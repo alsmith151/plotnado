@@ -29,6 +29,7 @@ BIGWIG_TYPES = (
     BigwigOverlay,
     cb.BigWig,
 )
+CUSTOM_TRACKS = (BedMemory, BedSimple, GenomicAxis, ScaleBar)
 
 
 class TrackType(Enum):
@@ -129,9 +130,11 @@ class TrackWrapper:
         except KeyError:
             if getattr(cb, self.track_type):
                 track_class = getattr(cb, self.track_type)
+            elif self.track_type in [*CUSTOM_TRACKS, *BIGWIG_TYPES, *MATRIX_TYPES]:
+                track_class = self.track_type
             else:
                 raise ValueError(
-                    f"Unknown track type {self.track_type}, select from: {', '.join([t.name for t in TrackType])}"
+                    f"Unknown track type {self.track_type}, select from: {', '.join([t.name for t in TrackType])} or provide a custom track class"
                 )
 
         return track_class
