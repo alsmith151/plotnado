@@ -1,0 +1,29 @@
+[build-system]
+requires = [
+    "setuptools >= 61.0",
+    "wheel",
+    "setuptools_scm[toml]>=6.2",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "seqnado"
+authors = [
+    {name = "Alastair Smith", email = "alastair.smith@ndcls.ox.ac.uk"},
+]
+description = "Pipelines for genomics analysis"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "GNU GENERAL PUBLIC LICENSE Version 3"}
+dynamic = ["version", "dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
+[tool.setuptools_scm]
+local_scheme = "no-local-version"
+write_to = "plotnado/_version.py"
+
+
+[project.urls]
+Homepage = "https://github.com/alsmith151/plotnado"

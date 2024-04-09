@@ -1,0 +1,9 @@
+click
+pandas
+polars
+matplotlib
+coolbox
+cooler
+seaborn
+iced
+h5py
