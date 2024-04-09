@@ -20,7 +20,6 @@ from plotnado.api.tracks import (
 )
 
 
-
 MATRIX_TRACKS = (MatrixCapcruncher, MatrixCapcruncherAverage, cb.Cool)
 BIGWIG_TRACKS = (
     BigwigFragment,
@@ -31,7 +30,8 @@ BIGWIG_TRACKS = (
 )
 CUSTOM_TRACKS = (BedMemory, BedSimple, GenomicAxis, ScaleBar)
 
-AGGREGATED_TRACKS = (MatrixCapcruncherAverage, BigwigOverlay, BigwigFragmentCollectionOverlay, BigwigFragmentCollection)
+AGGREGATED_TRACKS_MEMMORY = (MatrixCapcruncherAverage, BigwigOverlay, BigwigFragmentCollection)
+AGGREGATED_TRACKS_FILE = (BigwigFragmentCollectionOverlay, )
 
 
 class TrackType(Enum):
@@ -41,7 +41,7 @@ class TrackType(Enum):
     bigwig_fragment_collection = BigwigFragmentCollection
     bigwig_fragment_collection_overlay = BigwigFragmentCollectionOverlay
     bigwig = cb.BigWig
-    bigwig_summary = BigwigOverlay
+    bigwig_overlay = BigwigOverlay
     bed_memory = BedMemory
     bed_simple = BedSimple
     xaxis = GenomicAxis
@@ -66,11 +66,11 @@ class Autoscaler:
 
         assert len(tracks) > 0, "No tracks to autoscale"
         assert all(
-            isinstance(t, cb.Track) for t in tracks
+            isinstance(t, (cb.Track, TrackWrapper)) for t in tracks
         ), "All tracks must be of type cb.Track"
         assert all(
             type(t) in MATRIX_TRACKS + BIGWIG_TRACKS for t in tracks
-        ), "All tracks must be of tracks that produce numerical data"
+        ), "All tracks must be of tracks that produce numerical data (MatrixCapcruncher, BigWig, etc)"
 
     @property
     def data(self):
@@ -150,13 +150,18 @@ class TrackWrapper:
 
         if self.file is None and self.track_class in [t.value for t in FilelessTracks]:
             track = self.track_class(**self.properties)
-        
-        elif self.track_class in AGGREGATED_TRACKS and all(pathlib.Path(f).exists() for f in self.file):
+
+        elif self.track_class in AGGREGATED_TRACKS_FILE:
+            assert all([pathlib.Path(p).exists() for p in self.file]), f"Not files provided to track {self.track_class} exist"
             track = self.track_class(self.file, **self.properties)
-        
+
+        elif self.track_class in AGGREGATED_TRACKS_MEMMORY:
+            assert all([isinstance(t, (cb.Track, TrackWrapper)) for t in self.file]), f"Must provide pre-created track instances to {self.track_class}"
+            track = self.track_class(self.file, **self.properties)
+
         elif pathlib.Path(self.file).exists():
             track = self.track_class(self.file, **self.properties)
-            
+
         return track
 
     @property
@@ -247,7 +252,7 @@ class Figure:
         if self.autoscale_groups:
             for group, tracks_indexes in self.autoscale_groups.items():
 
-                tracks = [self.frame.tracks[i] for i in tracks_indexes]
+                tracks = [t for ii, (tn, t) in enumerate(self.frame.tracks.items()) if ii in tracks_indexes]
                 autoscaler = Autoscaler(
                     tracks, gr, gr2
                 )
@@ -373,4 +378,3 @@ class Figure:
     
     def __repr__(self) -> str:
         return f"Figure({len(self.tracks)} tracks)"
-    
