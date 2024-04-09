@@ -21,8 +21,8 @@ from plotnado.api.tracks import (
 
 
 
-MATRIX_TYPES = (MatrixCapcruncher, MatrixCapcruncherAverage, cb.Cool)
-BIGWIG_TYPES = (
+MATRIX_TRACKS = (MatrixCapcruncher, MatrixCapcruncherAverage, cb.Cool)
+BIGWIG_TRACKS = (
     BigwigFragment,
     BigwigFragmentCollection,
     BigwigFragmentCollectionOverlay,
@@ -30,6 +30,8 @@ BIGWIG_TYPES = (
     cb.BigWig,
 )
 CUSTOM_TRACKS = (BedMemory, BedSimple, GenomicAxis, ScaleBar)
+
+AGGREGATED_TRACKS = (MatrixCapcruncherAverage, BigwigOverlay, BigwigFragmentCollectionOverlay, BigwigFragmentCollection)
 
 
 class TrackType(Enum):
@@ -44,6 +46,8 @@ class TrackType(Enum):
     bed_simple = BedSimple
     xaxis = GenomicAxis
     scale = ScaleBar
+    scalebar = ScaleBar
+    spacer = cb.Spacer
 
 
 class FilelessTracks(Enum):
@@ -65,7 +69,7 @@ class Autoscaler:
             isinstance(t, cb.Track) for t in tracks
         ), "All tracks must be of type cb.Track"
         assert all(
-            type(t) in MATRIX_TYPES + BIGWIG_TYPES for t in tracks
+            type(t) in MATRIX_TRACKS + BIGWIG_TRACKS for t in tracks
         ), "All tracks must be of tracks that produce numerical data"
 
     @property
@@ -130,7 +134,7 @@ class TrackWrapper:
         except KeyError:
             if getattr(cb, self.track_type):
                 track_class = getattr(cb, self.track_type)
-            elif self.track_type in [*CUSTOM_TRACKS, *BIGWIG_TYPES, *MATRIX_TYPES]:
+            elif self.track_type in [*CUSTOM_TRACKS, *BIGWIG_TRACKS, *MATRIX_TRACKS]:
                 track_class = self.track_type
             else:
                 raise ValueError(
@@ -144,7 +148,15 @@ class TrackWrapper:
         Get the track object with the specified properties and adding track type specific properties
         """
 
-        track = self.track_class(self.file if self.file else None, **self.properties)
+        if self.file is None and self.track_class in [t.value for t in FilelessTracks]:
+            track = self.track_class(**self.properties)
+        
+        elif self.track_class in AGGREGATED_TRACKS and all(pathlib.Path(f).exists() for f in self.file):
+            track = self.track_class(self.file, **self.properties)
+        
+        elif pathlib.Path(self.file).exists():
+            track = self.track_class(self.file, **self.properties)
+            
         return track
 
     @property
