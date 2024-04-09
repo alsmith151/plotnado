@@ -7,3 +7,5 @@ cooler
 seaborn
 iced
 h5py
+scipy
+capcruncher
