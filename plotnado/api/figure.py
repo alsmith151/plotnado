@@ -19,6 +19,18 @@ from plotnado.api.tracks import (
     ScaleBar,
 )
 
+from plotnado.api.utils import get_max_value_over_region
+
+
+MATRIX_TYPES = (MatrixCapcruncher, MatrixCapcruncherAverage, cb.Cool)
+BIGWIG_TYPES = (
+    BigwigFragment,
+    BigwigFragmentCollection,
+    BigwigFragmentCollectionOverlay,
+    BigwigOverlay,
+    cb.BigWig,
+)
+
 
 class TrackType(Enum):
     heatmap = MatrixCapcruncher
@@ -38,6 +50,43 @@ class FilelessTracks(Enum):
     spacer = cb.Spacer
     scale = ScaleBar
     xaxis = GenomicAxis
+
+
+class Autoscaler:
+    def __init__(
+        self, tracks: List[cb.Track], gr: cb.GenomeRange, gr2: cb.GenomeRange = None
+    ):
+        self.tracks = tracks
+        self.gr = gr
+        self.gr2 = gr2
+
+        assert len(tracks) > 0, "No tracks to autoscale"
+        assert all(
+            isinstance(t, cb.Track) for t in tracks
+        ), "All tracks must be of type cb.Track"
+        assert all(
+            type(t) in MATRIX_TYPES + BIGWIG_TYPES for t in tracks
+        ), "All tracks must be of tracks that produce numerical data"
+
+    @property
+    def data(self):
+        """
+        Get the data from all tracks for the specified region
+        """
+        _data = [t.fetch_data(self.gr, self.gr2) for t in self.tracks]
+        return np.concatenate(_data, axis=0)
+
+    @property
+    def max_value(self):
+        return np.nanmax(self.data)
+
+    @property
+    def min_value(self):
+        return np.nanmin(self.data)
+
+    @property
+    def mean_value(self):
+        return np.nanmean(self.data)
 
 
 class TrackWrapper:
@@ -122,11 +171,13 @@ class Figure:
         tracks: List[TrackWrapper] = None,
         auto_spacing: bool = False,
         frame_args: Dict[str, Any] = None,
+        autoscale_groups: Dict[str, List[int]] = None,
         **kwargs,
     ) -> None:
 
         self.frame = cb.Frame(**frame_args)
         self.auto_spacing = auto_spacing
+        self.autoscale_groups = autoscale_groups
         self.properties = dict()
         self.properties.update(kwargs)
 
@@ -176,6 +227,20 @@ class Figure:
             show (bool, optional): Show the figure. Defaults to True.
             **kwargs: Additional arguments to pass to the plot
         """
+
+        if self.autoscale_groups:
+            for group, tracks_indexes in self.autoscale_groups.items():
+
+                tracks = [self.frame.tracks[i] for i in tracks_indexes]
+                autoscaler = Autoscaler(
+                    tracks, gr, gr2
+                )
+                for track in tracks:
+                    if track.properties.get("autoscale"):
+                        track.properties["max_value"] = autoscaler.max_value
+                        track.properties["min_value"] = autoscaler.min_value
+                        track.properties["mean_value"] = autoscaler.mean_value
+                    
 
         if gr2:
             fig = self.frame.plot(gr, gr2, **kwargs)
