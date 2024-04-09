@@ -584,25 +584,26 @@ class BigwigOverlay(Track):
         files (List[os.PathLike]): List of paths to the bigwig files
         **kwargs: Additional arguments to pass to the track
     """
+
     def __init__(self, collection: List[cb.BigWig], **kwargs):
         self.collection = collection
         self.properties = dict()
         self.properties.update(kwargs)
         self.properties["name"] = f"BigWigOverlay.{self.properties.get('title')}"
-    
+
     def fetch_data(self, gr: GenomeRange, **kwargs):
         data = []
         for bw in self.collection:
             data.append(bw.fetch_data(gr, **kwargs))
         return data
-    
+
     def plot(self, ax, gr: GenomeRange, **kwargs):
         data = self.fetch_data(gr, **kwargs)
         for d in data:
             d.plot(ax, gr, **kwargs)
-        
+
         self.plot_label()
-    
+
     def plot_label(self):
         if hasattr(self, "label_ax") and self.label_ax is not None:
             self.label_ax.text(
@@ -613,10 +614,6 @@ class BigwigOverlay(Track):
                 size="large",
                 verticalalignment="center",
             )
-        
-    
-
-
 
 
 class BedSimple(cb.BED):

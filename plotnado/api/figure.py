@@ -19,7 +19,6 @@ from plotnado.api.tracks import (
     ScaleBar,
 )
 
-from plotnado.api.utils import get_max_value_over_region
 
 
 MATRIX_TYPES = (MatrixCapcruncher, MatrixCapcruncherAverage, cb.Cool)
