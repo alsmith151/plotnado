@@ -144,7 +144,7 @@ class TrackWrapper:
         Get the track object with the specified properties and adding track type specific properties
         """
 
-        track = self.track_class(self.file, **self.properties)
+        track = self.track_class(self.file if self.file else None, **self.properties)
         return track
 
     @property
@@ -165,6 +165,8 @@ class Figure:
     Args:
         tracks (List[TrackWrapper], optional): List of tracks to plot. Defaults to None.
         auto_spacing (bool, optional): Automatically add a spacer track between each track. Defaults to False.
+        frame_args (Dict[str, Any], optional): Arguments to pass to the frame. Defaults to None.
+        autoscale_groups (Dict[str, List[int]], optional): Groups of tracks to autoscale together. Defaults to None.
         **kwargs: Additional arguments to pass to the figure
     """
 
@@ -177,7 +179,7 @@ class Figure:
         **kwargs,
     ) -> None:
 
-        self.frame = cb.Frame(**frame_args)
+        self.frame = cb.Frame(**frame_args if frame_args else dict())
         self.auto_spacing = auto_spacing
         self.autoscale_groups = autoscale_groups
         self.properties = dict()
@@ -356,3 +358,7 @@ class Figure:
 
         if not output:
             return config
+    
+    def __repr__(self) -> str:
+        return f"Figure({len(self.tracks)} tracks)"
+    
