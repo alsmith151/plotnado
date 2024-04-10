@@ -1,3 +1,5 @@
 build/
 **egg**
 _version.py
+*__pycache__/*
+*.pyc

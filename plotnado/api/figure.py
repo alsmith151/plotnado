@@ -82,15 +82,15 @@ class Autoscaler:
 
     @property
     def max_value(self):
-        return np.nanmax(self.data)
+        return np.nanmax(self.data, axis=0)
 
     @property
     def min_value(self):
-        return np.nanmin(self.data)
+        return np.nanmin(self.data, axis=0)
 
     @property
     def mean_value(self):
-        return np.nanmean(self.data)
+        return np.nanmean(self.data, axis=0)
 
 
 class TrackWrapper:
@@ -143,7 +143,8 @@ class TrackWrapper:
 
         return track_class
 
-    def get_track(self) -> cb.Track:
+    @property
+    def track(self) -> cb.Track:
         """
         Get the track object with the specified properties and adding track type specific properties
         """
@@ -157,7 +158,7 @@ class TrackWrapper:
 
         elif self.track_class in AGGREGATED_TRACKS_MEMMORY:
             assert all([isinstance(t, (cb.Track, TrackWrapper)) for t in self.file]), f"Must provide pre-created track instances to {self.track_class}"
-            track = self.track_class(self.file, **self.properties)
+            track = self.track_class([t.get_track() if isinstance(t, TrackWrapper) else t for t in self.file], **self.properties)
 
         elif pathlib.Path(self.file).exists():
             track = self.track_class(self.file, **self.properties)
@@ -170,9 +171,13 @@ class TrackWrapper:
             return [str(pathlib.Path(f).resolve()) for f in self.file]
         else:
             return str(pathlib.Path(self.file).resolve())
+    
 
     def __repr__(self) -> str:
-        return f"WrappedTrack({self.properties.get('title')}, {self.properties.get('type')})"
+    
+        title = self.properties.get("title", "No title")
+        track_class = self.track_class
+        return f"TrackWrapper({title}, {track_class})"
 
 
 class Figure:
@@ -216,7 +221,7 @@ class Figure:
             track (TrackWrapper): Track to add
         """
         self.tracks.add(track)
-        self.frame.add_track(track.get_track())
+        self.frame.add_track(track.track)
 
     def add_tracks(self, tracks: List[TrackWrapper]) -> None:
         """
@@ -232,6 +237,24 @@ class Figure:
 
             self.add_track(track)
 
+    def _autoscale(self, gr: cb.GenomeRange, gr2: cb.GenomeRange = None):
+        # Deal with autoscaling
+        if self.autoscale_groups:
+            for group, tracks_indexes in self.autoscale_groups.items():
+                tracks_for_scaling = []
+                for index, track in enumerate(self.frame.tracks.values()):
+                    if index in tracks_indexes:
+                        tracks_for_scaling.append(track)
+                
+                autoscaler = Autoscaler(
+                    tracks_for_scaling, gr, gr2
+                )
+                for track in tracks_for_scaling:
+                    track.properties["max_value"] = autoscaler.max_value
+                    track.properties["min_value"] = autoscaler.min_value
+                    track.properties["mean_value"] = autoscaler.mean_value
+                        
+                    
     def plot(
         self,
         gr: Union[str, cb.GenomeRange],
@@ -249,19 +272,8 @@ class Figure:
             **kwargs: Additional arguments to pass to the plot
         """
 
-        if self.autoscale_groups:
-            for group, tracks_indexes in self.autoscale_groups.items():
+        self._autoscale(gr, gr2)
 
-                tracks = [t for ii, (tn, t) in enumerate(self.frame.tracks.items()) if ii in tracks_indexes]
-                autoscaler = Autoscaler(
-                    tracks, gr, gr2
-                )
-                for track in tracks:
-                    if track.properties.get("autoscale"):
-                        track.properties["max_value"] = autoscaler.max_value
-                        track.properties["min_value"] = autoscaler.min_value
-                        track.properties["mean_value"] = autoscaler.mean_value
-                    
 
         if gr2:
             fig = self.frame.plot(gr, gr2, **kwargs)
