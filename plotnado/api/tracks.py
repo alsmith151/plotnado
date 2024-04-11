@@ -1,6 +1,8 @@
 import functools
 import math
 import os
+import pathlib
+from enum import Enum
 from typing import List, Literal
 
 import coolbox.api as cb
@@ -18,11 +20,58 @@ from matplotlib import cm, transforms
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.patches import Polygon
 from pybedtools import BedTool
+from typing import Optional, Union, List, Dict
 
 from plotnado.api.utils import (
-    interval_to_pyranges,
     get_human_readable_number_of_bp,
+    interval_to_pyranges,
 )
+
+
+class Autoscaler:
+    def __init__(
+        self, tracks: List[cb.Track], gr: cb.GenomeRange, gr2: cb.GenomeRange = None
+    ):
+        self.tracks = tracks
+        self.gr = gr
+        self.gr2 = gr2
+
+        from . track_wrapper import MATRIX_TRACKS, BIGWIG_TRACKS, TrackWrapper
+        assert len(tracks) > 0, "No tracks to autoscale"
+        assert all(
+            isinstance(t, (cb.Track, TrackWrapper)) for t in tracks
+        ), "All tracks must be of type cb.Track"
+        assert all(
+            type(t) in MATRIX_TRACKS + BIGWIG_TRACKS for t in tracks
+        ), "All tracks must be of tracks that produce numerical data (MatrixCapcruncher, BigWig, etc)"
+
+    @property
+    def data(self):
+        """
+        Get the data from all tracks for the specified region
+        """
+        _data = [t.fetch_data(gr=self.gr, gr2=self.gr2) for t in self.tracks]
+
+        if isinstance(
+            _data[0], pd.DataFrame
+        ):  # If the data is a DataFrame, we need to extract the values from the last column
+            _data = [d.values[:, -1] for d in _data]
+        elif isinstance(_data[0], np.ndarray):
+            pass
+
+        return np.concatenate(_data, axis=0)
+
+    @property
+    def max_value(self):
+        return np.nanmax(self.data, axis=0)
+
+    @property
+    def min_value(self):
+        return min(0, np.nanmin(self.data, axis=0))
+
+    @property
+    def mean_value(self):
+        return np.nanmean(self.data, axis=0)
 
 
 class MatrixCapcruncher(cb.Cool):
@@ -323,7 +372,7 @@ class BigwigFragmentCollection(Track):
     def __init__(self, file: list, exclusions: str = None, **kwargs):
         self.file_names = file
         self.exclusions = exclusions
-        self.bws = [cb.BigWig(str(fn)) for fn in file]
+        self.bws = [cb.BigWig(str(fn)) for fn in file] if not isinstance(file[0], cb.BigWig) else file
         self.properties = {"files": self.file_names}
         self.properties.update(BigwigFragmentCollection.DEFAULT_PROPERTIES.copy())
         self.properties.update(kwargs)
@@ -341,6 +390,10 @@ class BigwigFragmentCollection(Track):
         coverage_stack = get_coverage_stack()
         for coverage in coverage_stack:
             self.coverages.append(coverage)
+    
+    @property
+    def subtracks(self):
+        return self.bws
 
     def fetch_data(self, gr, **kwargs):
         datasets = [
@@ -373,7 +426,7 @@ class BigwigFragmentCollection(Track):
                 [df_intervals, self.fetch_exluded_regions(gr)]
             ).sort_values("bp")
 
-        if self.properties.get("smooth_window"):
+        if self.properties.get("smooth_window") or self.properties.get("smooth"):
             from scipy.signal import savgol_filter
 
             df_intervals["mean_smoothed"] = savgol_filter(
@@ -443,6 +496,8 @@ class BigwigFragmentCollection(Track):
         max_val = self.properties.get("max_value")
 
         ymin = round(scores.min()) if min_val == "auto" else min_val
+        ymin = min(0, ymin)
+
         ymax = round(scores.max() + data["sem"].max()) if max_val == "auto" else max_val
 
         ax.set_xlim(gr.start, gr.end)
@@ -548,6 +603,10 @@ class BigwigFragmentCollectionOverlay(Track):
         self.collections = collections
         self.properties = {"collections": collections}
         self.properties.update(kwargs)
+    
+    @property
+    def subtracks(self):
+        return self.collections
 
     def plot(self, ax, genome_range, **kwargs):
         # Method for plot the track
@@ -585,11 +644,25 @@ class BigwigOverlay(Track):
         **kwargs: Additional arguments to pass to the track
     """
 
-    def __init__(self, collection: List[cb.BigWig], **kwargs):
-        self.collection = collection
+    def __init__(self, collection: List[Union[cb.BigWig, str]], **kwargs):
+        
+        _collection = []
+        for obj in collection:
+            if isinstance(obj, str):
+                assert os.path.exists(obj), f"File {obj} does not exist"
+                _collection.append(cb.BigWig(obj))
+            elif isinstance(obj, cb.Track):
+                _collection.append(obj)
+            else:
+                raise ValueError(f"Object {obj} is not a valid BigWig or path to a BigWig file")
+        self.collection = _collection
         self.properties = dict()
         self.properties.update(kwargs)
         self.properties["name"] = f"BigWigOverlay.{self.properties.get('title')}"
+
+    @property
+    def subtracks(self):
+        return self.collection
 
     def fetch_data(self, gr: GenomeRange, **kwargs):
         data = []
@@ -598,14 +671,33 @@ class BigwigOverlay(Track):
         return data
 
     def plot(self, ax, gr: GenomeRange, **kwargs):
-        data = self.fetch_data(gr, **kwargs)
-        for d in data:
-            d.plot(ax, gr, **kwargs)
+
+        scaler = Autoscaler(tracks=self.collection, gr=gr)
+        min_value = scaler.min_value
+        max_value = scaler.max_value
+
+
+        for bw in self.collection:
+            bw.properties["show_data_range"] = False
+            bw.properties["data_range_style"] = "text"
+            bw.properties["min_value"] = min_value
+            bw.properties["max_value"] = max_value
+            bw.plot(
+                ax,
+                gr,
+                show_data_range=False,
+                data_range_style="text",
+                **kwargs,
+            )
 
         self.plot_label()
 
     def plot_label(self):
-        if hasattr(self, "label_ax") and self.label_ax is not None:
+        if (
+            hasattr(self, "label_ax")
+            and self.label_ax is not None
+            and "title" in self.properties
+        ):
             self.label_ax.text(
                 0.15,
                 0.5,
@@ -841,6 +933,10 @@ class MatrixCapcruncherAverage(MatrixCapcruncher):
 
         # Override the defaults
         self.properties["balance"] = "no"
+    
+    @property
+    def subtracks(self):
+        return self.matricies
 
     @functools.cache
     def fetch_data(self, gr: cb.GenomeRange, gr2=None, **kwargs):

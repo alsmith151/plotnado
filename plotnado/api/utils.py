@@ -4,6 +4,8 @@ from typing import Iterable, Optional, Union
 import coolbox.api as cb
 import pyBigWig
 import pyranges as pr
+from typing import List, Tuple, Union, Optional, Iterable
+
 
 
 def get_max_value_over_region(
