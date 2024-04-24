@@ -7,6 +7,9 @@ from typing import Any, Dict, List, Literal, Optional, Union
 import coolbox.api as cb
 import numpy as np
 import pandas as pd
+import pyranges as pr
+import matplotlib.pyplot as plt
+import matplotlib.figure
 
 from .track_wrapper import FilelessTracks, TrackType, TrackWrapper
 from .tracks import (
@@ -129,7 +132,7 @@ class Figure:
         gr2: Union[str, cb.GenomeRange] = None,
         show: bool = True,
         **kwargs,
-    ) -> None:
+    ) -> matplotlib.figure.Figure:
         """
         Plot the figure
 
@@ -138,6 +141,9 @@ class Figure:
             gr2 (Union[str, GenomeRange], optional): Second GenomeRange to plot. Defaults to None.
             show (bool, optional): Show the figure. Defaults to True.
             **kwargs: Additional arguments to pass to the plot
+
+        Returns:
+            matplotlib.figure.Figure: The figure
         """
 
         self._autoscale(gr, gr2)
@@ -150,6 +156,65 @@ class Figure:
             fig.show()
 
         return fig
+
+    def plot_regions(
+        self,
+        regions: Union[pathlib.Path, pr.PyRanges, pd.DataFrame, Dict[str, cb.GenomeRange]],
+        show: bool = True,
+        **kwargs,
+    ) -> Dict[str, matplotlib.figure.Figure]:
+        """
+        Plot the figure for a list of regions
+
+        Args:
+            regions (Union[str, pd.DataFrame, List[GenomeRange]]): Regions to plot
+            show (bool, optional): Show the figure. Defaults to True.
+            **kwargs: Additional arguments to pass to the plot
+        
+        Returns:
+            Dict[str, matplotlib.figure.Figure]: Dictionary of figures for each region
+        """
+
+        # Format the regions into a dictionary of genome ranges
+        if isinstance(regions, pathlib.Path):
+            regions = pr.read_bed(str(regions))
+        
+        if isinstance(regions, pr.PyRanges):
+            regions = {row.Name if row.Name else f"{row.Chromosome}_{row.Start}_{row.End}": cb.GenomeRange(
+                    chrom=row.Chromosome,
+                    start=row.Start,
+                    end=row.End,
+                )
+                for _, row in regions.df.itertuples()
+            }
+        
+        if isinstance(regions, pd.DataFrame):
+            assert "Chromosome" in regions.columns, "Chromosome column not found in regions"
+            assert "Start" in regions.columns, "Start column not found in regions"
+            assert "End" in regions.columns, "End column not found in regions"
+
+            regions = {row.Name if row.Name else f"{row.Chromosome}_{row.Start}_{row.End}": cb.GenomeRange(
+                    chrom=row.Chromosome,
+                    start=row.Start,
+                    end=row.End,
+                )
+                for _, row in regions.iterrows()
+            }
+        
+        plots = dict()
+        for name, gr in regions.items():
+            plots[name] = self.plot(gr, show=False, **kwargs)
+        
+        return plots
+        
+        
+
+        
+
+
+        
+    
+
 
     def save(
         self,
