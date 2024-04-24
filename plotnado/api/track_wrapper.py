@@ -1,22 +1,24 @@
+import pathlib
 from collections import OrderedDict
+from enum import Enum
+from typing import Any, Dict, List, Optional, Tuple, Union
+
+import coolbox.api as cb
+import numpy as np
+
 from . import (
-    MatrixCapcruncher,
-    MatrixCapcruncherAverage,
-    ScaleBar,
     BedMemory,
     BedSimple,
     BigwigFragment,
     BigwigFragmentCollection,
     BigwigFragmentCollectionOverlay,
     BigwigOverlay,
+    Genes,
     GenomicAxis,
+    MatrixCapcruncher,
+    MatrixCapcruncherAverage,
+    ScaleBar,
 )
-import coolbox.api as cb
-from enum import Enum
-from typing import List, Optional, Union, Tuple, Dict, Any
-import pathlib
-import numpy as np
-
 
 MATRIX_TRACKS = (MatrixCapcruncher, MatrixCapcruncherAverage, cb.Cool)
 BIGWIG_TRACKS = (
@@ -50,6 +52,7 @@ class TrackType(Enum):
     scale = ScaleBar
     scalebar = ScaleBar
     spacer = cb.Spacer
+    genes = Genes
 
 
 class FilelessTracks(Enum):

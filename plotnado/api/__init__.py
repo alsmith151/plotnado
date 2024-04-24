@@ -13,6 +13,7 @@ from .tracks import (
     ScaleBar,
     Autoscaler,
 )
+from .genes import Genes
 from .track_wrapper import TrackWrapper, MATRIX_TRACKS, BIGWIG_TRACKS, CUSTOM_TRACKS, FilelessTracks, TrackType
 from .figure import Figure
 
@@ -31,4 +32,5 @@ __all__ = [
     "MatrixCapcruncherAverage",
     "ScaleBar",
     "TrackWrapper",
+    "Genes"
 ]
