@@ -15,6 +15,10 @@ class OuputFormat(str, Enum):
     bmp = "bmp"
 
 
+def main():
+    typer.run(plot)
+
+
 def plot(
     template: Annotated[
         pathlib.Path,
@@ -79,4 +83,4 @@ def plot(
 
 
 if __name__ == "__main__":
-    typer.run(plot)
+    main()

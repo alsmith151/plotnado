@@ -1,29 +1,30 @@
 [build-system]
-requires = [
-    "setuptools >= 61.0",
-    "wheel",
-    "setuptools_scm[toml]>=6.2",
-]
+requires = ["setuptools >= 61.0", "wheel", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "plotnado"
-authors = [
-    {name = "Alastair Smith", email = "alastair.smith@ndcls.ox.ac.uk"},
-]
-description = "Pipelines for genomics analysis"
+authors = [{ name = "Alastair Smith", email = "alastair.smith@ndcls.ox.ac.uk" }]
+description = "A simple plotting library for making genomic tracks"
 readme = "README.md"
 requires-python = ">=3.10"
-license = {text = "GNU GENERAL PUBLIC LICENSE Version 3"}
+license = { text = "GNU GENERAL PUBLIC LICENSE Version 3" }
 dynamic = ["version", "dependencies"]
+scripts = { "plotnado" =  "plotnado.cli:main" }
 
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
 
+# [tool.setuptools.packages.find]
+# where = ["plotnado"]
+
+
+# [tool.setuptools.package-data]
+# plotnado = ["*.json", "*.bed.gz", "*.tbi"]
+
 [tool.setuptools_scm]
 local_scheme = "no-local-version"
 write_to = "plotnado/_version.py"
-
 
 [project.urls]
 Homepage = "https://github.com/alsmith151/plotnado"

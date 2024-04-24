@@ -334,6 +334,9 @@ class Genes(GenesBase, FetchBed):
     }
 
     def __init__(self, file, **kwargs):
+        
+        file = self.get_genes_file(file)
+
         properties = BED.DEFAULT_PROPERTIES.copy()
         properties.update({"file": file, **kwargs})
         super().__init__(**properties)
@@ -342,4 +345,18 @@ class Genes(GenesBase, FetchBed):
     def fetch_data(self, gr: GenomeRange, **kwargs):
         return self.fetch_intervals(self.bgz_file, gr)
 
+    def get_genes_file(self, file: str):
 
+        import importlib
+        import json
+
+        bed_prefix = importlib.resources.files("plotnado.data.gene_bed_files")
+        bed_paths = bed_prefix / "genes.json"
+
+        with open(bed_paths) as f:
+            gene_files = json.load(f)
+
+        if file in gene_files:
+            return bed_prefix / gene_files[file]
+        else:
+            return file 
