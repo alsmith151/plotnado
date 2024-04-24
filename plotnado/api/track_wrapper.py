@@ -37,6 +37,8 @@ AGGREGATED_TRACKS_MEMMORY = (
 )
 AGGREGATED_TRACKS_FILE = (BigwigFragmentCollectionOverlay,)
 
+ALLOWED_NON_FILE_TRACKS = (GenomicAxis, ScaleBar, BedMemory, BedSimple, Genes)
+
 
 class TrackType(Enum):
     heatmap = MatrixCapcruncher
@@ -164,6 +166,12 @@ class TrackWrapper:
 
         elif pathlib.Path(self.file).exists():
             track = self.track_class(self.file, **self.properties)
+        
+        elif self.track_class in ALLOWED_NON_FILE_TRACKS:
+            track = self.track_class(self.file, **self.properties)
+        
+        else:
+            raise FileNotFoundError(f"File {self.file} does not exist")
 
         return track
 
