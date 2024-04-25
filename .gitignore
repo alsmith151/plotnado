@@ -4,3 +4,5 @@ _version.py
 *__pycache__/*
 *.pyc
 plotnado_figures/
+*.bw
+*.bgz*
