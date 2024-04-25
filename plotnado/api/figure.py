@@ -39,10 +39,14 @@ def get_track_title(track: TrackWrapper, config: Dict[str, Dict]) -> str:
         str: Title of the track
     """
 
-    title = track.properties.get("title", track.track_type)
+    try:
+        title = track.properties.get("title", track.track_type)
+    except AttributeError:
+        title = ""
+
     if title in config:
         n = 1
-        while f"{title} {n}" in config: # Ensure the title is unique
+        while f"{title} {n}" in config:  # Ensure the title is unique
             n += 1
         title = f"{title} {n}"
 
@@ -65,13 +69,18 @@ class Figure:
         self,
         tracks: List[TrackWrapper] = None,
         auto_spacing: bool = False,
+        auto_spacing_height: float = 0.1,
         frame_args: Dict[str, Any] = None,
         autoscale_groups: Dict[str, List[int]] = None,
+        highlight_regions: Union[pathlib.Path, cb.HighLights] = None,
+        highlight_regions_color: str = "blue",
+        highlight_regions_kwargs: Dict[str, Any] = None,
         **kwargs,
     ) -> None:
 
         self.frame = cb.Frame(**frame_args if frame_args else dict())
         self.auto_spacing = auto_spacing
+        self.autos_spacing_height = auto_spacing_height
         self.autoscale_groups = autoscale_groups
         self.properties = dict()
         self.properties.update(kwargs)
@@ -79,6 +88,15 @@ class Figure:
         self.tracks = OrderedDict()
         if tracks:
             self.add_tracks(tracks)
+
+        if isinstance(highlight_regions, (pathlib.Path, str)):
+            self.highlight_regions = cb.HighLightsFromFile(
+                highlight_regions,
+                color=highlight_regions_color,
+                **highlight_regions_kwargs,
+            )
+        else:
+            self.highlight_regions = highlight_regions
 
     def add_track(self, track: TrackWrapper) -> None:
         """
@@ -89,7 +107,7 @@ class Figure:
         """
         # Add a spacer track if auto_spacing is enabled
         if self.auto_spacing:
-            spacer = TrackWrapper(track_type="spacer")
+            spacer = TrackWrapper(track_type="spacer", height=self.autos_spacing_height)
             title = get_track_title(spacer, self.tracks)
             self.tracks[title] = spacer
 
@@ -148,6 +166,9 @@ class Figure:
 
         self._autoscale(gr, gr2)
 
+        if self.highlight_regions:
+            self.frame = self.frame * self.highlight_regions
+
         if gr2:
             fig = self.frame.plot(gr, gr2, **kwargs)
         else:
@@ -159,7 +180,9 @@ class Figure:
 
     def plot_regions(
         self,
-        regions: Union[pathlib.Path, pr.PyRanges, pd.DataFrame, Dict[str, cb.GenomeRange]],
+        regions: Union[
+            pathlib.Path, pr.PyRanges, pd.DataFrame, Dict[str, cb.GenomeRange]
+        ],
         show: bool = True,
         **kwargs,
     ) -> Dict[str, matplotlib.figure.Figure]:
@@ -170,7 +193,7 @@ class Figure:
             regions (Union[str, pd.DataFrame, List[GenomeRange]]): Regions to plot
             show (bool, optional): Show the figure. Defaults to True.
             **kwargs: Additional arguments to pass to the plot
-        
+
         Returns:
             Dict[str, matplotlib.figure.Figure]: Dictionary of figures for each region
         """
@@ -178,43 +201,42 @@ class Figure:
         # Format the regions into a dictionary of genome ranges
         if isinstance(regions, pathlib.Path):
             regions = pr.read_bed(str(regions))
-        
+
         if isinstance(regions, pr.PyRanges):
-            regions = {row.Name if row.Name else f"{row.Chromosome}_{row.Start}_{row.End}": cb.GenomeRange(
+            regions = {
+                (
+                    row.Name if row.Name else f"{row.Chromosome}_{row.Start}_{row.End}"
+                ): cb.GenomeRange(
                     chrom=row.Chromosome,
                     start=row.Start,
                     end=row.End,
                 )
                 for _, row in regions.df.itertuples()
             }
-        
+
         if isinstance(regions, pd.DataFrame):
-            assert "Chromosome" in regions.columns, "Chromosome column not found in regions"
+            assert (
+                "Chromosome" in regions.columns
+            ), "Chromosome column not found in regions"
             assert "Start" in regions.columns, "Start column not found in regions"
             assert "End" in regions.columns, "End column not found in regions"
 
-            regions = {row.Name if row.Name else f"{row.Chromosome}_{row.Start}_{row.End}": cb.GenomeRange(
+            regions = {
+                (
+                    row.Name if row.Name else f"{row.Chromosome}_{row.Start}_{row.End}"
+                ): cb.GenomeRange(
                     chrom=row.Chromosome,
                     start=row.Start,
                     end=row.End,
                 )
                 for _, row in regions.iterrows()
             }
-        
+
         plots = dict()
         for name, gr in regions.items():
             plots[name] = self.plot(gr, show=False, **kwargs)
-        
+
         return plots
-        
-        
-
-        
-
-
-        
-    
-
 
     def save(
         self,
@@ -259,7 +281,6 @@ class Figure:
 
         return _cls
 
-
     def to_toml(self, output: str = None) -> Union[None, Dict[str, Any]]:
         """
         Save the Figure to a toml file
@@ -285,7 +306,6 @@ class Figure:
         outfile = output if output else "config.toml"
 
         with open(outfile, "w") as f:
-            print(config)
             config_str = toml.dumps(config)
             f.write(config_str)
 

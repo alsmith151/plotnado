@@ -649,12 +649,14 @@ class BigwigOverlay(Track):
         _collection = []
         for obj in collection:
             if isinstance(obj, str):
-                assert os.path.exists(obj), f"File {obj} does not exist"
+                assert os.path.exists(obj) or kwargs.get("ignore_file_validation"), f"File {obj} does not exist"
                 _collection.append(cb.BigWig(obj))
             elif isinstance(obj, cb.Track):
                 _collection.append(obj)
             else:
                 raise ValueError(f"Object {obj} is not a valid BigWig or path to a BigWig file")
+            
+        self.coverages = []
         self.collection = _collection
         self.properties = dict()
         self.properties.update(kwargs)
@@ -673,8 +675,8 @@ class BigwigOverlay(Track):
     def plot(self, ax, gr: GenomeRange, **kwargs):
 
         scaler = Autoscaler(tracks=self.collection, gr=gr)
-        min_value = scaler.min_value
-        max_value = scaler.max_value
+        min_value = scaler.min_value if self.properties.get("min_value") == "auto" else self.properties.get("min_value", 0)
+        max_value = scaler.max_value if self.properties.get("max_value") == "auto" else self.properties.get("max_value")
 
 
         for bw in self.collection:
@@ -706,6 +708,28 @@ class BigwigOverlay(Track):
                 size="large",
                 verticalalignment="center",
             )
+        elif hasattr(self, "label_ax") and self.properties.get("label_subtracks"):
+            # Plot a patch with the color of the subtracks and the name of the subtrack
+            for i, bw in enumerate(self.collection):
+                self.label_ax.add_patch(
+                    Polygon(
+                        [
+                            (0.1, 0.5 - (i * 0.1)),
+                            (0.1, 0.6 - (i * 0.1)),
+                            (0.2, 0.6 - (i * 0.1)),
+                            (0.2, 0.5 - (i * 0.1)),
+                        ],
+                        color=bw.properties.get("color", "black"),
+                    )
+                )
+
+                self.label_ax.text(
+                    0.25,
+                    0.55 - (i * 0.1),
+                    bw.properties.get("title", f"Subtrack {i}"),
+                    horizontalalignment="left",
+                    verticalalignment="center",
+                )
 
 
 class BedSimple(cb.BED):
@@ -967,3 +991,31 @@ class MatrixCapcruncherAverage(MatrixCapcruncher):
         self.adjust_figure(gr, kwargs.get("gr2"))
         self.draw_colorbar(img)
         self.plot_label()
+
+
+class HighlightsFromFile(cb.HighLightsFromFile):
+    def plot(self, ax, gr: cb.GenomeRange, **kwargs):
+        from matplotlib.patches import Rectangle
+
+        regions = self.fetch_data(gr, **kwargs)
+
+        for start, end, color in regions:
+            if self.properties["color"] != "bed_rgb":
+                color = self.properties["color"]
+
+            ymin, ymax = ax.get_ylim()
+
+            # Add a small offset to the y-axis to avoid the highlights overlapping with the axis
+            # ymin += 0.001 * (ymax - ymin)
+            # ymax -= 0.001 * (ymax - ymin)
+
+            ax.add_patch(
+                Rectangle(
+                    (start, ymin),
+                    end - start,
+                    ymax - ymin,
+                    color=color,
+                    alpha=self.properties["alpha"],
+                    linewidth=0,
+                )
+            )

@@ -1,6 +1,7 @@
 import coolbox.api as cb
 
 from .tracks import (
+    Autoscaler,
     BedMemory,
     BedSimple,
     BigwigFragment,
@@ -8,13 +9,20 @@ from .tracks import (
     BigwigFragmentCollectionOverlay,
     BigwigOverlay,
     GenomicAxis,
+    HighlightsFromFile,
     MatrixCapcruncher,
     MatrixCapcruncherAverage,
     ScaleBar,
-    Autoscaler,
 )
 from .genes import Genes
-from .track_wrapper import TrackWrapper, MATRIX_TRACKS, BIGWIG_TRACKS, CUSTOM_TRACKS, FilelessTracks, TrackType
+from .track_wrapper import (
+    BIGWIG_TRACKS,
+    CUSTOM_TRACKS,
+    FilelessTracks,
+    MATRIX_TRACKS,
+    TrackType,
+    TrackWrapper,
+)
 from .figure import Figure
 
 
@@ -27,10 +35,11 @@ __all__ = [
     "BigwigFragmentCollectionOverlay",
     "BigwigOverlay",
     "Figure",
+    "Genes",
     "GenomicAxis",
+    "HighlightsFromFile",
     "MatrixCapcruncher",
     "MatrixCapcruncherAverage",
     "ScaleBar",
     "TrackWrapper",
-    "Genes"
 ]

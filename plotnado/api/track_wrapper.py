@@ -1,6 +1,7 @@
 import pathlib
 from collections import OrderedDict
 from enum import Enum
+import re
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import coolbox.api as cb
@@ -20,6 +21,17 @@ from . import (
     ScaleBar,
 )
 
+
+URL_REGEX = re.compile(
+    r"http[s]?://"  # http:// or https://
+    r"(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|"  # domain...
+    r"localhost|"  # localhost...
+    r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"  # ...or ip
+    r"(?::\d+)?"  # optional port
+    r"(?:/?|[/?]\S+)$",
+    re.IGNORECASE,
+)
+
 MATRIX_TRACKS = (MatrixCapcruncher, MatrixCapcruncherAverage, cb.Cool)
 BIGWIG_TRACKS = (
     BigwigFragment,
@@ -37,7 +49,16 @@ AGGREGATED_TRACKS_MEMMORY = (
 )
 AGGREGATED_TRACKS_FILE = (BigwigFragmentCollectionOverlay,)
 
-ALLOWED_NON_FILE_TRACKS = (GenomicAxis, ScaleBar, BedMemory, BedSimple, Genes)
+ALLOWED_NON_FILE_TRACKS = (
+    GenomicAxis,
+    ScaleBar,
+    BedMemory,
+    BedSimple,
+    Genes,
+    cb.HighLightsFromFile,
+)
+
+HAS_PRESETS = (Genes)
 
 
 class TrackType(Enum):
@@ -164,12 +185,18 @@ class TrackWrapper:
 
             track = self.track_class(tracks, **self.properties)
 
-        elif pathlib.Path(self.file).exists():
-            track = self.track_class(self.file, **self.properties)
-        
         elif self.track_class in ALLOWED_NON_FILE_TRACKS:
             track = self.track_class(self.file, **self.properties)
+
+        elif pathlib.Path(self.file).exists():
+            track = self.track_class(self.file, **self.properties)
+
+        elif self.properties.get("ignore_file_validation"):
+            track = self.track_class(self.file, **self.properties)
         
+        elif URL_REGEX.match(self.file):
+            track = self.track_class(self.file, **self.properties)
+
         else:
             raise FileNotFoundError(f"File {self.file} does not exist")
 
@@ -180,21 +207,41 @@ class TrackWrapper:
         """
         Get the path to the 'file' attribute these can be either a ssingle file or a list of files
         """
+        _files = []
         if isinstance(self.file, (list, tuple, np.ndarray)):
-            _files = []
+
             for f in self.file:
                 if isinstance(f, (TrackWrapper, cb.Track)):
-                    _file = str(pathlib.Path(f.file).resolve())
-                    _files.append(_file)
+                    if hasattr(f, "file"):
+                        _file = f.file
+                    elif f.properties.get("file"):
+                        _file = f.properties["file"]
                 elif isinstance(f, (str, pathlib.Path)):
-                    _file = str(pathlib.Path(f).resolve())
-                    _files.append(_file)
-            return _files
+                    _file = f
+                _files.append(_file)
         elif self.file is None:
             return None
-
         else:
-            return str(pathlib.Path(self.file).resolve())
+            _files.append(self.file)
+        
+        files = []
+        for f in _files:
+            if URL_REGEX.match(f):
+                files.append(f)
+            elif pathlib.Path(f).exists():
+                files.append(str(pathlib.Path(f).resolve()))
+            elif self.properties.get("ignore_file_validation") or self.track.properties.get("ignore_file_validation"):
+                files.append(f)
+            else:
+                raise FileNotFoundError(f"File {f} does not exist")
+        
+        if len(files) == 1:
+            return files[0]
+        else:
+            return tuple(files)
+            
+
+            
 
     def to_dict(self) -> Dict:
         """

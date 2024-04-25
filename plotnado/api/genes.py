@@ -333,17 +333,31 @@ class Genes(GenesBase, FetchBed):
         "labels": "on",
     }
 
-    def __init__(self, file, **kwargs):
-        
+    def __init__(
+        self,
+        file,
+        ignore_file_validation: bool = True,
+        min_gene_length: int = 1e6,
+        **kwargs,
+    ):
+
         file = self.get_genes_file(file)
 
         properties = BED.DEFAULT_PROPERTIES.copy()
-        properties.update({"file": file, **kwargs})
+        properties.update(
+            {"file": file, "ignore_file_validation": ignore_file_validation, 
+            "min_gene_length": min_gene_length, **kwargs}
+        )
         super().__init__(**properties)
+        self.min_gene_length = min_gene_length
         self.bgz_file = build_bed_index(file)
 
     def fetch_data(self, gr: GenomeRange, **kwargs):
-        return self.fetch_intervals(self.bgz_file, gr)
+        intervals =  self.fetch_intervals(self.bgz_file, gr)
+        intervals = intervals.query("(end - start) > @self.min_gene_length")
+        return intervals
+
+
 
     def get_genes_file(self, file: str):
 
@@ -359,4 +373,4 @@ class Genes(GenesBase, FetchBed):
         if file in gene_files:
             return bed_prefix / gene_files[file]
         else:
-            return file 
+            return file
