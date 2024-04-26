@@ -30,13 +30,17 @@ from plotnado.api.utils import (
 
 class Autoscaler:
     def __init__(
-        self, tracks: List[cb.Track], gr: cb.GenomeRange, gr2: cb.GenomeRange = None
+        self,
+        tracks: List[cb.Track],
+        gr: cb.GenomeRange,
+        gr2: cb.GenomeRange = None,
     ):
         self.tracks = tracks
         self.gr = gr
         self.gr2 = gr2
 
-        from . track_wrapper import MATRIX_TRACKS, BIGWIG_TRACKS, TrackWrapper
+        from .track_wrapper import MATRIX_TRACKS, BIGWIG_TRACKS, TrackWrapper
+
         assert len(tracks) > 0, "No tracks to autoscale"
         assert all(
             isinstance(t, (cb.Track, TrackWrapper)) for t in tracks
@@ -72,6 +76,55 @@ class Autoscaler:
     @property
     def mean_value(self):
         return np.nanmean(self.data, axis=0)
+
+
+class Scaler:
+    def __init__(
+        self,
+        tracks: List[cb.Track],
+        gr: cb.GenomeRange,
+        gr2: cb.GenomeRange = None,
+        method: Literal["max", "mean", "total"] = "mean",
+    ):
+        self.tracks = tracks
+        self.gr = gr
+        self.gr2 = gr2
+        self.method = method
+
+        from .track_wrapper import MATRIX_TRACKS, BIGWIG_TRACKS, TrackWrapper
+
+        assert len(tracks) > 0, "No tracks to autoscale"
+        assert all(
+            isinstance(t, (cb.Track, TrackWrapper)) for t in tracks
+        ), "All tracks must be of type cb.Track"
+        assert all(
+            type(t) in MATRIX_TRACKS + BIGWIG_TRACKS for t in tracks
+        ), "All tracks must be of tracks that produce numerical data (MatrixCapcruncher, BigWig, etc)"
+
+    @property
+    def data(self) -> List[np.ndarray]:
+        """
+        Get the data from all tracks for the specified region
+        """
+        _data = [t.fetch_data(gr=self.gr, gr2=self.gr2) for t in self.tracks]
+
+        if isinstance(
+            _data[0], pd.DataFrame
+        ):  # If the data is a DataFrame, we need to extract the values from the last column
+            _data = [d.values[:, -1] for d in _data]
+        elif isinstance(_data[0], np.ndarray):
+            pass
+
+        return _data
+    
+    @property
+    def scaling_factors(self) -> np.ndarray:
+        if self.method == "max":
+            return [np.nanmax(d, axis=0) for d in self.data]
+        elif self.method == "mean":
+            return [np.nanmean(d, axis=0) for d in self.data]
+        elif self.method == "total":
+            return [np.nansum(d, axis=0) for d in self.data]
 
 
 class MatrixCapcruncher(cb.Cool):
@@ -372,7 +425,11 @@ class BigwigFragmentCollection(Track):
     def __init__(self, file: list, exclusions: str = None, **kwargs):
         self.file_names = file
         self.exclusions = exclusions
-        self.bws = [cb.BigWig(str(fn)) for fn in file] if not isinstance(file[0], cb.BigWig) else file
+        self.bws = (
+            [cb.BigWig(str(fn)) for fn in file]
+            if not isinstance(file[0], cb.BigWig)
+            else file
+        )
         self.properties = {"files": self.file_names}
         self.properties.update(BigwigFragmentCollection.DEFAULT_PROPERTIES.copy())
         self.properties.update(kwargs)
@@ -390,7 +447,7 @@ class BigwigFragmentCollection(Track):
         coverage_stack = get_coverage_stack()
         for coverage in coverage_stack:
             self.coverages.append(coverage)
-    
+
     @property
     def subtracks(self):
         return self.bws
@@ -603,7 +660,7 @@ class BigwigFragmentCollectionOverlay(Track):
         self.collections = collections
         self.properties = {"collections": collections}
         self.properties.update(kwargs)
-    
+
     @property
     def subtracks(self):
         return self.collections
@@ -634,7 +691,6 @@ class BigwigFragmentCollectionOverlay(Track):
                 verticalalignment="center",
             )
 
-
 class BigwigOverlay(Track):
     """
     Overlay multiple bigwig files on top of each other.
@@ -645,20 +701,25 @@ class BigwigOverlay(Track):
     """
 
     def __init__(self, collection: List[Union[cb.BigWig, str]], **kwargs):
-        
+
         _collection = []
         for obj in collection:
             if isinstance(obj, str):
-                assert os.path.exists(obj) or kwargs.get("ignore_file_validation"), f"File {obj} does not exist"
+                assert os.path.exists(obj) or kwargs.get(
+                    "ignore_file_validation"
+                ), f"File {obj} does not exist"
                 _collection.append(cb.BigWig(obj))
             elif isinstance(obj, cb.Track):
                 _collection.append(obj)
             else:
-                raise ValueError(f"Object {obj} is not a valid BigWig or path to a BigWig file")
-            
+                raise ValueError(
+                    f"Object {obj} is not a valid BigWig or path to a BigWig file"
+                )
+
         self.coverages = []
         self.collection = _collection
         self.properties = dict()
+        self.properties.update({"min_value": "auto", "max_value": "auto", "scale": False, "scale_n_cis": False})
         self.properties.update(kwargs)
         self.properties["name"] = f"BigWigOverlay.{self.properties.get('title')}"
 
@@ -666,24 +727,64 @@ class BigwigOverlay(Track):
     def subtracks(self):
         return self.collection
 
-    def fetch_data(self, gr: GenomeRange, **kwargs):
+    def fetch_data(self, gr: GenomeRange, scale: bool = False, scale_n_cis: bool = False, **kwargs):
         data = []
-        for bw in self.collection:
-            data.append(bw.fetch_data(gr, **kwargs))
+
+        if not scale:
+            for bw in self.collection:
+                data.append(bw.fetch_data(gr, **kwargs))
+
+        elif scale and not scale_n_cis:
+            scaler = Scaler(tracks=self.collection, gr=gr)
+            scaling_factors = scaler.scaling_factors
+
+            for bw, scaling_factor in zip(self.collection, scaling_factors):
+                data.append(bw.fetch_data(gr, **kwargs) / scaling_factor)
+
+        elif scale and scale_n_cis:
+            import pyBigWig
+
+            chrom = gr.chrom
+            if isinstance(self.collection[0], cb.BigWig):
+                bw_file = self.collection[0].properties["file"]
+            else:
+                bw_file = self.collection[0]
+
+            with pyBigWig.open(bw_file) as bw:
+                chrom_length = bw.chroms()[chrom]
+
+            gr_chrom = GenomeRange(chrom, 0, chrom_length)
+            scaler = Scaler(tracks=self.collection, gr=gr_chrom, method="total")
+            scaling_factors = scaler.scaling_factors
+
+            for bw, scaling_factor in zip(self.collection, scaling_factors):
+                data.append(bw.fetch_data(gr, **kwargs) / scaling_factor)    
+
         return data
 
     def plot(self, ax, gr: GenomeRange, **kwargs):
 
         scaler = Autoscaler(tracks=self.collection, gr=gr)
-        min_value = scaler.min_value if self.properties.get("min_value") == "auto" else self.properties.get("min_value", 0)
-        max_value = scaler.max_value if self.properties.get("max_value") == "auto" else self.properties.get("max_value")
+        min_value = (
+            scaler.min_value
+            if self.properties.get("min_value") == "auto"
+            else self.properties.get("min_value", 0)
+        )
+        max_value = (
+            scaler.max_value
+            if self.properties.get("max_value") == "auto"
+            else self.properties.get("max_value")
+        )
 
+        plot_data = self.fetch_data(gr, scale=self.properties.get("scale"), scale_n_cis=self.properties.get("scale_n_cis"), **kwargs)
 
-        for bw in self.collection:
+        for ii, bw in enumerate(self.collection):
             bw.properties["show_data_range"] = False
             bw.properties["data_range_style"] = "text"
             bw.properties["min_value"] = min_value
             bw.properties["max_value"] = max_value
+
+            #bw.fetch_plot_data = lambda gr, **kwargs: plot_data[ii] # Monkey patch the fetch_plot_data method
             bw.plot(
                 ax,
                 gr,
@@ -730,6 +831,55 @@ class BigwigOverlay(Track):
                     horizontalalignment="left",
                     verticalalignment="center",
                 )
+
+class BigwigSubtraction(cb.BigWig):
+    """
+    Compare two bigwig files by plotting their difference.
+
+    Args:
+        file1 (os.PathLike): Path to the first bigwig file
+        file2 (os.PathLike): Path to the second bigwig file
+        **kwargs: Additional arguments to pass to the track
+    """
+
+    def __init__(self, files: List[str], **kwargs):
+        self.properties = dict()
+        self.properties.update(kwargs)
+        self.properties["name"] = f"BigWigSubtraction.{self.properties.get('title')}"
+        super(BigwigSubtraction, self).__init__(files[0], **self.properties)
+        
+        self.bw1 = cb.BigWig(files[0])
+        self.bw2 = cb.BigWig(files[1])
+
+    @property
+    def subtracks(self):
+        return [self.bw1, self.bw2]
+
+    def fetch_data(self, gr: GenomeRange, **kwargs):
+        data1 = self.bw1.fetch_data(gr, **kwargs)
+        data2 = self.bw2.fetch_data(gr, **kwargs)
+
+        n_bins = len(range(gr.start, gr.end, self.properties.get("binsize", 10)))
+        new_starts = np.linspace(gr.start, gr.end, n_bins)
+        interpol_1 = np.interp(new_starts, data1.start, data1.score.values)
+        interpol_2 = np.interp(new_starts, data2.start, data2.score.values)
+        diff = interpol_1 - interpol_2
+
+        return pd.DataFrame({"chrom": gr.chrom, "start": new_starts, "end": pd.Series(new_starts).shift(-1), "score": diff}).dropna()
+
+    def fetch_plot_data(self, gr: GenomeRange, **kwargs):
+        return self.fetch_data(gr, **kwargs)
+    
+    def plot_label(self):
+        if hasattr(self, "label_ax") and self.label_ax is not None:
+            self.label_ax.text(
+                0.15,
+                0.5,
+                self.properties["title"],
+                horizontalalignment="left",
+                size="large",
+                verticalalignment="center",
+            )
 
 
 class BedSimple(cb.BED):
@@ -957,7 +1107,7 @@ class MatrixCapcruncherAverage(MatrixCapcruncher):
 
         # Override the defaults
         self.properties["balance"] = "no"
-    
+
     @property
     def subtracks(self):
         return self.matricies

@@ -19,6 +19,7 @@ from . import (
     MatrixCapcruncher,
     MatrixCapcruncherAverage,
     ScaleBar,
+    BigwigSubtraction
 )
 
 
@@ -38,6 +39,7 @@ BIGWIG_TRACKS = (
     BigwigFragmentCollection,
     BigwigFragmentCollectionOverlay,
     BigwigOverlay,
+    BigwigSubtraction,
     cb.BigWig,
 )
 CUSTOM_TRACKS = (BedMemory, BedSimple, GenomicAxis, ScaleBar)
@@ -47,7 +49,7 @@ AGGREGATED_TRACKS_MEMMORY = (
     BigwigOverlay,
     BigwigFragmentCollection,
 )
-AGGREGATED_TRACKS_FILE = (BigwigFragmentCollectionOverlay,)
+AGGREGATED_TRACKS_FILE = (BigwigFragmentCollectionOverlay, BigwigSubtraction)
 
 ALLOWED_NON_FILE_TRACKS = (
     GenomicAxis,
@@ -67,6 +69,7 @@ class TrackType(Enum):
     bigwig_fragment = BigwigFragment
     bigwig_fragment_collection = BigwigFragmentCollection
     bigwig_fragment_collection_overlay = BigwigFragmentCollectionOverlay
+    bigwig_subtraction = BigwigSubtraction
     bigwig = cb.BigWig
     bigwig_overlay = BigwigOverlay
     bed_memory = BedMemory
@@ -239,8 +242,13 @@ class TrackWrapper:
             return files[0]
         else:
             return tuple(files)
-            
-
+    
+    @property
+    def autoscale_group(self) -> str:
+        """
+        Get the autoscale group
+        """
+        return self.properties.get("autoscale_group", None)
             
 
     def to_dict(self) -> Dict:

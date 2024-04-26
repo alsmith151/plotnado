@@ -13,6 +13,7 @@ from .tracks import (
     MatrixCapcruncher,
     MatrixCapcruncherAverage,
     ScaleBar,
+    BigwigSubtraction,
 )
 from .genes import Genes
 from .track_wrapper import (
@@ -42,4 +43,5 @@ __all__ = [
     "MatrixCapcruncherAverage",
     "ScaleBar",
     "TrackWrapper",
+    "BigwigSubtraction",
 ]
