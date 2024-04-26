@@ -24,6 +24,7 @@ from .tracks import (
     MatrixCapcruncher,
     MatrixCapcruncherAverage,
     ScaleBar,
+    HighlightsFromFile,
 )
 
 
@@ -71,7 +72,6 @@ class Figure:
         auto_spacing: bool = False,
         auto_spacing_height: float = 0.1,
         frame_args: Dict[str, Any] = None,
-        autoscale_groups: Dict[str, List[int]] = None,
         highlight_regions: Union[pathlib.Path, cb.HighLights] = None,
         highlight_regions_color: str = "blue",
         highlight_regions_kwargs: Dict[str, Any] = None,
@@ -81,7 +81,6 @@ class Figure:
         self.frame = cb.Frame(**frame_args if frame_args else dict())
         self.auto_spacing = auto_spacing
         self.autos_spacing_height = auto_spacing_height
-        self.autoscale_groups = autoscale_groups
         self.properties = dict()
         self.properties.update(kwargs)
 
@@ -90,7 +89,7 @@ class Figure:
             self.add_tracks(tracks)
 
         if isinstance(highlight_regions, (pathlib.Path, str)):
-            self.highlight_regions = cb.HighLightsFromFile(
+            self.highlight_regions = HighlightsFromFile(
                 highlight_regions,
                 color=highlight_regions_color,
                 **highlight_regions_kwargs,
@@ -131,18 +130,34 @@ class Figure:
             self.add_track(track)
 
     def _autoscale(self, gr: cb.GenomeRange, gr2: cb.GenomeRange = None):
-        # Deal with autoscaling
-        if self.autoscale_groups:
-            for group, tracks_indexes in self.autoscale_groups.items():
-                tracks_for_scaling = []
-                for index, track in enumerate(self.frame.tracks.values()):
-                    if index in tracks_indexes:
-                        tracks_for_scaling.append(track)
 
-                autoscaler = Autoscaler(tracks_for_scaling, gr, gr2)
-                for track in tracks_for_scaling:
-                    track.properties["max_value"] = autoscaler.max_value
-                    track.properties["min_value"] = autoscaler.min_value
+        scale_groups = dict()
+        for title, track in self.tracks.items():
+            if track.autoscale_group:
+                if track.autoscale_group not in scale_groups:
+                    scale_groups[track.autoscale_group] = []
+                scale_groups[track.autoscale_group].append(title)
+        
+        for group, tracks in scale_groups.items():
+            autoscaler = Autoscaler(
+                [self.frame.tracks[title] for title in tracks],
+                gr,
+                gr2,
+            )
+            for title in tracks:
+                self.frame.tracks[title].properties["max_value"] = autoscaler.max_value
+                self.frame.tracks[title].properties["min_value"] = autoscaler.min_value
+
+    
+    @property
+    def data_tracks(self):
+        tracks = OrderedDict()
+        for title, track in self.tracks.items():
+            if not any(y in title for y in ["spacer"]):
+                tracks[title] = track
+        return tracks
+
+
 
     def plot(
         self,
