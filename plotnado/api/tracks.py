@@ -116,7 +116,7 @@ class Scaler:
             pass
 
         return _data
-    
+
     @property
     def scaling_factors(self) -> np.ndarray:
         if self.method == "max":
@@ -691,6 +691,7 @@ class BigwigFragmentCollectionOverlay(Track):
                 verticalalignment="center",
             )
 
+
 class BigwigOverlay(Track):
     """
     Overlay multiple bigwig files on top of each other.
@@ -719,7 +720,14 @@ class BigwigOverlay(Track):
         self.coverages = []
         self.collection = _collection
         self.properties = dict()
-        self.properties.update({"min_value": "auto", "max_value": "auto", "scale": False, "scale_n_cis": False})
+        self.properties.update(
+            {
+                "min_value": "auto",
+                "max_value": "auto",
+                "scale": False,
+                "scale_n_cis": False,
+            }
+        )
         self.properties.update(kwargs)
         self.properties["name"] = f"BigWigOverlay.{self.properties.get('title')}"
 
@@ -727,7 +735,9 @@ class BigwigOverlay(Track):
     def subtracks(self):
         return self.collection
 
-    def fetch_data(self, gr: GenomeRange, scale: bool = False, scale_n_cis: bool = False, **kwargs):
+    def fetch_data(
+        self, gr: GenomeRange, scale: bool = False, scale_n_cis: bool = False, **kwargs
+    ):
         data = []
 
         if not scale:
@@ -758,7 +768,7 @@ class BigwigOverlay(Track):
             scaling_factors = scaler.scaling_factors
 
             for bw, scaling_factor in zip(self.collection, scaling_factors):
-                data.append(bw.fetch_data(gr, **kwargs) / scaling_factor)    
+                data.append(bw.fetch_data(gr, **kwargs) / scaling_factor)
 
         return data
 
@@ -776,7 +786,12 @@ class BigwigOverlay(Track):
             else self.properties.get("max_value")
         )
 
-        plot_data = self.fetch_data(gr, scale=self.properties.get("scale"), scale_n_cis=self.properties.get("scale_n_cis"), **kwargs)
+        plot_data = self.fetch_data(
+            gr,
+            scale=self.properties.get("scale"),
+            scale_n_cis=self.properties.get("scale_n_cis"),
+            **kwargs,
+        )
 
         for ii, bw in enumerate(self.collection):
             bw.properties["show_data_range"] = False
@@ -784,7 +799,7 @@ class BigwigOverlay(Track):
             bw.properties["min_value"] = min_value
             bw.properties["max_value"] = max_value
 
-            #bw.fetch_plot_data = lambda gr, **kwargs: plot_data[ii] # Monkey patch the fetch_plot_data method
+            # bw.fetch_plot_data = lambda gr, **kwargs: plot_data[ii] # Monkey patch the fetch_plot_data method
             bw.plot(
                 ax,
                 gr,
@@ -832,6 +847,7 @@ class BigwigOverlay(Track):
                     verticalalignment="center",
                 )
 
+
 class BigwigSubtraction(cb.BigWig):
     """
     Compare two bigwig files by plotting their difference.
@@ -847,7 +863,7 @@ class BigwigSubtraction(cb.BigWig):
         self.properties.update(kwargs)
         self.properties["name"] = f"BigWigSubtraction.{self.properties.get('title')}"
         super(BigwigSubtraction, self).__init__(files[0], **self.properties)
-        
+
         self.bw1 = cb.BigWig(files[0])
         self.bw2 = cb.BigWig(files[1])
 
@@ -865,11 +881,72 @@ class BigwigSubtraction(cb.BigWig):
         interpol_2 = np.interp(new_starts, data2.start, data2.score.values)
         diff = interpol_1 - interpol_2
 
-        return pd.DataFrame({"chrom": gr.chrom, "start": new_starts, "end": pd.Series(new_starts).shift(-1), "score": diff}).dropna()
+        return pd.DataFrame(
+            {
+                "chrom": gr.chrom,
+                "start": new_starts,
+                "end": pd.Series(new_starts).shift(-1),
+                "score": diff,
+            }
+        ).dropna()
 
     def fetch_plot_data(self, gr: GenomeRange, **kwargs):
         return self.fetch_data(gr, **kwargs)
-    
+
+    def plot(self, ax, gr: GenomeRange, **kwargs):
+        if not self.properties["style"] == "line":
+            super(BigwigSubtraction, self).plot(ax, gr, **kwargs)
+        else:
+            data = self.fetch_data(gr, **kwargs)
+
+            # Split the data into positive and negative values
+            fmt = self.properties.get("fmt")
+            line_width = self.properties.get("line_width", 1)
+            color = self.properties.get("color", "black")
+            alpha = self.properties.get("alpha", 1.0)
+            threshold = float(self.properties.get("threshold", 0))
+            threshold_color = self.properties.get("threshold_color")
+
+            num_bins = self.properties.get("num_bins", 700)
+            x = np.linspace(gr.start, gr.end, num_bins)
+            y = np.interp(x, data["start"], data["score"])
+
+            data_pos = y[y > threshold]
+            data_neg = y[y < threshold]
+
+            # PLot the positive values as a line
+            ax.plot(
+                x,
+                data_pos,
+                color=color,
+                zorder=1,
+                alpha=alpha,
+                linewidth=line_width,
+                linestyle=fmt,
+            )
+
+            # Plot the negative values as a line
+            ax.plot(
+                x,
+                data_neg,
+                color=threshold_color,
+                zorder=1,
+                alpha=alpha,
+                linewidth=line_width,
+                linestyle=fmt,
+            )
+            ymin, ymax = self.adjust_plot(ax, gr)
+            # disable plot data range in coverage mode
+            if (
+                self.properties["data_range_style"] != "no"
+                and "track" not in self.__dict__
+            ):
+                self.plot_data_range(
+                    ax, ymin, ymax, self.properties["data_range_style"], gr
+                )
+            
+            self.plot_label()
+
     def plot_label(self):
         if hasattr(self, "label_ax") and self.label_ax is not None:
             self.label_ax.text(
