@@ -911,13 +911,15 @@ class BigwigSubtraction(cb.BigWig):
             x = np.linspace(gr.start, gr.end, num_bins)
             y = np.interp(x, data["start"], data["score"])
 
-            data_pos = y[y > threshold]
-            data_neg = y[y < threshold]
+            y_pos = y[y > threshold]
+            y_neg = y[y < threshold]
+            x_pos = x[y > threshold]
+            x_neg = x[y < threshold]
 
             # PLot the positive values as a line
             ax.plot(
-                x,
-                data_pos,
+                x_pos,
+                y_pos,
                 color=color,
                 zorder=1,
                 alpha=alpha,
@@ -927,8 +929,8 @@ class BigwigSubtraction(cb.BigWig):
 
             # Plot the negative values as a line
             ax.plot(
-                x,
-                data_neg,
+                x_neg,
+                y_neg,
                 color=threshold_color,
                 zorder=1,
                 alpha=alpha,
