@@ -6,3 +6,8 @@ _version.py
 plotnado_figures/
 *.bw
 *.bgz*
+.vscode/launch.json
+*.pdf
+*.png
+*.svg
+template.toml
