@@ -191,7 +191,7 @@ class GenesBase(Track, PlotGenes):
     ----------
     style : {'gene', 'tad'}
 
-    gene_style: {'flybase', 'normal'}
+    gene_style: {'normal'}
 
     display : {'stacked', 'interlaced', 'collapsed'}, optional
         Display mode. (Default: 'stacked')
@@ -257,7 +257,7 @@ class GenesBase(Track, PlotGenes):
     DEFAULT_PROPERTIES = {
         "style": STYLE_GENE,
         # gene
-        "gene_style": "flybase",
+        "gene_style": "normal",
         "display": "stacked",
         "color": "bed_rgb",
         "border_color": "#1f78b4",
@@ -276,6 +276,9 @@ class GenesBase(Track, PlotGenes):
         "score_font_color": "#000000",
         "score_height_ratio": 0.4,
         "border_only": False,
+        'min_gene_length': 1e4,
+        "fontsize": 8,
+
     }
 
     def __init__(self, **kwargs):
@@ -335,13 +338,19 @@ class Genes(GenesBase, FetchBed):
 
     def __init__(
         self,
-        file,
+        file: str = None,
+        genome: str = None,
         ignore_file_validation: bool = True,
-        min_gene_length: int = 1e6,
+        min_gene_length: int = 1e4,
         **kwargs,
     ):
 
-        file = self.get_genes_file(file)
+        if file is None and genome is None:
+            raise ValueError("Genes track requires a file path to a bed file or a genome name")
+        elif file is None and genome:
+            file = self.get_genes_file(genome)
+        elif file:
+            file = self.get_genes_file(file)
 
         properties = BED.DEFAULT_PROPERTIES.copy()
         properties.update(

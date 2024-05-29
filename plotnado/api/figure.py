@@ -96,14 +96,20 @@ class Figure:
             )
         else:
             self.highlight_regions = highlight_regions
+        
+        self.track_name_to_frame_name_mapping = dict()
 
-    def add_track(self, track: TrackWrapper) -> None:
+    def add_track(self, track: Union[str, TrackWrapper], **kwargs) -> None:
         """
         Add a track to the figure
 
         Args:
             track (TrackWrapper): Track to add
         """
+
+        if isinstance(track, str):
+            track = TrackWrapper(track_type=track, **kwargs)
+
         # Add a spacer track if auto_spacing is enabled
         if self.auto_spacing:
             spacer = TrackWrapper(track_type="spacer", height=self.autos_spacing_height)
@@ -119,6 +125,9 @@ class Figure:
         # Add the track to the frame so coolbox can plot its
         self.frame.add_track(track.track)
 
+        # Add the track to the mapping (take the last track added to the frame as the frame name)
+        self.track_name_to_frame_name_mapping[title] = list(self.frame.tracks.keys())[-1]
+
     def add_tracks(self, tracks: List[TrackWrapper]) -> None:
         """
         Add a list of tracks to the figure
@@ -131,6 +140,7 @@ class Figure:
 
     def _autoscale(self, gr: cb.GenomeRange, gr2: cb.GenomeRange = None):
 
+        # Extract the autoscale groups
         scale_groups = dict()
         for title, track in self.tracks.items():
             if track.autoscale_group:
@@ -138,7 +148,11 @@ class Figure:
                     scale_groups[track.autoscale_group] = []
                 scale_groups[track.autoscale_group].append(title)
         
+        # Autoscale the tracks
         for group, tracks in scale_groups.items():
+
+            # Need to translate the track names to the frame names
+            tracks = [self.track_name_to_frame_name_mapping[title] for title in tracks]
             autoscaler = Autoscaler(
                 [self.frame.tracks[title] for title in tracks],
                 gr,
@@ -164,6 +178,7 @@ class Figure:
         gr: Union[str, cb.GenomeRange],
         gr2: Union[str, cb.GenomeRange] = None,
         show: bool = True,
+        extend: Union[int, Dict[Literal["upstream", "downstream"], int]] = 0,
         **kwargs,
     ) -> matplotlib.figure.Figure:
         """
@@ -179,11 +194,32 @@ class Figure:
             matplotlib.figure.Figure: The figure
         """
 
+        # Ensure the genome ranges are valid
+        if isinstance(gr, str):
+            gr = cb.GenomeRange(gr)
+        
+        if isinstance(gr2, str):
+            gr2 = cb.GenomeRange(gr2)
+
+        # Extend the genome ranges
+        if isinstance(extend, int):
+            extend = {"upstream": extend, "downstream": extend}
+        
+        gr.start = max(0, gr.start - extend["upstream"])
+        gr.end = gr.end + extend["downstream"]
+
+        if gr2:
+            gr2.start = max(0, gr2.start - extend["upstream"])
+            gr2.end = gr2.end + extend["downstream"]
+
+        # Autoscale the tracks
         self._autoscale(gr, gr2)
 
+        # Highlight the regions if specified
         if self.highlight_regions:
             self.frame = self.frame * self.highlight_regions
 
+        # Plot the figure as 2D or 1D depending on the number of genome ranges
         if gr2:
             fig = self.frame.plot(gr, gr2, **kwargs)
         else:
@@ -192,6 +228,31 @@ class Figure:
             fig.show()
 
         return fig
+    
+    def plot_gene(
+            self,
+            gene: str,
+            genome: str,
+            **kwargs,
+    ):
+        """
+        Plot the figure for a gene
+
+        Args:
+            gene (str): Gene to plot
+            genome (str): Genome to plot the gene on
+            **kwargs: Additional arguments to pass to the plot
+        """
+        import importlib
+        import json
+
+        genes_prefix = importlib.resources.files("plotnado.data.genes")
+        with open(genes_prefix / f"{genome}.json") as f:
+            genes = json.load(f)
+        
+        gene = genes[gene]
+        gr = cb.GenomeRange(gene["chrom"], gene["start"], gene["end"])
+        return self.plot(gr, **kwargs)
 
     def plot_regions(
         self,
