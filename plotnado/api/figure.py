@@ -166,11 +166,15 @@ class Figure:
 
 
     def _autocolor(self):
-        
+
+        colors = list(plt.cm.tab20.colors)
         tracktypes_for_autocolor = ['bigwig']
+
         for track_name, track in self.frame.tracks.items():
             if any(y in track_name.lower() for y in tracktypes_for_autocolor):
-                track.properties["color"] = np.random.choice(list(plt.cm.tab20.colors))
+                color_number = np.random.choice(range(len(colors)))
+                color = colors[color_number]
+                track.properties["color"] = color
     
     @property
     def data_tracks(self):
