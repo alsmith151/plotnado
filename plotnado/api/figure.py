@@ -69,18 +69,20 @@ class Figure:
     def __init__(
         self,
         tracks: List[TrackWrapper] = None,
-        auto_spacing: bool = False,
-        auto_spacing_height: float = 0.1,
+        autospacing: bool = False,
+        autospacing_height: float = 0.1,
         frame_args: Dict[str, Any] = None,
         highlight_regions: Union[pathlib.Path, cb.HighLights] = None,
         highlight_regions_color: str = "blue",
         highlight_regions_kwargs: Dict[str, Any] = None,
+        autocolor: bool = False,
         **kwargs,
     ) -> None:
 
         self.frame = cb.Frame(**frame_args if frame_args else dict())
-        self.auto_spacing = auto_spacing
-        self.autos_spacing_height = auto_spacing_height
+        self.autospacing = autospacing
+        self.autospacing_height = autospacing_height
+        self.autocolor = autocolor
         self.properties = dict()
         self.properties.update(kwargs)
 
@@ -111,8 +113,8 @@ class Figure:
             track = TrackWrapper(track_type=track, **kwargs)
 
         # Add a spacer track if auto_spacing is enabled
-        if self.auto_spacing:
-            spacer = TrackWrapper(track_type="spacer", height=self.autos_spacing_height)
+        if self.autospacing:
+            spacer = TrackWrapper(track_type="spacer", height=self.autospacing_height)
             title = get_track_title(spacer, self.tracks)
             self.tracks[title] = spacer
 
@@ -162,6 +164,13 @@ class Figure:
                 self.frame.tracks[title].properties["max_value"] = autoscaler.max_value
                 self.frame.tracks[title].properties["min_value"] = autoscaler.min_value
 
+
+    def _autocolor(self):
+        
+        tracktypes_for_autocolor = ['bigwig']
+        for track_name, track in self.frame.tracks.items():
+            if any(y in track_name.lower() for y in tracktypes_for_autocolor):
+                track.properties["color"] = np.random.choice(list(plt.cm.tab20.colors))
     
     @property
     def data_tracks(self):
@@ -214,6 +223,10 @@ class Figure:
 
         # Autoscale the tracks
         self._autoscale(gr, gr2)
+
+        # Autocolor the tracks if specified
+        if self.autocolor:
+            self._autocolor()
 
         # Highlight the regions if specified
         if self.highlight_regions:
