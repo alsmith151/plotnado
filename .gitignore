@@ -16,3 +16,4 @@ plot_chipment_and_mcc.ipynb
 plot_mcc.ipynb
 test.ipynb
 vs-mcc-plots.ipynb
+site/*
