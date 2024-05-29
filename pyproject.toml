@@ -15,13 +15,6 @@ scripts = { "plotnado" =  "plotnado.cli:main" }
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
 
-# [tool.setuptools.packages.find]
-# where = ["plotnado"]
-
-
-# [tool.setuptools.package-data]
-# plotnado = ["*.json", "*.bed.gz", "*.tbi"]
-
 [tool.setuptools_scm]
 local_scheme = "no-local-version"
 write_to = "plotnado/_version.py"
