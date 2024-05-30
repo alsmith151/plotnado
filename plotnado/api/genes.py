@@ -141,11 +141,9 @@ class PlotGenes(PlotBed):
             else:
                 self.draw_gene_simple(ax, bed, ypos, rgb, edgecolor)
 
-            if (
-                self.is_draw_labels
-                and (bed.start >= gr.start and bed.start <= gr.end)
-                or (bed.end >= gr.start and bed.end <= gr.end)
-            ):
+
+            if (self.is_draw_labels and bed.name != "."):
+
                 overlap_start = max(bed.start, gr.start)
                 overlap_end = min(bed.end, gr.end)
                 overlap_center = (overlap_start + overlap_end) / 2
