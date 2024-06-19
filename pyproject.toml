@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "GNU GENERAL PUBLIC LICENSE Version 3" }
 dynamic = ["version", "dependencies"]
-scripts = { "plotnado" =  "plotnado.cli:main" }
+scripts = { "plotnado" =  "plotnado.cli.cli:main" }
 
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }

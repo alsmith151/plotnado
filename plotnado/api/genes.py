@@ -7,6 +7,7 @@ from coolbox.core.track.bed.fetch import FetchBed
 from coolbox.core.track.bed.plot import PlotBed
 from coolbox.utilities.bed import build_bed_index
 from loguru import logger as log
+import pathlib
 
 
 class PlotGenes(PlotBed):
@@ -93,9 +94,7 @@ class PlotGenes(PlotBed):
             self.counter += 1
 
             if self.is_draw_labels:
-                num_name_characters = (
-                    len(bed.name) + 2
-                )  # +2 to account for an space before and after the name
+                num_name_characters = (len(bed.name) + 2)  # +2 to account for an space before and after the name
                 bed_extended_end = int(bed.end + (num_name_characters * self.len_w))
             else:
                 bed_extended_end = bed.end + 2 * self.small_relative
@@ -147,13 +146,18 @@ class PlotGenes(PlotBed):
                 overlap_start = max(bed.start, gr.start)
                 overlap_end = min(bed.end, gr.end)
                 overlap_center = (overlap_start + overlap_end) / 2
+                height = properties['interval_height']
+                half_height = height / 2
+                quarter_height = height / 4
+
+                y_label = ypos + half_height + quarter_height
 
                 ax.text(
                     overlap_center + self.small_relative,
-                    ypos - (float(properties["interval_height"]) / 4),
+                    y_label,
                     bed.name,
-                    horizontalalignment="left",
-                    verticalalignment="center",
+                    horizontalalignment="center",
+                    verticalalignment="bottom",
                     fontproperties=self.fp,
                 )
 
@@ -371,11 +375,19 @@ class Genes(GenesBase, FetchBed):
         import importlib
         import json
 
-        bed_prefix = importlib.resources.files("plotnado.data.gene_bed_files")
-        bed_paths = bed_prefix / "genes.json"
+        try:
+                
+            bed_prefix = importlib.resources.files("plotnado.data.gene_bed_files")
+            bed_paths = bed_prefix / "genes.json"
 
-        with open(bed_paths) as f:
-            gene_files = json.load(f)
+            with open(bed_paths) as f:
+                gene_files = json.load(f)
+
+        except FileNotFoundError:
+            if pathlib.Path(file).exists():
+                return file
+            else:
+                raise FileNotFoundError(f"File {file} does not exist")
 
         if file in gene_files:
             return bed_prefix / gene_files[file]

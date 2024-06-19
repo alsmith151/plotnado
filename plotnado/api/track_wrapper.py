@@ -2,7 +2,8 @@ import pathlib
 from collections import OrderedDict
 from enum import Enum
 import re
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, Literal
+import functools
 
 import coolbox.api as cb
 import numpy as np
@@ -19,8 +20,10 @@ from . import (
     MatrixCapcruncher,
     MatrixCapcruncherAverage,
     ScaleBar,
-    BigwigSubtraction
+    BigwigSubtraction,
 )
+
+from .patches import plot_label, plot_text_range
 
 
 URL_REGEX = re.compile(
@@ -60,7 +63,7 @@ ALLOWED_NON_FILE_TRACKS = (
     cb.HighLightsFromFile,
 )
 
-HAS_PRESETS = (Genes)
+HAS_PRESETS = Genes
 
 
 class TrackType(Enum):
@@ -196,12 +199,24 @@ class TrackWrapper:
 
         elif self.properties.get("ignore_file_validation"):
             track = self.track_class(self.file, **self.properties)
-        
+
         elif URL_REGEX.match(self.file):
             track = self.track_class(self.file, **self.properties)
 
         else:
             raise FileNotFoundError(f"File {self.file} does not exist")
+
+        return self._patch_track(track)
+
+    def _patch_track(self, track: cb.Track) -> cb.Track:
+        """
+        Patch the track with new functionality
+        """
+        if self.properties.get("data_range_location"):
+            track.plot_text_range = functools.partial(plot_text_range, track)
+
+        if self.properties.get("label_on_track"):
+            track.plot_label = functools.partial(plot_label, track)
 
         return track
 
@@ -212,7 +227,6 @@ class TrackWrapper:
         """
         _files = []
         if isinstance(self.file, (list, tuple, np.ndarray)):
-
             for f in self.file:
                 if isinstance(f, (TrackWrapper, cb.Track)):
                     if hasattr(f, "file"):
@@ -226,30 +240,31 @@ class TrackWrapper:
             return None
         else:
             _files.append(self.file)
-        
+
         files = []
         for f in _files:
             if URL_REGEX.match(f):
                 files.append(f)
             elif pathlib.Path(f).exists():
                 files.append(str(pathlib.Path(f).resolve()))
-            elif self.properties.get("ignore_file_validation") or self.track.properties.get("ignore_file_validation"):
+            elif self.properties.get(
+                "ignore_file_validation"
+            ) or self.track.properties.get("ignore_file_validation"):
                 files.append(f)
             else:
                 raise FileNotFoundError(f"File {f} does not exist")
-        
+
         if len(files) == 1:
             return files[0]
         else:
             return tuple(files)
-    
+
     @property
     def autoscale_group(self) -> str:
         """
         Get the autoscale group
         """
         return self.properties.get("autoscale_group", None)
-            
 
     def to_dict(self) -> Dict:
         """
@@ -296,3 +311,4 @@ class TrackWrapper:
         title = self.properties.get("title", "No title")
         track_class = self.track_class
         return f"TrackWrapper({title}, {track_class})"
+

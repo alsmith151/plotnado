@@ -27,6 +27,8 @@ from plotnado.api.utils import (
     interval_to_pyranges,
 )
 
+from .patches import plot_label, plot_text_range
+
 
 class Autoscaler:
     def __init__(
@@ -120,11 +122,13 @@ class Scaler:
     @property
     def scaling_factors(self) -> np.ndarray:
         if self.method == "max":
-            return [np.nanmax(d, axis=0) for d in self.data]
+            arr =  [np.nanmax(d, axis=0) for d in self.data]
         elif self.method == "mean":
-            return [np.nanmean(d, axis=0) for d in self.data]
+            arr =  [np.nanmean(d, axis=0) for d in self.data]
         elif self.method == "total":
-            return [np.nansum(d, axis=0) for d in self.data]
+            arr =  [np.nansum(d, axis=0) for d in self.data]
+        
+        return np.array(arr) / np.max(arr)
 
 
 class MatrixCapcruncher(cb.Cool):
@@ -646,6 +650,10 @@ class BigwigFragmentCollection(Track):
         )
 
 
+
+
+
+
 class BigwigFragmentCollectionOverlay(Track):
     """
     Overlay multiple bigwig collections on top of each other.
@@ -690,6 +698,37 @@ class BigwigFragmentCollectionOverlay(Track):
                 size="large",
                 verticalalignment="center",
             )
+
+
+def plot_bigwig_scaled(track, ax, gr, scale_factor, **kwargs):
+    genome_range = gr
+
+    data = track.fetch_plot_data(gr, **kwargs)
+    if isinstance(data, pd.DataFrame):
+        # ['pos', 'score']
+        if 'pos' in data:
+            data = data['pos'].to_numpy(), data['score'].to_numpy()
+        # ['score']
+        else:
+            data = np.linspace(gr.start, gr.end, len(data)), data['score'].to_numpy()
+    elif isinstance(data, np.ndarray):
+        # 1d or 2d ndarray
+        if len(data.shape) == 1:
+            data = np.linspace(gr.start, gr.end, len(data)), data
+        elif len(data.shape) == 2:
+            data = np.linspace(gr.start, gr.end, data.shape[1]), data
+        else:
+            raise ValueError("The ndarray must be in 1d or 2d format")
+    elif not isinstance(data, tuple):
+        # not (indexes, values)
+        raise ValueError(f"Data format not supported.")
+
+    indexes, values = data
+    values = values / scale_factor
+    track.plot_hist(ax, gr, indexes, values)
+    track.plot_label()
+
+
 
 
 class BigwigOverlay(Track):
@@ -772,6 +811,29 @@ class BigwigOverlay(Track):
 
         return data
 
+
+    def _get_scaling_factors(self, gr: GenomeRange, method: Literal['n_cis', 'mean', 'max', 'min']):
+        if method == 'n_cis':
+            import pyBigWig
+            chrom = gr.chrom
+            if isinstance(self.collection[0], cb.BigWig):
+                bw_file = self.collection[0].properties["file"]
+            else:
+                bw_file = self.collection[0]
+
+            with pyBigWig.open(bw_file) as bw:
+                chrom_length = bw.chroms()[chrom]
+
+            gr_chrom = GenomeRange(chrom, 0, chrom_length)
+            scaler = Scaler(tracks=self.collection, gr=gr_chrom, method="total")
+            scaling_factors = scaler.scaling_factors
+        else:
+            scaler = Scaler(tracks=self.collection, gr=gr, method=method)
+            scaling_factors = scaler.scaling_factors
+
+        return scaling_factors
+
+
     def plot(self, ax, gr: GenomeRange, **kwargs):
 
         scaler = Autoscaler(tracks=self.collection, gr=gr)
@@ -786,66 +848,91 @@ class BigwigOverlay(Track):
             else self.properties.get("max_value")
         )
 
-        plot_data = self.fetch_data(
-            gr,
-            scale=self.properties.get("scale"),
-            scale_n_cis=self.properties.get("scale_n_cis"),
-            **kwargs,
-        )
+        if self.properties.get("scale_method"):
+            scaling_factors = self._get_scaling_factors(gr, self.properties.get("scale_method"))
+            for ii, (bw, scaling_factor) in enumerate(zip(self.collection, scaling_factors)):
+                bw.properties["min_value"] = min_value
+                bw.properties["max_value"] = max_value
+                bw.properties["show_data_range"] = 'no'
+                bw.properties["data_range_style"] = 'no'
+                bw.properties["scaling_factor"] = scaling_factor
+                plot_bigwig_scaled(bw, ax, gr, scaling_factor, **kwargs)
 
-        for ii, bw in enumerate(self.collection):
-            bw.properties["show_data_range"] = False
-            bw.properties["data_range_style"] = "text"
-            bw.properties["min_value"] = min_value
-            bw.properties["max_value"] = max_value
+        else:
 
-            # bw.fetch_plot_data = lambda gr, **kwargs: plot_data[ii] # Monkey patch the fetch_plot_data method
-            bw.plot(
-                ax,
-                gr,
-                show_data_range=False,
-                data_range_style="text",
-                **kwargs,
-            )
+            for ii, bw in enumerate(self.collection):
+                bw.properties["show_data_range"] = 'no'
+                bw.properties["data_range_style"] = 'no'
+                bw.properties["min_value"] = min_value
+                bw.properties["max_value"] = max_value
+                bw.plot(
+                    ax,
+                    gr,
+                    show_data_range=False,
+                    **kwargs,
+                )
 
+        self._plot_text_range(ax, min_value, max_value, gr)
         self.plot_label()
+    
+    def _plot_text_range(self, ax, ymin, ymax, gr: cb.GenomeRange):
+        plot_text_range(self, ax, ymin, ymax, gr)
+
 
     def plot_label(self):
-        if (
-            hasattr(self, "label_ax")
-            and self.label_ax is not None
-            and "title" in self.properties
-        ):
-            self.label_ax.text(
-                0.15,
-                0.5,
-                self.properties["title"],
-                horizontalalignment="left",
-                size="large",
-                verticalalignment="center",
-            )
-        elif hasattr(self, "label_ax") and self.properties.get("label_subtracks"):
-            # Plot a patch with the color of the subtracks and the name of the subtrack
-            for i, bw in enumerate(self.collection):
-                self.label_ax.add_patch(
-                    Polygon(
-                        [
-                            (0.1, 0.5 - (i * 0.1)),
-                            (0.1, 0.6 - (i * 0.1)),
-                            (0.2, 0.6 - (i * 0.1)),
-                            (0.2, 0.5 - (i * 0.1)),
-                        ],
-                        color=bw.properties.get("color", "black"),
-                    )
-                )
 
+        if not self.properties.get("label_on_track") in ['True', 'yes', 'T', 'Y', '1', True, 1]:
+
+            if (
+                hasattr(self, "label_ax")
+                and self.label_ax is not None
+                and "title" in self.properties
+            ):
                 self.label_ax.text(
-                    0.25,
-                    0.55 - (i * 0.1),
-                    bw.properties.get("title", f"Subtrack {i}"),
+                    0.15,
+                    0.5,
+                    self.properties["title"],
                     horizontalalignment="left",
+                    size="large",
                     verticalalignment="center",
                 )
+            elif hasattr(self, "label_ax") and self.properties.get("label_subtracks"):
+                # Plot a patch with the color of the subtracks and the name of the subtrack
+                for i, bw in enumerate(self.collection):
+                    self.label_ax.add_patch(
+                        Polygon(
+                            [
+                                (0.1, 0.5 - (i * 0.1)),
+                                (0.1, 0.6 - (i * 0.1)),
+                                (0.2, 0.6 - (i * 0.1)),
+                                (0.2, 0.5 - (i * 0.1)),
+                            ],
+                            color=bw.properties.get("color", "black"),
+                        )
+                    )
+
+                    self.label_ax.text(
+                        0.25,
+                        0.55 - (i * 0.1),
+                        bw.properties.get("title", f"Subtrack {i}"),
+                        horizontalalignment="left",
+                        verticalalignment="center",
+                    )
+    
+    def adjust_plot(self, ax, gr: GenomeRange):
+        ax.set_xlim(gr.start, gr.end)
+        ymin, ymax = ax.get_ylim()
+        if 'max_value' in self.properties and self.properties['max_value'] != 'auto':
+            ymax = self.properties['max_value']
+        if 'min_value' in self.properties and self.properties['min_value'] != 'auto':
+            ymin = self.properties['min_value']
+
+        if 'orientation' in self.properties and self.properties['orientation'] == 'inverted':
+            ax.set_ylim(ymax, ymin)
+        else:
+            ax.set_ylim(ymin, ymax)
+        return ymin, ymax
+        
 
 
 class BigwigSubtraction(cb.BigWig):

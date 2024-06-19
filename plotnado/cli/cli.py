@@ -55,12 +55,6 @@ def plot(
 ):
     """
     Use Plotnado to plot a template at either a set of coordinates or a set of regions.
-
-    Args:
-        template (pathlib.Path): Path to the template file.
-        coordinates (str): Coordinates to plot the template at.
-        regions (pathlib.Path): Path to the regions file.
-        output (pathlib.Path): Path to the output image.
     """
 
     assert coordinates or regions, "Either coordinates or regions must be provided."
