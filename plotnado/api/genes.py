@@ -150,7 +150,8 @@ class PlotGenes(PlotBed):
                 half_height = height / 2
                 quarter_height = height / 4
 
-                y_label = ypos + half_height + quarter_height
+                y_label = (ypos + half_height + quarter_height)
+                y_label *= 1.5
 
                 ax.text(
                     overlap_center + self.small_relative,
