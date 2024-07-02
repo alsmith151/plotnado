@@ -33,7 +33,7 @@ jobs:
           pip install numpy cython
           git clone https://github.com/hiclib/iced.git
           for fn in $(find iced -iname "*.pyx"); do cython $fn; done
-          pip install .
+          pip install . -v
       - name: Install Mkdocs plugins
         run: pip install mkdocs-material mkdocstrings-python mkdocs-click pygments mkdocs-gen-files mkdocs-jupyter mkdocs-autorefs mkdocs-literate-nav mkdocs-section-index
       - name: Build the documentation
