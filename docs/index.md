@@ -7,11 +7,15 @@ PlotNado is a python package designed to make quick genome browser style plots. 
 To install PlotNado, you can use pip:
 
 ```bash
-pip install plotnado
+pip install git+https://github.com/alsmith151/plotnado
+
+# Once this is on pypi, you will be able to install it with:
+#pip install plotnado
+
 ```
 
 # Usage
 
-See the example notebook for a quick start guide.
+* For basic usage, see the [example notebook](basic_example.ipynb).
 
 
