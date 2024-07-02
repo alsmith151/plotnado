@@ -8,8 +8,8 @@ seaborn
 iced
 h5py
 scipy
-capcruncher
 typer
 tqdm
 pyBigWig
 toml
+numpy<=1.23
