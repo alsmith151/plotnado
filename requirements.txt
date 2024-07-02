@@ -12,5 +12,4 @@ typer
 tqdm
 pyBigWig
 toml
-numpy<=1.23
 iced<=0.5.13
