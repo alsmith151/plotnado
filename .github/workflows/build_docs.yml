@@ -30,6 +30,7 @@ jobs:
       - name: Install the package
         shell: bash -el {0}
         run: |
+          pip install numpy cython
           git clone https://github.com/hiclib/iced.git
           for fn in $(find iced -iname "*.pyx"); do cython $fn; done
           pip install .
