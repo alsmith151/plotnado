@@ -1,6 +1,6 @@
 click
 coolbox
-cooler
+cooler<0.10.0
 cython<3.0.10
 h5py
 iced
