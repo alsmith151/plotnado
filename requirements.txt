@@ -1,9 +1,8 @@
 click
 coolbox
-cooler<0.10.0
+cooler<=0.10.0
 cython<3.0.10
 h5py
-iced
 matplotlib
 numpy>1.26.4
 pandas
