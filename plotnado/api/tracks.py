@@ -31,6 +31,15 @@ from .patches import plot_label, plot_text_range
 
 
 class Autoscaler:
+    """
+    Autoscale the data from multiple tracks to a single scale.
+
+    Args:
+        tracks (List[cb.Track]): List of tracks to autoscale
+        gr (cb.GenomeRange): Genome range to fetch the data
+        gr2 (cb.GenomeRange, optional): Second genome range for 2D data. Defaults to None.
+
+    """
     def __init__(
         self,
         tracks: List[cb.Track],
@@ -132,6 +141,17 @@ class Scaler:
 
 
 class MatrixCapcruncher(cb.Cool):
+    """
+    Matrix track designed to plot CapCruncher derived matrices.
+
+    Args:
+        file (os.PathLike): Path to the cooler file
+        binsize (int, optional): Binsize of the matrix. Defaults to 5000.
+        viewpoint (str): Viewpoint to plot the matrix from
+        remove_viewpoint (bool, optional): Remove the viewpoint from the matrix. Defaults to False.
+        **kwargs: Additional arguments to pass to the track
+    """
+
     def __init__(
         self,
         file: os.PathLike,
@@ -1049,6 +1069,12 @@ class BigwigSubtraction(cb.BigWig):
 
 
 class BedSimple(cb.BED):
+    """
+    Simplified version of the Bed class that only plots the intervals as rectangles.
+
+    Args:
+        file (os.PathLike): Path to the bed file
+    """
     def __init__(self, file: str, **kwargs):
         self.file = file
         self.properties = dict()
@@ -1168,6 +1194,9 @@ class BedMemory(Track):
 
 
 class ScaleBar(Track):
+    """
+    A scale bar that shows the length of the genomic region.
+    """
     def __init__(self, **kwargs):
         self.properties = dict()
         self.properties["name"] = "Scale"
@@ -1233,6 +1262,9 @@ class ScaleBar(Track):
 
 
 class GenomicAxis(cb.XAxis):
+    """
+    A genomic axis that shows the genomic coordinates of the region.
+    """
     def __init__(self, **kwargs):
         super(GenomicAxis, self).__init__()
         self.properties.update(kwargs)
@@ -1256,6 +1288,15 @@ class GenomicAxis(cb.XAxis):
 
 
 class MatrixCapcruncherAverage(MatrixCapcruncher):
+    """
+    A matrix track that averages multiple matrices.
+
+    Args:
+        matricies (List[MatrixCapcruncher]): List of MatrixCapcruncher objects
+        aggregation (str, optional): Aggregation method. Defaults to "mean". Choices are "sum", "mean", "median".
+        **kwargs: Additional arguments to pass to the track
+
+    """
     def __init__(
         self,
         matricies: List[MatrixCapcruncher],
@@ -1310,6 +1351,14 @@ class MatrixCapcruncherAverage(MatrixCapcruncher):
 
 
 class HighlightsFromFile(cb.HighLightsFromFile):
+    """
+    Plot highlights from a bed file.
+    This is a modified version of the HighlightsFromFile class that does not print block of highlights but instead highlights the entire region.
+
+    Args:
+        file (os.PathLike): Path to the bed file
+        **kwargs: Additional arguments to pass to the track
+    """
     def plot(self, ax, gr: cb.GenomeRange, **kwargs):
         from matplotlib.patches import Rectangle
 
