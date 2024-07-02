@@ -1,6 +1,6 @@
 import os
 import pathlib
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from enum import Enum
 from typing import Any, Dict, List, Literal, Optional, Union
 
@@ -369,11 +369,9 @@ class Figure:
 
     def _autoscale(self, gr: cb.GenomeRange, gr2: cb.GenomeRange = None):
         # Extract the autoscale groups
-        scale_groups = dict()
+        scale_groups = defaultdict(list)
         for title, track in self.tracks.items():
             if track.autoscale_group:
-                if track.autoscale_group not in scale_groups:
-                    scale_groups[track.autoscale_group] = []
                 scale_groups[track.autoscale_group].append(title)
 
         # Autoscale the tracks
@@ -385,9 +383,13 @@ class Figure:
                 gr,
                 gr2,
             )
+
+            max_value = autoscaler.max_value
+            min_value = autoscaler.min_value
+
             for title in tracks:
-                self.frame.tracks[title].properties["max_value"] = autoscaler.max_value
-                self.frame.tracks[title].properties["min_value"] = autoscaler.min_value
+                self.frame.tracks[title].properties["max_value"] = max_value
+                self.frame.tracks[title].properties["min_value"] = min_value
 
     def _autocolor(self):
         colors = list(plt.cm.tab20.colors)
