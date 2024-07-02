@@ -30,7 +30,7 @@ jobs:
       - name: Install the package
         shell: bash -el {0}
         run: |
-          pip install "numpy<2" .
+          pip install cython "numpy<2" .
       - name: Install Mkdocs plugins
         run: pip install mkdocs-material mkdocstrings-python mkdocs-click pygments mkdocs-gen-files mkdocs-jupyter mkdocs-autorefs mkdocs-literate-nav mkdocs-section-index
       - name: Build the documentation
