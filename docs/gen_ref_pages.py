@@ -6,7 +6,7 @@ import mkdocs_gen_files
 
 nav = mkdocs_gen_files.Nav()
 
-for path in sorted(Path("capcruncher/api").glob("*.py")):  #
+for path in sorted(Path("plotnado/api").glob("*.py")):  #
 
     module_path = path.relative_to(".").with_suffix("")  #
     doc_path = module_path.with_suffix(".md")  #
