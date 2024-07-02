@@ -36,6 +36,7 @@ jobs:
           for fn in $(find . -iname "*.pyx"); do cython $fn; done
           pip install . -v
           cd ..
+          rm -rf iced
           pip install . -v
       - name: Install Mkdocs plugins
         run: pip install mkdocs-material mkdocstrings-python mkdocs-click pygments mkdocs-gen-files mkdocs-jupyter mkdocs-autorefs mkdocs-literate-nav mkdocs-section-index
