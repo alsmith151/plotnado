@@ -16,6 +16,7 @@ pip install git+https://github.com/alsmith151/plotnado
 
 # Usage
 
-* For basic usage, see the [example notebook](basic_example.ipynb).
+* Basic plotting [example notebook](basic_example.ipynb).
+* Simple overlays of multiple tracks [example notebook](simple_overlays.ipynb).
 
 
