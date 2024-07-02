@@ -7,7 +7,7 @@ name = "plotnado"
 authors = [{ name = "Alastair Smith", email = "alastair.smith@ndcls.ox.ac.uk" }]
 description = "A simple plotting library for making genomic tracks"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 license = { text = "GNU GENERAL PUBLIC LICENSE Version 3" }
 dynamic = ["version", "dependencies"]
 scripts = { "plotnado" =  "plotnado.cli.cli:main" }
