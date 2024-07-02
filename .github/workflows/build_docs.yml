@@ -22,15 +22,15 @@ jobs:
           path: .cache
           restore-keys: |
             mkdocs-material-
-      - name: Install OS dependencies
-        shell: bash -el {0}
-        run: |
-          sudo apt update
-          sudo apt install -y gcc git cmake make libtool g++ perl coreutils libcurl4-openssl-dev
-      - name: Install the package
-        shell: bash -el {0}
-        run: |
-          pip install cython "numpy" .
+      # - name: Install OS dependencies
+      #   shell: bash -el {0}
+      #   run: |
+      #     sudo apt update
+      #     sudo apt install -y gcc git cmake make libtool g++ perl coreutils libcurl4-openssl-dev
+      # - name: Install the package
+      #   shell: bash -el {0}
+      #   run: |
+      #     pip install cython "numpy" .
       - name: Install Mkdocs plugins
         run: pip install mkdocs-material mkdocstrings-python mkdocs-click pygments mkdocs-gen-files mkdocs-jupyter mkdocs-autorefs mkdocs-literate-nav mkdocs-section-index
       - name: Build the documentation
