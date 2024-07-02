@@ -30,6 +30,7 @@ jobs:
       - name: Install the package
         shell: bash -el {0}
         run: |
+          pip install numpy
           pip install .
       - name: Install Mkdocs plugins
         run: pip install mkdocs-material mkdocstrings-python mkdocs-click pygments mkdocs-gen-files mkdocs-jupyter mkdocs-autorefs mkdocs-literate-nav mkdocs-section-index
