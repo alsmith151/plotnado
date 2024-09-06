@@ -1,2 +1,2 @@
-global-include *.py
-recursive-include plotnado data/*
+include plotnado/data/genes/*
+include plotnado/data/gene_bed_files/*
