@@ -1,10 +1,9 @@
-click
-coolbox
-cooler<=0.10.0
-cython<3.0.10
+coolbox @ git+https://github.com/GangCaoLab/CoolBox.git
+cooler<=0.10.2
+cython<=3.0.10
 h5py
-matplotlib
-numpy>1.26.4
+matplotlib<3.9
+numpy<2.0.0
 pandas
 polars
 pyBigWig
