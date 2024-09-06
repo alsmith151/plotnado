@@ -67,82 +67,81 @@ def plot_label_on_track(
     ydelta = ymax - ymin
     small_x = 0.01 * gr.length
 
-    if not hasattr(track, 'collection'):
-        if location == "left":
-            ax.text(
-                gr.start,
-                ymax - ydelta * 0.2,
-                track.properties["title"],
-                horizontalalignment="left",
-                verticalalignment="top",
-            )
-        elif location == "right":
-            ax.text(
-                gr.end - small_x,
-                ymax - ydelta * 0.2,
-                track.properties["title"],
-                horizontalalignment="right",
-                verticalalignment="top",
-            )
+    if location == "left":
+        ax.text(
+            gr.start,
+            ymax - ydelta * 0.2,
+            track.properties["title"],
+            horizontalalignment="left",
+            verticalalignment="top",
+        )
+    elif location == "right":
+        ax.text(
+            gr.end - small_x,
+            ymax - ydelta * 0.2,
+            track.properties["title"],
+            horizontalalignment="right",
+            verticalalignment="top",
+        )
     
-    else:
+    # else:
 
-        y = ymax - ydelta * 0.2
-        y_rec_top = y + (y * 0.1)
+    #     y = ymax - ydelta * 0.2
+    #     y_rec_top = y + (y * 0.1)
 
-        if location == "left":
-            for i, bw in enumerate(track.collection):
+    #     if location == "left":
+    #         for i, bw in enumerate(track.collection):
 
-                rec_start = gr.start
-                rec_end = rec_start + (gr.length * 0.001)
-                tiny_x = 0.0001 * gr.length
+    #             rec_start = gr.start
+    #             rec_end = rec_start + (gr.length * 0.001)
+    #             tiny_x = 0.0001 * gr.length
 
-                ax.add_patch(
-                    matplotlib.patches.Polygon(
-                        [
-                            (rec_start, y - (i * 0.1)),
-                            (rec_start, y_rec_top - (i * 0.1)),
-                            (rec_end, y_rec_top - (i * 0.1)),
-                            (rec_end , y - (i * 0.1)),
-                        ],
-                        color=bw.properties.get("color", "black"),
-                    )
-                )
+    #             ax.add_patch(
+    #                 matplotlib.patches.Polygon(
+    #                     [
+    #                         (rec_start, y - (i * 0.1)),
+    #                         (rec_start, y_rec_top - (i * 0.1)),
+    #                         (rec_end, y_rec_top - (i * 0.1)),
+    #                         (rec_end , y - (i * 0.1)),
+    #                     ],
+    #                     color=bw.properties.get("color", "black"),
+    #                 )
+    #             )
 
-                track.label_ax.text(
-                    rec_end + tiny_x,
-                    0.55 - (i * 0.1),
-                    bw.properties.get("title", f"Subtrack {i}"),
-                    horizontalalignment="left",
-                    verticalalignment="center",
-                )
+    #             track.label_ax.text(
+    #                 rec_end + tiny_x,
+    #                 0.55 - (i * 0.1),
+    #                 bw.properties.get("title", f"Subtrack {i}"),
+    #                 horizontalalignment="left",
+    #                 verticalalignment="center",
+    #             )
         
-        elif location == "right":
-            for i, bw in enumerate(track.collection):
+    #     elif location == "right":
+    #         for i, bw in enumerate(track.collection):
 
-                rec_start = gr.end - (gr.length * 0.001)
-                rec_end = rec_start + (gr.length * 0.001)
-                tiny_x = 0.0001 * gr.length
+    #             rec_start = gr.end - (gr.length * 0.001)
+    #             rec_end = rec_start + (gr.length * 0.001)
+    #             tiny_x = 0.0001 * gr.length
 
-                ax.add_patch(
-                    matplotlib.patches.Polygon(
-                        [
-                            (rec_start, y - (i * 0.1)),
-                            (rec_start, y_rec_top - (i * 0.1)),
-                            (rec_end, y_rec_top - (i * 0.1)),
-                            (rec_end , y - (i * 0.1)),
-                        ],
-                        color=bw.properties.get("color", "black"),
-                    )
-                )
+    #             ax.add_patch(
+    #                 matplotlib.patches.Polygon(
+    #                     [
+    #                         (rec_start, y - (i * 0.1)),
+    #                         (rec_start, y_rec_top - (i * 0.1)),
+    #                         (rec_end, y_rec_top - (i * 0.1)),
+    #                         (rec_end , y - (i * 0.1)),
+    #                     ],
+    #                     color=bw.properties.get("color", "black"),
+    #                 )
+    #             )
 
-                track.label_ax.text(
-                    rec_start - tiny_x,
-                    0.55 - (i * 0.1),
-                    bw.properties.get("title", f"Subtrack {i}"),
-                    horizontalalignment="right",
-                    verticalalignment="center",
-                )
+    #             track.label_ax.text(
+    #                 rec_start - tiny_x,
+    #                 0.55 - (i * 0.1),
+    #                 bw.properties.get("title", f"Subtrack {i}"),
+    #                 horizontalalignment="right",
+    #                 verticalalignment="center",
+    #             )
 
 
 def _plot(self, *args, label_loc: Literal["left", "right"] = "right", **kwargs):
@@ -245,7 +244,7 @@ def _plot(self, *args, label_loc: Literal["left", "right"] = "right", **kwargs):
 
             if track.properties.get("label_on_track") in ['True', 'yes', 'T', 'Y', '1', True, 1]:
                 ymin, ymax = track.adjust_plot(ax, gr)
-                plot_label_on_track(track, ax, ymin, ymax, gr, location=track.properties['label_loc'])
+                plot_label_on_track(track, ax, ymin, ymax, gr, location=track.properties.get('label_loc', 'left'))
 
         except Exception as e:
             import sys, os
@@ -319,7 +318,7 @@ class Figure:
             self.highlight_regions = HighlightsFromFile(
                 highlight_regions,
                 color=highlight_regions_color,
-                **highlight_regions_kwargs,
+                **highlight_regions_kwargs if highlight_regions_kwargs else dict(),
             )
         else:
             self.highlight_regions = highlight_regions
@@ -485,16 +484,24 @@ class Figure:
 
         Args:
             gene (str): Gene to plot
-            genome (str): Genome to plot the gene on
+            genome (str): Genome for the gene. Can be a genome name or a path to a json file containing coordinates
             **kwargs: Additional arguments to pass to the plot
         """
         import importlib
         import json
 
-        genes_prefix = importlib.resources.files("plotnado.data.genes")
-        with open(genes_prefix / f"{genome}.json") as f:
-            genes = json.load(f)
-
+        try:
+            genes_prefix = importlib.resources.files("plotnado.data.genes")
+            with open(genes_prefix / f"{genome}.json") as f:
+                genes = json.load(f)
+        except (ModuleNotFoundError, FileNotFoundError):
+            try:
+                with open(genome, 'r') as f:
+                    genes = json.load(f)
+            except FileNotFoundError:
+                print("Genome not found")
+                raise RuntimeError("Genome not found")
+        
         gene = genes[gene]
         gr = cb.GenomeRange(gene["chrom"], gene["start"], gene["end"])
         return self.plot(gr, **kwargs)
@@ -578,9 +585,9 @@ class Figure:
 
         fig = self.plot(gr, gr2, show=False, **kwargs)
         if output:
-            fig.savefig(output, dpi=300)
+            fig.savefig(output, dpi=300, bbox_inches="tight")
         else:
-            fig.savefig(f"{gr.chrom}_{gr.start}_{gr.end}.png", dpi=300)
+            fig.savefig(f"{gr.chrom}_{gr.start}_{gr.end}.png", dpi=300, bbox_inches="tight")
 
     @classmethod
     def from_toml(cls, toml_file: os.PathLike, **kwargs) -> "Figure":
