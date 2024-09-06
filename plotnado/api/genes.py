@@ -1,52 +1,90 @@
 import matplotlib
 import pandas as pd
+import numpy as np
 from coolbox.api import BED, GenomeRange
 from coolbox.core.track import Track
+from coolbox.core.track.bed.plot import PlotGenes
 from coolbox.core.track.bed.base import BedBase
 from coolbox.core.track.bed.fetch import FetchBed
-from coolbox.core.track.bed.plot import PlotBed
 from coolbox.utilities.bed import build_bed_index
 from loguru import logger as log
 import pathlib
 
 
-class PlotGenes(PlotBed):
-    def plot_genes(self, ax, gr: GenomeRange, ov_genes: pd.DataFrame):
+class PlotGenesPlotnado(PlotGenes):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.label_location = self.properties.get("label_loc", "mid")
+        self.label_y_offset = self.properties.get("label_y_offset", 0)
+
+    def __set_plot_params(self, gr: GenomeRange, ov_genes: pd.DataFrame):
         properties = self.properties
         # bed_type
         self.properties["bed_type"] = properties["bed_type"] or self.infer_bed_type(
             ov_genes
         )
-        # as min_score and max_score change every plot, we compute them for every plot
-        min_score, max_score = properties["min_score"], properties["max_score"]
-        has_score_col = properties["bed_type"] in ("bed6", "bed9", "bed12")
-        if has_score_col and len(ov_genes):
-            min_score = (min_score != "inf") or ov_genes["score"].min()
-            max_score = (max_score != "-inf") or ov_genes["score"].max()
-        min_score, max_score = float(min_score), float(max_score)
-
-        # set colormap
-        if self.colormap is not None:
-            norm = matplotlib.colors.Normalize(vmin=min_score, vmax=max_score)
-            cmap = matplotlib.cm.get_cmap(properties["color"])
-            self.colormap = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap)
-        if properties["color"] == "bed_rgb" and properties["bed_type"] not in [
-            "bed12",
-            "bed9",
-        ]:
-            log.warning(
-                "*WARNING* Color set to 'bed_rgb', but bed file does not have the rgb field. The color has "
-                "been set to {}".format(self.COLOR)
-            )
-            self.properties["color"] = self.COLOR
-            self.colormap = None
-
-        self.counter = 0
-        self.small_relative = 0.004 * (gr.end - gr.start)
-        self.get_length_w(ax.get_figure().get_figwidth(), gr.start, gr.end)
+        self.set_colormap(ov_genes)
         # turn labels off when too many intervals are visible.
-        if properties["labels"] == "on" and len(ov_genes) > 60:
-            self.is_draw_labels = False
+        if properties["labels"] == "auto":
+            if len(ov_genes) > 60:
+                self.is_draw_labels = False
+            else:
+                self.is_draw_labels = True
+        self.small_relative = 0.004 * (gr.end - gr.start)
+        self.counter = 0
+
+    def __get_length_w(self, fig_width, region_start, region_end):
+        """
+        to improve the visualization of the genes it is good to have an estimation of the label
+        length. In the following code I try to get the length of a 'W' in base pairs.
+        """
+        if self.is_draw_labels:
+            # from http://scipy-cookbook.readthedocs.org/items/Matplotlib_LaTeX_Examples.html
+            inches_per_pt = 1.0 / 72.27
+            font_in_inches = self.properties["fontsize"] * inches_per_pt
+            region_len = region_end - region_start
+            bp_per_inch = region_len / fig_width
+            font_in_bp = font_in_inches * bp_per_inch
+            self.len_w = font_in_bp
+            log.debug("len of w set to: {} bp".format(self.len_w))
+        else:
+            self.len_w = 1
+
+        return self.len_w
+
+    def get_y_pos(self, free_row):
+        """
+        The y_pos is set such that regions to be plotted do not overlap (stacked). To override this
+        the properties['collapsed'] needs to be set.
+
+        The algorithm uses a interval tree (self.region_interval) to check the overlaps
+        and a sort of coverage vector 'rows used' to identify the row in which to plot
+
+        Return
+        ------
+        ypos : int
+            y position.
+        """
+
+        # if the domain directive is given, ypos simply oscilates between 0 and 100
+        if self.properties["display"] == "interlaced":
+            return self.properties["interval_height"] if self.counter % 2 == 0 else 1
+        elif self.properties["display"] == "collapsed":
+            return 0
+        else:
+            return free_row * self.row_scale
+
+    def plot_genes(
+        self, ax, gr: GenomeRange, ov_genes: pd.DataFrame, dry_run=False, fig_width=None
+    ):
+        properties = self.properties
+        self.__set_plot_params(gr, ov_genes)
+
+        assert (not dry_run) or (fig_width is not None)
+        if dry_run:
+            self.__get_length_w(fig_width, gr.start, gr.end)
+        else:
+            self.__get_length_w(ax.get_figure().get_figwidth(), gr.start, gr.end)
 
         num_rows = properties["num_rows"]
         max_num_row_local = 1
@@ -93,8 +131,10 @@ class PlotGenes(PlotBed):
             """
             self.counter += 1
 
-            if self.is_draw_labels:
-                num_name_characters = (len(bed.name) + 2)  # +2 to account for an space before and after the name
+            if self.is_draw_labels and self.label_location == "right":
+                num_name_characters = (
+                    len(bed.name) + 2
+                )  # +2 to account for an space before and after the name
                 bed_extended_end = int(bed.end + (num_name_characters * self.len_w))
             else:
                 bed_extended_end = bed.end + 2 * self.small_relative
@@ -118,7 +158,6 @@ class PlotGenes(PlotBed):
                     row_last_position.append(bed_extended_end)
 
             rgb, edgecolor = self.get_rgb_and_edge_color(bed)
-
             ypos = self.get_y_pos(free_row)
 
             # do not plot if the maximum interval rows to plot is reached
@@ -130,40 +169,28 @@ class PlotGenes(PlotBed):
             if ypos > max_ypos:
                 max_ypos = ypos
 
-            if properties["bed_type"] == "bed12":
-                if properties["gene_style"] == "flybase":
-                    self.draw_gene_with_introns_flybase_style(
-                        ax, bed, ypos, rgb, edgecolor
-                    )
+            if not dry_run:
+                if properties["bed_type"] == "bed12":
+                    if properties["gene_style"] == "flybase":
+                        self.draw_gene_with_introns_flybase_style(
+                            ax, bed, ypos, rgb, edgecolor
+                        )
+                    else:
+                        self._draw_gene_with_introns(
+                            ax,
+                            bed,
+                            ypos,
+                            rgb,
+                            edgecolor,
+                            arrow_color=properties.get("arrow_color", "black"),
+                        )
                 else:
-                    self.draw_gene_with_introns(ax, bed, ypos, rgb, edgecolor)
-            else:
-                self.draw_gene_simple(ax, bed, ypos, rgb, edgecolor)
+                    self.draw_gene_simple(ax, bed, ypos, rgb, edgecolor)
 
-
-            if (self.is_draw_labels and bed.name != "."):
-
-                overlap_start = max(bed.start, gr.start)
-                overlap_end = min(bed.end, gr.end)
-                overlap_center = (overlap_start + overlap_end) / 2
-                height = properties['interval_height']
-                half_height = height / 2
-                quarter_height = height / 4
-
-                y_label = (ypos + half_height + quarter_height)
-                y_label *= 1.5
-
-                ax.text(
-                    overlap_center + self.small_relative,
-                    y_label,
-                    bed.name,
-                    horizontalalignment="center",
-                    verticalalignment="bottom",
-                    fontproperties=self.fp,
-                )
+                self.draw_label(bed, gr, ax, ypos)
 
         if self.counter == 0:
-            log.warning(
+            log.debug(
                 f"*Warning* No intervals were found for file {properties['file']} "
                 f"in Track '{properties['name']}' for the interval plotted ({gr}).\n"
             )
@@ -171,170 +198,178 @@ class PlotGenes(PlotBed):
         ymax = 0
         if num_rows:
             ymin = float(num_rows) * self.row_scale
+            self.current_row_num = num_rows
         else:
             ymin = max_ypos + properties["interval_height"]
+            self.current_row_num = len(row_last_position)
 
         log.debug("ylim {},{}".format(ymin, ymax))
         # the axis is inverted (thus, ymax < ymin)
-        ax.set_ylim(ymin, ymax)
+        if not dry_run:
+            ax.set_ylim(ymin, ymax)
 
-        if properties["display"] == "domain":
-            ax.set_ylim(-5, 205)
-        elif properties["display"] == "collapsed":
-            ax.set_ylim(-5, 105)
+            if properties["display"] == "collapsed":
+                ax.set_ylim(-5, 105)
 
-        ax.set_xlim(gr.start, gr.end)
+            ax.set_xlim(gr.start, gr.end)
+
+    def draw_label(self, bed, gr, ax, ypos):
+        if self.is_draw_labels:
+            # if the label is to be plotted on the right side
+            if self.label_location == "right":
+                # Check if the label is within the genomic range if not writ the label at the middle of the gene
+                if bed.start > gr.start and bed.end < gr.end:
+                    self._draw_label_right(bed, gr, ax, ypos)
+                elif bed.start < gr.end and bed.end > gr.end:
+                    self._draw_label_mid(bed, gr, ax, ypos)
+
+            elif self.label_location == "mid":
+                self._draw_label_mid(bed, gr, ax, ypos)
+            
+
+    def _draw_label_right(self, bed, gr, ax, ypos):
+        ax.text(
+            bed.end + self.small_relative,
+            ypos + (float(self.properties["interval_height"]) / 2),
+            bed.name,
+            horizontalalignment="left",
+            verticalalignment="center",
+            fontproperties=self.fp,
+        )
+    
+    def _draw_label_mid(self, bed, gr, ax, ypos):
+        # Intersect the gene with the genomic range
+        start = max(bed.start, gr.start)
+        end = min(bed.end, gr.end)
+        # Calculate the middle of the gene
+        mid = (start + end) / 2
+        ax.text(
+            mid,
+            ypos
+            + (float(self.properties["interval_height"]) / 2)
+            + self.label_y_offset,
+            bed.name,
+            horizontalalignment="center",
+            verticalalignment="center",
+            fontproperties=self.fp,
+        )
 
 
-class GenesBase(Track, PlotGenes):
-    """
-    BED Base track.
-
-    Parameters
-    ----------
-    style : {'gene', 'tad'}
-
-    gene_style: {'normal'}
-
-    display : {'stacked', 'interlaced', 'collapsed'}, optional
-        Display mode. (Default: 'stacked')
-
-    color : str, optional
-        Track color, 'bed_rgb' for auto specify color according to bed record.
-        (Default: 'bed_rgb')
-
-    border_color : str, optional
-        Border_color of gene. (Default: 'black')
-
-    fontsize : int, optional
-        Font size. (Default: BED.DEFAULT_FONTSIZE)
-
-    labels : {True, False, 'auto'}, optional
-        Draw bed name or not. 'auto' for automate decision according to density.
-        (Default: 'auto')
-
-    interval_height : int, optional
-        The height of the interval. (Default: 100)
-
-    num_rows : int, optional
-        Set the max interval rows. (Default: unlimited interval rows)
-
-    max_value : float, optional
-        Max score. (Default: inf)
-
-    min_value : float, optional
-        Min score. (Default: -inf)
-
-    border_style: str, optional
-        Border style of tad. (Default: 'solid')
-
-    border_width: int, optional
-        Border width of tad. (Default: '2.0')
-
-    show_score : bool
-        Show bed score or not.
-        default False.
-
-    score_font_size : {'auto', int}
-        Score text font size.
-        default 'auto'
-
-    score_font_color : str
-        Score text color.
-        default '#000000'
-
-    score_height_ratio : float
-        (text tag height) / (TAD height). used for adjust the position of Score text.
-        default 0.5
-
-    border_only : bool
-        Only show border, default False
-
-    """
-
-    STYLE_GENE = "gene"
-    STYLE_TAD = "tad"
-
-    COLOR = "#1f78b4"
-
-    DEFAULT_PROPERTIES = {
-        "style": STYLE_GENE,
-        # gene
-        "gene_style": "normal",
-        "display": "stacked",
-        "color": "bed_rgb",
-        "border_color": "#1f78b4",
-        "fontsize": 12,
-        "interval_height": 100,
-        "num_rows": None,
-        "labels": "off",
-        "min_score": "-inf",
-        "max_score": "inf",
-        "bed_type": None,
-        # tad
-        "border_style": "--",
-        "border_width": 2.0,
-        "show_score": False,
-        "score_font_size": "auto",
-        "score_font_color": "#000000",
-        "score_height_ratio": 0.4,
-        "border_only": False,
-        'min_gene_length': 1e4,
-        "fontsize": 8,
-
-    }
-
-    def __init__(self, **kwargs):
-        properties = BedBase.DEFAULT_PROPERTIES.copy()
-        properties.update(kwargs)
-        super().__init__(properties)
-        self.init_for_plot()
-
-    def fetch_data(self, gr: GenomeRange, **kwargs) -> pd.DataFrame:
+    def _draw_gene_with_introns(
+        self, ax, bed, ypos, rgb, edgecolor, arrow_color="blue"
+    ):
         """
-
-        Returns
-        -------
-        intervals : pandas.core.frame.DataFrame
-            BED interval table. The table should be in format like:
-
-            bed_fields = ['chromosome', 'start', 'end',
-                          'name', 'score', 'strand',
-                          'thick_start', 'thick_end',
-                          'rgb', 'block_count',
-                          'block_sizes', 'block_starts']
-            The table can be in bed6/bed9/bed12 format and the trailing columns can be omited.
-
+        draws a gene like in flybase gbrowse.
         """
-        raise NotImplementedError
+        from matplotlib.patches import Polygon
 
-    def plot(self, ax, gr: GenomeRange, **kwargs):
-        self.ax = ax
-        ov_intervals: pd.DataFrame = self.fetch_plot_data(gr, **kwargs)
+        properties = self.properties
+        height = float(properties["interval_height"])
 
-        style = self.properties["style"]
-        if style == self.STYLE_TAD:
-            self.plot_tads(ax, gr, ov_intervals)
-        elif style == self.STYLE_GENE:
-            self.plot_genes(ax, gr, ov_intervals)
-        else:
-            raise ValueError("style not supportted, should be one of 'gene' 'tad' ")
-        self.plot_label()
+        if (
+            bed.block_count == 0
+            and bed.thick_start == bed.start
+            and bed.thick_end == bed.end
+        ):
+            self.draw_gene_simple(ax, bed, ypos, rgb, edgecolor)
+            return
+        half_height = height / 2
+        quarter_height = height / 4
+        three_quarter_height = quarter_height * 3
+
+        # draw 'backbone', a line from the start until the end of the gene
+        ax.plot(
+            [bed.start, bed.end],
+            [ypos + half_height, ypos + half_height],
+            "black",
+            linewidth=0.5,
+            zorder=-1,
+        )
+
+        for idx in range(bed.block_count):
+            x0 = bed.start + bed.block_starts[idx]
+            x1 = x0 + bed.block_sizes[idx]
+            if x1 < bed.thick_start or x0 > bed.thick_end:
+                y0 = ypos + quarter_height
+                y1 = ypos + three_quarter_height
+            else:
+                y0 = ypos
+                y1 = ypos + height
+
+            if x0 < bed.thick_start < x1:
+                vertices = [
+                    (x0, ypos + quarter_height),
+                    (x0, ypos + three_quarter_height),
+                    (bed.thick_start, ypos + three_quarter_height),
+                    (bed.thick_start, ypos + height),
+                    (bed.thick_start, ypos + height),
+                    (x1, ypos + height),
+                    (x1, ypos),
+                    (bed.thick_start, ypos),
+                    (bed.thick_start, ypos + quarter_height),
+                ]
+
+            elif x0 < bed.thick_end < x1:
+                vertices = [
+                    (x0, ypos),
+                    (x0, ypos + height),
+                    (bed.thick_end, ypos + height),
+                    (bed.thick_end, ypos + three_quarter_height),
+                    (x1, ypos + three_quarter_height),
+                    (x1, ypos + quarter_height),
+                    (bed.thick_end, ypos + quarter_height),
+                    (bed.thick_end, ypos),
+                ]
+            else:
+                vertices = [(x0, y0), (x0, y1), (x1, y1), (x1, y0)]
+
+            ax.add_patch(
+                Polygon(
+                    vertices,
+                    closed=True,
+                    fill=True,
+                    linewidth=0.1,
+                    edgecolor="none",
+                    facecolor=rgb,
+                )
+            )
+
+            if idx < bed.block_count - 1:
+                # plot small arrows using the character '<' or '>' over the back bone
+                intron_length = bed.block_starts[idx + 1] - (
+                    bed.block_starts[idx] + bed.block_sizes[idx]
+                )
+                marker = 5 if bed.strand == "+" else 4
+                if intron_length > 3 * self.small_relative:
+                    pos = np.arange(
+                        x1 + 1 * self.small_relative,
+                        x1 + intron_length + self.small_relative,
+                        int(2 * self.small_relative),
+                    )
+                    ax.plot(
+                        pos,
+                        np.zeros(len(pos)) + ypos + half_height,
+                        ".",
+                        marker=marker,
+                        fillstyle="none",
+                        color=arrow_color,
+                        markersize=3,
+                    )
+
+                elif intron_length > self.small_relative:
+                    intron_center = x1 + int(intron_length) / 2
+                    ax.plot(
+                        [intron_center],
+                        [ypos + half_height],
+                        ".",
+                        marker=5,
+                        fillstyle="none",
+                        color=arrow_color,
+                        markersize=3,
+                    )
 
 
-class Genes(GenesBase, FetchBed):
-    """
-    Bed Track for plotting 1d intervals data from .bed file.
-    The input bed file can be bed3/bed6/bed9/bed12
-
-    Parameters
-    ----------
-    file: str
-        The file path of `.bed` file.
-
-
-    """
-
+class Genes(BedBase, PlotGenesPlotnado, FetchBed):
     DEFAULT_PROPERTIES = {
         "labels": "on",
     }
@@ -347,9 +382,10 @@ class Genes(GenesBase, FetchBed):
         min_gene_length: int = 1e4,
         **kwargs,
     ):
-
         if file is None and genome is None:
-            raise ValueError("Genes track requires a file path to a bed file or a genome name")
+            raise ValueError(
+                "Genes track requires a file path to a bed file or a genome name"
+            )
         elif file is None and genome:
             file = self.get_genes_file(genome)
         elif file:
@@ -357,27 +393,34 @@ class Genes(GenesBase, FetchBed):
 
         properties = BED.DEFAULT_PROPERTIES.copy()
         properties.update(
-            {"file": file, "ignore_file_validation": ignore_file_validation, 
-            "min_gene_length": min_gene_length, **kwargs}
+            {
+                "file": file,
+                "ignore_file_validation": ignore_file_validation,
+                "min_gene_length": min_gene_length,
+                **kwargs,
+            }
         )
         super().__init__(**properties)
+        PlotGenesPlotnado.__init__(self)
+
         self.min_gene_length = min_gene_length
         self.bgz_file = build_bed_index(file)
 
     def fetch_data(self, gr: GenomeRange, **kwargs):
-        intervals =  self.fetch_intervals(self.bgz_file, gr)
+        intervals = self.fetch_intervals(self.bgz_file, gr)
         intervals = intervals.query("(end - start) > @self.min_gene_length")
         return intervals
 
-
+    def plot(self, ax, gr: GenomeRange, **kwargs):
+        self.ax = ax
+        ov_intervals: pd.DataFrame = self.fetch_plot_data(gr, **kwargs)
+        self.plot_genes(ax, gr, ov_intervals)
 
     def get_genes_file(self, file: str):
-
         import importlib
         import json
 
         try:
-                
             bed_prefix = importlib.resources.files("plotnado.data.gene_bed_files")
             bed_paths = bed_prefix / "genes.json"
 
