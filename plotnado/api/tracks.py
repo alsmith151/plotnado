@@ -409,8 +409,12 @@ class BigwigFragment(cb.BigWig):
 
         ax.set_ylim(0, data["value"].max())
         ymin, ymax = self.adjust_plot(ax, gr)
-        self.plot_data_range(ax, ymin, ymax, self.properties["data_range_style"], gr)
-        self.plot_label()
+
+        if self.properties.get("show_data_range") == "yes" and not self.properties.get('is_subtrack'):
+            self.plot_data_range(ax, ymin, ymax, self.properties["data_range_style"], gr)
+        
+        if self.properties.get("label_on_track") and not self.properties.get('is_subtrack'):
+            self.plot_label()
 
     def plot(self, ax, gr, **kwargs):
         if not self.properties["style"] == "fragment":
@@ -571,6 +575,7 @@ class BigwigFragmentCollection(Track):
             scores,
             color=color,
             zorder=1,
+            linewidth=line_width,
         )
 
         min_val = self.properties.get("min_value")
@@ -584,18 +589,25 @@ class BigwigFragmentCollection(Track):
         ax.set_xlim(gr.start, gr.end)
         ax.set_ylim(ymin, ymax)
 
-        self.plot_data_range(ax, ymin, ymax, self.properties["data_range_style"], gr)
-        self.plot_label()
+        if not self.properties.get('is_subtrack'):
+            self.plot_data_range(ax, ymin, ymax, self.properties["data_range_style"], gr)
+
+        if self.properties.get("label_on_track") and not self.properties.get('is_subtrack'):
+            self.plot_label()
 
     def plot_data_range(self, ax, ymin, ymax, data_range_style, gr: cb.GenomeRange):
         if data_range_style == "text":
-            self.plot_text_range(ax, ymin, ymax, gr)
+            self._plot_text_range(ax, ymin, ymax, gr)
         else:  # 'y-axis' style
             try:
                 y_ax = self.y_ax
                 self.plot_yaxis_range(ax, y_ax)
             except AttributeError:
                 self.plot_data_range(ax, ymin, ymax, "text", gr)
+    
+    def _plot_text_range(self, ax, ymin, ymax, gr: cb.GenomeRange):
+        plot_text_range(self, ax, ymin, ymax, gr)
+
 
     def plot_yaxis_range(self, plot_axis, y_ax):
         # """
@@ -670,10 +682,6 @@ class BigwigFragmentCollection(Track):
         )
 
 
-
-
-
-
 class BigwigFragmentCollectionOverlay(Track):
     """
     Overlay multiple bigwig collections on top of each other.
@@ -686,6 +694,13 @@ class BigwigFragmentCollectionOverlay(Track):
     def __init__(self, collections: List[BigwigFragmentCollection], **kwargs):
         # Initialization
         self.collections = collections
+
+        for track in self.collections:
+            track.properties["show_data_range"] = "no"
+            track.properties["data_range_style"] = "no"
+            track.properties["label_on_track"] = "no"
+            track.properties['is_subtrack'] = True
+
         self.properties = {"collections": collections}
         self.properties.update(kwargs)
 
@@ -707,17 +722,6 @@ class BigwigFragmentCollectionOverlay(Track):
         # genome_range is a `coolbox.utilities.GenomeRange` object
         for collection in self.collections:
             collection.fetch_data(genome_range, **kwargs)
-
-    def plot_label(self):
-        if hasattr(self, "label_ax") and self.label_ax is not None:
-            self.label_ax.text(
-                0.15,
-                0.5,
-                self.properties["title"],
-                horizontalalignment="left",
-                size="large",
-                verticalalignment="center",
-            )
 
 
 def plot_bigwig_scaled(track, ax, gr, scale_factor, **kwargs):
@@ -885,6 +889,7 @@ class BigwigOverlay(Track):
                 bw.properties["data_range_style"] = 'no'
                 bw.properties["min_value"] = min_value
                 bw.properties["max_value"] = max_value
+                bw.properties["is_subtrack"] = True
                 bw.plot(
                     ax,
                     gr,
@@ -901,7 +906,7 @@ class BigwigOverlay(Track):
 
     def plot_label(self):
 
-        if not self.properties.get("label_on_track") in ['True', 'yes', 'T', 'Y', '1', True, 1]:
+        if self.properties.get("label_on_track") not in ['True', 'yes', 'T', 'Y', '1', True, 1]:
 
             if (
                 hasattr(self, "label_ax")
