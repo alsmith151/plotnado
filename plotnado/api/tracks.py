@@ -7,7 +7,6 @@ from typing import List, Literal
 
 import coolbox.api as cb
 import cooler.api as cooler
-import iced
 import matplotlib.colors as colors
 import numpy as np
 import pandas as pd
@@ -217,6 +216,8 @@ class MatrixCapcruncher(cb.Cool):
             )
 
         elif normalization_method == "ice":
+            import iced
+            
             matrix = self.get_matrix(coordinates)
             matrix = np.nan_to_num(matrix)
             # matrix = iced.filter.filter_low_counts(matrix, percentage=0.04)
