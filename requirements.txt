@@ -8,6 +8,7 @@ pandas
 polars
 pyBigWig
 pyranges
+pybedtools
 scipy
 seaborn
 toml
