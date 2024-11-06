@@ -1,0 +1,34 @@
+BootStrap: docker
+From: mambaorg/micromamba:bookworm
+
+%labels
+    Author asmith
+    Version 1.0
+
+%post
+
+    apt-get update
+    apt-get install -y build-essential gcc g++ zlib1g-dev libbz2-dev liblzma-dev libcurl4-openssl-dev libssl-dev
+
+    # Install dependencies
+    cd /opt
+    micromamba install -y -n base -c conda-forge -c bioconda samtools tabix bcftools bedtools uv python git 
+    export PATH="/opt/conda/bin:$PATH"
+
+    # Clone the repository
+    git clone https://github.com/alsmith151/plotnado.git
+    cd plotnado
+
+    # Install the package
+    uv pip install . --system
+
+    # Clean up
+    cd ..
+    rm -rf plotnado
+    apt-get remove -y git gcc g++ build-essential
+
+%environment
+    export PATH=/usr/local/bin:/opt/conda/bin:$PATH
+
+%test
+    echo "Container built successfully!"
