@@ -12,7 +12,7 @@ From: mambaorg/micromamba:bookworm
 
     # Install dependencies
     cd /opt
-    micromamba install -y -n base -c conda-forge -c bioconda samtools tabix bcftools bedtools uv python git 
+    micromamba install -y -n base -c conda-forge -c bioconda samtools tabix bcftools bedtools uv python git iced
     export PATH="/opt/conda/bin:$PATH"
 
     # Clone the repository
