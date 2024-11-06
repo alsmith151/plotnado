@@ -217,7 +217,7 @@ class MatrixCapcruncher(cb.Cool):
 
         elif normalization_method == "ice":
             import iced
-            
+
             matrix = self.get_matrix(coordinates)
             matrix = np.nan_to_num(matrix)
             # matrix = iced.filter.filter_low_counts(matrix, percentage=0.04)
@@ -226,6 +226,8 @@ class MatrixCapcruncher(cb.Cool):
             )  # Get iced matrix
 
         elif normalization_method == "icen_cis":
+            import iced
+
             matrix = self.get_matrix(coordinates)
             matrix = np.nan_to_num(matrix)
             matrix_ice = iced.normalization.ICE_normalization(
