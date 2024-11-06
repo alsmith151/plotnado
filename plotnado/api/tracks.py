@@ -1128,6 +1128,11 @@ class BedSimple(cb.BED):
 
         ax.set_xlim(gr.start, gr.end)
         ax.set_ylim(0, 1)
+    
+    def adjust_plot(self, ax, gr: GenomeRange):
+        ax.set_xlim(gr.start, gr.end)
+        ymin, ymax = ax.get_ylim()
+        return ymin, ymax
 
 
 class BedMemory(Track):
