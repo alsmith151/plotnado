@@ -39,6 +39,7 @@ class Autoscaler:
         gr2 (cb.GenomeRange, optional): Second genome range for 2D data. Defaults to None.
 
     """
+
     def __init__(
         self,
         tracks: List[cb.Track],
@@ -130,12 +131,12 @@ class Scaler:
     @property
     def scaling_factors(self) -> np.ndarray:
         if self.method == "max":
-            arr =  [np.nanmax(d, axis=0) for d in self.data]
+            arr = [np.nanmax(d, axis=0) for d in self.data]
         elif self.method == "mean":
-            arr =  [np.nanmean(d, axis=0) for d in self.data]
+            arr = [np.nanmean(d, axis=0) for d in self.data]
         elif self.method == "total":
-            arr =  [np.nansum(d, axis=0) for d in self.data]
-        
+            arr = [np.nansum(d, axis=0) for d in self.data]
+
         return np.array(arr) / np.max(arr)
 
 
@@ -413,10 +414,16 @@ class BigwigFragment(cb.BigWig):
         ax.set_ylim(0, data["value"].max())
         ymin, ymax = self.adjust_plot(ax, gr)
 
-        if self.properties.get("show_data_range") == "yes" and not self.properties.get('is_subtrack'):
-            self.plot_data_range(ax, ymin, ymax, self.properties["data_range_style"], gr)
-        
-        if self.properties.get("label_on_track") and not self.properties.get('is_subtrack'):
+        if self.properties.get("show_data_range") == "yes" and not self.properties.get(
+            "is_subtrack"
+        ):
+            self.plot_data_range(
+                ax, ymin, ymax, self.properties["data_range_style"], gr
+            )
+
+        if self.properties.get("label_on_track") and not self.properties.get(
+            "is_subtrack"
+        ):
             self.plot_label()
 
     def plot(self, ax, gr, **kwargs):
@@ -592,10 +599,14 @@ class BigwigFragmentCollection(Track):
         ax.set_xlim(gr.start, gr.end)
         ax.set_ylim(ymin, ymax)
 
-        if not self.properties.get('is_subtrack'):
-            self.plot_data_range(ax, ymin, ymax, self.properties["data_range_style"], gr)
+        if not self.properties.get("is_subtrack"):
+            self.plot_data_range(
+                ax, ymin, ymax, self.properties["data_range_style"], gr
+            )
 
-        if self.properties.get("label_on_track") and not self.properties.get('is_subtrack'):
+        if self.properties.get("label_on_track") and not self.properties.get(
+            "is_subtrack"
+        ):
             self.plot_label()
 
     def plot_data_range(self, ax, ymin, ymax, data_range_style, gr: cb.GenomeRange):
@@ -607,10 +618,9 @@ class BigwigFragmentCollection(Track):
                 self.plot_yaxis_range(ax, y_ax)
             except AttributeError:
                 self.plot_data_range(ax, ymin, ymax, "text", gr)
-    
+
     def _plot_text_range(self, ax, ymin, ymax, gr: cb.GenomeRange):
         plot_text_range(self, ax, ymin, ymax, gr)
-
 
     def plot_yaxis_range(self, plot_axis, y_ax):
         # """
@@ -702,7 +712,7 @@ class BigwigFragmentCollectionOverlay(Track):
             track.properties["show_data_range"] = "no"
             track.properties["data_range_style"] = "no"
             track.properties["label_on_track"] = "no"
-            track.properties['is_subtrack'] = True
+            track.properties["is_subtrack"] = True
 
         self.properties = {"collections": collections}
         self.properties.update(kwargs)
@@ -733,11 +743,11 @@ def plot_bigwig_scaled(track, ax, gr, scale_factor, **kwargs):
     data = track.fetch_plot_data(gr, **kwargs)
     if isinstance(data, pd.DataFrame):
         # ['pos', 'score']
-        if 'pos' in data:
-            data = data['pos'].to_numpy(), data['score'].to_numpy()
+        if "pos" in data:
+            data = data["pos"].to_numpy(), data["score"].to_numpy()
         # ['score']
         else:
-            data = np.linspace(gr.start, gr.end, len(data)), data['score'].to_numpy()
+            data = np.linspace(gr.start, gr.end, len(data)), data["score"].to_numpy()
     elif isinstance(data, np.ndarray):
         # 1d or 2d ndarray
         if len(data.shape) == 1:
@@ -756,8 +766,6 @@ def plot_bigwig_scaled(track, ax, gr, scale_factor, **kwargs):
     track.plot_label()
 
 
-
-
 class BigwigOverlay(Track):
     """
     Overlay multiple bigwig files on top of each other.
@@ -768,7 +776,6 @@ class BigwigOverlay(Track):
     """
 
     def __init__(self, collection: List[Union[cb.BigWig, str]], **kwargs):
-
         _collection = []
         for obj in collection:
             if isinstance(obj, str):
@@ -838,10 +845,12 @@ class BigwigOverlay(Track):
 
         return data
 
-
-    def _get_scaling_factors(self, gr: GenomeRange, method: Literal['n_cis', 'mean', 'max', 'min']):
-        if method == 'n_cis':
+    def _get_scaling_factors(
+        self, gr: GenomeRange, method: Literal["n_cis", "mean", "max", "min"]
+    ):
+        if method == "n_cis":
             import pyBigWig
+
             chrom = gr.chrom
             if isinstance(self.collection[0], cb.BigWig):
                 bw_file = self.collection[0].properties["file"]
@@ -860,9 +869,7 @@ class BigwigOverlay(Track):
 
         return scaling_factors
 
-
     def plot(self, ax, gr: GenomeRange, **kwargs):
-
         scaler = Autoscaler(tracks=self.collection, gr=gr)
         min_value = (
             scaler.min_value
@@ -876,20 +883,23 @@ class BigwigOverlay(Track):
         )
 
         if self.properties.get("scale_method"):
-            scaling_factors = self._get_scaling_factors(gr, self.properties.get("scale_method"))
-            for ii, (bw, scaling_factor) in enumerate(zip(self.collection, scaling_factors)):
+            scaling_factors = self._get_scaling_factors(
+                gr, self.properties.get("scale_method")
+            )
+            for ii, (bw, scaling_factor) in enumerate(
+                zip(self.collection, scaling_factors)
+            ):
                 bw.properties["min_value"] = min_value
                 bw.properties["max_value"] = max_value
-                bw.properties["show_data_range"] = 'no'
-                bw.properties["data_range_style"] = 'no'
+                bw.properties["show_data_range"] = "no"
+                bw.properties["data_range_style"] = "no"
                 bw.properties["scaling_factor"] = scaling_factor
                 plot_bigwig_scaled(bw, ax, gr, scaling_factor, **kwargs)
 
         else:
-
             for ii, bw in enumerate(self.collection):
-                bw.properties["show_data_range"] = 'no'
-                bw.properties["data_range_style"] = 'no'
+                bw.properties["show_data_range"] = "no"
+                bw.properties["data_range_style"] = "no"
                 bw.properties["min_value"] = min_value
                 bw.properties["max_value"] = max_value
                 bw.properties["is_subtrack"] = True
@@ -902,15 +912,20 @@ class BigwigOverlay(Track):
 
         self._plot_text_range(ax, min_value, max_value, gr)
         self.plot_label()
-    
+
     def _plot_text_range(self, ax, ymin, ymax, gr: cb.GenomeRange):
         plot_text_range(self, ax, ymin, ymax, gr)
 
-
     def plot_label(self):
-
-        if self.properties.get("label_on_track") not in ['True', 'yes', 'T', 'Y', '1', True, 1]:
-
+        if self.properties.get("label_on_track") not in [
+            "True",
+            "yes",
+            "T",
+            "Y",
+            "1",
+            True,
+            1,
+        ]:
             if (
                 hasattr(self, "label_ax")
                 and self.label_ax is not None
@@ -946,21 +961,23 @@ class BigwigOverlay(Track):
                         horizontalalignment="left",
                         verticalalignment="center",
                     )
-    
+
     def adjust_plot(self, ax, gr: GenomeRange):
         ax.set_xlim(gr.start, gr.end)
         ymin, ymax = ax.get_ylim()
-        if 'max_value' in self.properties and self.properties['max_value'] != 'auto':
-            ymax = self.properties['max_value']
-        if 'min_value' in self.properties and self.properties['min_value'] != 'auto':
-            ymin = self.properties['min_value']
+        if "max_value" in self.properties and self.properties["max_value"] != "auto":
+            ymax = self.properties["max_value"]
+        if "min_value" in self.properties and self.properties["min_value"] != "auto":
+            ymin = self.properties["min_value"]
 
-        if 'orientation' in self.properties and self.properties['orientation'] == 'inverted':
+        if (
+            "orientation" in self.properties
+            and self.properties["orientation"] == "inverted"
+        ):
             ax.set_ylim(ymax, ymin)
         else:
             ax.set_ylim(ymin, ymax)
         return ymin, ymax
-        
 
 
 class BigwigSubtraction(cb.BigWig):
@@ -1061,7 +1078,7 @@ class BigwigSubtraction(cb.BigWig):
                 self.plot_data_range(
                     ax, ymin, ymax, self.properties["data_range_style"], gr
                 )
-            
+
             self.plot_label()
 
     def plot_label(self):
@@ -1083,6 +1100,7 @@ class BedSimple(cb.BED):
     Args:
         file (os.PathLike): Path to the bed file
     """
+
     def __init__(self, file: str, **kwargs):
         self.file = file
         self.properties = dict()
@@ -1091,11 +1109,21 @@ class BedSimple(cb.BED):
 
     def fetch_data(self, gr):
         bt = BedTool(self.file)
-        bt_tabix = bt.tabix(force=True)
 
-        return bt_tabix.tabix_intervals(
-            f"{gr.chrom}:{gr.start}-{gr.end}"
-        ).to_dataframe()
+        try:
+            bt_tabix = bt.tabix(force=True)
+            return bt_tabix.tabix_intervals(
+                f"{gr.chrom}:{gr.start}-{gr.end}"
+            ).to_dataframe()
+
+        except OSError: # Handle the case where the bed file is not tabix indexed or the user does not have permission to write to the directory
+            import tempfile
+            with tempfile.NamedTemporaryFile() as tmp:
+                bt.saveas(tmp.name)
+                bt_tabix = BedTool(tmp.name).tabix(force=True)
+                return bt_tabix.tabix_intervals(
+                    f"{gr.chrom}:{gr.start}-{gr.end}"
+                ).to_dataframe()
 
     def plot(self, ax, gr, **kwargs):
         data = self.fetch_data(gr)
@@ -1128,7 +1156,7 @@ class BedSimple(cb.BED):
 
         ax.set_xlim(gr.start, gr.end)
         ax.set_ylim(0, 1)
-    
+
     def adjust_plot(self, ax, gr: GenomeRange):
         ax.set_xlim(gr.start, gr.end)
         ymin, ymax = ax.get_ylim()
@@ -1210,6 +1238,7 @@ class ScaleBar(Track):
     """
     A scale bar that shows the length of the genomic region.
     """
+
     def __init__(self, **kwargs):
         self.properties = dict()
         self.properties["name"] = "Scale"
@@ -1278,6 +1307,7 @@ class GenomicAxis(cb.XAxis):
     """
     A genomic axis that shows the genomic coordinates of the region.
     """
+
     def __init__(self, **kwargs):
         super(GenomicAxis, self).__init__()
         self.properties.update(kwargs)
@@ -1310,6 +1340,7 @@ class MatrixCapcruncherAverage(MatrixCapcruncher):
         **kwargs: Additional arguments to pass to the track
 
     """
+
     def __init__(
         self,
         matricies: List[MatrixCapcruncher],
@@ -1372,6 +1403,7 @@ class HighlightsFromFile(cb.HighLightsFromFile):
         file (os.PathLike): Path to the bed file
         **kwargs: Additional arguments to pass to the track
     """
+
     def plot(self, ax, gr: cb.GenomeRange, **kwargs):
         from matplotlib.patches import Rectangle
 
