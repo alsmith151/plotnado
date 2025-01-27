@@ -1112,24 +1112,26 @@ class BedSimple(cb.BED):
 
         try:
             bt_tabix = bt.tabix(force=True)
-            return bt_tabix.tabix_intervals(
+            intervals = bt_tabix.tabix_intervals(
                 f"{gr.chrom}:{gr.start}-{gr.end}"
-            ).to_dataframe()
+            )
 
         except OSError: # Handle the case where the bed file is not tabix indexed or the user does not have permission to write to the directory
             import tempfile
             with tempfile.NamedTemporaryFile() as tmp:
                 bt.saveas(tmp.name)
                 bt_tabix = BedTool(tmp.name).tabix(force=True)
-                return bt_tabix.tabix_intervals(
+                intervals = bt_tabix.tabix_intervals(
                     f"{gr.chrom}:{gr.start}-{gr.end}"
-                ).to_dataframe()
+                )
+        
+        return intervals
 
     def plot(self, ax, gr, **kwargs):
         data = self.fetch_data(gr)
         y_midpoint = 0.5
 
-        for interval in data.itertuples():
+        for interval in data.intervals:
             pg = Polygon(
                 [
                     (interval.start, y_midpoint - 0.1),
