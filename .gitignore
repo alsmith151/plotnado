@@ -17,3 +17,10 @@ plot_mcc.ipynb
 test.ipynb
 vs-mcc-plots.ipynb
 site/*
+H3K79me2.toml
+test.def
+.ipython/profile_default/history.sqlite
+.ipython/profile_default/startup/README
+.jupyter/migrated
+.jupyter/labconfig/page_config.json
+.local/share/jupyter/runtime/jupyter_cookie_secret

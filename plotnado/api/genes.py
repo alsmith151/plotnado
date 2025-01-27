@@ -225,7 +225,6 @@ class PlotGenesPlotnado(PlotGenes):
 
             elif self.label_location == "mid":
                 self._draw_label_mid(bed, gr, ax, ypos)
-            
 
     def _draw_label_right(self, bed, gr, ax, ypos):
         ax.text(
@@ -236,7 +235,7 @@ class PlotGenesPlotnado(PlotGenes):
             verticalalignment="center",
             fontproperties=self.fp,
         )
-    
+
     def _draw_label_mid(self, bed, gr, ax, ypos):
         # Intersect the gene with the genomic range
         start = max(bed.start, gr.start)
@@ -253,7 +252,6 @@ class PlotGenesPlotnado(PlotGenes):
             verticalalignment="center",
             fontproperties=self.fp,
         )
-
 
     def _draw_gene_with_introns(
         self, ax, bed, ypos, rgb, edgecolor, arrow_color="blue"
@@ -404,10 +402,48 @@ class Genes(BedBase, PlotGenesPlotnado, FetchBed):
         PlotGenesPlotnado.__init__(self)
 
         self.min_gene_length = min_gene_length
-        self.bgz_file = build_bed_index(file)
+
+    def _fetch_intervals(self, file: str, gr: GenomeRange):
+        from pybedtools import BedTool
+
+        bt = BedTool(file)
+        try:
+            bt_tabix = bt.tabix(force=True)
+            intervals = bt_tabix.tabix_intervals(f"{gr.chrom}:{gr.start}-{gr.end}")
+
+        except OSError:  # Handle the case where the bed file is not tabix indexed or the user does not have permission to write to the directory
+            import tempfile
+
+            with tempfile.NamedTemporaryFile() as tmp:
+                bt.saveas(tmp.name)
+                bt_tabix = BedTool(tmp.name).tabix(force=True)
+                intervals = bt_tabix.tabix_intervals(f"{gr.chrom}:{gr.start}-{gr.end}")
+
+        if len(intervals) == 0:
+            log.warning(
+                f"No intervals were found for file {file} in the interval plotted ({gr}).\n"
+            )
+
+        df = intervals.to_dataframe()
+        df = df.rename(
+            columns={
+                "itemRgb": "rgb",
+                "blockCount": "block_count",
+                "blockSizes": "block_sizes",
+                "blockStarts": "block_starts",
+                "thickStart": "thick_start",
+                "thickEnd": "thick_end",
+            }
+        )
+
+        df['block_starts'] = df['block_starts'].apply(lambda x: list(map(int, x.split(','))))
+        df['block_sizes'] = df['block_sizes'].apply(lambda x: list(map(int, x.split(','))))
+
+        return df
+                                                    
 
     def fetch_data(self, gr: GenomeRange, **kwargs):
-        intervals = self.fetch_intervals(self.bgz_file, gr)
+        intervals = self._fetch_intervals(self.properties["file"], gr)
         intervals = intervals.query("(end - start) > @self.min_gene_length")
         return intervals
 
