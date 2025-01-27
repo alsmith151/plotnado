@@ -367,7 +367,19 @@ class PlotGenesPlotnado(PlotGenes):
                     )
 
 
-class Genes(BedBase, PlotGenesPlotnado, FetchBed):
+class BedBasePlotnado(BedBase):
+    def __init__(self, file, **kwargs):
+        properties = BedBase.DEFAULT_PROPERTIES.copy()
+        properties.update({
+            'file': file,
+            **kwargs
+        })
+        super().__init__(properties)
+        
+        self.bgz_file = None 
+
+
+class Genes(BedBasePlotnado, PlotGenesPlotnado, FetchBed):
     DEFAULT_PROPERTIES = {
         "labels": "on",
     }
