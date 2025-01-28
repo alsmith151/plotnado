@@ -379,7 +379,7 @@ class BedBasePlotnado(BedBase):
         self.bgz_file = None 
 
 
-class Genes(BedBasePlotnado, PlotGenesPlotnado, FetchBed):
+class Genes(BedBase, PlotGenesPlotnado, FetchBed):
     DEFAULT_PROPERTIES = {
         "labels": "on",
     }
