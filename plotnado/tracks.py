@@ -18,6 +18,28 @@ from pandera.typing import Index, DataFrame, Series
 import matplotlib
 
 
+def clean_axis(ax: matplotlib.axes.Axes) -> None:
+    """
+    Clean the axis:
+    - Remove the ticks
+    - Remove the spines
+
+    Args:
+        ax (matplotlib.axes.Axes): The axis object
+    """
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_visible(False)
+    ax.spines["bottom"].set_visible(False)
+    ax.xaxis.set_major_locator(matplotlib.ticker.NullLocator())
+    ax.yaxis.set_major_locator(matplotlib.ticker.NullLocator())
+
+
+
+
+
 class GenomicRegion(BaseModel):
     chromosome: str
     start: int
@@ -119,7 +141,6 @@ class BigwigAesthetics(BaseModel):
     # Hist plot aesthetics
     linewidth: float = 1.0
 
-    
     min_value: Optional[float] = None
     max_value: Optional[float] = None
 
@@ -274,6 +295,11 @@ class Labeller(BaseModel):
             self._plot_title(ax, gr)
         if self.plot_scale:
             self._plot_scale(ax, gr)
+        
+        # Clean the axis
+        clean_axis(ax)
+
+        
 
 
 
