@@ -32,7 +32,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install uv
-        uv pip install . pytest pytest-cov
+        uv pip install . pytest pytest-cov --system
     - name: Run tests
       run: |
         pytest tests/ -v --cov=plotnado
