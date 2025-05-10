@@ -1,4 +1,4 @@
-coolbox @ git+https://github.com/GangCaoLab/CoolBox.git
+# coolbox @ git+https://github.com/GangCaoLab/CoolBox.git
 cooler<=0.10.2
 cython<=3.0.10
 h5py
