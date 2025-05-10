@@ -380,7 +380,7 @@ class BigWigTrack(Track):
         # Fetch the data
         data = self.fetch_data(gr)
 
-        # Plot the dataz
+        # Plot the data
         if self.aesthetics.style == 'std':
             self._plot_stairs(ax, gr, data)
         
