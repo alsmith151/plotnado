@@ -1,5 +1,8 @@
 # PlotNado
 
+[![Tests](https://github.com/alsmith151/plotnado/actions/workflows/run_tests.yml/badge.svg)](https://github.com/alsmith151/plotnado/actions/workflows/run_tests.yml)
+[![Docs](https://github.com/alsmith151/plotnado/actions/workflows/build_docs.yml/badge.svg)](https://github.com/alsmith151/plotnado/actions/workflows/build_docs.yml)
+
 PlotNado is a Python package that provides a simple interface to create genome browser plots. It's a wrapper around the CoolBox library with a focus on simplicity and ease of use. It is designed to be used in Jupyter notebooks, but can also be used as a CLI.
 
 ## Installation

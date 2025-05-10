@@ -3,6 +3,11 @@ from collections import OrderedDict, defaultdict
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional, Union
+import os
+import subprocess
+from pathlib import Path
+import tempfile
+import shutil
 
 import matplotlib.axes
 import matplotlib.axis
@@ -36,6 +41,7 @@ def clean_axis(ax: matplotlib.axes.Axes) -> None:
     ax.xaxis.set_major_locator(matplotlib.ticker.NullLocator())
     ax.yaxis.set_major_locator(matplotlib.ticker.NullLocator())
 
+
 def get_human_readable_number_of_bp(bp: int) -> str:
     """Converts integer into human readable basepair number"""
     if bp < 1000:
@@ -46,7 +52,6 @@ def get_human_readable_number_of_bp(bp: int) -> str:
         bp = f"{bp / 1e6: .0f} mb"
 
     return bp
-
 
 
 class GenomicRegion(BaseModel):
@@ -169,25 +174,51 @@ class ScaleBarAesthetics(BaseModel):
     title: str = "Scale"
 
 
+class GenesAesthetics(BaseModel):
+    # Plot style
+    style: Literal["std"] = "std"
+    # General aesthetics
+    color: str = "black"
+    fill: bool = True
+    alpha: float = 1.0
+
+    # Genes aesthetics
+    display: Literal["collapsed", "expanded"] = "collapsed"
+    minimum_gene_length: int = 0
+
+    # Plot aesthetics
+    max_number_of_rows: int = 4
+    interval_height: float = 0.5  # fraction of the y-axis
+
+
+
 class Aesthetics(BaseModel):
     """Generic class for track aesthetics"""
+
     aesthetics_type: str
-    
+
     @classmethod
     def bigwig(cls, **kwargs) -> BigwigAesthetics:
         """Create BigwigAesthetics instance"""
         return BigwigAesthetics(**kwargs)
-    
+
     @classmethod
     def scalebar(cls, **kwargs) -> ScaleBarAesthetics:
         """Create ScaleBarAesthetics instance"""
         return ScaleBarAesthetics(**kwargs)
 
+    @classmethod
+    def genes(cls, **kwargs) -> GenesAesthetics:
+        """Create GenesAesthetics instance"""
+        return GenesAesthetics(**kwargs)
+
 
 class Track(BaseModel, ABC):
     title: Optional[str] = None
     data: Optional[Path | pd.DataFrame] = None
-    aesthetics: Optional[Any] = None  # Changed from Aesthetics enum to Any to support different aesthetic types
+    aesthetics: Optional[Any] = (
+        None  # Changed from Aesthetics enum to Any to support different aesthetic types
+    )
 
     class Config:
         arbitrary_types_allowed = True
@@ -202,7 +233,7 @@ class Track(BaseModel, ABC):
         pass
 
 
-class Labeller(BaseModel):
+class TrackLabeller(BaseModel):
     gr: GenomicRegion
     y_min: float
     y_max: float
@@ -413,7 +444,7 @@ class BigWigTrack(Track):
         ax.set_ylim(ymin=self.y_min, ymax=self.y_max)
 
         # Plot the labels
-        labeller = Labeller(
+        labeller = TrackLabeller(
             gr=gr,
             y_min=self.y_min,
             y_max=self.y_max,
@@ -431,6 +462,7 @@ class ScaleBar(Track):
     """
     A scale bar that shows the length of the genomic region.
     """
+
     title: str = "ScaleBar"
     data: Optional[np.ndarray] = None
     aesthetics: ScaleBarAesthetics = ScaleBarAesthetics()
@@ -442,40 +474,38 @@ class ScaleBar(Track):
     def _get_appropriate_scale(length):
         """
         Determine an appropriate scale for a genomic region of given length.
-        
+
         Returns a round number (power of 10) that's roughly 10-25% of the total length,
         which works well for scale bars.
-        
+
         Args:
             length (int): Length of the genomic region in base pairs
-            
+
         Returns:
             float: Appropriate scale distance in base pairs
         """
         if length <= 0:
             raise ValueError("Length must be positive")
-            
+
         # Get order of magnitude of the length
         magnitude = 10 ** int(np.floor(np.log10(length)))
-        
+
         # Target scale is ~10-25% of total length
         target_ratio = 0.2  # 20% of total length
         target_scale = length * target_ratio
-        
+
         # Find the closest "round" number (1, 2, or 5 times a power of 10)
         candidates = [magnitude * 0.1, magnitude * 0.2, magnitude * 0.5, magnitude]
-        
+
         # Choose the candidate closest to our target scale
         scale = min(candidates, key=lambda x: abs(x - target_scale))
-        
+
         # Ensure scale is at least 1bp and not larger than the region itself
         scale = max(1, min(scale, length))
-        
+
         return scale
-    
 
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
-
         position = self.aesthetics.position
         y_midpoint = 0.5
 
@@ -519,3 +549,406 @@ class ScaleBar(Track):
 
         # Clean the axis
         clean_axis(ax)
+
+
+def tabix_gtf(file: Path) -> Path:
+    """
+    Create a tabix index for a GTF file using pathlib and subprocess without shell=True.
+    """
+    # Define temporary and output file paths
+    sorted_file = file.parent / f"{file.name}.sorted"
+    gz_file = file.parent / f"{file.name}.gz"
+
+    # Sort the file and write output to sorted_file
+    with sorted_file.open("w") as sf:
+        subprocess.run(
+            ["sort", "-k1,1", "-k4,4n", str(file)],
+            stdout=sf,
+            check=True,
+        )
+
+    # Compress the sorted file into gz_file using bgzip
+    with gz_file.open("wb") as gf:
+        subprocess.run(
+            ["bgzip", "-c", str(sorted_file)],
+            stdout=gf,
+            check=True,
+        )
+
+    # Create tabix index for the gzipped file
+    subprocess.run(
+        ["tabix", "-p", "gff", str(gz_file)],
+        check=True,
+    )
+
+    # Remove the sorted temporary file
+    sorted_file.unlink()
+
+    return gz_file
+
+
+def gtf_line_to_bed12_line(df: pd.DataFrame) -> pd.Series:
+    """
+    Convert a GTF line to a BED12 line.
+    Args:
+        df (pd.DataFrame): A dataframe containing the GTF line
+    Returns:
+        pd.Series: A series containing the BED12 line
+    """
+    # Sort the dataframe by start position
+    # and group by geneid
+    df = df.sort_values(["seqname", "start"])
+    geneid = df["geneid"].iloc[0]
+    exons = df.query('feature == "exon"')
+    chrom = df["seqname"].iloc[0]
+    start = str(df["start"].min())
+    end = str(df["end"].max())
+    strand = df["strand"].iloc[0]
+    thick_start = start if strand == "+" else end
+    thick_end = thick_start
+    color = "0,0,0"
+    block_count = str(exons.shape[0])
+    block_sizes = ",".join((exons["end"] - exons["start"]).values.astype(str))
+    block_starts = ",".join((exons["start"] - int(start)).astype(str))
+
+    return pd.Series(
+        {
+            "chrom": chrom,
+            "start": start,
+            "end": end,
+            "geneid": geneid,
+            "score": "0",
+            "strand": strand,
+            "thick_start": thick_start,
+            "thick_end": thick_end,
+            "color": color,
+            "block_count": block_count,
+            "block_sizes": block_sizes,
+            "block_starts": block_starts,
+        }
+    )
+
+
+class Genes(Track):
+    """
+    A track that shows the genes in a genomic region.
+    """
+
+    data: Optional[Path | pd.DataFrame] = None
+    genome: Optional[str] = None
+    aesthetics: GenesAesthetics = GenesAesthetics()
+
+
+    def fetch_data(self, gr: GenomicRegion) -> pd.DataFrame:
+        if self.data is None and self.genome is None:
+            raise ValueError("Either data or genome must be provided")
+        elif self.data is None:
+            # Data stored in a json based genes database within the package
+            data = self._fetch_genes_from_package(gr)
+        elif isinstance(self.data, Path):
+            fn_string = str(self.data)
+            if fn_string.endswith(".gtf.gz") or fn_string.endswith(".gtf"):
+                data = self._fetch_from_disk_gtf(gr)
+            elif fn_string.endswith(".bed.gz") or fn_string.endswith(".bed"):
+                data = self._fetch_from_disk_bed12(gr)
+            else:
+                raise ValueError(
+                    "Unsupported file format. Only .gtf and .bed files are supported."
+                )
+
+        elif isinstance(self.data, pd.DataFrame):
+            data = self.data
+
+        # Filter the data based on the minimum gene length to display. Avoid displaying genes that are too short.
+        data = data.query("end - start >= @self.minimum_gene_length")
+
+        return data
+
+    def _fetch_genes_from_package(self, gr: GenomicRegion) -> pd.DataFrame:
+        import importlib
+        import json
+
+        try:
+            # Read the genes files that are stored
+            bed_prefix = importlib.resources.files("plotnado.data.gene_bed_files")
+            bed_paths = bed_prefix / "genes.json"
+
+            # Read the json file that contains the mapping of gene names to bed files
+            with open(bed_paths) as f:
+                gene_files = json.load(f)
+        except FileNotFoundError:
+            raise FileNotFoundError(
+                "The genes database is not available. Please provide a data file."
+            )
+
+        if self.genome in gene_files:
+            return bed_prefix / gene_files[self.genome]
+        else:
+            raise ValueError(
+                f"Genome {self.genome} not found in the genes database. Please provide a data file."
+            )
+
+    def _fetch_from_disk_bed12(self, gr: GenomicRegion) -> pd.DataFrame:
+        """Fetch the data from disk"""
+
+        from pybedtools import BedTool
+
+        bt = BedTool(self.data)
+        try:
+            bt_tabix = bt.tabix(force=True)
+            intervals = bt_tabix.tabix_intervals(f"{gr.chrom}:{gr.start}-{gr.end}")
+
+        except OSError:  # Handle the case where the bed file is not tabix indexed or the user does not have permission to write to the directory
+            import tempfile
+
+            with tempfile.NamedTemporaryFile() as tmp:
+                bt.saveas(tmp.name)
+                bt_tabix = BedTool(tmp.name).tabix(force=True)
+                intervals = bt_tabix.tabix_intervals(f"{gr.chrom}:{gr.start}-{gr.end}")
+
+        df = intervals.to_dataframe()
+        df = df.rename(
+            columns={
+                "itemRgb": "rgb",
+                "blockCount": "block_count",
+                "blockSizes": "block_sizes",
+                "blockStarts": "block_starts",
+                "thickStart": "thick_start",
+                "thickEnd": "thick_end",
+            }
+        )
+
+        df["block_starts"] = df["block_starts"].apply(
+            lambda x: list(map(int, x.split(",")))
+        )
+        df["block_sizes"] = df["block_sizes"].apply(
+            lambda x: list(map(int, x.split(",")))
+        )
+
+        return df
+
+    def _fetch_from_disk_gtf(self, gr: GenomicRegion) -> pd.DataFrame:
+        """Fetch the data from disk if the file is a gtf file"""
+
+        if (
+            not self.data.endswith(".gz")
+            and not Path(self.data).with_suffix(".gz.tbi").exists()
+        ):
+            try:
+                data = tabix_gtf(self.data)
+            except OSError:
+                # Assume that the user does not have permission to write to the directory
+                # and the file is not tabix indexed
+                tempfile = tempfile.NamedTemporaryFile(delete=False)
+                shutil.copy(self.data, tempfile.name)
+                data = tabix_gtf(tempfile.name)
+        else:
+            data = self.data
+
+        # Use pysam to read the gtf file
+        import pysam
+
+        gtf = pysam.TabixFile(data)
+
+        records = []
+        for record in gtf.fetch(gr.chromosome, gr.start, gr.end, parser=pysam.asGTF()):
+            records.append(record)
+
+        df = pd.DataFrame(records)
+        df = df.rename(
+            columns={
+                "seqname": "chrom",
+                "start": "start",
+                "end": "end",
+                "strand": "strand",
+                "feature": "feature",
+                "attribute": "attribute",
+            }
+        )
+
+        df["geneid"] = df["attributes"].str.extract(r"gene_id\s?\"(.*?)\";.*")
+        df = df.query('feature.isin(["5UTR", "3UTR", "exon"])')
+        df = df.loc[lambda df: df["chrom"].str.contains(r"^chr[xXYy]?[1-9]?[0-9]?$")]
+
+        records = []
+        for gene, df in df.sort_values(["chrom", "start"]).groupby("geneid"):
+            bed12_line = gtf_line_to_bed12_line(df)
+            records.append(bed12_line)
+
+        df = pd.DataFrame(records)
+
+        df = df.rename(
+            columns={
+                "chrom": "chrom",
+                "start": "start",
+                "end": "end",
+                "geneid": "geneid",
+                "score": "score",
+                "strand": "strand",
+                "thick_start": "thick_start",
+                "thick_end": "thick_end",
+                "color": "color",
+                "block_count": "block_count",
+                "block_sizes": "block_sizes",
+                "block_starts": "block_starts",
+            }
+        )
+
+        return df
+
+    def _compute_extended_end_bp(self, gene) -> int:
+        """
+        Compute gene end position extended by label padding in base pairs.
+        """
+        if self.is_draw_labels and self.label_location == "right":
+            label_chars = len(gene.name) + 2
+            padding_bp = label_chars * self.len_w
+        else:
+            padding_bp = 2 * self.small_relative
+        return int(gene.end + padding_bp)
+
+
+    def _allocate_row_index(
+        self, row_last_positions: List[int], start_bp: int, end_bp: int
+    ) -> int:
+        """
+        Allocate a row index where the new feature does not overlap existing ones.
+        Updates row_last_positions in place and returns the chosen index.
+        """
+        for idx, last_end in enumerate(row_last_positions):
+            if last_end < start_bp:
+                row_last_positions[idx] = end_bp
+                return idx
+        row_last_positions.append(end_bp)
+        return len(row_last_positions) - 1
+
+
+    def _draw_gene_feature(
+        self, ax, gene, ypos: float, fill_color, edge_color
+    ) -> None:
+        """
+        Draw a gene feature using intron representation or simple blocks for BED3/6.
+        """
+        bed_type = self.properties.get("bed_type")
+        if bed_type == "bed12":
+            self._draw_gene_with_introns(
+                ax,
+                gene,
+                ypos,
+                fill_color,
+                edge_color,
+                arrow_color=self.properties.get("arrow_color", "black"),
+            )
+        else:
+            self.draw_gene_simple(ax, gene, ypos, fill_color, edge_color)
+
+    
+
+    def _estimate_label_char_width(self, fig_width: int, region_start: int, region_end: int, char: str = 'W'):
+        """
+        Estimate the width of a label character (default: 'W') in base pairs
+        for gene visualization purposes.
+
+        Parameters:
+            fig_width (int): Width of the figure in inches.
+            region_start (int): Start coordinate of the genomic region.
+            region_end (int): End coordinate of the genomic region.
+            char (str): Character to estimate width for (default is 'W').
+
+        Returns:
+            float: Estimated width of the character in base pairs.
+        """
+        if fig_width <= 0:
+            raise ValueError("Figure width must be greater than zero.")
+        if region_end <= region_start:
+            raise ValueError("Region end must be greater than region start.")
+
+        pt_to_inch = 1.0 / 72.27
+        font_size_pt = self.properties.get("fontsize", 10)
+        char_width_ratio = 1.0  # Approximate width/height ratio for 'W'
+
+        char_width_in = font_size_pt * pt_to_inch * char_width_ratio
+        bp_per_inch = (region_end - region_start) / fig_width
+        self.len_w = char_width_in * bp_per_inch
+
+        return self.len_w
+    
+
+    def plot_genes(
+    self,
+    ax,
+    genome_range: GenomicRegion,
+    ) -> None:
+        """
+        Render gene features along a genomic range on the given Axes.
+
+        Steps:
+        1. Configure plotting parameters.
+        2. Compute character width for labels (in bp).
+        3. Assign non-overlapping rows for features.
+        4. Draw each gene and its label.
+        5. Adjust axis limits and scaling.
+
+        Args:
+            ax: matplotlib Axes to draw on.
+            genome_range: Genomic interval defining the plotting region.
+            overlapping_genes: DataFrame of overlapping gene records.
+        """
+        # Fetch the data
+        overlapping_genes = self.fetch_data(genome_range)
+
+        # Estimate label-character width in bp
+        fig_width = ax.get_figure().get_figwidth()
+        self._estimate_label_char_width(fig_width, region_start=genome_range.start, region_end=genome_range.end)
+
+        max_rows_allowed = self.aesthetics.max_number_of_rows
+        row_last_positions: List[int] = []
+        highest_ypos = 0
+        self.gene_count = 0
+
+        for gene in overlapping_genes.itertuples():
+            self.gene_count += 1
+            extended_end_bp = self._compute_extended_end_bp(gene)
+            row_index = self._allocate_row_index(row_last_positions, gene.start, extended_end_bp)
+            ypos = self.get_y_pos(row_index)
+
+            # Skip genes if exceeding allowed rows
+            if max_rows_allowed and row_index >= max_rows_allowed:
+                logger.warning(
+                    f"Gene {gene.geneid} exceeds maximum allowed rows ({max_rows_allowed})."
+                )
+                continue
+
+            highest_ypos = max(highest_ypos, ypos)
+
+            # Draw gene feature and label
+            fill_color, edge_color = self.get_rgb_and_edge_color(gene)
+            self._draw_gene_feature(ax, gene, ypos, fill_color, edge_color)
+            # self.draw_label(gene, genome_range, ax, ypos)
+
+        if self.gene_count == 0:
+            logger.warning(
+                f"No genes found in the genomic range {genome_range.chromosome}:{genome_range.start}-{genome_range.end}."
+            )
+
+            # Set axis limits to avoid empty plot
+            ax.set_ylim(0, 1)
+            ax.set_xlim(genome_range.start, genome_range.end)
+            clean_axis(ax)
+            return None
+
+        # Compute axis limits
+        if max_rows_allowed:
+            ymin = float(max_rows_allowed) * self.row_scale
+            self.current_row_num = max_rows_allowed
+        else:
+            ymin = highest_ypos + self.aesthetics.interval_height
+            self.current_row_num = len(row_last_positions)
+        ymax = 0
+
+        ax.set_ylim(ymin, ymax)
+        if self.aesthetics.display == "collapsed":
+            ax.set_ylim(-5, 105)
+        ax.set_xlim(genome_range.start, genome_range.end)
+
+
