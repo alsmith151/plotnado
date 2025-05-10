@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.12"]
 
     steps:
     - uses: actions/checkout@v3
@@ -31,23 +31,8 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        python -m pip install pytest pytest-cov
-        # Install numpy and cython first as they're required for building some dependencies
-        pip install numpy cython
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        
-        # Install ICED (for HiC matrix balancing) as done in the docs workflow
-        git clone https://github.com/hiclib/iced.git
-        cd iced
-        for fn in $(find . -iname "*.pyx"); do cython $fn; done
-        pip install . -v
-        cd ..
-        rm -rf iced
-        
-        # Install the package itself in development mode
-        pip install -e . -v
-
+        pip install uv
+        uv pip install . pytest pytest-cov
     - name: Run tests
       run: |
         pytest tests/ -v --cov=plotnado
