@@ -175,7 +175,7 @@ class TestTrackLabeller:
         args, kwargs = mock_ax.text.call_args
         assert args[0] == 1010  # gr.start + (0.01 * gr.length)
         assert args[1] == 0.8  # labeller.y_delta * labeller.scale_height
-        assert args[2] == "[ 0.5 - 1.5 ]"
+        assert args[2] == "[ 0.50 - 1.50 ]"
         assert kwargs['horizontalalignment'] == "left"
         assert kwargs['verticalalignment'] == "top"
 
@@ -205,7 +205,7 @@ class TestTrackLabeller:
         args, kwargs = mock_ax.text.call_args
         assert args[0] == 1990  # gr.end - (0.01 * gr.length)
         assert args[1] == 0.8  # labeller.y_delta * labeller.scale_height
-        assert args[2] == "[ 0.5 - 1.5 ]"
+        assert args[2] == "[ 0.50 - 1.50 ]"
         assert kwargs['horizontalalignment'] == "right"
         assert kwargs['verticalalignment'] == "top"
 
