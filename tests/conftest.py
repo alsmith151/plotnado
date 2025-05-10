@@ -5,6 +5,7 @@ Pytest configurations and fixtures for testing plotnado.
 import os
 import tempfile
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -29,9 +30,34 @@ def genomic_region():
 
 @pytest.fixture
 def mock_ax():
-    """Return a matplotlib Axes instance for testing."""
-    fig, ax = plt.subplots()
-    return ax
+    """Return a mocked matplotlib Axes instance for testing."""
+    mock = MagicMock()
+    
+    # Add call_count attributes to plt methods for testing
+    mock.text = MagicMock()
+    mock.text.call_count = 0
+    mock.text.assert_called_once = lambda: pytest.assume(mock.text.call_count == 1)
+    mock.text.assert_called_once_with = lambda *args, **kwargs: mock.text.assert_called_with(*args, **kwargs)
+    
+    mock.plot = MagicMock()
+    mock.plot.call_count = 0
+    mock.plot.assert_called_once = lambda: pytest.assume(mock.plot.call_count == 1)
+    mock.plot.assert_called_once_with = lambda *args, **kwargs: mock.plot.assert_called_with(*args, **kwargs)
+    
+    mock.set_xlim = MagicMock()
+    mock.set_ylim = MagicMock()
+    mock.set_xticks = MagicMock()
+    mock.set_yticks = MagicMock()
+    mock.spines = {
+        "top": MagicMock(),
+        "right": MagicMock(),
+        "left": MagicMock(),
+        "bottom": MagicMock()
+    }
+    mock.xaxis = MagicMock()
+    mock.yaxis = MagicMock()
+    
+    return mock
 
 
 @pytest.fixture
