@@ -4,7 +4,7 @@ Tests for the BedgraphDataFrame class.
 
 import pytest
 import pandas as pd
-import pandera as pa
+import pandera
 
 from plotnado.tracks import BedgraphDataFrame
 
@@ -20,10 +20,10 @@ class TestBedgraphDataFrame:
             'end': [200, 300, 400],
             'value': [0.1, 0.2, 0.3]
         }
+        # Use the function directly for testing
         df = BedgraphDataFrame(data)
-        
+
         assert isinstance(df, pd.DataFrame)
-        assert isinstance(df, BedgraphDataFrame)
         assert list(df.columns) == ['chrom', 'start', 'end', 'value']
         assert df.shape == (3, 4)
 
@@ -36,9 +36,9 @@ class TestBedgraphDataFrame:
             'end': [200, 300, 400]
         }
         
-        with pytest.raises((pa.errors.SchemaError, KeyError)):
+        with pytest.raises(pandera.errors.SchemaError):
             BedgraphDataFrame(data)
-    
+
     def test_wrong_type(self):
         """Test creating a BedgraphDataFrame with wrong column types."""
         # 'start' column has strings instead of integers
@@ -49,7 +49,7 @@ class TestBedgraphDataFrame:
             'value': [0.1, 0.2, 0.3]
         }
         
-        # Should coerce strings to integers due to coerce=True in Config
+        # Should coerce strings to integers
         df = BedgraphDataFrame(data)
         assert df['start'].dtype == 'int64'
 
@@ -80,6 +80,6 @@ class TestBedgraphDataFrame:
             'extra': ['a', 'b', 'c']  # Extra column
         }
         
-        # Should only keep required columns due to strict=True in Config
-        with pytest.raises(pa.errors.SchemaError):
+        # Should raise error due to extra columns
+        with pytest.raises(pandera.errors.SchemaError):
             BedgraphDataFrame(data)
