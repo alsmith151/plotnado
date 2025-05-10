@@ -24,3 +24,4 @@ test.def
 .jupyter/migrated
 .jupyter/labconfig/page_config.json
 .local/share/jupyter/runtime/jupyter_cookie_secret
+.DS_Store
