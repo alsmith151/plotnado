@@ -1,4 +1,5 @@
 from abc import ABC
+import re
 from typing import Any, List, Literal, Optional, Union
 from pathlib import Path
 import subprocess
@@ -190,10 +191,19 @@ class GenesAesthetics(BaseModel):
     # Genes aesthetics
     display: Literal["collapsed", "expanded"] = "collapsed"
     minimum_gene_length: int = 0
+    bed_type: Literal['bed', 'bed12'] = 'bed12'
+    arrow_color: str = "black"
 
     # Plot aesthetics
     max_number_of_rows: int = 4
     interval_height: float = 0.5  # fraction of the y-axis
+
+    # Label aesthetics
+    label_color: str = "black"
+    label_font: str = "Arial"
+    label_weight: Literal["normal", "bold"] = "bold"
+    label_size: int = 8
+    label_location: Literal["left", "right", "center"] = "right"
 
 
 class Aesthetics(BaseModel):
@@ -616,19 +626,21 @@ def gtf_line_to_bed12_line(df: pd.DataFrame) -> pd.Series:
     """
     # Sort the dataframe by start position
     # and group by geneid
-    df = df.sort_values(["seqname", "start"])
+    df = df.sort_values(["chrom", "start"])
     geneid = df["geneid"].iloc[0]
     exons = df.query('feature == "exon"')
-    chrom = df["seqname"].iloc[0]
-    start = str(df["start"].min())
-    end = str(df["end"].max())
+    chrom = df["chrom"].iloc[0]
+    start = int(df["start"].min())  # Convert to int, not string
+    end = int(df["end"].max())      # Convert to int, not string
     strand = df["strand"].iloc[0]
     thick_start = start if strand == "+" else end
     thick_end = thick_start
     color = "0,0,0"
-    block_count = str(exons.shape[0])
-    block_sizes = ",".join((exons["end"] - exons["start"]).values.astype(str))
-    block_starts = ",".join((exons["start"] - int(start)).astype(str))
+    block_count = exons.shape[0]    # Keep as int
+    
+    # Calculate block sizes and starts as integers before joining to strings
+    block_sizes = ",".join([(exons["end"] - exons["start"]).astype(int).astype(str).values][0])
+    block_starts = ",".join([(exons["start"] - start).astype(int).astype(str).values][0])
 
     return pd.Series(
         {
@@ -749,10 +761,10 @@ class Genes(Track):
 
         if not df.empty:
             df["block_starts"] = df["block_starts"].apply(
-                lambda x: list(map(int, x.split(",")))
+                lambda x: list(map(int, x.split(","))) if isinstance(x, str) else x
             )
             df["block_sizes"] = df["block_sizes"].apply(
-                lambda x: list(map(int, x.split(",")))
+                lambda x: list(map(int, x.split(","))) if isinstance(x, str) else x
             )
 
         return df
@@ -781,53 +793,42 @@ class Genes(Track):
         # Use pysam to read the gtf file
         import pysam
 
-        gtf = pysam.TabixFile(data)
-
+        gtf = pysam.TabixFile(str(data))
         records = []
+
+        # Fetch the records from the gtf file
+        gene_id_regex = re.compile(r"gene_id\s?\"(.*?)\";")
+
         for record in gtf.fetch(gr.chromosome, gr.start, gr.end, parser=pysam.asGTF()):
-            records.append(record)
+            # Bed12 format
+            record = pd.Series({
+                "chrom": record.contig,
+                "start": record.start + 1,  # Convert to 1-based
+                "end": record.end,
+                "strand": record.strand,
+                "feature": record.feature,
+                "attributes": record.attributes,
+                "geneid": gene_id_regex.search(record.attributes).group(1)
 
+            })
+
+            if record["feature"] in ["exon", "5UTR", "3UTR"]:
+                records.append(record)
+
+
+        # Convert the records to a DataFrame
         df = pd.DataFrame(records)
-        df = df.rename(
-            columns={
-                "seqname": "chrom",
-                "start": "start",
-                "end": "end",
-                "strand": "strand",
-                "feature": "feature",
-                "attribute": "attribute",
-            }
-        )
+        df = df.sort_values(["chrom", "start"])
 
-        df["geneid"] = df["attributes"].str.extract(r"gene_id\s?\"(.*?)\";.*")
-        df = df.query('feature.isin(["5UTR", "3UTR", "exon"])')
-        df = df.loc[lambda df: df["chrom"].str.contains(r"^chr[xXYy]?[1-9]?[0-9]?$")]
-
-        records = []
-        for gene, df in df.sort_values(["chrom", "start"]).groupby("geneid"):
+        # Convert to BED12 format 
+        intervals = []
+        for gene, df in df.groupby("geneid"):
             bed12_line = gtf_line_to_bed12_line(df)
-            records.append(bed12_line)
+            intervals.append(bed12_line)
 
-        df = pd.DataFrame(records)
 
-        df = df.rename(
-            columns={
-                "chrom": "chrom",
-                "start": "start",
-                "end": "end",
-                "geneid": "geneid",
-                "score": "score",
-                "strand": "strand",
-                "thick_start": "thick_start",
-                "thick_end": "thick_end",
-                "color": "color",
-                "block_count": "block_count",
-                "block_sizes": "block_sizes",
-                "block_starts": "block_starts",
-            }
-        )
+        return pd.DataFrame(intervals)
 
-        return df
 
     def _compute_extended_end_bp(self, gene) -> int:
         """
@@ -858,7 +859,7 @@ class Genes(Track):
         """
         Draw a gene feature using intron representation or simple blocks for BED3/6.
         """
-        bed_type = self.properties.get("bed_type")
+        bed_type = self.aesthetics.bed_type
         if bed_type == "bed12":
             self._draw_gene_with_introns(
                 ax,
@@ -866,7 +867,7 @@ class Genes(Track):
                 ypos,
                 fill_color,
                 edge_color,
-                arrow_color=self.properties.get("arrow_color", "black"),
+                arrow_color=self.aesthetics.arrow_color,
             )
         else:
             self.draw_gene_simple(ax, gene, ypos, fill_color, edge_color)
@@ -893,7 +894,7 @@ class Genes(Track):
             raise ValueError("Region end must be greater than region start.")
 
         pt_to_inch = 1.0 / 72.27
-        font_size_pt = self.properties.get("fontsize", 10)
+        font_size_pt = self.aesthetics.label_size
         char_width_ratio = 1.0  # Approximate width/height ratio for 'W'
 
         char_width_in = font_size_pt * pt_to_inch * char_width_ratio
@@ -905,7 +906,7 @@ class Genes(Track):
     def plot_genes(
         self,
         ax,
-        genome_range: GenomicRegion,
+        gr: GenomicRegion,
     ) -> None:
         """
         Render gene features along a genomic range on the given Axes.
@@ -923,12 +924,12 @@ class Genes(Track):
             overlapping_genes: DataFrame of overlapping gene records.
         """
         # Fetch the data
-        overlapping_genes = self.fetch_data(genome_range)
+        overlapping_genes = self.fetch_data(gr)
 
         # Estimate label-character width in bp
         fig_width = ax.get_figure().get_figwidth()
         self._estimate_label_char_width(
-            fig_width, region_start=genome_range.start, region_end=genome_range.end
+            fig_width, region_start=gr.start, region_end=gr.end
         )
 
         max_rows_allowed = self.aesthetics.max_number_of_rows
@@ -960,12 +961,12 @@ class Genes(Track):
 
         if self.gene_count == 0:
             logger.warning(
-                f"No genes found in the genomic range {genome_range.chromosome}:{genome_range.start}-{genome_range.end}."
+                f"No genes found in the genomic range {gr.chromosome}:{gr.start}-{gr.end}."
             )
 
             # Set axis limits to avoid empty plot
             ax.set_ylim(0, 1)
-            ax.set_xlim(genome_range.start, genome_range.end)
+            ax.set_xlim(gr.start, gr.end)
             clean_axis(ax)
             return None
 
@@ -981,7 +982,9 @@ class Genes(Track):
         ax.set_ylim(ymin, ymax)
         if self.aesthetics.display == "collapsed":
             ax.set_ylim(-5, 105)
-        ax.set_xlim(genome_range.start, genome_range.end)
+        ax.set_xlim(gr.start, gr.end)
+
+        clean_axis(ax)
 
     def get_y_pos(self, row_index: int) -> float:
         """Get the y position for a given row index."""

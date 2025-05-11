@@ -31,6 +31,12 @@ def test_gtf_file():
     """Return the path to a test GTF file."""
     return TEST_DATA_DIR / "test_chr21.gtf"
 
+@pytest.fixture(scope="session")
+def test_bed12_file():
+    """Return the path to a test BED12 file."""
+    return TEST_DATA_DIR / "test_chr21_bed12.bed"
+    
+
 
 @pytest.fixture
 def genomic_region():
@@ -42,6 +48,16 @@ def genomic_region():
         strand="+"
     )
 
+
+@pytest.fixture
+def genomic_region_chr21():
+    """Return a GenomicRegion instance for testing with chromosome 21."""
+    return GenomicRegion(
+            chromosome="chr21",
+            start=5_022_531,
+            end=5_046_683,
+            strand="+"
+        )
 
 @pytest.fixture
 def mock_ax():
@@ -71,8 +87,19 @@ def mock_ax():
     }
     mock.xaxis = MagicMock()
     mock.yaxis = MagicMock()
-    
+
+    mock.get_figure().get_figwidth = MagicMock(return_value=10)
+
     return mock
+
+@pytest.fixture
+def mock_warning(recwarn):
+    """Return a mocked warning function for testing."""
+    yield MagicMock()
+    
+    # Check if any warnings were raised
+    if recwarn:
+        raise AssertionError(f"Warnings were raised: {recwarn.list}")
 
 
 @pytest.fixture
