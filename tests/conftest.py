@@ -17,6 +17,21 @@ from matplotlib.testing.compare import compare_images
 from plotnado.tracks import GenomicRegion
 
 
+# Test data locations
+TEST_DATA_DIR = Path(__file__).parent / "data"
+
+
+@pytest.fixture(scope="session")
+def test_bw_file():
+    """Return the path to a test bigwig file."""
+    return TEST_DATA_DIR / "test.bw"
+
+@pytest.fixture(scope="session")
+def test_gtf_file():
+    """Return the path to a test GTF file."""
+    return TEST_DATA_DIR / "test_chr21.gtf"
+
+
 @pytest.fixture
 def genomic_region():
     """Return a GenomicRegion instance for testing."""
