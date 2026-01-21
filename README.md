@@ -1,35 +1,56 @@
 # PlotNado
 
 [![Tests](https://github.com/alsmith151/plotnado/actions/workflows/run_tests.yml/badge.svg)](https://github.com/alsmith151/plotnado/actions/workflows/run_tests.yml)
-[![Docs](https://github.com/alsmith151/plotnado/actions/workflows/build_docs.yml/badge.svg)](https://github.com/alsmith151/plotnado/actions/workflows/build_docs.yml)
 
-PlotNado is a Python package that provides a simple interface to create genome browser plots. It's a wrapper around the CoolBox library with a focus on simplicity and ease of use. It is designed to be used in Jupyter notebooks, but can also be used as a CLI.
+PlotNado is a lightweight Python package for creating genome browser-style plots with a focus on simplicity, rich aesthetics, and performance.
+
+> [!NOTE]
+> This new version of PlotNado is independent and does not require CoolBox.
+
+## Key Features
+
+- **Rich Aesthetics**: Premium default designs with support for custom palettes and styles.
+- **Multiple Track Types**:
+  - `BigWigTrack`: Signal data visualization with stairs or scatter styles.
+  - `Genes`: Intelligent gene annotation display with intron/exon structure and collision-aware labels.
+  - `BedTrack`: Simple and clean BED record display.
+  - `GenomicAxis`: Clear x-axis with genomic coordinates.
+  - `Highlights`: Highlight specific regions across all tracks.
+- **Advanced Plotting**:
+  - `BigwigOverlay`: Overlay multiple signals on a single axis.
+  - `Autoscaler`: Automatically share y-axis scales across tracks.
+  - `Figure API`: High-level API for easy composition, automatic coloring, and region manipulation.
 
 ## Installation
-
-You can install PlotNado using pip:
 
 ```bash
 pip install git+https://github.com/alsmith151/plotnado
 ```
 
-## Usage
-
-Here's a simple example of how to use PlotNado to create a genome browser plot:
+## Basic Usage
 
 ```python
-import plotnado as pn
+from plotnado import Figure
 
-figure = pn.Figure()
-figure.add_track('scale')
-figure.add_track('genes', 'hg38')
+fig = Figure()
+fig.add_track('scalebar')
+fig.add_track('axis')
+fig.add_track('genes', genome='hg38')
+fig.add_track('bigwig', data='signal.bw', title='ChIP-seq')
 
-figure.plot('chr1:1000-2000')
+fig.plot('chr1:1,000,000-1,100,000')
 ```
 
-This will create a plot of the region chr1:1000-2000 on the hg38 genome with a scale track and a genes track.
+## Advanced Usage
 
-## Documentation
+```python
+fig = Figure()
+fig.autoscale(True).autocolor(palette='Set1')
+fig.highlight('chr1:1045000-1055000')
 
-For more information on how to use PlotNado, check out the [documentation](https://plotnado.readthedocs.io/).
+fig.add_track('bigwig_overlay', tracks=[...])
+fig.plot('chr1:1000000-1100000')
+```
+
+For more examples, see the `examples/` directory.
 
