@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from unittest.mock import patch, call, MagicMock
+from pydantic import ValidationError
 
 from plotnado.tracks import (
     ScaleBar,
@@ -127,18 +128,8 @@ class TestScaleBar:
 
     def test_plot_invalid_position(self, mock_ax, genomic_region):
         """Test plotting ScaleBar with invalid position."""
-        # Setup
-        scale_bar = ScaleBar(
-            title="Test Scale",
-            aesthetics=ScaleBarAesthetics(
-                position="invalid",  # Invalid position
-                scale_distance=200
-            )
-        )
-        
-        # Test & Validate
-        with pytest.raises(ValueError, match="Position can only be"):
-            scale_bar.plot(mock_ax, genomic_region)
+        with pytest.raises(ValidationError):
+            ScaleBarAesthetics(position="invalid", scale_distance=200)
 
     def test_plot_auto_scale_distance(self, mock_ax, genomic_region):
         """Test plotting ScaleBar with automatic scale distance."""

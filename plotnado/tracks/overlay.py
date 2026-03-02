@@ -3,11 +3,10 @@ BigWig overlay track for displaying multiple signals on the same axis.
 """
 
 from pathlib import Path
-from typing import List, Optional, Union
 
 import matplotlib.axes
 import pandas as pd
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from .region import GenomicRegion
 from .base import Track, TrackLabeller
@@ -21,11 +20,11 @@ class BigwigOverlayAesthetics(BaseModel):
     Aesthetics for BigWig overlay tracks.
     """
 
-    colors: Optional[List[str]] = None
+    colors: list[str] | None = None
     alpha: float = 0.5
     show_labels: bool = True
-    min_value: Optional[float] = None
-    max_value: Optional[float] = None
+    min_value: float | None = None
+    max_value: float | None = None
 
 
 class BigwigOverlay(Track):
@@ -37,14 +36,13 @@ class BigwigOverlay(Track):
         aesthetics: Visual configuration
     """
 
-    tracks: List[Union[BigWigTrack, Path, str]]
+    tracks: list[BigWigTrack | Path | str]
     aesthetics: BigwigOverlayAesthetics = BigwigOverlayAesthetics()
     height: float = 2.0
 
-    _track_instances: List[BigWigTrack] = []
+    _track_instances: list[BigWigTrack] = []
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def __init__(self, **data):
         super().__init__(**data)
@@ -72,7 +70,7 @@ class BigwigOverlay(Track):
                 )
             self._track_instances.append(inst)
 
-    def fetch_data(self, gr: GenomicRegion) -> List[pd.DataFrame]:
+    def fetch_data(self, gr: GenomicRegion) -> list[pd.DataFrame]:
         """Fetch data from all subtracks."""
         return [t.fetch_data(gr) for t in self._track_instances]
 
@@ -107,7 +105,7 @@ class BigwigOverlay(Track):
             track.aesthetics.plot_scale = False
             track.aesthetics.plot_title = False
 
-            track.plot(gr, ax)
+            track.plot(ax, gr)
 
             # Restore
             track.aesthetics.min_value = orig_min
@@ -126,6 +124,8 @@ class BigwigOverlay(Track):
                 plot_scale=True,
                 scale_min=y_min,
                 scale_max=y_max,
+                label_box_enabled=self.label_box_enabled,
+                label_box_alpha=self.label_box_alpha,
             )
             labeller.plot(ax, gr)
         else:

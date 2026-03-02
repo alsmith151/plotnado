@@ -1,0 +1,8 @@
+# Documentation toolchain
+mkdocs>=1.6.1
+mkdocstrings>=1.0.3
+mkdocs-literate-nav>=0.6.2
+mkdocs-gen-files>=0.6.0
+mkdocs-jupyter>=0.25.1
+mkdocs-click>=0.9.0
+pymdown-extensions>=10.21

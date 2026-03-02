@@ -177,6 +177,28 @@ class TestBigWigTrack:
         assert kwargs["alpha"] == 0.7
         assert kwargs["s"] == 5.0
 
+    def test_plot_fragment_uses_interval_widths(self, mock_ax, genomic_region):
+        values = BedgraphDataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [100, 220],
+                "end": [200, 260],
+                "value": [0.5, 0.8],
+            }
+        )
+
+        aesthetics = BigwigAesthetics(style="fragment", color="red", alpha=0.7, linewidth=1.2)
+        track = BigWigTrack(title="Test BigWig", aesthetics=aesthetics)
+
+        track._plot_fragment(mock_ax, genomic_region, values)
+
+        mock_ax.bar.assert_called_once()
+        args, kwargs = mock_ax.bar.call_args
+        assert kwargs["align"] == "edge"
+        assert kwargs["color"] == "red"
+        assert kwargs["alpha"] == 0.7
+        assert list(kwargs["width"]) == [100.0, 40.0]
+
     @patch.object(BigWigTrack, "fetch_data")
     @patch.object(BigWigTrack, "_plot_stairs")
     @patch.object(BigWigTrack, "_plot_scatter")
@@ -208,7 +230,8 @@ class TestBigWigTrack:
 
         # Validate
         mock_fetch_data.assert_called_once_with(genomic_region)
-        mock_plot_stairs.assert_called_once()
+        # 'std' style now uses _plot_fill, not _plot_stairs
+        mock_plot_stairs.assert_not_called()
         mock_plot_scatter.assert_not_called()
 
         # Check that limits were set correctly

@@ -32,13 +32,44 @@ class GenomicRegion(BaseModel):
         """Center position of the region."""
         return (self.start + self.end) // 2
 
+    def extend(self, upstream: int = 0, downstream: int = 0) -> "GenomicRegion":
+        """
+        Extend the region upstream and/or downstream.
+
+        Args:
+            upstream: Number of base pairs to extend upstream
+            downstream: Number of base pairs to extend downstream
+
+        Returns:
+            A new GenomicRegion instance
+        """
+        new_start = self.start
+        new_end = self.end
+
+        if self.strand == "+":
+            new_start -= upstream
+            new_end += downstream
+        else:  # strand == "-"
+            new_start -= downstream
+            new_end += upstream
+
+        # Ensure start is not negative
+        new_start = max(0, new_start)
+
+        return GenomicRegion(
+            chromosome=self.chromosome,
+            start=new_start,
+            end=new_end,
+            strand=self.strand,
+        )
+
     def __str__(self) -> str:
         return f"{self.chromosome}:{self.start}-{self.end}({self.strand})"
 
     @classmethod
     def from_str(cls, region_str: str) -> "GenomicRegion":
         """
-        Parse a region string like 'chr1:1000-2000' or 'chr1:1000-2000(+)'.
+        Parse a region string like 'chr1:1000-2000' or 'chr1:1M-2M' or 'chr1:1M+20k'.
 
         Args:
             region_str: Region string to parse
@@ -46,6 +77,8 @@ class GenomicRegion(BaseModel):
         Returns:
             GenomicRegion instance
         """
+        from .utils import parse_genomic_value
+
         strand = "+"
         if "(" in region_str:
             main_part, strand_part = region_str.rsplit("(", 1)
@@ -58,14 +91,26 @@ class GenomicRegion(BaseModel):
             )
 
         chromosome, positions = region_str.split(":")
-        if "-" not in positions:
-            raise ValueError(f"Invalid positions: {positions}. Expected 'start-end'")
 
-        start_str, end_str = positions.split("-")
+        if "-" in positions:
+            start_str, end_str = positions.split("-")
+            start = parse_genomic_value(start_str)
+            end = parse_genomic_value(end_str)
+        elif "+" in positions:
+            center_str, size_str = positions.split("+")
+            center = parse_genomic_value(center_str)
+            size = parse_genomic_value(size_str)
+            start = center - (size // 2)
+            end = center + (size // 2)
+        else:
+            raise ValueError(
+                f"Invalid positions: {positions}. Expected 'start-end' or 'center+size'"
+            )
+
         return cls(
             chromosome=chromosome,
-            start=int(start_str.replace(",", "")),
-            end=int(end_str.replace(",", "")),
+            start=max(0, start),
+            end=end,
             strand=strand,
         )
 
@@ -121,3 +166,6 @@ class GenomicRegion(BaseModel):
         if hasattr(gr, "chromosome") and hasattr(gr, "start"):
             return cls.from_named_tuple(gr)
         raise ValueError(f"Cannot convert {type(gr)} to GenomicRegion")
+
+
+GenomicRange = GenomicRegion

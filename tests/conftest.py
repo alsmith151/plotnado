@@ -26,18 +26,26 @@ def mock_ax():
     mock = MagicMock()
 
     # Add call_count attributes to plt methods for testing
+    def check_text_called_once():
+        if mock.text.call_count != 1:
+            raise AssertionError(f"Expected 1 call, got {mock.text.call_count}")
+
+    def check_plot_called_once():
+        if mock.plot.call_count != 1:
+            raise AssertionError(f"Expected 1 call, got {mock.plot.call_count}")
+
     mock.text = MagicMock()
     mock.text.call_count = 0
-    mock.text.assert_called_once = lambda: pytest.assume(mock.text.call_count == 1)
-    mock.text.assert_called_once_with = (
-        lambda *args, **kwargs: mock.text.assert_called_with(*args, **kwargs)
+    mock.text.assert_called_once = check_text_called_once
+    mock.text.assert_called_once_with = lambda *args, **kwargs: (
+        mock.text.assert_called_with(*args, **kwargs)
     )
 
     mock.plot = MagicMock()
     mock.plot.call_count = 0
-    mock.plot.assert_called_once = lambda: pytest.assume(mock.plot.call_count == 1)
-    mock.plot.assert_called_once_with = (
-        lambda *args, **kwargs: mock.plot.assert_called_with(*args, **kwargs)
+    mock.plot.assert_called_once = check_plot_called_once
+    mock.plot.assert_called_once_with = lambda *args, **kwargs: (
+        mock.plot.assert_called_with(*args, **kwargs)
     )
 
     mock.set_xlim = MagicMock()

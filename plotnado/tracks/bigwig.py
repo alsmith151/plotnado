@@ -3,7 +3,7 @@ BigWig track for signal visualization.
 """
 
 from pathlib import Path
-from typing import Literal, Optional, Union
+from typing import Literal
 
 import matplotlib.axes
 import matplotlib.patches
@@ -26,15 +26,15 @@ class BigwigAesthetics(BaseModel):
         style: Plot style ('std', 'line', 'scatter', 'heatmap')
     """
 
-    style: Literal["std", "scatter", "line", "heatmap"] = "std"
-    color: str = "black"
+    style: Literal["std", "scatter", "line", "heatmap", "fill", "fragment"] = "fill"
+    color: str = "#2171b5"  # Genome browser blue
     fill: bool = True
-    alpha: float = 1.0
+    alpha: float = 0.85
     linewidth: float = 1.0
     scatter_point_size: float = 1.0
 
-    min_value: Optional[float] = None
-    max_value: Optional[float] = None
+    min_value: float | None = None
+    max_value: float | None = None
 
     plot_title: bool = True
     title_location: Literal["left", "right"] = "left"
@@ -55,11 +55,11 @@ class BigWigTrack(Track):
         aesthetics: Visual styling configuration
     """
 
-    data: Optional[Union[Path, pd.DataFrame, str]] = None
+    data: Path | pd.DataFrame | str | None = None
     aesthetics: BigwigAesthetics = BigwigAesthetics()
 
-    y_min: Optional[float] = None
-    y_max: Optional[float] = None
+    y_min: float | None = None
+    y_max: float | None = None
 
     def _plot_stairs(
         self, ax: matplotlib.axes.Axes, gr: GenomicRegion, values: pd.DataFrame
@@ -129,8 +129,8 @@ class BigWigTrack(Track):
             y,
             alpha=self.aesthetics.alpha,
             color=self.aesthetics.color,
-            linewidth=self.aesthetics.linewidth,
-            step="pre" if self.aesthetics.style == "std" else None,
+            linewidth=0,
+            step="post" if self.aesthetics.style in ["std", "fill"] else None,
         )
 
     def _plot_line(
@@ -167,6 +167,28 @@ class BigWigTrack(Track):
             s=self.aesthetics.scatter_point_size,
         )
 
+    def _plot_fragment(
+        self, ax: matplotlib.axes.Axes, gr: GenomicRegion, data: pd.DataFrame
+    ) -> None:
+        """Plot as explicit fragment blocks using true start/end intervals."""
+        if data.empty:
+            return
+
+        starts = data["start"].to_numpy(dtype=float)
+        widths = (data["end"] - data["start"]).to_numpy(dtype=float)
+        values = data["value"].to_numpy(dtype=float)
+        ax.bar(
+            starts,
+            values,
+            width=widths,
+            align="edge",
+            bottom=0,
+            color=self.aesthetics.color,
+            edgecolor=self.aesthetics.color,
+            linewidth=max(self.aesthetics.linewidth, 0.4),
+            alpha=self.aesthetics.alpha,
+        )
+
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
         """Plot the BigWig track."""
         data = self.fetch_data(gr)
@@ -176,23 +198,26 @@ class BigWigTrack(Track):
             self._plot_scatter(ax, gr, data)
         elif self.aesthetics.style == "line":
             self._plot_line(ax, gr, data)
+        elif self.aesthetics.style == "fragment":
+            self._plot_fragment(ax, gr, data)
         elif self.aesthetics.style == "heatmap":
             pass  # Heatmap not implemented yet
-
-        if self.aesthetics.style == "std":
-            self._plot_stairs(ax, gr, data)
+        elif self.aesthetics.style in ["std", "fill"]:
+            self._plot_fill(ax, gr, data)
 
         # Set axis limits
         ax.set_xlim(gr.start, gr.end)
 
         if data.empty:
-            self.y_min = 0
+            self.y_min = 0  # Always start at 0 for genome browser style
             self.y_max = 1
         else:
+            # Always use 0 as minimum for genome browser baseline
+            data_min = data["value"].min()
             self.y_min = (
                 self.aesthetics.min_value
                 if self.aesthetics.min_value is not None
-                else data["value"].min()
+                else min(0, data_min)
             )
             self.y_max = (
                 self.aesthetics.max_value
@@ -214,6 +239,10 @@ class BigWigTrack(Track):
                 y_max=self.y_max,
                 plot_title=self.aesthetics.plot_title,
                 plot_scale=self.aesthetics.plot_scale,
+                label_on_track=self.label_on_track,
+                data_range_style=self.data_range_style,
+                label_box_enabled=self.label_box_enabled,
+                label_box_alpha=self.label_box_alpha,
                 title=self.title or "",
                 scale_min=self.y_min,
                 scale_max=self.y_max,

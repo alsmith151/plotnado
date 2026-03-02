@@ -3,15 +3,15 @@ Highlights track for marking genomic regions.
 """
 
 from pathlib import Path
-from typing import Optional, Union
 
 import matplotlib.axes
 import matplotlib.patches
 import pandas as pd
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from .region import GenomicRegion
 from .base import Track
+from .utils import read_bed_regions
 
 
 class HighlightsAesthetics(BaseModel):
@@ -26,7 +26,7 @@ class HighlightsAesthetics(BaseModel):
 
     color: str = "yellow"
     alpha: float = 0.3
-    edge_color: Optional[str] = None
+    edge_color: str | None = None
 
 
 class HighlightsFromFile(Track):
@@ -41,34 +41,15 @@ class HighlightsFromFile(Track):
         aesthetics: Visual styling configuration
     """
 
-    data: Union[Path, pd.DataFrame, str]
+    data: Path | pd.DataFrame | str
     aesthetics: HighlightsAesthetics = HighlightsAesthetics()
     height: float = 0.0  # Zero height means it spans all tracks
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def _fetch_from_disk(self, gr: GenomicRegion) -> pd.DataFrame:
-        """Fetch highlight regions from a BED file."""
-        from pybedtools import BedTool
-
-        path = str(self.data)
-        bt = BedTool(path)
-
-        try:
-            bt_tabix = bt.tabix(force=True)
-            intervals = bt_tabix.tabix_intervals(f"{gr.chromosome}:{gr.start}-{gr.end}")
-            df = intervals.to_dataframe()
-        except (OSError, Exception):
-            df = bt.to_dataframe()
-            if not df.empty:
-                df = df[
-                    (df["chrom"] == gr.chromosome)
-                    & (df["end"] > gr.start)
-                    & (df["start"] < gr.end)
-                ]
-
-        return df
+        """Fetch highlight regions from BED/BigBed."""
+        return read_bed_regions(str(self.data), gr.chromosome, gr.start, gr.end)
 
     def _fetch_from_df(self, gr: GenomicRegion) -> pd.DataFrame:
         """Fetch highlight regions from a DataFrame."""
@@ -126,4 +107,4 @@ class HighlightsFromFile(Track):
     def plot_on_axes(self, gr: GenomicRegion, axes: list) -> None:
         """Plot highlights on multiple axes (for use in Figure)."""
         for ax in axes:
-            self.plot(gr, ax)
+            self.plot(ax, gr)

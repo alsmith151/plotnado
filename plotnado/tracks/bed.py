@@ -3,16 +3,16 @@ BED track for displaying genomic intervals.
 """
 
 from pathlib import Path
-from typing import List, Union
+from typing import Any
 
 import matplotlib.axes
 import matplotlib.patches
 import pandas as pd
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from .region import GenomicRegion
 from .base import Track
-from .utils import clean_axis
+from .utils import clean_axis, read_bed_regions
 from .enums import DisplayMode
 
 
@@ -32,7 +32,7 @@ class BedAesthetics(BaseModel):
     color: str = "steelblue"
     edge_color: str = "black"
     alpha: float = 0.8
-    interval_height: float = 0.6
+    interval_height: float = 0.45
     display: DisplayMode = DisplayMode.COLLAPSED
     max_rows: int = 5
     show_labels: bool = False
@@ -51,41 +51,28 @@ class BedTrack(Track):
         aesthetics: Visual styling configuration
     """
 
-    data: Union[Path, pd.DataFrame, str]
+    data: Path | pd.DataFrame | str | Any | None = None
     aesthetics: BedAesthetics = BedAesthetics()
     height: float = 1.0
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def _fetch_from_disk(self, gr: GenomicRegion) -> pd.DataFrame:
-        """Fetch intervals from a BED file."""
-        from pybedtools import BedTool
+        """Fetch intervals from a BED/BigBed file."""
+        return read_bed_regions(str(self.data), gr.chromosome, gr.start, gr.end)
 
-        path = str(self.data)
-        bt = BedTool(path)
+    def _fetch_from_memory(self, gr: GenomicRegion, data: Any) -> pd.DataFrame:
+        """Fetch intervals from in-memory DataFrame/PyRanges-like object."""
+        if hasattr(data, "df"):
+            df = data.df
+        elif hasattr(data, "as_df"):
+            df = data.as_df()
+        else:
+            df = data
 
-        # Get intervals overlapping region
-        region_str = f"{gr.chromosome}:{gr.start}-{gr.end}"
-        try:
-            bt_tabix = bt.tabix(force=True)
-            intervals = bt_tabix.tabix_intervals(region_str)
-            df = intervals.to_dataframe()
-        except (OSError, Exception):
-            # Fallback: filter in memory
-            df = bt.to_dataframe()
-            if not df.empty:
-                df = df[
-                    (df["chrom"] == gr.chromosome)
-                    & (df["end"] > gr.start)
-                    & (df["start"] < gr.end)
-                ]
+        if not isinstance(df, pd.DataFrame):
+            df = pd.DataFrame(df)
 
-        return df
-
-    def _fetch_from_df(self, gr: GenomicRegion) -> pd.DataFrame:
-        """Fetch intervals from a DataFrame."""
-        df = self.data
         # Handle different column names
         chrom_col = "chrom" if "chrom" in df.columns else "Chromosome"
         start_col = "start" if "start" in df.columns else "Start"
@@ -107,12 +94,15 @@ class BedTrack(Track):
 
     def fetch_data(self, gr: GenomicRegion) -> pd.DataFrame:
         """Fetch BED data for the given region."""
-        if isinstance(self.data, pd.DataFrame):
-            return self._fetch_from_df(gr)
+        if self.data is None:
+            return pd.DataFrame(columns=["chrom", "start", "end"])
+
+        if isinstance(self.data, pd.DataFrame) or hasattr(self.data, "df"):
+            return self._fetch_from_memory(gr, self.data)
         return self._fetch_from_disk(gr)
 
     def _allocate_row_index(
-        self, row_last_positions: List[int], start_bp: int, end_bp: int
+        self, row_last_positions: list[int], start_bp: int, end_bp: int
     ) -> int:
         """Allocate a row where the new interval doesn't overlap existing ones."""
         for idx, last_end in enumerate(row_last_positions):
@@ -133,7 +123,7 @@ class BedTrack(Track):
             return
 
         row_scale = 1.0 / max(1, self.aesthetics.max_rows)
-        row_last_positions: List[int] = []
+        row_last_positions: list[int] = []
 
         for row in data.itertuples():
             start = row.start

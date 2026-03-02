@@ -22,11 +22,11 @@ class GenomicAxisAesthetics(BaseModel):
         show_chromosome: Whether to show chromosome name
     """
 
-    color: str = "black"
-    font_size: int = 10
+    color: str = "#666666"  # Gray for axis line
+    font_size: int = 9
     num_ticks: int = 5
     show_chromosome: bool = True
-    tick_height: float = 0.1
+    tick_height: float = 0.15  # Increased slightly for visibility
 
 
 class GenomicAxis(Track):
@@ -38,19 +38,10 @@ class GenomicAxis(Track):
 
     title: str = ""
     aesthetics: GenomicAxisAesthetics = GenomicAxisAesthetics()
-    height: float = 0.3
+    height: float = 0.2  # Reduced height for tighter layout
 
     def fetch_data(self, gr: GenomicRegion) -> None:
         return None
-
-    @staticmethod
-    def _format_position(pos: int) -> str:
-        """Format a genomic position for display."""
-        if pos >= 1_000_000:
-            return f"{pos / 1_000_000:.1f}M"
-        elif pos >= 1_000:
-            return f"{pos / 1_000:.1f}k"
-        return str(pos)
 
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
         """Plot the genomic axis."""
@@ -69,32 +60,37 @@ class GenomicAxis(Track):
         if len(tick_positions) == 0:
             tick_positions = np.array([gr.start, gr.end])
 
-        # Draw axis line
-        y_line = 0.7
+        from .utils import format_genomic_value
+
+        # Draw axis line at the bottom
+        y_line = 0.3
         ax.plot(
             [gr.start, gr.end],
             [y_line, y_line],
             color=self.aesthetics.color,
-            linewidth=1,
+            linewidth=1.5,
+            zorder=2,
         )
 
-        # Draw ticks and labels
+        # Draw ticks downward (genome browser convention)
         tick_height = self.aesthetics.tick_height
         for pos in tick_positions:
             ax.plot(
                 [pos, pos],
-                [y_line - tick_height, y_line + tick_height],
-                color=self.aesthetics.color,
-                linewidth=1,
+                [y_line, y_line - tick_height],  # Downward ticks
+                color="#333333",  # Darker for ticks
+                linewidth=1.2,
+                zorder=2,
             )
             ax.text(
                 pos,
-                y_line - tick_height * 2,
-                self._format_position(int(pos)),
+                y_line - tick_height - 0.05,  # Position below tick
+                format_genomic_value(int(pos)),
                 ha="center",
                 va="top",
                 fontsize=self.aesthetics.font_size,
-                color=self.aesthetics.color,
+                color="#333333",
+                zorder=3,
             )
 
         # Draw chromosome label if enabled

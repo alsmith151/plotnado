@@ -1,24 +1,16 @@
 site_name: PlotNado Documentation
 nav:
   - Home: index.md
+  - Track Aliases: track_aliases.md
   - Tutorials:
     - Basic Usage: basic_example.ipynb
-    - Advanced Usage: advanced_example.ipynb
+    - Simple Overlays: simple_overlays.ipynb
   - API Reference: api_reference.md
   - Changelog: changelog.md
+  - Reference Summary: reference/SUMMARY.md
 
 theme:
-  name: material
-  palette:
-    scheme: default
-  font:
-    text: "Roboto"
-    code: "Roboto Mono"
-  features:
-    - content.code.copy
-    - header.autohide
-  icon:
-    repo: fontawesome/brands/git-alt
+  name: mkdocs
 markdown_extensions:
   - toc:
       permalink: true
@@ -42,8 +34,7 @@ plugins:
       nav_file: SUMMARY.md
   - gen-files:
       scripts:
-        - docs/gen_ref_pages.py
-  - section-index
+        - scripts/gen_ref_pages.py
   - mkdocs-jupyter
 
 repo_url: https://github.com/alsmith151/plotnado

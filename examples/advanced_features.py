@@ -40,11 +40,12 @@ def main():
 
     fig_features.add_track("axis")
     fig_features.add_track("bigwig", data="signal.bw")
-    fig_features.add_track("genes", genome="mm10")
+    fig_features.add_track("genes", genome="hg38")
 
     print("Advanced setup examples created.")
     print(f"Original region: {gr}")
     print(f"Extended region: {extended_gr}")
+    fig_features.save("advanced_features.png", region=extended_gr)
 
 
 if __name__ == "__main__":

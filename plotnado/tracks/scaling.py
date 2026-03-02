@@ -2,7 +2,7 @@
 Scaling utilities for genomic tracks.
 """
 
-from typing import List, Literal
+from typing import Literal
 import numpy as np
 import pandas as pd
 from .base import GenomicRegion, Track
@@ -15,7 +15,7 @@ class Autoscaler:
 
     def __init__(
         self,
-        tracks: List[Track],
+        tracks: list[Track],
         gr: GenomicRegion,
     ):
         self.tracks = tracks
@@ -66,6 +66,20 @@ class Autoscaler:
         d = self.data
         return float(np.nanmean(d)) if d.size > 0 else 0.5
 
+    def apply(self) -> None:
+        """Apply global min/max scale to compatible tracks."""
+        min_value = self.min_value
+        max_value = self.max_value
+        if min_value == max_value:
+            max_value = min_value + 1
+
+        for track in self.tracks:
+            if hasattr(track, "aesthetics"):
+                if hasattr(track.aesthetics, "min_value"):
+                    track.aesthetics.min_value = min_value
+                if hasattr(track.aesthetics, "max_value"):
+                    track.aesthetics.max_value = max_value
+
 
 class Scaler:
     """
@@ -74,7 +88,7 @@ class Scaler:
 
     def __init__(
         self,
-        tracks: List[Track],
+        tracks: list[Track],
         gr: GenomicRegion,
         method: Literal["max", "mean", "total"] = "mean",
     ):
@@ -83,7 +97,7 @@ class Scaler:
         self.method = method
 
     @property
-    def data(self) -> List[np.ndarray]:
+    def data(self) -> list[np.ndarray]:
         """Fetch data arrays for each track."""
         _data = []
         for t in self.tracks:

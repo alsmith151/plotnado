@@ -33,6 +33,7 @@ def main():
     # Here we just show the setup
     print(f"Figure setup complete with {len(fig.tracks)} tracks.")
     print(fig)
+    fig.save("basic_figure.png", region=gr)
 
 
 if __name__ == "__main__":

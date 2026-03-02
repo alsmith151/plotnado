@@ -2,7 +2,7 @@
 Scale bar track for showing genomic distances.
 """
 
-from typing import Literal, Optional, Union
+from typing import Literal
 
 import matplotlib.axes
 import matplotlib.patches
@@ -10,7 +10,7 @@ from pydantic import BaseModel
 
 from .region import GenomicRegion
 from .base import Track
-from .utils import clean_axis, get_human_readable_number_of_bp
+from .utils import clean_axis, format_distance
 from .enums import Position
 
 
@@ -18,10 +18,10 @@ class ScaleBarAesthetics(BaseModel):
     """Visual configuration for scale bars."""
 
     style: Literal["std"] = "std"
-    color: str = "black"
-    position: Union[Position, Literal["left", "right", "center"]] = Position.LEFT
-    scale_distance: Optional[float] = None
-    font_size: int = 10
+    color: str = "#333333"  # Dark gray
+    position: Position | Literal["left", "right", "center"] = Position.LEFT
+    scale_distance: float | None = None
+    font_size: int = 8
     title: str = "Scale"
 
 
@@ -78,8 +78,15 @@ class ScaleBar(Track):
         else:
             raise ValueError('Position can only be "left", "right" or "center"')
 
-        # Plot scale bar
-        ax.plot([x0, x1], [y_midpoint, y_midpoint], color=color, linewidth=2)
+        # Plot scale bar (thicker for visibility)
+        ax.plot(
+            [x0, x1],
+            [y_midpoint, y_midpoint],
+            color=color,
+            linewidth=3,
+            clip_on=False,
+            zorder=5,
+        )
 
         # Plot ticks (as expected by tests)
         tick_height = 0.1
@@ -88,16 +95,20 @@ class ScaleBar(Track):
             [y_midpoint - tick_height, y_midpoint + tick_height],
             color=color,
             linewidth=2,
+            clip_on=False,
+            zorder=5,
         )
         ax.plot(
             [x1, x1],
             [y_midpoint - tick_height, y_midpoint + tick_height],
             color=color,
             linewidth=2,
+            clip_on=False,
+            zorder=5,
         )
 
         # Add label
-        scale_label = get_human_readable_number_of_bp(scale_distance)
+        scale_label = format_distance(scale_distance)
         ax.text(
             (x0 + x1) / 2,
             y_midpoint - 0.25,

@@ -27,6 +27,13 @@ PlotNado is a lightweight Python package for creating genome browser-style plots
 pip install git+https://github.com/alsmith151/plotnado
 ```
 
+## Build Documentation
+
+```bash
+python -m pip install -r requirements-docs.txt
+python -m mkdocs build --strict
+```
+
 ## Basic Usage
 
 ```python
@@ -50,6 +57,42 @@ fig.highlight('chr1:1045000-1055000')
 
 fig.add_track('bigwig_overlay', tracks=[...])
 fig.plot('chr1:1000000-1100000')
+```
+
+## Track Aliases
+
+`Figure.add_track()` accepts either a track instance or a string alias. The following aliases are supported:
+
+Full docs page: `docs/track_aliases.md`.
+
+| Alias | Track Class | Notes |
+|---|---|---|
+| `scalebar` | `ScaleBar` | Scale bar track |
+| `scale` | `ScaleBar` | Synonym for `scalebar` |
+| `axis` | `GenomicAxis` | Genomic coordinate axis |
+| `genes` | `Genes` | Gene annotations (`genome` or `data`) |
+| `spacer` | `Spacer` | Empty spacing track |
+| `bigwig` | `BigWigTrack` | BigWig signal track |
+| `bed` | `BedTrack` | BED/BigBed intervals |
+| `highlight` | `HighlightsFromFile` | Region highlighting from BED/BigBed |
+| `bigwig_overlay` | `BigwigOverlay` | Overlay multiple BigWig tracks |
+| `bigwig_collection` | `BigWigCollection` | Collection track (`overlay`/`stacked`) |
+| `bigwig_diff` | `BigWigDiff` | Difference/ratio between two BigWig tracks |
+| `narrowpeak` | `NarrowPeakTrack` | NarrowPeak intervals |
+| `links` | `LinksTrack` | BEDPE-style interaction arcs |
+| `hline` | `HLineTrack` | Horizontal annotation line |
+| `vline` | `VLineTrack` | Vertical annotation line |
+| `cooler` | `CoolerTrack` | Cooler matrix heatmap (`.cool`/`.mcool`) |
+| `capcruncher` | `CapcruncherTrack` | CapCruncher-style Cooler track |
+| `cooler_average` | `CoolerAverage` | Average matrix across multiple Cooler files |
+
+Example:
+
+```python
+fig = Figure()
+fig.add_track("cooler", file="sample.mcool", resolution=10000)
+fig.add_track("bigwig_diff", file_a="a.bw", file_b="b.bw", method="log2ratio")
+fig.add_track("vline", x_position=1050000)
 ```
 
 For more examples, see the `examples/` directory.
