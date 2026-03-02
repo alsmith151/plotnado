@@ -29,6 +29,12 @@ class GenesAesthetics(BaseModel):
     max_number_of_rows: int = 4
     interval_height: float = 0.1
     arrow_size: float = 0.12
+    exon_linewidth: float = 0.8
+    exon_edge_color: str = "black"
+    intron_linewidth: float = 0.8
+    intron_color: str = "black"
+    gene_label_font_size: int = 6
+    gene_label_style: Literal["normal", "italic", "oblique"] = "italic"
 
 
 class Genes(Track):
@@ -211,8 +217,8 @@ class Genes(Track):
                     "Unsupported file format. Only BED/BED.GZ/BigBed and GTF files are supported."
                 )
 
-        if self.aesthetics.minimum_gene_length > 0 and not data.empty:
-            data = data.query(f"end - start >= {self.aesthetics.minimum_gene_length}")
+        if self.minimum_gene_length > 0 and not data.empty:
+            data = data.query(f"end - start >= {self.minimum_gene_length}")
         return data
 
     def _allocate_row_index(
@@ -240,13 +246,13 @@ class Genes(Track):
         for index, (start, size) in enumerate(zip(block_starts, block_sizes)):
             block_start = gene.start + start
             rect = matplotlib.patches.Rectangle(
-                (block_start, ypos - self.aesthetics.interval_height / 2),
+                (block_start, ypos - self.interval_height / 2),
                 size,
-                self.aesthetics.interval_height,
-                linewidth=0.8,
-                edgecolor="black",
-                facecolor=self.aesthetics.color,
-                alpha=self.aesthetics.alpha,
+                self.interval_height,
+                linewidth=self.exon_linewidth,
+                edgecolor=self.exon_edge_color,
+                facecolor=self.color,
+                alpha=self.alpha,
                 zorder=2,
             )
             ax.add_patch(rect)
@@ -257,8 +263,8 @@ class Genes(Track):
                 ax.plot(
                     [intron_start, intron_end],
                     [ypos, ypos],
-                    color="black",
-                    linewidth=0.8,
+                    color=self.intron_color,
+                    linewidth=self.intron_linewidth,
                     zorder=1,
                 )
 
@@ -266,13 +272,13 @@ class Genes(Track):
         self, ax: matplotlib.axes.Axes, gene: pd.Series, ypos: float
     ) -> None:
         rect = matplotlib.patches.Rectangle(
-            (gene.start, ypos - self.aesthetics.interval_height / 2),
+            (gene.start, ypos - self.interval_height / 2),
             gene.end - gene.start,
-            self.aesthetics.interval_height,
-            linewidth=0.8,
-            edgecolor="black",
-            facecolor=self.aesthetics.color,
-            alpha=self.aesthetics.alpha,
+            self.interval_height,
+            linewidth=self.exon_linewidth,
+            edgecolor=self.exon_edge_color,
+            facecolor=self.color,
+            alpha=self.alpha,
         )
         ax.add_patch(rect)
 
@@ -293,9 +299,9 @@ class Genes(Track):
             str(gene.get("geneid", "gene")),
             va="center",
             ha="left",
-            fontsize=6,
-            style="italic",
-            color=self.aesthetics.color,
+            fontsize=self.gene_label_font_size,
+            style=self.gene_label_style,
+            color=self.color,
         )
 
     def plot_genes(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
@@ -309,12 +315,12 @@ class Genes(Track):
         row_last_positions: list[int] = []
         max_row_index = 0
 
-        if self.aesthetics.display == "expanded":
+        if self.display == "expanded":
             for _, gene in genes_df.iterrows():
                 row_index = self._allocate_row_index(
                     row_last_positions, int(gene["start"]), int(gene["end"])
                 )
-                row_index = min(row_index, self.aesthetics.max_number_of_rows - 1)
+                row_index = min(row_index, self.max_number_of_rows - 1)
                 max_row_index = max(max_row_index, row_index)
                 self._draw_gene_feature(ax, gene, row_index)
         else:

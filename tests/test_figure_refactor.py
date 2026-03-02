@@ -7,10 +7,74 @@ import pandas as pd
 import pytest
 
 from plotnado import Figure
+from plotnado.theme import Theme
 from plotnado.tracks import BigWigTrack, ScaleBar
 
 
 class TestFigureRefactor:
+    def test_theme_applies_default_track_color(self):
+        df = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [100, 200],
+                "end": [200, 300],
+                "value": [1.0, 2.0],
+            }
+        )
+        fig = Figure(theme=Theme(color="#111111"))
+        fig.add_track(BigWigTrack(data=df))
+
+        assert fig.tracks[0].color == "#111111"
+
+    def test_theme_does_not_override_explicit_track_color(self):
+        df = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [100, 200],
+                "end": [200, 300],
+                "value": [1.0, 2.0],
+            }
+        )
+        fig = Figure(theme=Theme(color="#111111"))
+        fig.add_track(BigWigTrack(data=df, color="#ff0000"))
+
+        assert fig.tracks[0].color == "#ff0000"
+
+    def test_theme_controls_highlight_defaults(self):
+        fig = Figure(theme=Theme(highlight_color="#00ff00", highlight_alpha=0.33))
+        assert fig.highlight_color == "#00ff00"
+        assert fig.highlight_alpha == 0.33
+
+    def test_highlight_style_configuration(self):
+        fig = Figure(highlight_color="#123456", highlight_alpha=0.2)
+        assert fig.highlight_color == "#123456"
+        assert fig.highlight_alpha == 0.2
+
+        fig.highlight_style(color="#abcdef", alpha=0.4)
+        assert fig.highlight_color == "#abcdef"
+        assert fig.highlight_alpha == 0.4
+
+    def test_available_track_aliases_contains_bigwig(self):
+        aliases = Figure.available_track_aliases()
+        assert "bigwig" in aliases
+        assert aliases["bigwig"] == "BigWigTrack"
+
+    def test_track_options_by_alias(self):
+        options = Figure.track_options("bigwig")
+        assert "aesthetics" in options
+        assert "track" in options
+        assert "color" in options["aesthetics"]
+
+    def test_track_options_unknown_alias_raises(self):
+        with pytest.raises(ValueError, match="Unknown track alias"):
+            Figure.track_options("missing")
+
+    def test_track_options_markdown_by_alias(self):
+        markdown = Figure.track_options_markdown("bigwig")
+        assert "## BigWigTrack options" in markdown
+        assert "### Aesthetics fields" in markdown
+        assert "| color |" in markdown
+
     def test_extend_parameter(self):
         fig = Figure().add_track(ScaleBar())
         out = fig.plot("chr1:100-200", show=False, extend=0.5)

@@ -23,6 +23,10 @@ class ScaleBarAesthetics(BaseModel):
     scale_distance: float | None = None
     font_size: int = 8
     title: str = "Scale"
+    bar_linewidth: float = 3.0
+    tick_linewidth: float = 2.0
+    tick_height: float = 0.1
+    label_offset: float = 0.25
 
 
 class ScaleBar(Track):
@@ -57,13 +61,11 @@ class ScaleBar(Track):
 
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
         """Plot the scale bar."""
-        position = self.aesthetics.position
+        position = self.position
         y_midpoint = 0.5
-        color = self.aesthetics.color
+        color = self.color
 
-        scale_distance = self.aesthetics.scale_distance or self._get_appropriate_scale(
-            gr.length
-        )
+        scale_distance = self.scale_distance or self._get_appropriate_scale(gr.length)
 
         # Determine x start and end based on position
         if position == "left":
@@ -83,26 +85,25 @@ class ScaleBar(Track):
             [x0, x1],
             [y_midpoint, y_midpoint],
             color=color,
-            linewidth=3,
+            linewidth=self.bar_linewidth,
             clip_on=False,
             zorder=5,
         )
 
         # Plot ticks (as expected by tests)
-        tick_height = 0.1
         ax.plot(
             [x0, x0],
-            [y_midpoint - tick_height, y_midpoint + tick_height],
+            [y_midpoint - self.tick_height, y_midpoint + self.tick_height],
             color=color,
-            linewidth=2,
+            linewidth=self.tick_linewidth,
             clip_on=False,
             zorder=5,
         )
         ax.plot(
             [x1, x1],
-            [y_midpoint - tick_height, y_midpoint + tick_height],
+            [y_midpoint - self.tick_height, y_midpoint + self.tick_height],
             color=color,
-            linewidth=2,
+            linewidth=self.tick_linewidth,
             clip_on=False,
             zorder=5,
         )
@@ -111,11 +112,11 @@ class ScaleBar(Track):
         scale_label = format_distance(scale_distance)
         ax.text(
             (x0 + x1) / 2,
-            y_midpoint - 0.25,
+            y_midpoint - self.label_offset,
             scale_label,
             ha="center",
             va="center",
-            fontsize=self.aesthetics.font_size,
+            fontsize=self.font_size,
         )
 
         ax.set_xlim(gr.start, gr.end)

@@ -6,8 +6,10 @@ without heavy dependencies like CoolBox.
 """
 
 from .figure import Figure
+from .theme import Theme
 from .tracks import (
     # Enums
+    CollectionStyle,
     DisplayMode,
     FontWeight,
     PlotStyle,
@@ -16,8 +18,10 @@ from .tracks import (
     TrackType,
     # Base classes
     GenomicRegion,
+    LabelConfig,
     Track,
     TrackLabeller,
+    list_options,
     # Track types
     BigWigTrack,
     BigwigAesthetics,
@@ -41,6 +45,7 @@ from .tracks import (
     BigWigCollection,
     BigWigCollectionAesthetics,
     BigWigDiff,
+    BigWigDiffAesthetics,
     CoolerTrack,
     CapcruncherTrack,
     CoolerAverage,
@@ -61,8 +66,10 @@ except ImportError:
 
 __all__ = [
     "Figure",
+    "Theme",
     # Enums
     "DisplayMode",
+    "CollectionStyle",
     "FontWeight",
     "PlotStyle",
     "Position",
@@ -70,8 +77,10 @@ __all__ = [
     "TrackType",
     # Base
     "GenomicRegion",
+    "LabelConfig",
     "Track",
     "TrackLabeller",
+    "list_options",
     # Track types
     "BigWigTrack",
     "BigwigAesthetics",
@@ -95,6 +104,7 @@ __all__ = [
     "BigWigCollection",
     "BigWigCollectionAesthetics",
     "BigWigDiff",
+    "BigWigDiffAesthetics",
     "CoolerTrack",
     "CapcruncherTrack",
     "CoolerAverage",

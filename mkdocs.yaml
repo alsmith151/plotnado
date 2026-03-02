@@ -6,6 +6,7 @@ nav:
     - Basic Usage: basic_example.ipynb
     - Simple Overlays: simple_overlays.ipynb
   - API Reference: api_reference.md
+  - Aesthetics Reference: aesthetics_reference.md
   - Changelog: changelog.md
   - Reference Summary: reference/SUMMARY.md
 

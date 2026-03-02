@@ -3,7 +3,6 @@ BigWig track for signal visualization.
 """
 
 from pathlib import Path
-from typing import Literal
 
 import matplotlib.axes
 import matplotlib.patches
@@ -11,11 +10,13 @@ import numpy as np
 import pandas as pd
 import pybigtools
 from pydantic import BaseModel
+from pydantic import ConfigDict
 
 from .region import GenomicRegion
 from .base import Track, TrackLabeller
 from .utils import clean_axis
 from .schemas import BedgraphDataFrame
+from .enums import PlotStyle
 
 
 class BigwigAesthetics(BaseModel):
@@ -26,7 +27,7 @@ class BigwigAesthetics(BaseModel):
         style: Plot style ('std', 'line', 'scatter', 'heatmap')
     """
 
-    style: Literal["std", "scatter", "line", "heatmap", "fill", "fragment"] = "fill"
+    style: PlotStyle = PlotStyle.FILL
     color: str = "#2171b5"  # Genome browser blue
     fill: bool = True
     alpha: float = 0.85
@@ -36,14 +37,7 @@ class BigwigAesthetics(BaseModel):
     min_value: float | None = None
     max_value: float | None = None
 
-    plot_title: bool = True
-    title_location: Literal["left", "right"] = "left"
-    title_height: float = 0.5  # Add this field expected by some old tests
-
-    plot_scale: bool = True
-    scale_location: Literal["left", "right"] = "left"
-    scale_height: float = 0.5
-    title: str = "BigWig"
+    model_config = ConfigDict(use_enum_values=True)
 
 
 class BigWigTrack(Track):
@@ -69,10 +63,10 @@ class BigWigTrack(Track):
         ax.stairs(
             values=values["value"],
             edges=edges,
-            linewidth=self.aesthetics.linewidth,
-            color=self.aesthetics.color,
-            alpha=self.aesthetics.alpha,
-            fill=self.aesthetics.fill,
+            linewidth=self.linewidth,
+            color=self.color,
+            alpha=self.alpha,
+            fill=self.fill,
         )
 
     def _fetch_from_disk(self, gr: GenomicRegion) -> pd.DataFrame:
@@ -127,10 +121,10 @@ class BigWigTrack(Track):
         ax.fill_between(
             x,
             y,
-            alpha=self.aesthetics.alpha,
-            color=self.aesthetics.color,
+            alpha=self.alpha,
+            color=self.color,
             linewidth=0,
-            step="post" if self.aesthetics.style in ["std", "fill"] else None,
+            step="post" if self.style in ["std", "fill"] else None,
         )
 
     def _plot_line(
@@ -145,9 +139,9 @@ class BigWigTrack(Track):
         ax.plot(
             x,
             y,
-            color=self.aesthetics.color,
-            alpha=self.aesthetics.alpha,
-            linewidth=self.aesthetics.linewidth,
+            color=self.color,
+            alpha=self.alpha,
+            linewidth=self.linewidth,
         )
 
     def _plot_scatter(
@@ -162,9 +156,9 @@ class BigWigTrack(Track):
         ax.scatter(
             x,
             y,
-            color=self.aesthetics.color,
-            alpha=self.aesthetics.alpha,
-            s=self.aesthetics.scatter_point_size,
+            color=self.color,
+            alpha=self.alpha,
+            s=self.scatter_point_size,
         )
 
     def _plot_fragment(
@@ -183,10 +177,10 @@ class BigWigTrack(Track):
             width=widths,
             align="edge",
             bottom=0,
-            color=self.aesthetics.color,
-            edgecolor=self.aesthetics.color,
-            linewidth=max(self.aesthetics.linewidth, 0.4),
-            alpha=self.aesthetics.alpha,
+            color=self.color,
+            edgecolor=self.color,
+            linewidth=max(self.linewidth, 0.4),
+            alpha=self.alpha,
         )
 
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
@@ -194,15 +188,13 @@ class BigWigTrack(Track):
         data = self.fetch_data(gr)
 
         # Plot based on style
-        if self.aesthetics.style == "scatter":
+        if self.style == "scatter":
             self._plot_scatter(ax, gr, data)
-        elif self.aesthetics.style == "line":
+        elif self.style == "line":
             self._plot_line(ax, gr, data)
-        elif self.aesthetics.style == "fragment":
+        elif self.style == "fragment":
             self._plot_fragment(ax, gr, data)
-        elif self.aesthetics.style == "heatmap":
-            pass  # Heatmap not implemented yet
-        elif self.aesthetics.style in ["std", "fill"]:
+        elif self.style in ["std", "fill", "heatmap"]:
             self._plot_fill(ax, gr, data)
 
         # Set axis limits
@@ -215,13 +207,13 @@ class BigWigTrack(Track):
             # Always use 0 as minimum for genome browser baseline
             data_min = data["value"].min()
             self.y_min = (
-                self.aesthetics.min_value
-                if self.aesthetics.min_value is not None
+                self.min_value
+                if self.min_value is not None
                 else min(0, data_min)
             )
             self.y_max = (
-                self.aesthetics.max_value
-                if self.aesthetics.max_value is not None
+                self.max_value
+                if self.max_value is not None
                 else data["value"].max()
             )
 
@@ -232,22 +224,33 @@ class BigWigTrack(Track):
         ax.set_ylim(ymin=self.y_min, ymax=self.y_max)
 
         # Add labels
-        if self.aesthetics.plot_title or self.aesthetics.plot_scale:
+        if self.label.plot_title or self.label.plot_scale:
             labeller = TrackLabeller(
                 gr=gr,
                 y_min=self.y_min,
                 y_max=self.y_max,
-                plot_title=self.aesthetics.plot_title,
-                plot_scale=self.aesthetics.plot_scale,
-                label_on_track=self.label_on_track,
-                data_range_style=self.data_range_style,
-                label_box_enabled=self.label_box_enabled,
-                label_box_alpha=self.label_box_alpha,
+                plot_title=self.label.plot_title,
+                plot_scale=self.label.plot_scale,
+                label_on_track=self.label.label_on_track,
+                data_range_style=self.label.data_range_style,
+                label_box_enabled=self.label.label_box_enabled,
+                label_box_alpha=self.label.label_box_alpha,
                 title=self.title or "",
                 scale_min=self.y_min,
                 scale_max=self.y_max,
-                title_location=self.aesthetics.title_location,
-                scale_location=self.aesthetics.scale_location,
+                title_location=self.label.title_location,
+                title_height=self.label.title_height,
+                title_size=self.label.title_size,
+                title_color=self.label.title_color,
+                title_font=self.label.title_font,
+                title_weight=self.label.title_weight,
+                scale_location=self.label.scale_location,
+                scale_height=self.label.scale_height,
+                scale_precision=self.label.scale_precision,
+                scale_size=self.label.scale_size,
+                scale_color=self.label.scale_color,
+                scale_font=self.label.scale_font,
+                scale_weight=self.label.scale_weight,
             )
             labeller.plot(ax, gr)
         else:

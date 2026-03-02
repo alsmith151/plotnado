@@ -38,6 +38,7 @@ class BedAesthetics(BaseModel):
     show_labels: bool = False
     label_field: str = "name"
     font_size: int = 8
+    rect_linewidth: float = 1.0
 
 
 class BedTrack(Track):
@@ -122,51 +123,49 @@ class BedTrack(Track):
             clean_axis(ax)
             return
 
-        row_scale = 1.0 / max(1, self.aesthetics.max_rows)
+        row_scale = 1.0 / max(1, self.max_rows)
         row_last_positions: list[int] = []
 
         for row in data.itertuples():
             start = row.start
             end = row.end
 
-            if self.aesthetics.display == DisplayMode.COLLAPSED:
+            if self.display == DisplayMode.COLLAPSED:
                 row_index = 0
             else:
                 row_index = self._allocate_row_index(row_last_positions, start, end)
 
-            if row_index >= self.aesthetics.max_rows:
+            if row_index >= self.max_rows:
                 continue
 
             ypos = (
                 0.5
-                if self.aesthetics.display == DisplayMode.COLLAPSED
+                if self.display == DisplayMode.COLLAPSED
                 else ((row_index + 0.5) * row_scale)
             )
 
             # Draw interval
             rect = matplotlib.patches.Rectangle(
-                (start, ypos - self.aesthetics.interval_height / 2),
+                (start, ypos - self.interval_height / 2),
                 end - start,
-                self.aesthetics.interval_height,
-                linewidth=1,
-                edgecolor=self.aesthetics.edge_color,
-                facecolor=self.aesthetics.color,
-                alpha=self.aesthetics.alpha,
+                self.interval_height,
+                linewidth=self.rect_linewidth,
+                edgecolor=self.edge_color,
+                facecolor=self.color,
+                alpha=self.alpha,
             )
             ax.add_patch(rect)
 
             # Draw label if enabled
-            if self.aesthetics.show_labels and hasattr(
-                row, self.aesthetics.label_field
-            ):
-                label = getattr(row, self.aesthetics.label_field)
+            if self.show_labels and hasattr(row, self.label_field):
+                label = getattr(row, self.label_field)
                 ax.text(
                     (start + end) / 2,
                     ypos,
                     str(label),
                     ha="center",
                     va="center",
-                    fontsize=self.aesthetics.font_size,
+                    fontsize=self.font_size,
                 )
 
         ax.set_xlim(gr.start, gr.end)

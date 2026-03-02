@@ -59,6 +59,26 @@ fig.add_track('bigwig_overlay', tracks=[...])
 fig.plot('chr1:1000000-1100000')
 ```
 
+## Discoverability in IDE and notebooks
+
+```python
+from plotnado import BigWigTrack, Figure, LabelConfig
+
+# Programmatic option discovery
+BigWigTrack.options()            # dict with track/aesthetics/label sections
+BigWigTrack.options_markdown()   # notebook-friendly markdown table
+
+# Alias-based discovery
+Figure.available_track_aliases()
+Figure.track_options("bigwig")
+
+# Unified label config
+track = BigWigTrack(
+  color="#1f77b4",
+  label=LabelConfig(plot_title=True, plot_scale=True, label_box_alpha=0.8),
+)
+```
+
 ## Track Aliases
 
 `Figure.add_track()` accepts either a track instance or a string alias. The following aliases are supported:

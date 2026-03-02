@@ -13,8 +13,24 @@ from .utils import clean_axis
 
 class CoolerAesthetics(BaseModel):
     cmap: str = "RdBu_r"
-    vmin: float | None = None
-    vmax: float | None = None
+    min_value: float | None = None
+    max_value: float | None = None
+
+    @property
+    def vmin(self) -> float | None:
+        return self.min_value
+
+    @vmin.setter
+    def vmin(self, value: float | None) -> None:
+        self.min_value = value
+
+    @property
+    def vmax(self) -> float | None:
+        return self.max_value
+
+    @vmax.setter
+    def vmax(self, value: float | None) -> None:
+        self.max_value = value
 
 
 class CoolerTrack(Track):
@@ -61,9 +77,9 @@ class CoolerTrack(Track):
         tri = np.triu(matrix)
         ax.matshow(
             tri,
-            cmap=self.aesthetics.cmap,
-            vmin=self.aesthetics.vmin,
-            vmax=self.aesthetics.vmax,
+            cmap=self.cmap,
+            vmin=self.min_value,
+            vmax=self.max_value,
             origin="lower",
             aspect="auto",
         )
@@ -105,9 +121,9 @@ class CoolerAverage(Track):
             return
         ax.matshow(
             np.triu(matrix),
-            cmap=self.aesthetics.cmap,
-            vmin=self.aesthetics.vmin,
-            vmax=self.aesthetics.vmax,
+            cmap=self.cmap,
+            vmin=self.min_value,
+            vmax=self.max_value,
             origin="lower",
             aspect="auto",
         )

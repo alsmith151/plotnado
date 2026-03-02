@@ -5,6 +5,7 @@ Provides track classes for genomic visualization.
 """
 
 from .enums import (
+    CollectionStyle,
     DisplayMode,
     FontWeight,
     PlotStyle,
@@ -21,10 +22,11 @@ from .utils import (
     parse_genomic_value,
 )
 from .base import (
+    LabelConfig,
     Track,
     TrackLabeller,
 )
-from .aesthetics import Aesthetics
+from .aesthetics import list_options
 from .schemas import BedgraphDataFrame
 from .bigwig import BigWigTrack, BigwigAesthetics
 from .genes import Genes, GenesAesthetics
@@ -36,7 +38,7 @@ from .highlight import HighlightsFromFile, HighlightsAesthetics
 from .scaling import Autoscaler, Scaler
 from .overlay import BigwigOverlay, BigwigOverlayAesthetics
 from .bigwig_collection import BigWigCollection, BigWigCollectionAesthetics
-from .bigwig_diff import BigWigDiff
+from .bigwig_diff import BigWigDiff, BigWigDiffAesthetics
 from .cooler_track import CoolerTrack, CapcruncherTrack, CoolerAverage
 from .peaks import NarrowPeakTrack, NarrowPeakAesthetics
 from .links import LinksTrack, LinksAesthetics
@@ -50,17 +52,19 @@ SpacerTrack = Spacer
 __all__ = [
     # Enums
     "DisplayMode",
+    "CollectionStyle",
     "FontWeight",
     "PlotStyle",
     "Position",
     "Strand",
     "TrackType",
     # Base classes
-    "Aesthetics",
+    "list_options",
     "GenomicRegion",
     "GenomicRange",
     "Track",
     "TrackLabeller",
+    "LabelConfig",
     "clean_axis",
     "format_distance",
     "get_human_readable_number_of_bp",
@@ -93,6 +97,7 @@ __all__ = [
     "BigWigCollection",
     "BigWigCollectionAesthetics",
     "BigWigDiff",
+    "BigWigDiffAesthetics",
     "CoolerTrack",
     "CapcruncherTrack",
     "CoolerAverage",

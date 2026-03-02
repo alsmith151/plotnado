@@ -6,3 +6,4 @@ mkdocs-gen-files>=0.6.0
 mkdocs-jupyter>=0.25.1
 mkdocs-click>=0.9.0
 pymdown-extensions>=10.21
+tomli-w

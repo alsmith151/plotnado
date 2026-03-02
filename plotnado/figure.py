@@ -35,7 +35,9 @@ from .tracks import (
     Track,
     VLineTrack,
     BigwigOverlay,
+    list_options,
 )
+from .theme import Theme
 
 
 class Figure:
@@ -46,19 +48,106 @@ class Figure:
         tracks: list[Track] | None = None,
         width: float = 12,
         track_height: float = 2.0,
+        highlight_color: str | None = None,
+        highlight_alpha: float | None = None,
+        theme: Theme | None = None,
     ):
         self.tracks: list[Track] = tracks or []
         self.width = width
         self.track_height = track_height
+        self.theme = theme
+        default_highlight_color = (
+            theme.highlight_color if theme is not None else "#ffd700"
+        )
+        default_highlight_alpha = theme.highlight_alpha if theme is not None else 0.15
+        self.highlight_color = highlight_color or default_highlight_color
+        self.highlight_alpha = (
+            highlight_alpha if highlight_alpha is not None else default_highlight_alpha
+        )
         self._highlight_regions: list[GenomicRegion] = []
         self._autocolor_palette: str | None = None
         self._autoscale: bool = False
 
+        if self.theme is not None:
+            self.tracks = [self._apply_theme_to_track(track) for track in self.tracks]
+
     def add_track(self, track: str | Track, **kwargs) -> Self:
         if isinstance(track, str):
             track = self._create_track_from_alias(track, **kwargs)
+        track = self._apply_theme_to_track(track)
         self.tracks.append(track)
         return self
+
+    def _apply_theme_to_track(self, track: Track) -> Track:
+        if self.theme is None:
+            return track
+
+        theme = self.theme
+        for field_name in ("color", "alpha", "linewidth", "font_size", "cmap"):
+            if not hasattr(track, field_name):
+                continue
+            theme_value = getattr(theme, field_name)
+            if theme_value is None:
+                continue
+            model_field = track.__class__.model_fields.get(field_name)
+            if model_field is None:
+                continue
+            if getattr(track, field_name) == model_field.default:
+                setattr(track, field_name, theme_value)
+
+        if hasattr(track, "label") and track.label is not None:
+            default_label = track.label.__class__()
+            for field_name, model_field in track.label.__class__.model_fields.items():
+                current_value = getattr(track.label, field_name)
+                theme_value = getattr(theme.label, field_name)
+                default_value = getattr(default_label, field_name)
+                if current_value == default_value and theme_value != default_value:
+                    setattr(track.label, field_name, theme_value)
+
+        return track
+
+    @classmethod
+    def available_track_aliases(cls) -> dict[str, str]:
+        """Return available alias -> TrackClass mappings."""
+        return {
+            alias: track_cls.__name__
+            for alias, track_cls in cls._alias_map().items()
+        }
+
+    @classmethod
+    def track_options(cls, track: str | type[Track]) -> dict[str, dict]:
+        """Return programmatic option metadata for a track alias or class.
+
+        Examples:
+            Figure.track_options("bigwig")
+            Figure.track_options(BigWigTrack)
+        """
+        if isinstance(track, str):
+            key = track.lower()
+            alias_map = cls._alias_map()
+            if key not in alias_map:
+                raise ValueError(
+                    f"Unknown track alias: {track}. Available: {list(alias_map.keys())}"
+                )
+            track_cls = alias_map[key]
+        else:
+            track_cls = track
+        return list_options(track_cls)
+
+    @classmethod
+    def track_options_markdown(cls, track: str | type[Track]) -> str:
+        """Return markdown-formatted option tables for a track alias or class."""
+        if isinstance(track, str):
+            key = track.lower()
+            alias_map = cls._alias_map()
+            if key not in alias_map:
+                raise ValueError(
+                    f"Unknown track alias: {track}. Available: {list(alias_map.keys())}"
+                )
+            track_cls = alias_map[key]
+        else:
+            track_cls = track
+        return track_cls.options_markdown()
 
     def autoscale(self, enable: bool = True) -> Self:
         self._autoscale = enable
@@ -70,16 +159,33 @@ class Figure:
 
         cmap = plt.get_cmap(palette)
         for index, track in enumerate(self.tracks):
-            if hasattr(track, "aesthetics") and hasattr(track.aesthetics, "color"):
-                track.aesthetics.color = mcolors.to_hex(cmap(index % cmap.N))
+            if hasattr(track, "color"):
+                track.color = mcolors.to_hex(cmap(index % cmap.N))
         return self
 
     def highlight(self, region: str | GenomicRegion) -> Self:
         self._highlight_regions.append(GenomicRegion.into(region))
         return self
 
+    def highlight_style(self, color: str | None = None, alpha: float | None = None) -> Self:
+        if color is not None:
+            self.highlight_color = color
+        if alpha is not None:
+            self.highlight_alpha = alpha
+        return self
+
     def _create_track_from_alias(self, alias: str, **kwargs) -> Track:
-        alias_map = {
+        alias_map = self._alias_map()
+        key = alias.lower()
+        if key not in alias_map:
+            raise ValueError(
+                f"Unknown track alias: {alias}. Available: {list(alias_map.keys())}"
+            )
+        return alias_map[key](**kwargs)
+
+    @staticmethod
+    def _alias_map() -> dict[str, type[Track]]:
+        return {
             "scalebar": ScaleBar,
             "scale": ScaleBar,
             "genes": Genes,
@@ -99,12 +205,6 @@ class Figure:
             "bigwig_collection": BigWigCollection,
             "bigwig_diff": BigWigDiff,
         }
-        key = alias.lower()
-        if key not in alias_map:
-            raise ValueError(
-                f"Unknown track alias: {alias}. Available: {list(alias_map.keys())}"
-            )
-        return alias_map[key](**kwargs)
 
     @staticmethod
     def _apply_extend(gr: GenomicRegion, extend: float | int | None) -> GenomicRegion:
@@ -213,7 +313,13 @@ class Figure:
                 start = max(highlight_gr.start, gr.start)
                 end = min(highlight_gr.end, gr.end)
                 if start < end:
-                    bg_ax.axvspan(start, end, color="#ffd700", alpha=0.15, zorder=-1)
+                    bg_ax.axvspan(
+                        start,
+                        end,
+                        color=self.highlight_color,
+                        alpha=self.highlight_alpha,
+                        zorder=-1,
+                    )
 
         for track in global_tracks:
             try:
@@ -361,14 +467,28 @@ class Figure:
         }
 
     def to_toml(self, path: str) -> None:
+        def _prune_none(value):
+            if isinstance(value, dict):
+                return {
+                    key: _prune_none(item)
+                    for key, item in value.items()
+                    if item is not None
+                }
+            if isinstance(value, list):
+                return [_prune_none(item) for item in value if item is not None]
+            return value
+
         tracks_by_type: dict[str, list[dict]] = {}
         for track in self.tracks:
-            tracks_by_type.setdefault(track.__class__.__name__, []).append(track.model_dump())
+            tracks_by_type.setdefault(track.__class__.__name__, []).append(
+                _prune_none(track.model_dump())
+            )
 
         payload = {
             "figure": {"width": self.width, "track_height": self.track_height},
             "tracks": tracks_by_type,
         }
+        payload = _prune_none(payload)
 
         try:
             import tomli_w

@@ -47,11 +47,11 @@ class HLineTrack(Track):
         """Plot horizontal line."""
         ax.axhline(
             y=self.y_value,
-            color=self.aesthetics.color,
-            linestyle=self.aesthetics.linestyle,
-            linewidth=self.aesthetics.linewidth,
-            alpha=self.aesthetics.alpha,
-            zorder=self.aesthetics.zorder,
+            color=self.color,
+            linestyle=self.linestyle,
+            linewidth=self.linewidth,
+            alpha=self.alpha,
+            zorder=self.zorder,
         )
 
 
@@ -76,11 +76,11 @@ class VLineTrack(Track):
         if gr.start <= x <= gr.end:
             ax.axvline(
                 x=x,
-                color=self.aesthetics.color,
-                linestyle=self.aesthetics.linestyle,
-                linewidth=self.aesthetics.linewidth,
-                alpha=self.aesthetics.alpha,
-                zorder=self.aesthetics.zorder,
+                color=self.color,
+                linestyle=self.linestyle,
+                linewidth=self.linewidth,
+                alpha=self.alpha,
+                zorder=self.zorder,
             )
 
     def plot_on_axes(self, gr: GenomicRegion, axes: list) -> None:

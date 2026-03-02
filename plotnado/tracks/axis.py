@@ -27,6 +27,10 @@ class GenomicAxisAesthetics(BaseModel):
     num_ticks: int = 5
     show_chromosome: bool = True
     tick_height: float = 0.15  # Increased slightly for visibility
+    axis_linewidth: float = 1.5
+    tick_color: str = "#333333"
+    tick_linewidth: float = 1.2
+    chromosome_fontweight: str = "bold"
 
 
 class GenomicAxis(Track):
@@ -46,7 +50,7 @@ class GenomicAxis(Track):
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
         """Plot the genomic axis."""
         # Calculate nice tick positions
-        num_ticks = self.aesthetics.num_ticks
+        num_ticks = self.num_ticks
         tick_positions = np.linspace(gr.start, gr.end, num_ticks)
 
         # Round to nice numbers
@@ -67,19 +71,19 @@ class GenomicAxis(Track):
         ax.plot(
             [gr.start, gr.end],
             [y_line, y_line],
-            color=self.aesthetics.color,
-            linewidth=1.5,
+            color=self.color,
+            linewidth=self.axis_linewidth,
             zorder=2,
         )
 
         # Draw ticks downward (genome browser convention)
-        tick_height = self.aesthetics.tick_height
+        tick_height = self.tick_height
         for pos in tick_positions:
             ax.plot(
                 [pos, pos],
                 [y_line, y_line - tick_height],  # Downward ticks
-                color="#333333",  # Darker for ticks
-                linewidth=1.2,
+                color=self.tick_color,
+                linewidth=self.tick_linewidth,
                 zorder=2,
             )
             ax.text(
@@ -88,22 +92,22 @@ class GenomicAxis(Track):
                 format_genomic_value(int(pos)),
                 ha="center",
                 va="top",
-                fontsize=self.aesthetics.font_size,
-                color="#333333",
+                fontsize=self.font_size,
+                color=self.tick_color,
                 zorder=3,
             )
 
         # Draw chromosome label if enabled
-        if self.aesthetics.show_chromosome:
+        if self.show_chromosome:
             ax.text(
                 gr.start,
                 0.95,
                 gr.chromosome,
                 ha="left",
                 va="top",
-                fontsize=self.aesthetics.font_size,
-                color=self.aesthetics.color,
-                fontweight="bold",
+                fontsize=self.font_size,
+                color=self.color,
+                fontweight=self.chromosome_fontweight,
             )
 
         ax.set_xlim(gr.start, gr.end)

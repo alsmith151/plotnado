@@ -27,6 +27,7 @@ class HighlightsAesthetics(BaseModel):
     color: str = "yellow"
     alpha: float = 0.3
     edge_color: str | None = None
+    linewidth: float = 1.0
 
 
 class HighlightsFromFile(Track):
@@ -97,10 +98,10 @@ class HighlightsFromFile(Track):
                 (start, y_min),
                 end - start,
                 y_max - y_min,
-                facecolor=self.aesthetics.color,
-                alpha=self.aesthetics.alpha,
-                edgecolor=self.aesthetics.edge_color,
-                linewidth=0 if self.aesthetics.edge_color is None else 1,
+                facecolor=self.color,
+                alpha=self.alpha,
+                edgecolor=self.edge_color,
+                linewidth=0 if self.edge_color is None else self.linewidth,
             )
             ax.add_patch(rect)
 

@@ -1,24 +1,26 @@
 """Collection track for rendering multiple BigWig files."""
 
 from pathlib import Path
-from typing import Literal
 
 import matplotlib.axes
 import pandas as pd
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
-from .base import Track, TrackLabeller
+from .base import LabelConfig, Track, TrackLabeller
 from .bigwig import BigWigTrack, BigwigAesthetics
 from .region import GenomicRegion
 from .scaling import Autoscaler
 from .utils import clean_axis
+from .enums import CollectionStyle
 
 
 class BigWigCollectionAesthetics(BaseModel):
     colors: list[str] | None = None
     labels: list[str] | None = None
     alpha: float = 0.6
-    style: Literal["overlay", "stacked"] = "overlay"
+    style: CollectionStyle = CollectionStyle.OVERLAY
+
+    model_config = ConfigDict(use_enum_values=True)
 
 
 class BigWigCollection(Track):
@@ -31,13 +33,13 @@ class BigWigCollection(Track):
         tracks: list[BigWigTrack] = []
         for index, file_path in enumerate(self.files):
             color = (
-                self.aesthetics.colors[index]
-                if self.aesthetics.colors and index < len(self.aesthetics.colors)
+                self.colors[index]
+                if self.colors and index < len(self.colors)
                 else defaults[index % len(defaults)]
             )
             label = (
-                self.aesthetics.labels[index]
-                if self.aesthetics.labels and index < len(self.aesthetics.labels)
+                self.labels[index]
+                if self.labels and index < len(self.labels)
                 else Path(file_path).stem
             )
             tracks.append(
@@ -47,10 +49,9 @@ class BigWigCollection(Track):
                     aesthetics=BigwigAesthetics(
                         style="fill",
                         color=color,
-                        alpha=self.aesthetics.alpha,
-                        plot_title=False,
-                        plot_scale=False,
+                        alpha=self.alpha,
                     ),
+                    label=LabelConfig(plot_title=False, plot_scale=False),
                 )
             )
         return tracks
@@ -66,10 +67,10 @@ class BigWigCollection(Track):
         if y_min == y_max:
             y_max = y_min + 1
 
-        if self.aesthetics.style == "overlay":
+        if self.style == "overlay":
             for track in tracks:
-                track.aesthetics.min_value = y_min
-                track.aesthetics.max_value = y_max
+                track.min_value = y_min
+                track.max_value = y_max
                 track.plot(ax, gr)
         else:
             offset = 0.0
@@ -80,7 +81,7 @@ class BigWigCollection(Track):
                     continue
                 x = (data["start"] + data["end"]) / 2
                 y = data["value"] + offset
-                ax.plot(x, y, color=track.aesthetics.color, alpha=track.aesthetics.alpha)
+                ax.plot(x, y, color=track.color, alpha=track.alpha)
                 offset += max_step
             y_max = max_step * max(1, len(tracks))
             y_min = 0
@@ -93,10 +94,23 @@ class BigWigCollection(Track):
                 title=self.title,
                 plot_title=True,
                 plot_scale=True,
-                label_on_track=self.label_on_track,
-                data_range_style=self.data_range_style,
-                label_box_enabled=self.label_box_enabled,
-                label_box_alpha=self.label_box_alpha,
+                label_on_track=self.label.label_on_track,
+                data_range_style=self.label.data_range_style,
+                label_box_enabled=self.label.label_box_enabled,
+                label_box_alpha=self.label.label_box_alpha,
+                title_location=self.label.title_location,
+                title_height=self.label.title_height,
+                title_size=self.label.title_size,
+                title_color=self.label.title_color,
+                title_font=self.label.title_font,
+                title_weight=self.label.title_weight,
+                scale_location=self.label.scale_location,
+                scale_height=self.label.scale_height,
+                scale_precision=self.label.scale_precision,
+                scale_size=self.label.scale_size,
+                scale_color=self.label.scale_color,
+                scale_font=self.label.scale_font,
+                scale_weight=self.label.scale_weight,
             ).plot(ax, gr)
         else:
             clean_axis(ax)

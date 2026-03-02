@@ -1,30 +1,15 @@
 """
-Aesthetics factory for compatibility.
+Option helpers for aesthetics discoverability.
 """
 
-from pydantic import BaseModel
-from .bigwig import BigwigAesthetics
-from .scalebar import ScaleBarAesthetics
-from .genes import GenesAesthetics
+from typing import Any
+
+from .base import Track
 
 
-class Aesthetics(BaseModel):
+def list_options(track_cls: type[Track]) -> dict[str, dict[str, dict[str, Any]]]:
+    """Return generated option metadata for a Track subclass.
+
+    This is notebook-friendly and avoids guessing kwargs.
     """
-    Factory class for track aesthetics.
-    Maintains compatibility with the old API.
-    """
-
-    @classmethod
-    def bigwig(cls, **kwargs) -> BigwigAesthetics:
-        """Create BigwigAesthetics instance."""
-        return BigwigAesthetics(**kwargs)
-
-    @classmethod
-    def scalebar(cls, **kwargs) -> ScaleBarAesthetics:
-        """Create ScaleBarAesthetics instance."""
-        return ScaleBarAesthetics(**kwargs)
-
-    @classmethod
-    def genes(cls, **kwargs) -> GenesAesthetics:
-        """Create GenesAesthetics instance."""
-        return GenesAesthetics(**kwargs)
+    return track_cls.options()

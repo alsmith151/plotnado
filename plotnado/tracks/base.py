@@ -6,11 +6,39 @@ from abc import ABC
 from typing import Any, Literal
 
 import matplotlib.axes
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+from ._meta import TrackMeta
 from .region import GenomicRegion
 
 
-class Track(BaseModel, ABC):
+class LabelConfig(BaseModel):
+    """Unified label configuration for all tracks."""
+
+    plot_title: bool = True
+    plot_scale: bool = True
+    label_on_track: bool = False
+    data_range_style: Literal["text", "colorbar", "none"] = "text"
+    label_box_enabled: bool = True
+    label_box_alpha: float = 0.9
+
+    title_location: Literal["left", "right"] = "left"
+    title_height: float = 0.8
+    title_size: int = 10
+    title_color: str = "#333333"
+    title_font: str = "DejaVu Sans"
+    title_weight: Literal["normal", "bold"] = "bold"
+
+    scale_location: Literal["left", "right"] = "right"
+    scale_height: float = 0.8
+    scale_precision: int = 2
+    scale_size: int = 9
+    scale_color: str = "#666666"
+    scale_font: str = "DejaVu Sans"
+    scale_weight: Literal["normal", "bold"] = "normal"
+
+
+class Track(BaseModel, ABC, metaclass=TrackMeta):
     """
     Abstract base class for all track types.
 
@@ -23,12 +51,52 @@ class Track(BaseModel, ABC):
     data: Any | None = None
     height: float = 1.0
     autoscale_group: str | None = None
-    label_on_track: bool = False
-    data_range_style: Literal["text", "colorbar", "none"] = "text"
-    label_box_enabled: bool = True
-    label_box_alpha: float = 0.9
+    label: LabelConfig = Field(default_factory=LabelConfig)
 
-    model_config = ConfigDict(arbitrary_types_allowed=True)
+    model_config = ConfigDict(arbitrary_types_allowed=True, extra="forbid")
+
+    @model_validator(mode="before")
+    @classmethod
+    def _merge_nested_aesthetics(cls, data: Any) -> Any:
+        """Allow nested aesthetics input while exposing flattened kwargs."""
+        if not isinstance(data, dict) or "aesthetics" not in data:
+            return data
+
+        aesthetics_data = data.get("aesthetics")
+        if isinstance(aesthetics_data, BaseModel):
+            aesthetics_data = aesthetics_data.model_dump()
+
+        if not isinstance(aesthetics_data, dict):
+            return data
+
+        merged = dict(data)
+        for key, value in aesthetics_data.items():
+            if key in cls.model_fields and key != "aesthetics":
+                merged.setdefault(key, value)
+        return merged
+
+    @model_validator(mode="after")
+    def _sync_aesthetics_model(self) -> "Track":
+        """Keep `self.aesthetics` aligned with flattened aesthetic fields."""
+        aesthetics_class = getattr(type(self), "__track_aesthetics_class__", None)
+        if aesthetics_class is None or "aesthetics" not in type(self).model_fields:
+            return self
+
+        aesthetics_payload: dict[str, Any] = {}
+        current_aesthetics = getattr(self, "aesthetics", None)
+        if isinstance(current_aesthetics, BaseModel):
+            aesthetics_payload.update(current_aesthetics.model_dump())
+        elif isinstance(current_aesthetics, dict):
+            aesthetics_payload.update(current_aesthetics)
+
+        for field_name in getattr(
+            type(self), "__track_flattened_aesthetics_fields__", set()
+        ):
+            if field_name in type(self).model_fields:
+                aesthetics_payload[field_name] = getattr(self, field_name)
+
+        object.__setattr__(self, "aesthetics", aesthetics_class(**aesthetics_payload))
+        return self
 
     def fetch_data(self, gr: GenomicRegion) -> Any:
         """Fetch data for the given genomic region."""
@@ -37,6 +105,83 @@ class Track(BaseModel, ABC):
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
         """Plot the track on the given axes for the given region."""
         raise NotImplementedError
+
+    @staticmethod
+    def _render_type_name(annotation: Any) -> str:
+        if annotation is None:
+            return "None"
+        if isinstance(annotation, type):
+            return annotation.__name__
+        return str(annotation).replace("typing.", "")
+
+    @staticmethod
+    def _render_default(value: Any) -> Any:
+        if value is None:
+            return None
+        if isinstance(value, (str, int, float, bool, list, dict)):
+            return value
+        return repr(value)
+
+    @classmethod
+    def options(cls) -> dict[str, dict[str, dict[str, Any]]]:
+        """Return programmatically generated option metadata for this track."""
+        native_fields = set(getattr(cls, "__track_native_fields__", set()))
+        flattened_fields = set(
+            getattr(cls, "__track_flattened_aesthetics_fields__", set())
+        )
+
+        track_options: dict[str, dict[str, Any]] = {}
+        aesthetics_options: dict[str, dict[str, Any]] = {}
+        label_options: dict[str, dict[str, Any]] = {}
+
+        for field_name, field_info in cls.model_fields.items():
+            section = (
+                aesthetics_options
+                if field_name in flattened_fields and field_name not in native_fields
+                else track_options
+            )
+            section[field_name] = {
+                "type": cls._render_type_name(field_info.annotation),
+                "default": cls._render_default(field_info.default),
+                "required": field_info.is_required(),
+                "description": field_info.description,
+            }
+
+        label_info = cls.model_fields.get("label")
+        if label_info and isinstance(label_info.annotation, type) and issubclass(
+            label_info.annotation, BaseModel
+        ):
+            for field_name, field_info in label_info.annotation.model_fields.items():
+                label_options[field_name] = {
+                    "type": cls._render_type_name(field_info.annotation),
+                    "default": cls._render_default(field_info.default),
+                    "required": field_info.is_required(),
+                    "description": field_info.description,
+                }
+
+        return {
+            "track": track_options,
+            "aesthetics": aesthetics_options,
+            "label": label_options,
+        }
+
+    @classmethod
+    def options_markdown(cls) -> str:
+        """Return options metadata as markdown tables for notebook display."""
+        options = cls.options()
+        lines = [f"## {cls.__name__} options", ""]
+
+        for section in ("track", "aesthetics", "label"):
+            lines.append(f"### {section.title()} fields")
+            lines.append("| Name | Type | Default | Required |")
+            lines.append("|---|---|---|---|")
+            for name, meta in options[section].items():
+                lines.append(
+                    f"| {name} | {meta['type']} | {meta['default']} | {meta['required']} |"
+                )
+            lines.append("")
+
+        return "\n".join(lines)
 
 
 class TrackLabeller(BaseModel):
@@ -124,7 +269,6 @@ class TrackLabeller(BaseModel):
 
     def _format_scale(self, value: float) -> str:
         """Format scale value for display."""
-        # Use integer if it's a whole number
         if value % 1 == 0:
             return str(int(value))
         return f"{value:.{self.scale_precision}f}"

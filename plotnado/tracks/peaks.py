@@ -8,7 +8,6 @@ import matplotlib.axes
 import matplotlib.cm
 import matplotlib.colors
 import matplotlib.patches
-import pandas as pd
 
 from .bed import BedTrack, BedAesthetics
 from .region import GenomicRegion
@@ -51,43 +50,6 @@ class NarrowPeakTrack(BedTrack):
 
     aesthetics: NarrowPeakAesthetics = NarrowPeakAesthetics()
 
-    def _fetch_from_disk(self, gr: GenomicRegion) -> pd.DataFrame:
-        """Fetch intervals from a narrowPeak file."""
-        # Reuse BedTrack logic but ensure columns are named correctly for narrowPeak
-        df = super()._fetch_from_disk(gr)
-
-        # If columns are unnamed/standard BED names, try to map them to narrowPeak
-        # Standard pybedtools to_dataframe() headers for narrowPeak might vary
-        # Usually: chrom, start, end, name, score, strand, signalValue, pValue, qValue, peak
-
-        expected_cols = [
-            "chrom",
-            "start",
-            "end",
-            "name",
-            "score",
-            "strand",
-            "signalValue",
-            "pValue",
-            "qValue",
-            "peak",
-        ]
-
-        if df.shape[1] == 10:
-            # Assuming standard narrowPeak format if exact column count matches
-            # but pybedtools usually names the first 6 correctly
-            current_cols = list(df.columns)
-            mapping = {}
-            for i, col in enumerate(expected_cols):
-                if i < len(current_cols):
-                    mapping[current_cols[i]] = col
-
-            # Only rename if numeric indices or mismatch
-            # But proceed with caution.
-            pass
-
-        return df
-
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
         """Plot narrowPeak records."""
         data = self.fetch_data(gr)
@@ -98,23 +60,23 @@ class NarrowPeakTrack(BedTrack):
             clean_axis(ax)
             return
 
-        row_scale = 1.0 / max(1, self.aesthetics.max_rows)
+        row_scale = 1.0 / max(1, self.max_rows)
         row_last_positions: List[int] = []
 
         # Setup colormap if needed
         cmap = None
         norm = None
-        if self.aesthetics.color_by and self.aesthetics.color_by in data.columns:
-            values = data[self.aesthetics.color_by]
-            cmap = matplotlib.cm.get_cmap(self.aesthetics.cmap)
+        if self.color_by and self.color_by in data.columns:
+            values = data[self.color_by]
+            cmap = matplotlib.cm.get_cmap(self.cmap)
             vmin = (
-                self.aesthetics.min_score
-                if self.aesthetics.min_score is not None
+                self.min_score
+                if self.min_score is not None
                 else values.min()
             )
             vmax = (
-                self.aesthetics.max_score
-                if self.aesthetics.max_score is not None
+                self.max_score
+                if self.max_score is not None
                 else values.max()
             )
             norm = matplotlib.colors.Normalize(vmin=vmin, vmax=vmax)
@@ -123,66 +85,64 @@ class NarrowPeakTrack(BedTrack):
             start = row.start
             end = row.end
 
-            if self.aesthetics.display == DisplayMode.COLLAPSED:
+            if self.display == DisplayMode.COLLAPSED:
                 row_index = 0
             else:
                 row_index = self._allocate_row_index(row_last_positions, start, end)
 
-            if row_index >= self.aesthetics.max_rows:
+            if row_index >= self.max_rows:
                 continue
 
             ypos = (
                 0.5
-                if self.aesthetics.display == DisplayMode.COLLAPSED
+                if self.display == DisplayMode.COLLAPSED
                 else ((row_index + 0.5) * row_scale)
             )
 
             # Determine color
-            current_color = self.aesthetics.color
-            if cmap and norm and hasattr(row, self.aesthetics.color_by):
-                val = getattr(row, self.aesthetics.color_by)
+            current_color = self.color
+            if cmap and norm and hasattr(row, self.color_by):
+                val = getattr(row, self.color_by)
                 current_color = cmap(norm(val))
 
             # Draw interval
             rect = matplotlib.patches.Rectangle(
-                (start, ypos - self.aesthetics.interval_height / 2),
+                (start, ypos - self.interval_height / 2),
                 end - start,
-                self.aesthetics.interval_height,
+                self.interval_height,
                 linewidth=1,
-                edgecolor=self.aesthetics.edge_color,
+                edgecolor=self.edge_color,
                 facecolor=current_color,
-                alpha=self.aesthetics.alpha,
+                alpha=self.alpha,
                 zorder=1,
             )
             ax.add_patch(rect)
 
             # Draw summit if enabled
-            if self.aesthetics.show_summit and hasattr(row, "peak") and row.peak != -1:
+            if self.show_summit and hasattr(row, "peak") and row.peak != -1:
                 # peak is 0-based offset from start
                 summit_pos = start + row.peak
                 ax.plot(
                     [summit_pos, summit_pos],
                     [
-                        ypos - self.aesthetics.interval_height / 2,
-                        ypos + self.aesthetics.interval_height / 2,
+                        ypos - self.interval_height / 2,
+                        ypos + self.interval_height / 2,
                     ],
-                    color=self.aesthetics.summit_color,
-                    linewidth=self.aesthetics.summit_width,
+                    color=self.summit_color,
+                    linewidth=self.summit_width,
                     zorder=2,
                 )
 
             # Draw label if enabled
-            if self.aesthetics.show_labels and hasattr(
-                row, self.aesthetics.label_field
-            ):
-                label = getattr(row, self.aesthetics.label_field)
+            if self.show_labels and hasattr(row, self.label_field):
+                label = getattr(row, self.label_field)
                 ax.text(
                     (start + end) / 2,
                     ypos,
                     str(label),
                     ha="center",
                     va="center",
-                    fontsize=self.aesthetics.font_size,
+                    fontsize=self.font_size,
                     zorder=3,
                 )
 

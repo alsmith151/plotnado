@@ -5,6 +5,7 @@ from typing import Literal
 import matplotlib.axes
 import numpy as np
 import pandas as pd
+from pydantic import BaseModel
 
 from .base import Track, TrackLabeller
 from .bigwig import BigWigTrack
@@ -12,13 +13,23 @@ from .region import GenomicRegion
 from .utils import clean_axis
 
 
+class BigWigDiffAesthetics(BaseModel):
+    """Visual configuration for BigWigDiff tracks."""
+
+    positive_color: str = "#d62728"
+    negative_color: str = "#1f77b4"
+    linewidth: float = 1.0
+    bar_alpha: float = 0.45
+    zero_line_color: str = "#333333"
+    zero_line_width: float = 0.8
+    zero_line_alpha: float = 0.8
+
+
 class BigWigDiff(Track):
     file_a: str
     file_b: str
     method: Literal["subtract", "ratio", "log2ratio"] = "subtract"
-    positive_color: str = "#d62728"
-    negative_color: str = "#1f77b4"
-    linewidth: float = 1.0
+    aesthetics: BigWigDiffAesthetics = BigWigDiffAesthetics()
     height: float = 1.5
 
     def _align(self, a: pd.DataFrame, b: pd.DataFrame) -> pd.DataFrame:
@@ -79,7 +90,7 @@ class BigWigDiff(Track):
             color=self.positive_color,
             edgecolor=self.positive_color,
             linewidth=self.linewidth,
-            alpha=0.45,
+            alpha=self.bar_alpha,
         )
         ax.bar(
             starts,
@@ -89,9 +100,14 @@ class BigWigDiff(Track):
             color=self.negative_color,
             edgecolor=self.negative_color,
             linewidth=self.linewidth,
-            alpha=0.45,
+            alpha=self.bar_alpha,
         )
-        ax.axhline(0, color="#333333", linewidth=0.8, alpha=0.8)
+        ax.axhline(
+            0,
+            color=self.zero_line_color,
+            linewidth=self.zero_line_width,
+            alpha=self.zero_line_alpha,
+        )
 
         y_min = float(np.nanmin(y))
         y_max = float(np.nanmax(y))
@@ -103,12 +119,25 @@ class BigWigDiff(Track):
             y_min=y_min,
             y_max=y_max,
             title=self.title or self.method,
-            plot_title=bool(self.title),
-            plot_scale=True,
-            label_on_track=self.label_on_track,
-            data_range_style=self.data_range_style,
-            label_box_enabled=self.label_box_enabled,
-            label_box_alpha=self.label_box_alpha,
+            plot_title=self.label.plot_title and bool(self.title),
+            plot_scale=self.label.plot_scale,
+            label_on_track=self.label.label_on_track,
+            data_range_style=self.label.data_range_style,
+            label_box_enabled=self.label.label_box_enabled,
+            label_box_alpha=self.label.label_box_alpha,
+            title_location=self.label.title_location,
+            title_height=self.label.title_height,
+            title_size=self.label.title_size,
+            title_color=self.label.title_color,
+            title_font=self.label.title_font,
+            title_weight=self.label.title_weight,
+            scale_location=self.label.scale_location,
+            scale_height=self.label.scale_height,
+            scale_precision=self.label.scale_precision,
+            scale_size=self.label.scale_size,
+            scale_color=self.label.scale_color,
+            scale_font=self.label.scale_font,
+            scale_weight=self.label.scale_weight,
         ).plot(ax, gr)
         ax.set_xlim(gr.start, gr.end)
         ax.set_ylim(y_min, y_max)

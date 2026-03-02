@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from unittest.mock import patch
 
-from plotnado.tracks import BigWigDiff, GenomicRegion
+from plotnado.tracks import BigWigDiff, BigWigDiffAesthetics, GenomicRegion
 
 
 class TestBigWigDiff:
@@ -76,3 +76,28 @@ class TestBigWigDiff:
 
         assert mock_ax.bar.call_count == 2
         mock_ax.axhline.assert_called_once()
+
+    def test_flattened_aesthetic_kwargs_supported(self):
+        track = BigWigDiff(
+            file_a="a.bw",
+            file_b="b.bw",
+            positive_color="#ff0000",
+            bar_alpha=0.2,
+            zero_line_width=1.5,
+        )
+
+        assert track.positive_color == "#ff0000"
+        assert track.bar_alpha == 0.2
+        assert track.zero_line_width == 1.5
+        assert track.aesthetics.positive_color == "#ff0000"
+
+    def test_nested_aesthetics_supported(self):
+        track = BigWigDiff(
+            file_a="a.bw",
+            file_b="b.bw",
+            aesthetics=BigWigDiffAesthetics(negative_color="#00ff00", bar_alpha=0.3),
+        )
+
+        assert track.negative_color == "#00ff00"
+        assert track.bar_alpha == 0.3
+        assert track.aesthetics.negative_color == "#00ff00"

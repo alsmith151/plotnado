@@ -3,6 +3,7 @@ import types
 import numpy as np
 
 from plotnado.tracks import CoolerTrack, CoolerAverage, GenomicRegion
+from plotnado.tracks.cooler_track import CoolerAesthetics
 
 
 class _FakeMatrix:
@@ -47,3 +48,20 @@ class TestCoolerTrack:
         matrix = track.fetch_data(gr)
         assert matrix.shape == (2, 2)
         assert np.allclose(matrix, np.array([[1.0, 2.0], [3.0, 4.0]]))
+
+    def test_flattened_min_max_kwargs(self):
+        track = CoolerTrack(file="a.cool", min_value=-1.0, max_value=2.0)
+        assert track.min_value == -1.0
+        assert track.max_value == 2.0
+        assert track.aesthetics.min_value == -1.0
+        assert track.aesthetics.max_value == 2.0
+
+    def test_vmin_vmax_alias_properties(self):
+        aesthetics = CoolerAesthetics()
+        aesthetics.vmin = -2.0
+        aesthetics.vmax = 3.0
+
+        assert aesthetics.min_value == -2.0
+        assert aesthetics.max_value == 3.0
+        assert aesthetics.vmin == -2.0
+        assert aesthetics.vmax == 3.0

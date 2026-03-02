@@ -2,58 +2,24 @@
 Tests for the aesthetics classes.
 """
 
+import inspect
+
 import pytest
 from pydantic import ValidationError
 
 from plotnado.tracks import (
-    Aesthetics,
+    BedAesthetics,
     BigwigAesthetics,
+    BigWigTrack,
+    GenomicAxis,
+    GenomicAxisAesthetics,
+    HighlightsAesthetics,
+    LabelConfig,
+    LinksAesthetics,
+    list_options,
     ScaleBarAesthetics,
     GenesAesthetics,
 )
-
-
-class TestAesthetics:
-    """Test cases for the Aesthetics class and factory methods."""
-
-    def test_bigwig_factory(self):
-        """Test the bigwig factory method."""
-        aesthetics = Aesthetics.bigwig(
-            color="red", fill=True, alpha=0.5, style="scatter", scatter_point_size=3.0
-        )
-
-        assert isinstance(aesthetics, BigwigAesthetics)
-        assert aesthetics.color == "red"
-        assert aesthetics.fill is True
-        assert aesthetics.alpha == 0.5
-        assert aesthetics.style == "scatter"
-        assert aesthetics.scatter_point_size == 3.0
-
-    def test_scalebar_factory(self):
-        """Test the scalebar factory method."""
-        aesthetics = Aesthetics.scalebar(
-            color="blue", position="center", scale_distance=500
-        )
-
-        assert isinstance(aesthetics, ScaleBarAesthetics)
-        assert aesthetics.color == "blue"
-        assert aesthetics.position == "center"
-        assert aesthetics.scale_distance == 500
-
-    def test_genes_factory(self):
-        """Test the genes factory method."""
-        aesthetics = Aesthetics.genes(
-            color="green",
-            display="expanded",
-            minimum_gene_length=1000,
-            max_number_of_rows=10,
-        )
-
-        assert isinstance(aesthetics, GenesAesthetics)
-        assert aesthetics.color == "green"
-        assert aesthetics.display == "expanded"
-        assert aesthetics.minimum_gene_length == 1000
-        assert aesthetics.max_number_of_rows == 10
 
 
 class TestBigwigAesthetics:
@@ -71,12 +37,6 @@ class TestBigwigAesthetics:
         assert aesthetics.linewidth == 1.0
         assert aesthetics.min_value is None
         assert aesthetics.max_value is None
-        assert aesthetics.plot_title is True
-        assert aesthetics.title_location == "left"
-        assert aesthetics.title_height == 0.5
-        assert aesthetics.plot_scale is True
-        assert aesthetics.scale_location == "left"
-        assert aesthetics.scale_height == 0.5
 
     def test_custom_values(self):
         """Test custom values."""
@@ -89,12 +49,6 @@ class TestBigwigAesthetics:
             linewidth=2.0,
             min_value=0.0,
             max_value=1.0,
-            plot_title=False,
-            title_location="right",
-            title_height=0.8,
-            plot_scale=False,
-            scale_location="right",
-            scale_height=0.8,
         )
 
         assert aesthetics.style == "scatter"
@@ -105,27 +59,81 @@ class TestBigwigAesthetics:
         assert aesthetics.linewidth == 2.0
         assert aesthetics.min_value == 0.0
         assert aesthetics.max_value == 1.0
-        assert aesthetics.plot_title is False
-        assert aesthetics.title_location == "right"
-        assert aesthetics.title_height == 0.8
-        assert aesthetics.plot_scale is False
-        assert aesthetics.scale_location == "right"
-        assert aesthetics.scale_height == 0.8
 
     def test_invalid_style(self):
         """Test invalid style value."""
         with pytest.raises(ValidationError):
             BigwigAesthetics(style="invalid_style")
 
-    def test_invalid_title_location(self):
-        """Test invalid title_location value."""
-        with pytest.raises(ValidationError):
-            BigwigAesthetics(title_location="invalid_location")
+    def test_flattened_track_kwargs_sync_to_aesthetics(self):
+        """Track constructor should accept flattened aesthetics kwargs."""
+        track = BigWigTrack(color="red", alpha=0.35, style="line")
 
-    def test_invalid_scale_location(self):
-        """Test invalid scale_location value."""
-        with pytest.raises(ValidationError):
-            BigwigAesthetics(scale_location="invalid_location")
+        assert track.color == "red"
+        assert track.alpha == 0.35
+        assert track.style == "line"
+        assert track.aesthetics.color == "red"
+        assert track.aesthetics.alpha == 0.35
+        assert track.aesthetics.style == "line"
+
+    def test_nested_aesthetics_still_works(self):
+        """Legacy nested aesthetics input remains supported."""
+        track = BigWigTrack(aesthetics=BigwigAesthetics(color="purple", alpha=0.5))
+
+        assert track.color == "purple"
+        assert track.alpha == 0.5
+        assert track.aesthetics.color == "purple"
+        assert track.aesthetics.alpha == 0.5
+
+    def test_explicit_flattened_kwargs_override_nested(self):
+        """Explicit flattened kwargs should win over nested aesthetics."""
+        track = BigWigTrack(
+            color="orange",
+            aesthetics=BigwigAesthetics(color="purple", alpha=0.5),
+        )
+
+        assert track.color == "orange"
+        assert track.aesthetics.color == "orange"
+
+    def test_signature_exposes_flattened_aesthetic_fields(self):
+        """Constructor signature should expose flattened kwargs for notebook discoverability."""
+        signature = inspect.signature(BigWigTrack)
+
+        assert "color" in signature.parameters
+        assert "alpha" in signature.parameters
+        assert "style" in signature.parameters
+
+    def test_track_options_reports_track_and_aesthetic_sections(self):
+        """Programmatic option discovery should split track vs aesthetics fields."""
+        options = BigWigTrack.options()
+
+        assert "track" in options
+        assert "aesthetics" in options
+        assert "label" in options
+        assert "title" in options["track"]
+        assert "height" in options["track"]
+        assert "color" in options["aesthetics"]
+        assert "alpha" in options["aesthetics"]
+        assert "style" in options["aesthetics"]
+        assert "plot_title" in options["label"]
+
+    def test_list_options_helper_matches_track_options(self):
+        """Module helper should mirror Track.options for notebook workflows."""
+        assert list_options(BigWigTrack) == BigWigTrack.options()
+
+    def test_options_markdown_contains_sections(self):
+        markdown = BigWigTrack.options_markdown()
+
+        assert "## BigWigTrack options" in markdown
+        assert "### Track fields" in markdown
+        assert "### Aesthetics fields" in markdown
+        assert "### Label fields" in markdown
+        assert "| color |" in markdown
+
+    def test_track_label_config(self):
+        track = BigWigTrack(label=LabelConfig(plot_title=False, plot_scale=False))
+        assert track.label.plot_title is False
+        assert track.label.plot_scale is False
 
 
 class TestScaleBarAesthetics:
@@ -141,6 +149,10 @@ class TestScaleBarAesthetics:
         assert aesthetics.scale_distance is None
         assert aesthetics.title == "Scale"
         assert aesthetics.font_size == 8
+        assert aesthetics.bar_linewidth == 3.0
+        assert aesthetics.tick_linewidth == 2.0
+        assert aesthetics.tick_height == 0.1
+        assert aesthetics.label_offset == 0.25
 
     def test_custom_values(self):
         """Test custom values."""
@@ -179,6 +191,12 @@ class TestGenesAesthetics:
         assert aesthetics.minimum_gene_length == 0
         assert aesthetics.max_number_of_rows == 4
         assert aesthetics.interval_height == 0.1  # Further reduced
+        assert aesthetics.exon_linewidth == 0.8
+        assert aesthetics.exon_edge_color == "black"
+        assert aesthetics.intron_linewidth == 0.8
+        assert aesthetics.intron_color == "black"
+        assert aesthetics.gene_label_font_size == 6
+        assert aesthetics.gene_label_style == "italic"
 
     def test_custom_values(self):
         """Test custom values."""
@@ -206,3 +224,40 @@ class TestGenesAesthetics:
         """Test invalid display value."""
         with pytest.raises(ValidationError):
             GenesAesthetics(display="invalid_display")
+
+
+class TestGenomicAxisAesthetics:
+    def test_default_values(self):
+        aesthetics = GenomicAxisAesthetics()
+
+        assert aesthetics.color == "#666666"
+        assert aesthetics.font_size == 9
+        assert aesthetics.num_ticks == 5
+        assert aesthetics.show_chromosome is True
+        assert aesthetics.tick_height == 0.15
+        assert aesthetics.axis_linewidth == 1.5
+        assert aesthetics.tick_color == "#333333"
+        assert aesthetics.tick_linewidth == 1.2
+        assert aesthetics.chromosome_fontweight == "bold"
+
+    def test_genomic_axis_flattens_aesthetics(self):
+        track = GenomicAxis(axis_linewidth=2.0, tick_color="purple")
+
+        assert track.axis_linewidth == 2.0
+        assert track.tick_color == "purple"
+        assert track.aesthetics.axis_linewidth == 2.0
+        assert track.aesthetics.tick_color == "purple"
+
+
+class TestAdditionalAesthetics:
+    def test_bed_defaults(self):
+        aesthetics = BedAesthetics()
+        assert aesthetics.rect_linewidth == 1.0
+
+    def test_highlight_defaults(self):
+        aesthetics = HighlightsAesthetics()
+        assert aesthetics.linewidth == 1.0
+
+    def test_links_defaults(self):
+        aesthetics = LinksAesthetics()
+        assert aesthetics.y_baseline == 0.1

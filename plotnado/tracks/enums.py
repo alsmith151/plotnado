@@ -10,10 +10,19 @@ from enum import Enum
 class PlotStyle(str, Enum):
     """Style for plotting signal tracks."""
 
+    STD = "std"
     FILL = "fill"
     LINE = "line"
     SCATTER = "scatter"
     HEATMAP = "heatmap"
+    FRAGMENT = "fragment"
+
+
+class CollectionStyle(str, Enum):
+    """Layout style for collections of signal tracks."""
+
+    OVERLAY = "overlay"
+    STACKED = "stacked"
 
 
 class Position(str, Enum):

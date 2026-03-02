@@ -12,3 +12,4 @@ pyranges1
 # CLI
 typer
 tqdm
+tomli-w

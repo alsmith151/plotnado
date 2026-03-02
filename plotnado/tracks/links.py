@@ -40,6 +40,7 @@ class LinksAesthetics(BaseModel):
     color_by_score: bool = False
     min_score: float | None = None
     max_score: float | None = None
+    y_baseline: float = 0.1
 
 
 class LinksTrack(Track):
@@ -101,16 +102,16 @@ class LinksTrack(Track):
         # Setup coloring
         cmap = None
         norm = None
-        if self.aesthetics.color_by_score and "score" in data.columns:
-            cmap = matplotlib.cm.get_cmap(self.aesthetics.cmap)
+        if self.color_by_score and "score" in data.columns:
+            cmap = matplotlib.cm.get_cmap(self.cmap)
             vmin = (
-                self.aesthetics.min_score
-                if self.aesthetics.min_score is not None
+                self.min_score
+                if self.min_score is not None
                 else data["score"].min()
             )
             vmax = (
-                self.aesthetics.max_score
-                if self.aesthetics.max_score is not None
+                self.max_score
+                if self.max_score is not None
                 else data["score"].max()
             )
             if vmin == vmax:
@@ -118,7 +119,7 @@ class LinksTrack(Track):
             norm = matplotlib.colors.Normalize(vmin=vmin, vmax=vmax)
 
         # Baseline for arcs
-        y_baseline = 0.1
+        y_baseline = self.y_baseline
 
         # Calculate max distance for height scaling
         # Use region width as a proxy for normalization if needed, or constant factor
@@ -136,14 +137,14 @@ class LinksTrack(Track):
 
             # Height proportional to distance, capped at max_height
             # Scaling factor can be adjusted. Let's try quadratic or sqrt for better visibility of short/long links
-            h = min(self.aesthetics.max_height, (dist / region_width) * 2)
+            h = min(self.max_height, (dist / region_width) * 2)
 
             # Calculate Bezier control point
             xm = (x1 + x2) / 2
             ym = y_baseline + h
 
             # Color
-            color = self.aesthetics.color
+            color = self.color
             if cmap and norm:
                 color = cmap(norm(row.score))
 
@@ -160,8 +161,8 @@ class LinksTrack(Track):
                 path,
                 facecolor="none",
                 edgecolor=color,
-                alpha=self.aesthetics.alpha,
-                linewidth=self.aesthetics.linewidth,
+                alpha=self.alpha,
+                linewidth=self.linewidth,
                 zorder=1,
             )
             ax.add_patch(patch)
