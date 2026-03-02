@@ -48,3 +48,7 @@ plan-plotnadoRefactor.prompt.md
 pr_docs.txt
 pyproject.toml
 test_parser.py
+examples/advanced_features.py
+examples/basic_figure.py
+examples/advanced_features.py
+examples/basic_figure.py
