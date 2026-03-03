@@ -31,6 +31,7 @@ class GenesAesthetics(BaseModel):
     arrow_size: float = 0.12
     exon_linewidth: float = 0.8
     exon_edge_color: str = "black"
+    exon_color: str = "black"
     intron_linewidth: float = 0.8
     intron_color: str = "black"
     chevron_height_ratio: float = 0.22
@@ -286,7 +287,7 @@ class Genes(Track):
                 self.interval_height,
                 linewidth=self.exon_linewidth,
                 edgecolor=self.exon_edge_color,
-                facecolor=self.color,
+                facecolor=self.exon_color,
                 alpha=self.alpha,
                 zorder=2,
             )
@@ -388,7 +389,7 @@ class Genes(Track):
             self.interval_height,
             linewidth=self.exon_linewidth,
             edgecolor=self.exon_edge_color,
-            facecolor=self.color,
+            facecolor=self.exon_color,
             alpha=self.alpha,
         )
         ax.add_patch(rect)

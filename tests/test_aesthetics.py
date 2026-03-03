@@ -193,6 +193,7 @@ class TestGenesAesthetics:
         assert aesthetics.interval_height == 0.1  # Further reduced
         assert aesthetics.exon_linewidth == 0.8
         assert aesthetics.exon_edge_color == "black"
+        assert aesthetics.exon_color == "black"
         assert aesthetics.intron_linewidth == 0.8
         assert aesthetics.intron_color == "black"
         assert aesthetics.gene_label_font_size == 8
