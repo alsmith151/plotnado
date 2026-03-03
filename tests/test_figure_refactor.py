@@ -5,6 +5,8 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+import matplotlib.colors as mcolors
+import matplotlib.pyplot as plt
 
 from plotnado import Figure
 from plotnado.theme import Theme
@@ -150,6 +152,38 @@ class TestFigureRefactor:
         ylim1 = out.axes[0].get_ylim()
         ylim2 = out.axes[1].get_ylim()
         assert ylim1 == ylim2
+
+    def test_autocolor_applies_when_enabled_before_add_track(self):
+        df = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [100, 200],
+                "end": [200, 300],
+                "value": [1.0, 2.0],
+            }
+        )
+
+        fig = Figure().autocolor("tab10")
+        fig.add_track(BigWigTrack(data=df))
+
+        expected = mcolors.to_hex(plt.get_cmap("tab10")(0))
+        assert fig.tracks[0].color == expected
+
+    def test_autocolor_overrides_theme_default_for_new_tracks(self):
+        df = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [100, 200],
+                "end": [200, 300],
+                "value": [1.0, 2.0],
+            }
+        )
+
+        fig = Figure(theme="publication").autocolor("tab10")
+        fig.add_track(BigWigTrack(data=df))
+
+        expected = mcolors.to_hex(plt.get_cmap("tab10")(0))
+        assert fig.tracks[0].color == expected
 
     def test_toml_roundtrip(self):
         pytest.importorskip("tomli_w")

@@ -21,7 +21,7 @@ class GenesAesthetics(BaseModel):
     """Aesthetics configuration for gene tracks."""
 
     style: Literal["std"] = "std"
-    color: str = "#2c3e50"
+    color: str = "black"
     fill: bool = True
     alpha: float = 1.0
     display: Literal["collapsed", "expanded"] = "collapsed"
@@ -40,7 +40,7 @@ class GenesAesthetics(BaseModel):
     chevron_margin_bp: float = 20.0
     chevron_target_spacing_bp: float = 6000.0
     chevron_max_count: int = 14
-    gene_label_font_size: int = 6
+    gene_label_font_size: int = 8
     gene_label_style: Literal["normal", "italic", "oblique"] = "italic"
 
 
@@ -412,7 +412,7 @@ class Genes(Track):
             ha="left",
             fontsize=self.gene_label_font_size,
             style=self.gene_label_style,
-            color=self.color,
+            color="black",
         )
 
     def plot_genes(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:

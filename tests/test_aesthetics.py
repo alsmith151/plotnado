@@ -184,7 +184,7 @@ class TestGenesAesthetics:
         aesthetics = GenesAesthetics()
 
         assert aesthetics.style == "std"
-        assert aesthetics.color == "#2c3e50"  # Genome browser dark navy
+        assert aesthetics.color == "black"
         assert aesthetics.fill is True
         assert aesthetics.alpha == 1.0
         assert aesthetics.display == "collapsed"
@@ -195,7 +195,7 @@ class TestGenesAesthetics:
         assert aesthetics.exon_edge_color == "black"
         assert aesthetics.intron_linewidth == 0.8
         assert aesthetics.intron_color == "black"
-        assert aesthetics.gene_label_font_size == 6
+        assert aesthetics.gene_label_font_size == 8
         assert aesthetics.gene_label_style == "italic"
 
     def test_custom_values(self):

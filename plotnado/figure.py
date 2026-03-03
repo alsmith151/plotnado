@@ -111,8 +111,19 @@ class Figure:
         if isinstance(track, str):
             track = self._create_track_from_alias(track, **kwargs)
         track = self._apply_theme_to_track(track)
+        track = self._apply_autocolor_to_track(track, index=len(self.tracks))
         self.tracks.append(track)
         return self
+
+    def _apply_autocolor_to_track(self, track: Track, index: int) -> Track:
+        if self._autocolor_palette is None or not hasattr(track, "color"):
+            return track
+
+        import matplotlib.colors as mcolors
+
+        cmap = plt.get_cmap(self._autocolor_palette)
+        track.color = mcolors.to_hex(cmap(index % cmap.N))
+        return track
 
     def bigwig(self, data: Any, /, **kwargs) -> Self:
         """Add a BigWig signal track.
@@ -592,6 +603,10 @@ class Figure:
         fig.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.05)
         if show:
             plt.show()
+        else:
+            # Detach from pyplot state to avoid duplicate auto-rendering in notebooks
+            # when the returned Figure object is also displayed as cell output.
+            plt.close(fig)
         return fig
 
     def _resolve_gene_track(self) -> Genes:
