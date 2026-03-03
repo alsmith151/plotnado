@@ -23,8 +23,8 @@ class ScaleBarAesthetics(BaseModel):
     scale_distance: float | None = None
     font_size: int = 8
     title: str = "Scale"
-    bar_linewidth: float = 1.2
-    tick_linewidth: float = 1.2
+    bar_linewidth: float = 3.0
+    tick_linewidth: float = 2.0
     tick_height: float = 0.1
     label_offset: float = 0.25
 

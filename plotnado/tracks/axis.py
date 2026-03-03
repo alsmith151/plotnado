@@ -25,7 +25,7 @@ class GenomicAxisAesthetics(BaseModel):
     color: str = "#666666"  # Gray for axis line
     font_size: int = 9
     num_ticks: int = 5
-    show_chromosome: bool = False
+    show_chromosome: bool = True
     use_human_readable_labels: bool = False
     tick_height: float = 0.15  # Increased slightly for visibility
     axis_linewidth: float = 1.5
@@ -43,6 +43,7 @@ class GenomicAxis(Track):
 
     title: str = ""
     aesthetics: GenomicAxisAesthetics = GenomicAxisAesthetics()
+    show_chromosome: bool = False
     height: float = 0.2  # Reduced height for tighter layout
 
     def fetch_data(self, gr: GenomicRegion) -> None:
