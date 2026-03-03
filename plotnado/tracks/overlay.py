@@ -114,32 +114,12 @@ class BigwigOverlay(Track):
 
         # Add global labeller
         if self.title:
-            labeller = TrackLabeller(
-                gr=gr,
-                y_min=y_min,
-                y_max=y_max,
+            labeller = TrackLabeller.from_config(
+                self.label,
+                gr,
+                y_min,
+                y_max,
                 title=self.title,
-                plot_title=True,
-                plot_scale=True,
-                scale_min=y_min,
-                scale_max=y_max,
-                label_on_track=self.label.label_on_track,
-                data_range_style=self.label.data_range_style,
-                label_box_enabled=self.label.label_box_enabled,
-                label_box_alpha=self.label.label_box_alpha,
-                title_location=self.label.title_location,
-                title_height=self.label.title_height,
-                title_size=self.label.title_size,
-                title_color=self.label.title_color,
-                title_font=self.label.title_font,
-                title_weight=self.label.title_weight,
-                scale_location=self.label.scale_location,
-                scale_height=self.label.scale_height,
-                scale_precision=self.label.scale_precision,
-                scale_size=self.label.scale_size,
-                scale_color=self.label.scale_color,
-                scale_font=self.label.scale_font,
-                scale_weight=self.label.scale_weight,
             )
             labeller.plot(ax, gr)
         else:

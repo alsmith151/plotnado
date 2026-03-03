@@ -8,10 +8,16 @@ import pytest
 
 from plotnado import Figure
 from plotnado.theme import Theme
-from plotnado.tracks import BigWigTrack, ScaleBar
+from plotnado.tracks import BigWigTrack, ScaleBar, BedTrack, LabelConfig
 
 
 class TestFigureRefactor:
+    def test_theme_font_family_syncs_label_fonts(self):
+        theme = Theme(font_family="Arial")
+
+        assert theme.label.title_font == "Arial"
+        assert theme.label.scale_font == "Arial"
+
     def test_theme_applies_default_track_color(self):
         df = pd.DataFrame(
             {
@@ -46,7 +52,7 @@ class TestFigureRefactor:
         assert fig.highlight_alpha == 0.33
 
     def test_highlight_style_configuration(self):
-        fig = Figure(highlight_color="#123456", highlight_alpha=0.2)
+        fig = Figure().highlight_style(color="#123456", alpha=0.2)
         assert fig.highlight_color == "#123456"
         assert fig.highlight_alpha == 0.2
 
@@ -195,3 +201,30 @@ class TestFigureRefactor:
 
         assert out is not None
         assert len(out.axes) >= 2
+
+    def test_plot_normalizes_font_family_across_text_artists(self):
+        data = pd.DataFrame(
+            {
+                "chrom": ["chr1"],
+                "start": [100],
+                "end": [200],
+                "name": ["interval_1"],
+            }
+        )
+        theme = Theme(font_family="Arial", label=LabelConfig(scale_font="Times New Roman"))
+        fig = Figure(theme=theme)
+        fig.add_track(BedTrack(data=data, show_labels=True))
+
+        out = fig.plot("chr1:50-250", show=False)
+
+        fonts = []
+        for axis in out.axes:
+            for text_artist in axis.texts:
+                families = text_artist.get_fontfamily()
+                if isinstance(families, (list, tuple)):
+                    fonts.extend([str(font) for font in families])
+                else:
+                    fonts.append(str(families))
+
+        assert fonts
+        assert set(fonts) == {"Arial"}

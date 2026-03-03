@@ -33,6 +33,13 @@ class GenesAesthetics(BaseModel):
     exon_edge_color: str = "black"
     intron_linewidth: float = 0.8
     intron_color: str = "black"
+    chevron_height_ratio: float = 0.22
+    chevron_vertical_offset_ratio: float = 0.0
+    chevron_width_fraction: float = 0.035
+    chevron_min_width_bp: float = 40.0
+    chevron_margin_bp: float = 20.0
+    chevron_target_spacing_bp: float = 6000.0
+    chevron_max_count: int = 14
     gene_label_font_size: int = 6
     gene_label_style: Literal["normal", "italic", "oblique"] = "italic"
 
@@ -103,15 +110,34 @@ class Genes(Track):
                 ]
             )
 
+        # Normalize BED12 naming variants from different parsers (pyranges, BigBed).
         rename_map = {
             "name": "geneid",
             "Name": "geneid",
+            "field_1": "geneid",
+            "score": "score",
+            "Score": "score",
+            "field_2": "score",
+            "Strand": "strand",
+            "field_3": "strand",
             "itemRgb": "rgb",
+            "ItemRGB": "rgb",
+            "field_6": "rgb",
             "blockCount": "block_count",
+            "BlockCount": "block_count",
+            "field_7": "block_count",
             "blockSizes": "block_sizes",
+            "BlockSizes": "block_sizes",
+            "field_8": "block_sizes",
             "blockStarts": "block_starts",
+            "BlockStarts": "block_starts",
+            "field_9": "block_starts",
             "thickStart": "thick_start",
+            "ThickStart": "thick_start",
+            "field_4": "thick_start",
             "thickEnd": "thick_end",
+            "ThickEnd": "thick_end",
+            "field_5": "thick_end",
         }
         df = df.rename(columns={k: v for k, v in rename_map.items() if k in df.columns})
 
@@ -119,13 +145,22 @@ class Genes(Track):
             df["geneid"] = "gene"
         if "strand" not in df.columns:
             df["strand"] = "+"
-        if "block_count" not in df.columns:
-            df["block_count"] = 1
+        if "block_sizes" not in df.columns:
             df["block_sizes"] = (df["end"] - df["start"]).astype(int).astype(str)
+        if "block_starts" not in df.columns:
             df["block_starts"] = "0"
 
         df["block_starts"] = df["block_starts"].apply(self._parse_int_list)
         df["block_sizes"] = df["block_sizes"].apply(self._parse_int_list)
+
+        if "block_count" in df.columns:
+            df["block_count"] = (
+                pd.to_numeric(df["block_count"], errors="coerce")
+                .fillna(df["block_starts"].apply(lambda values: len(values) or 1))
+                .astype(int)
+            )
+        else:
+            df["block_count"] = df["block_starts"].apply(lambda values: len(values) or 1)
         return df
 
     def _fetch_from_disk_gtf(self, gr: GenomicRegion) -> pd.DataFrame:
@@ -267,6 +302,82 @@ class Genes(Track):
                     linewidth=self.intron_linewidth,
                     zorder=1,
                 )
+                self._draw_intron_chevrons(
+                    ax=ax,
+                    intron_start=intron_start,
+                    intron_end=intron_end,
+                    ypos=ypos,
+                    strand=str(gene.get("strand", "+")),
+                )
+
+    def _draw_intron_chevrons(
+        self,
+        ax: matplotlib.axes.Axes,
+        intron_start: float,
+        intron_end: float,
+        ypos: float,
+        strand: str,
+    ) -> None:
+        intron_len = intron_end - intron_start
+        if intron_len <= 0:
+            return
+
+        chevron_height = max(self.interval_height * self.chevron_height_ratio, 0.01)
+        chevron_y = ypos - (chevron_height * self.chevron_vertical_offset_ratio)
+        chevron_width = max(self.chevron_min_width_bp, intron_len * self.chevron_width_fraction)
+        margin = (chevron_width / 2) + self.chevron_margin_bp
+        usable_len = intron_len - (2 * margin)
+        if usable_len <= 0:
+            return
+
+        target_spacing_bp = max(1.0, self.chevron_target_spacing_bp)
+        max_count = max(1, self.chevron_max_count)
+        chevron_count = max(1, min(max_count, int(usable_len / target_spacing_bp) + 1))
+        if chevron_count > 1 and chevron_count % 2 == 0:
+            if chevron_count < max_count:
+                chevron_count += 1
+            else:
+                chevron_count -= 1
+
+        direction = self._strand_direction(strand)
+        start_center = intron_start + margin
+        end_center = intron_end - margin
+        midpoint = (intron_start + intron_end) / 2.0
+
+        if chevron_count == 1:
+            centers = [midpoint]
+        else:
+            max_symmetric_spacing = (end_center - start_center) / (chevron_count - 1)
+            spacing = max_symmetric_spacing
+            half_span = spacing * ((chevron_count - 1) / 2.0)
+            first_center = midpoint - half_span
+            centers = [first_center + (index * spacing) for index in range(chevron_count)]
+
+        for center in centers:
+            x_tail = center - (direction * chevron_width / 2)
+            x_tip = center + (direction * chevron_width / 2)
+
+            ax.plot(
+                [x_tail, x_tip],
+                [chevron_y - chevron_height, chevron_y],
+                color=self.intron_color,
+                linewidth=self.intron_linewidth,
+                zorder=1,
+            )
+            ax.plot(
+                [x_tail, x_tip],
+                [chevron_y + chevron_height, chevron_y],
+                color=self.intron_color,
+                linewidth=self.intron_linewidth,
+                zorder=1,
+            )
+
+    @staticmethod
+    def _strand_direction(strand: str) -> int:
+        strand_value = str(strand).strip().lower()
+        if strand_value in {"-", "-1", "minus", "negative", "reverse", "rev"}:
+            return -1
+        return 1
 
     def _draw_gene_simple(
         self, ax: matplotlib.axes.Axes, gene: pd.Series, ypos: float

@@ -25,7 +25,8 @@ class GenomicAxisAesthetics(BaseModel):
     color: str = "#666666"  # Gray for axis line
     font_size: int = 9
     num_ticks: int = 5
-    show_chromosome: bool = True
+    show_chromosome: bool = False
+    use_human_readable_labels: bool = False
     tick_height: float = 0.15  # Increased slightly for visibility
     axis_linewidth: float = 1.5
     tick_color: str = "#333333"
@@ -64,8 +65,6 @@ class GenomicAxis(Track):
         if len(tick_positions) == 0:
             tick_positions = np.array([gr.start, gr.end])
 
-        from .utils import format_genomic_value
-
         # Draw axis line at the bottom
         y_line = 0.3
         ax.plot(
@@ -79,6 +78,11 @@ class GenomicAxis(Track):
         # Draw ticks downward (genome browser convention)
         tick_height = self.tick_height
         for pos in tick_positions:
+            tick_label = (
+                f"{int(pos):,}"
+                if not self.use_human_readable_labels
+                else self._format_human_readable_coordinate(int(pos))
+            )
             ax.plot(
                 [pos, pos],
                 [y_line, y_line - tick_height],  # Downward ticks
@@ -89,7 +93,7 @@ class GenomicAxis(Track):
             ax.text(
                 pos,
                 y_line - tick_height - 0.05,  # Position below tick
-                format_genomic_value(int(pos)),
+                tick_label,
                 ha="center",
                 va="top",
                 fontsize=self.font_size,
@@ -118,3 +122,11 @@ class GenomicAxis(Track):
         ax.set_yticks([])
         for spine in ax.spines.values():
             spine.set_visible(False)
+
+    @staticmethod
+    def _format_human_readable_coordinate(pos: int) -> str:
+        if pos >= 1_000_000:
+            return f"{(pos / 1_000_000):.2f}".rstrip("0").rstrip(".") + "M"
+        if pos >= 1_000:
+            return f"{(pos / 1_000):.1f}".rstrip("0").rstrip(".") + "k"
+        return str(pos)

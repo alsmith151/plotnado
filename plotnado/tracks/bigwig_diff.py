@@ -114,30 +114,12 @@ class BigWigDiff(Track):
         if y_min == y_max:
             y_max = y_min + 1
 
-        TrackLabeller(
-            gr=gr,
-            y_min=y_min,
-            y_max=y_max,
-            title=self.title or self.method,
-            plot_title=self.label.plot_title and bool(self.title),
-            plot_scale=self.label.plot_scale,
-            label_on_track=self.label.label_on_track,
-            data_range_style=self.label.data_range_style,
-            label_box_enabled=self.label.label_box_enabled,
-            label_box_alpha=self.label.label_box_alpha,
-            title_location=self.label.title_location,
-            title_height=self.label.title_height,
-            title_size=self.label.title_size,
-            title_color=self.label.title_color,
-            title_font=self.label.title_font,
-            title_weight=self.label.title_weight,
-            scale_location=self.label.scale_location,
-            scale_height=self.label.scale_height,
-            scale_precision=self.label.scale_precision,
-            scale_size=self.label.scale_size,
-            scale_color=self.label.scale_color,
-            scale_font=self.label.scale_font,
-            scale_weight=self.label.scale_weight,
+        TrackLabeller.from_config(
+            self.label,
+            gr,
+            y_min,
+            y_max,
+            title=self.title or "",
         ).plot(ax, gr)
         ax.set_xlim(gr.start, gr.end)
         ax.set_ylim(y_min, y_max)

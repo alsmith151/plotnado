@@ -23,8 +23,8 @@ class ScaleBarAesthetics(BaseModel):
     scale_distance: float | None = None
     font_size: int = 8
     title: str = "Scale"
-    bar_linewidth: float = 3.0
-    tick_linewidth: float = 2.0
+    bar_linewidth: float = 1.2
+    tick_linewidth: float = 1.2
     tick_height: float = 0.1
     label_offset: float = 0.25
 
@@ -47,17 +47,26 @@ class ScaleBar(Track):
         if length <= 0:
             raise ValueError("Length must be positive")
 
-        if length <= 100:
-            return 10
-        elif length <= 1000:
-            return 200
-        elif length <= 10000:
-            return 2000
-        elif length <= 100000:
-            return 20000
+        target = max(1, int(length * 0.2))
+        nice = ScaleBar._round_to_nice_scale(target)
+        return min(nice, length)
 
-        # Default to 20% of length for larger regions
-        return int(length * 0.2)
+    @staticmethod
+    def _round_to_nice_scale(value: int) -> int:
+        if value <= 0:
+            return 1
+
+        candidates = []
+        magnitude = 1
+        while magnitude <= value * 10:
+            for base in (1, 2, 5):
+                candidates.append(base * magnitude)
+            magnitude *= 10
+
+        below_or_equal = [candidate for candidate in candidates if candidate <= value]
+        if below_or_equal:
+            return max(below_or_equal)
+        return min(candidates)
 
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
         """Plot the scale bar."""
@@ -86,6 +95,7 @@ class ScaleBar(Track):
             [y_midpoint, y_midpoint],
             color=color,
             linewidth=self.bar_linewidth,
+            solid_capstyle="butt",
             clip_on=False,
             zorder=5,
         )
@@ -96,6 +106,7 @@ class ScaleBar(Track):
             [y_midpoint - self.tick_height, y_midpoint + self.tick_height],
             color=color,
             linewidth=self.tick_linewidth,
+            solid_capstyle="butt",
             clip_on=False,
             zorder=5,
         )
@@ -104,6 +115,7 @@ class ScaleBar(Track):
             [y_midpoint - self.tick_height, y_midpoint + self.tick_height],
             color=color,
             linewidth=self.tick_linewidth,
+            solid_capstyle="butt",
             clip_on=False,
             zorder=5,
         )

@@ -59,6 +59,20 @@ fig.add_track('bigwig_overlay', tracks=[...])
 fig.plot('chr1:1000000-1100000')
 ```
 
+## Theme and Font Selection
+
+Set a single font for all plot text using `Theme(font_family=...)`.
+
+```python
+from plotnado import Figure, Theme
+
+theme = Theme(font_family="Arial")
+fig = Figure(theme=theme)
+fig.add_track("axis")
+fig.add_track("genes", genome="hg38")
+fig.plot("chr1:1,000,000-1,100,000")
+```
+
 ## Discoverability in IDE and notebooks
 
 ```python

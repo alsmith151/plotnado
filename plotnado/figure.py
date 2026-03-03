@@ -6,7 +6,7 @@ import importlib.resources
 import json
 import math
 from pathlib import Path
-from typing import Self
+from typing import Any, Self
 
 import matplotlib.axes
 import matplotlib.figure
@@ -41,29 +41,40 @@ from .theme import Theme
 
 
 class Figure:
-    """Compose and plot multiple genomic tracks."""
+    """Compose and plot multiple genomic tracks.
+
+    Example:
+        fig = (
+            Figure()
+            .bigwig("signal.bw", title="H3K27ac")
+            .genes()
+            .axis()
+            .scalebar()
+        )
+        fig.plot("chr1:1000000-2000000")
+    """
 
     def __init__(
         self,
         tracks: list[Track] | None = None,
         width: float = 12,
         track_height: float = 2.0,
-        highlight_color: str | None = None,
-        highlight_alpha: float | None = None,
         theme: Theme | None = None,
     ):
+        """Create a figure container for genomic tracks.
+
+        Args:
+            tracks: Optional pre-populated list of tracks.
+            width: Figure width in inches.
+            track_height: Height scaling factor per track.
+            theme: Optional `Theme` applied to tracks on add/initialization.
+        """
         self.tracks: list[Track] = tracks or []
         self.width = width
         self.track_height = track_height
         self.theme = theme
-        default_highlight_color = (
-            theme.highlight_color if theme is not None else "#ffd700"
-        )
-        default_highlight_alpha = theme.highlight_alpha if theme is not None else 0.15
-        self.highlight_color = highlight_color or default_highlight_color
-        self.highlight_alpha = (
-            highlight_alpha if highlight_alpha is not None else default_highlight_alpha
-        )
+        self.highlight_color = theme.highlight_color if theme is not None else "#ffd700"
+        self.highlight_alpha = theme.highlight_alpha if theme is not None else 0.15
         self._highlight_regions: list[GenomicRegion] = []
         self._autocolor_palette: str | None = None
         self._autoscale: bool = False
@@ -72,11 +83,214 @@ class Figure:
             self.tracks = [self._apply_theme_to_track(track) for track in self.tracks]
 
     def add_track(self, track: str | Track, **kwargs) -> Self:
+        """Add a track instance or track alias to the figure.
+
+        Args:
+            track: Track instance or alias (for example `"bigwig"`, `"genes"`).
+            **kwargs: Parameters used when `track` is provided as an alias.
+
+        Returns:
+            Self, enabling method chaining.
+        """
         if isinstance(track, str):
             track = self._create_track_from_alias(track, **kwargs)
         track = self._apply_theme_to_track(track)
         self.tracks.append(track)
         return self
+
+    def bigwig(self, data: Any, /, **kwargs) -> Self:
+        """Add a BigWig signal track.
+
+        Args:
+            data: BigWig data source, typically a file path or compatible dataframe.
+            **kwargs: Additional `BigWigTrack` options passed through to `add_track`.
+                See `Figure.track_options("bigwig")`.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("bigwig", data=data, **kwargs)
+
+    def genes(self, genome: str = "hg38", /, **kwargs) -> Self:
+        """Add a genes annotation track.
+
+        Args:
+            genome: Genome identifier used for bundled gene annotations.
+            **kwargs: Additional `Genes` options passed through to `add_track`.
+                See `Figure.track_options("genes")`.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("genes", genome=genome, **kwargs)
+
+    def axis(self, **kwargs) -> Self:
+        """Add a genomic coordinate axis track.
+
+        Args:
+            **kwargs: Additional `GenomicAxis` options passed through to `add_track`.
+                See `Figure.track_options("axis")`.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("axis", **kwargs)
+
+    def scalebar(self, **kwargs) -> Self:
+        """Add a genomic scale bar track.
+
+        Args:
+            **kwargs: Additional `ScaleBar` options passed through to `add_track`.
+                See `Figure.track_options("scalebar")`.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("scalebar", **kwargs)
+
+    def spacer(self, height: float = 0.5, **kwargs) -> Self:
+        """Add an empty spacer track.
+
+        Args:
+            height: Spacer height used to separate neighboring tracks.
+            **kwargs: Additional `Spacer` options passed through to `add_track`.
+                See `Figure.track_options("spacer")`.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("spacer", height=height, **kwargs)
+
+    def bed(self, data: Any, /, **kwargs) -> Self:
+        """Add a BED interval track.
+
+        Args:
+            data: BED data source, typically a file path or compatible dataframe.
+            **kwargs: Additional `BedTrack` options passed through to `add_track`.
+                See `Figure.track_options("bed")`.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("bed", data=data, **kwargs)
+
+    def cooler(self, file: str, /, **kwargs) -> Self:
+        """Add a cooler/mcool matrix track.
+
+        Args:
+            file: Cooler file path.
+            **kwargs: Additional `CoolerTrack` options passed through to `add_track`.
+                See `Figure.track_options("cooler")`.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("cooler", file=file, **kwargs)
+
+    def bigwig_collection(self, files: list[str], /, **kwargs) -> Self:
+        """Add a collection track for multiple BigWig files.
+
+        Args:
+            files: List of BigWig file paths.
+            **kwargs: Additional `BigWigCollection` options passed through to `add_track`.
+                See `Figure.track_options("bigwig_collection")`.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("bigwig_collection", files=files, **kwargs)
+
+    def bigwig_diff(self, file_a: str, file_b: str, /, **kwargs) -> Self:
+        """Add a two-signal BigWig difference track.
+
+        Args:
+            file_a: First BigWig file path.
+            file_b: Second BigWig file path.
+            **kwargs: Additional `BigWigDiff` options passed through to `add_track`.
+                See `Figure.track_options("bigwig_diff")`.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("bigwig_diff", file_a=file_a, file_b=file_b, **kwargs)
+
+    def bigwig_overlay(self, tracks: list[Any], /, **kwargs) -> Self:
+        """Add an overlay track containing multiple BigWig signals.
+
+        Args:
+            tracks: Track inputs for overlay, usually paths or `BigWigTrack` objects.
+            **kwargs: Additional `BigwigOverlay` options passed through to `add_track`.
+                See `Figure.track_options("bigwig_overlay")`.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("bigwig_overlay", tracks=tracks, **kwargs)
+
+    def narrowpeak(self, data: Any, /, **kwargs) -> Self:
+        """Add a narrowPeak interval track.
+
+        Args:
+            data: NarrowPeak data source, typically a file path or compatible dataframe.
+            **kwargs: Additional `NarrowPeakTrack` options passed through to `add_track`.
+                See `Figure.track_options("narrowpeak")`.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("narrowpeak", data=data, **kwargs)
+
+    def links(self, data: Any, /, **kwargs) -> Self:
+        """Add a genomic links/arcs track.
+
+        Args:
+            data: BEDPE-like data source for links.
+            **kwargs: Additional `LinksTrack` options passed through to `add_track`.
+                See `Figure.track_options("links")`.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("links", data=data, **kwargs)
+
+    def highlights(self, data: Any, /, **kwargs) -> Self:
+        """Add file-based highlighted regions spanning tracks.
+
+        Args:
+            data: Highlight interval data source.
+            **kwargs: Additional `HighlightsFromFile` options passed through to `add_track`.
+                See `Figure.track_options("highlight")`.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("highlight", data=data, **kwargs)
+
+    def hline(self, y_value: float, /, **kwargs) -> Self:
+        """Add a horizontal reference line.
+
+        Args:
+            y_value: Y value where the line is drawn.
+            **kwargs: Additional `HLineTrack` options passed through to `add_track`.
+                See `Figure.track_options("hline")`.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("hline", y_value=y_value, **kwargs)
+
+    def vline(self, x_position: int | str, /, **kwargs) -> Self:
+        """Add a vertical reference line.
+
+        Args:
+            x_position: Genomic coordinate for the line.
+            **kwargs: Additional `VLineTrack` options passed through to `add_track`.
+                See `Figure.track_options("vline")`.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("vline", x_position=x_position, **kwargs)
 
     def _apply_theme_to_track(self, track: Track) -> Track:
         if self.theme is None:
@@ -150,10 +364,12 @@ class Figure:
         return track_cls.options_markdown()
 
     def autoscale(self, enable: bool = True) -> Self:
+        """Enable or disable automatic y-axis autoscaling across tracks."""
         self._autoscale = enable
         return self
 
     def autocolor(self, palette: str = "tab10") -> Self:
+        """Apply a matplotlib palette across tracks that expose a `color` field."""
         self._autocolor_palette = palette
         import matplotlib.colors as mcolors
 
@@ -164,10 +380,12 @@ class Figure:
         return self
 
     def highlight(self, region: str | GenomicRegion) -> Self:
+        """Register a genomic region to draw as a background highlight."""
         self._highlight_regions.append(GenomicRegion.into(region))
         return self
 
     def highlight_style(self, color: str | None = None, alpha: float | None = None) -> Self:
+        """Set default color/alpha used by highlighted regions."""
         if color is not None:
             self.highlight_color = color
         if alpha is not None:
@@ -244,13 +462,31 @@ class Figure:
             for index in indices:
                 axes[index].set_ylim(group_min, group_max)
 
+    def _font_family(self) -> str:
+        if self.theme is not None:
+            if self.theme.font_family:
+                return self.theme.font_family
+            return self.theme.label.title_font
+        return "DejaVu Sans"
+
     def plot(
         self,
         region: str | GenomicRegion,
-        show: bool = True,
+        show: bool = False,
         extend: float | int | None = None,
         **kwargs,
     ) -> matplotlib.figure.Figure | None:
+        """Render all tracks for a single genomic region.
+
+        Args:
+            region: Region string (`chr:start-end`) or `GenomicRegion`.
+            show: Whether to call `plt.show()` before returning.
+            extend: Optional symmetric extension (fraction or base pairs).
+            **kwargs: Forwarded to `matplotlib.figure.Figure` creation.
+
+        Returns:
+            The rendered matplotlib figure, or `None` if no tracks are present.
+        """
         gr = GenomicRegion.into(region)
         gr = self._apply_extend(gr, extend)
 
@@ -332,6 +568,11 @@ class Figure:
             except Exception as exc:
                 logger.error(f"Error plotting global track {track.__class__.__name__}: {exc}")
 
+        font_family = self._font_family()
+        for axis in fig.axes:
+            for text_artist in axis.texts:
+                text_artist.set_fontfamily(font_family)
+
         fig.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.05)
         if show:
             plt.show()
@@ -344,6 +585,16 @@ class Figure:
         return Genes(genome="hg38")
 
     def plot_gene(self, gene: str, extend: float = 0.5, **kwargs) -> matplotlib.figure.Figure | None:
+        """Resolve a gene symbol to a region and plot it.
+
+        Args:
+            gene: Gene symbol to look up in configured gene annotations.
+            extend: Fractional extension around gene bounds.
+            **kwargs: Forwarded to `plot`.
+
+        Returns:
+            The rendered figure or `None` when plotting is skipped.
+        """
         genes_track = self._resolve_gene_track()
         has_genes_track = any(isinstance(track, Genes) for track in self.tracks)
 
@@ -386,6 +637,16 @@ class Figure:
     def plot_regions(
         self, regions: list[str] | str, ncols: int = 1, **kwargs
     ) -> list[matplotlib.figure.Figure]:
+        """Plot one or many regions, optionally composing a multi-column grid.
+
+        Args:
+            regions: A region string, list of region strings, or BED-like path.
+            ncols: Number of columns for grid composition when >1 region.
+            **kwargs: Forwarded to `plot`.
+
+        Returns:
+            A list of matplotlib figures.
+        """
         if ncols < 1:
             raise ValueError("ncols must be >= 1")
 
@@ -467,6 +728,7 @@ class Figure:
         }
 
     def to_toml(self, path: str) -> None:
+        """Serialize figure and tracks to a TOML file."""
         def _prune_none(value):
             if isinstance(value, dict):
                 return {
@@ -500,6 +762,7 @@ class Figure:
 
     @classmethod
     def from_toml(cls, path: str) -> "Figure":
+        """Load a `Figure` definition from a TOML file."""
         try:
             import tomllib
         except ImportError:
@@ -545,6 +808,7 @@ class Figure:
         dpi: int = 300,
         **kwargs,
     ) -> None:
+        """Render one region and write it to disk."""
         fig = self.plot(region, show=False)
         if fig:
             fig.savefig(path, dpi=dpi, bbox_inches="tight", **kwargs)
@@ -552,5 +816,50 @@ class Figure:
             plt.close(fig)
 
     def __repr__(self) -> str:
-        track_names = [track.__class__.__name__ for track in self.tracks]
-        return f"Figure(tracks={track_names})"
+        parts = [f"tracks={len(self.tracks)}"]
+        if self.width != 12:
+            parts.append(f"width={self.width}")
+        if self.theme is None:
+            parts.append("theme=none")
+        elif self.theme == Theme.minimal():
+            parts.append("theme=minimal")
+        elif self.theme == Theme.publication():
+            parts.append("theme=publication")
+        elif self.theme == Theme.default():
+            parts.append("theme=default")
+        else:
+            parts.append("theme=custom")
+        parts.append(f"autoscale={self._autoscale}")
+        parts.append(f"highlights={len(self._highlight_regions)}")
+        return f"Figure({', '.join(parts)})"
+
+    def _repr_html_(self) -> str:
+        import html
+
+        if not self.tracks:
+            return (
+                "<div><em>No tracks added yet. Use .bigwig(), .genes(), .axis(), etc.</em></div>"
+            )
+
+        rows = []
+        for index, track in enumerate(self.tracks):
+            title = getattr(track, "title", "") or ""
+            data_value = getattr(track, "data", None)
+            data_display = "" if data_value is None else str(data_value)
+            rows.append(
+                "<tr>"
+                f"<td>{index}</td>"
+                f"<td>{html.escape(track.__class__.__name__)}</td>"
+                f"<td>{html.escape(str(title))}</td>"
+                f"<td>{html.escape(data_display)}</td>"
+                f"<td>{html.escape(str(getattr(track, 'height', '')))}</td>"
+                "</tr>"
+            )
+
+        table = (
+            "<table>"
+            "<thead><tr><th>#</th><th>Type</th><th>Title</th><th>Data</th><th>Height</th></tr></thead>"
+            f"<tbody>{''.join(rows)}</tbody>"
+            "</table>"
+        )
+        return table

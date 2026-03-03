@@ -7,6 +7,7 @@ from typing import Any, Literal
 
 import matplotlib.axes
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic_core import PydanticUndefined
 
 from ._meta import TrackMeta
 from .region import GenomicRegion
@@ -117,10 +118,14 @@ class Track(BaseModel, ABC, metaclass=TrackMeta):
     @staticmethod
     def _render_default(value: Any) -> Any:
         if value is None:
-            return None
+            return "—"
+        if value is PydanticUndefined:
+            return "*(required)*"
         if isinstance(value, (str, int, float, bool, list, dict)):
             return value
-        return repr(value)
+        if isinstance(value, BaseModel):
+            return value.__class__.__name__
+        return value.__class__.__name__
 
     @classmethod
     def options(cls) -> dict[str, dict[str, dict[str, Any]]]:
@@ -135,6 +140,8 @@ class Track(BaseModel, ABC, metaclass=TrackMeta):
         label_options: dict[str, dict[str, Any]] = {}
 
         for field_name, field_info in cls.model_fields.items():
+            if field_name in {"aesthetics", "label"}:
+                continue
             section = (
                 aesthetics_options
                 if field_name in flattened_fields and field_name not in native_fields
@@ -172,6 +179,8 @@ class Track(BaseModel, ABC, metaclass=TrackMeta):
         lines = [f"## {cls.__name__} options", ""]
 
         for section in ("track", "aesthetics", "label"):
+            if not options[section]:
+                continue
             lines.append(f"### {section.title()} fields")
             lines.append("| Name | Type | Default | Required |")
             lines.append("|---|---|---|---|")
@@ -182,6 +191,40 @@ class Track(BaseModel, ABC, metaclass=TrackMeta):
             lines.append("")
 
         return "\n".join(lines)
+
+    @staticmethod
+    def _truncate_repr(value: str, max_len: int = 60) -> str:
+        if len(value) <= max_len:
+            return value
+        return f"{value[: max_len - 3]}..."
+
+    def __repr__(self) -> str:
+        parts: list[str] = []
+        if self.title:
+            parts.append(f"title={self.title!r}")
+        if self.data is not None:
+            data_text = self._truncate_repr(str(self.data), max_len=60)
+            parts.append(f"data={data_text!r}")
+        body = ", ".join(parts)
+        return f"{self.__class__.__name__}({body})"
+
+    def _repr_html_(self) -> str:
+        import html
+
+        rows: list[tuple[str, str]] = [("Type", self.__class__.__name__)]
+        if self.title:
+            rows.append(("Title", str(self.title)))
+        if self.data is not None:
+            rows.append(("Data", self._truncate_repr(str(self.data), max_len=120)))
+        rows.append(("Height", str(self.height)))
+        if self.autoscale_group:
+            rows.append(("Autoscale group", self.autoscale_group))
+
+        row_html = "".join(
+            f"<tr><th style='text-align:left;padding-right:12px'>{html.escape(key)}</th><td>{html.escape(value)}</td></tr>"
+            for key, value in rows
+        )
+        return f"<table>{row_html}</table>"
 
 
 class TrackLabeller(BaseModel):
@@ -219,6 +262,43 @@ class TrackLabeller(BaseModel):
     scale_height: float = 0.8
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    @classmethod
+    def from_config(
+        cls,
+        label: LabelConfig,
+        gr: GenomicRegion,
+        y_min: float,
+        y_max: float,
+        title: str = "",
+    ) -> "TrackLabeller":
+        return cls(
+            gr=gr,
+            y_min=y_min,
+            y_max=y_max,
+            plot_title=label.plot_title,
+            plot_scale=label.plot_scale,
+            label_on_track=label.label_on_track,
+            data_range_style=label.data_range_style,
+            label_box_enabled=label.label_box_enabled,
+            label_box_alpha=label.label_box_alpha,
+            title=title,
+            scale_min=y_min,
+            scale_max=y_max,
+            title_location=label.title_location,
+            title_height=label.title_height,
+            title_size=label.title_size,
+            title_color=label.title_color,
+            title_font=label.title_font,
+            title_weight=label.title_weight,
+            scale_location=label.scale_location,
+            scale_height=label.scale_height,
+            scale_precision=label.scale_precision,
+            scale_size=label.scale_size,
+            scale_color=label.scale_color,
+            scale_font=label.scale_font,
+            scale_weight=label.scale_weight,
+        )
 
     @staticmethod
     def _default_text_bbox(alpha: float) -> dict:
