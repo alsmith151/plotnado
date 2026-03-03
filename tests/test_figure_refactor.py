@@ -51,6 +51,16 @@ class TestFigureRefactor:
         assert fig.highlight_color == "#00ff00"
         assert fig.highlight_alpha == 0.33
 
+    def test_theme_string_resolves_builtin(self):
+        fig = Figure(theme="minimal")
+        assert fig.theme is not None
+        assert fig.theme == Theme.minimal()
+        assert fig.highlight_color == Theme.minimal().highlight_color
+
+    def test_theme_string_unknown_raises(self):
+        with pytest.raises(ValueError, match="Unknown builtin theme"):
+            Figure(theme="unknown")
+
     def test_highlight_style_configuration(self):
         fig = Figure().highlight_style(color="#123456", alpha=0.2)
         assert fig.highlight_color == "#123456"

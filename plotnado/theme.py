@@ -1,8 +1,18 @@
 """Theme primitives for figure-level default styling."""
 
+from enum import Enum
+
 from pydantic import BaseModel, model_validator
 
 from .tracks.base import LabelConfig
+
+
+class BuiltinTheme(str, Enum):
+    """Builtin theme names supported by Plotnado."""
+
+    DEFAULT = "default"
+    MINIMAL = "minimal"
+    PUBLICATION = "publication"
 
 
 class Theme(BaseModel):
@@ -67,3 +77,16 @@ class Theme(BaseModel):
                 label_box_alpha=0.85,
             ),
         )
+
+    @classmethod
+    def from_builtin(cls, value: BuiltinTheme | str) -> "Theme":
+        """Create a `Theme` from a builtin theme name."""
+        builtin = value if isinstance(value, BuiltinTheme) else BuiltinTheme(str(value).lower())
+
+        if builtin == BuiltinTheme.DEFAULT:
+            return cls.default()
+        if builtin == BuiltinTheme.MINIMAL:
+            return cls.minimal()
+        if builtin == BuiltinTheme.PUBLICATION:
+            return cls.publication()
+        raise ValueError(f"Unknown builtin theme: {value}")

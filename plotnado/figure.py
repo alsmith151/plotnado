@@ -37,7 +37,7 @@ from .tracks import (
     BigwigOverlay,
     list_options,
 )
-from .theme import Theme
+from .theme import BuiltinTheme, Theme
 
 
 class Figure:
@@ -59,7 +59,7 @@ class Figure:
         tracks: list[Track] | None = None,
         width: float = 12,
         track_height: float = 2.0,
-        theme: Theme | None = None,
+        theme: Theme | BuiltinTheme | str | None = None,
     ):
         """Create a figure container for genomic tracks.
 
@@ -67,20 +67,36 @@ class Figure:
             tracks: Optional pre-populated list of tracks.
             width: Figure width in inches.
             track_height: Height scaling factor per track.
-            theme: Optional `Theme` applied to tracks on add/initialization.
+            theme: Optional `Theme` (or builtin name like "default", "minimal",
+                "publication") applied to tracks on add/initialization.
         """
         self.tracks: list[Track] = tracks or []
         self.width = width
         self.track_height = track_height
-        self.theme = theme
-        self.highlight_color = theme.highlight_color if theme is not None else "#ffd700"
-        self.highlight_alpha = theme.highlight_alpha if theme is not None else 0.15
+        self.theme = self._resolve_theme(theme)
+        self.highlight_color = (
+            self.theme.highlight_color if self.theme is not None else "#ffd700"
+        )
+        self.highlight_alpha = self.theme.highlight_alpha if self.theme is not None else 0.15
         self._highlight_regions: list[GenomicRegion] = []
         self._autocolor_palette: str | None = None
         self._autoscale: bool = False
 
         if self.theme is not None:
             self.tracks = [self._apply_theme_to_track(track) for track in self.tracks]
+
+    @staticmethod
+    def _resolve_theme(theme: Theme | BuiltinTheme | str | None) -> Theme | None:
+        if theme is None:
+            return None
+        if isinstance(theme, Theme):
+            return theme
+        try:
+            return Theme.from_builtin(theme)
+        except ValueError as exc:
+            raise ValueError(
+                f"Unknown builtin theme: {theme}. Available: {[item.value for item in BuiltinTheme]}"
+            ) from exc
 
     def add_track(self, track: str | Track, **kwargs) -> Self:
         """Add a track instance or track alias to the figure.
