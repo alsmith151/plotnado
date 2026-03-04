@@ -18,7 +18,7 @@ def dense_gene_annotations() -> pd.DataFrame:
                 "chrom": "chr1",
                 "start": start,
                 "end": end,
-                "geneid": f"GENE_{index}",
+                "geneid": f"GENE_LONG_NAME_GOES_ON_FOR_A_WHILE_{index}",
                 "strand": "+" if index % 2 else "-",
                 "block_count": 3,
                 "block_starts": [0, int(length * 0.42), int(length * 0.78)],
