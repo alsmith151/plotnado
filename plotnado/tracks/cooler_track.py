@@ -1,20 +1,27 @@
 """Cooler-based matrix tracks."""
 
-from typing import Literal
-
 import matplotlib.axes
 import numpy as np
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
 from .base import Track
+from .enums import CoolerTransform
 from .region import GenomicRegion
 from .utils import clean_axis
 
 
 class CoolerAesthetics(BaseModel):
-    cmap: str = "RdBu_r"
-    min_value: float | None = None
-    max_value: float | None = None
+    cmap: str = Field(default="RdBu_r", description="Matplotlib colormap used to render matrix intensity.")
+    min_value: float | None = Field(
+        default=None,
+        description="Optional fixed lower bound for colormap normalization.",
+    )
+    max_value: float | None = Field(
+        default=None,
+        description="Optional fixed upper bound for colormap normalization.",
+    )
+
+    model_config = ConfigDict(use_enum_values=True)
 
     @property
     def vmin(self) -> float | None:
@@ -34,12 +41,21 @@ class CoolerAesthetics(BaseModel):
 
 
 class CoolerTrack(Track):
-    file: str
-    resolution: int | None = None
-    balance: bool = True
-    transform: Literal["log", "log2", "log10", "none"] = "none"
-    aesthetics: CoolerAesthetics = CoolerAesthetics()
-    height: float = 2.5
+    file: str = Field(description="Path to cooler/mcool matrix file.")
+    resolution: int | None = Field(
+        default=None,
+        description="Resolution bin size for .mcool files.",
+    )
+    balance: bool = Field(default=True, description="Use balanced matrix values when available.")
+    transform: CoolerTransform = Field(
+        default=CoolerTransform.NONE,
+        description="Transform applied to matrix values before plotting.",
+    )
+    aesthetics: CoolerAesthetics = Field(
+        default_factory=CoolerAesthetics,
+        description="Colormap and value-range styling options.",
+    )
+    height: float = Field(default=2.5, description="Relative panel height for this track.")
 
     def _cooler_uri(self) -> str:
         if self.file.endswith(".mcool") and self.resolution:
@@ -87,17 +103,26 @@ class CoolerTrack(Track):
 
 
 class CapcruncherTrack(CoolerTrack):
-    viewpoint: str | None = None
-    normalisation: str | None = None
+    viewpoint: str | None = Field(default=None, description="Optional viewpoint identifier for capture-centric views.")
+    normalisation: str | None = Field(default=None, description="Optional normalization mode label.")
 
 
 class CoolerAverage(Track):
-    files: list[str]
-    resolution: int | None = None
-    balance: bool = True
-    transform: Literal["log", "log2", "log10", "none"] = "none"
-    aesthetics: CoolerAesthetics = CoolerAesthetics()
-    height: float = 2.5
+    files: list[str] = Field(description="List of cooler/mcool files to average.")
+    resolution: int | None = Field(
+        default=None,
+        description="Resolution bin size for .mcool input files.",
+    )
+    balance: bool = Field(default=True, description="Use balanced matrices where available.")
+    transform: CoolerTransform = Field(
+        default=CoolerTransform.NONE,
+        description="Transform applied before averaging and plotting.",
+    )
+    aesthetics: CoolerAesthetics = Field(
+        default_factory=CoolerAesthetics,
+        description="Colormap and value-range styling options.",
+    )
+    height: float = Field(default=2.5, description="Relative panel height for this track.")
 
     def fetch_data(self, gr: GenomicRegion) -> np.ndarray:
         matrices = []

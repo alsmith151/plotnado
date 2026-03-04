@@ -21,7 +21,7 @@ list_options(BigWigTrack)
 
 Both return a dictionary split into:
 - `track`: core track fields
-- `aesthetics`: flattened aesthetic fields accepted directly in constructors
+- `aesthetics`: nested style-model fields (`aesthetics=...`)
 - `label`: unified label controls (`track.label` / `label={...}`)
 
 For alias-based workflows:
@@ -38,9 +38,11 @@ theme = Theme.publication()
 fig = Figure(theme=theme)
 ```
 
+`Figure` helper method docstrings (for example `Figure.bigwig`) include auto-generated option sections sourced from `Track.options()`, so they stay aligned with model field descriptions without manual docstring maintenance.
+
 Current aesthetics coverage (derived from `Track.options()`):
 
-For the always up-to-date generated table per track (track/aesthetics/label fields), see [Aesthetics Reference](aesthetics_reference.md).
+For the always up-to-date generated table per track (track/aesthetics/label fields + descriptions), see [Aesthetics Reference](aesthetics_reference.md).
 
 - `BigWigTrack`: `alpha`, `color`, `fill`, `linewidth`, `max_value`, `min_value`, `scatter_point_size`, `style`
 - `BedTrack`: `alpha`, `color`, `display`, `edge_color`, `font_size`, `interval_height`, `label_field`, `max_rows`, `rect_linewidth`, `show_labels`

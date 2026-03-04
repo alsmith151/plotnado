@@ -1,4 +1,4 @@
-"""Generate the code reference pages."""
+"""Generate code and track-option reference pages."""
 
 from pathlib import Path
 
@@ -8,7 +8,7 @@ from plotnado.figure import Figure
 
 nav = mkdocs_gen_files.Nav()
 
-for path in sorted(Path("plotnado/api").glob("*.py")):
+for path in sorted(Path("plotnado").rglob("*.py")):
 
     module_path = path.relative_to(".").with_suffix("")
     doc_path = module_path.with_suffix(".md")
@@ -38,11 +38,19 @@ with mkdocs_gen_files.open("reference/SUMMARY.md", "w") as nav_file:
 
 
 def _format_section_rows(options: dict[str, dict], section: str) -> list[str]:
-    rows = [f"### {section.title()} fields", "", "| Name | Type | Default | Required |", "|---|---|---|---|"]
+    rows = [
+        f"### {section.title()} fields",
+        "",
+        "| Name | Type | Default | Choices | Required | Description |",
+        "|---|---|---|---|---|---|",
+    ]
     section_data = options.get(section, {})
     for field_name, meta in sorted(section_data.items()):
+        description = meta.get("description") or "—"
+        choices = meta.get("choices") or []
+        choices_text = ", ".join(str(choice) for choice in choices) if choices else "—"
         rows.append(
-            f"| {field_name} | {meta['type']} | {meta['default']} | {meta['required']} |"
+            f"| {field_name} | {meta['type']} | {meta['default']} | {choices_text} | {meta['required']} | {description} |"
         )
     rows.append("")
     return rows
@@ -61,6 +69,8 @@ def _generate_aesthetics_reference() -> None:
         "# Aesthetics Reference",
         "",
         "This page is auto-generated from runtime model metadata (`Track.options()`).",
+        "",
+        "Track styles are configured through nested `aesthetics=...` models.",
         "",
     ]
 

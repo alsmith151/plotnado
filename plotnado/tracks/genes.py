@@ -5,14 +5,14 @@ Genes track for displaying gene annotations.
 import importlib.resources
 import json
 from pathlib import Path
-from typing import Literal
 
 import matplotlib.axes
 import matplotlib.patches
 import pandas as pd
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from .base import Track
+from .enums import DisplayMode, GeneLabelStyle, PlotStyle
 from .region import GenomicRegion
 from .utils import clean_axis, read_bed_regions, read_gtf_regions
 
@@ -20,42 +20,86 @@ from .utils import clean_axis, read_bed_regions, read_gtf_regions
 class GenesAesthetics(BaseModel):
     """Aesthetics configuration for gene tracks."""
 
-    style: Literal["std"] = "std"
-    color: str = "black"
-    fill: bool = True
-    alpha: float = 1.0
-    display: Literal["collapsed", "expanded"] = "collapsed"
-    minimum_gene_length: int = 0
-    max_number_of_rows: int = 4
-    interval_height: float = 0.1
-    arrow_size: float = 0.12
-    exon_linewidth: float = 0.8
-    exon_edge_color: str = "black"
-    exon_color: str = "black"
-    intron_linewidth: float = 0.8
-    intron_color: str = "black"
-    chevron_height_ratio: float = 0.22
-    chevron_vertical_offset_ratio: float = 0.0
-    chevron_width_fraction: float = 0.035
-    chevron_min_width_bp: float = 40.0
-    chevron_margin_bp: float = 20.0
-    chevron_target_spacing_bp: float = 6000.0
-    chevron_max_count: int = 14
-    gene_label_font_size: int = 8
-    gene_label_style: Literal["normal", "italic", "oblique"] = "italic"
+    style: PlotStyle = Field(default=PlotStyle.STD, description="Gene rendering style preset.")
+    color: str = Field(default="black", description="Primary color used for gene glyphs.")
+    fill: bool = Field(default=True, description="Fill exon bodies instead of outlines only.")
+    alpha: float = Field(default=1.0, description="Opacity for rendered gene bodies (0-1).")
+    display: DisplayMode = Field(
+        default=DisplayMode.COLLAPSED,
+        description="Collapsed uses one row; expanded stacks overlapping genes.",
+    )
+    minimum_gene_length: int = Field(
+        default=0,
+        description="Minimum feature length (bp) required to draw a gene.",
+    )
+    max_number_of_rows: int = Field(
+        default=4,
+        description="Maximum rows shown when display mode is expanded.",
+    )
+    interval_height: float = Field(default=0.1, description="Vertical thickness of exon rectangles.")
+    arrow_size: float = Field(default=0.12, description="Arrow marker size for transcript direction cues.")
+    exon_linewidth: float = Field(default=0.8, description="Line width for exon outlines.")
+    exon_edge_color: str = Field(default="black", description="Edge color for exon rectangles.")
+    exon_color: str = Field(default="black", description="Fill color for exon rectangles.")
+    intron_linewidth: float = Field(default=0.8, description="Line width for intron connector lines.")
+    intron_color: str = Field(default="black", description="Color for intron connector lines.")
+    chevron_height_ratio: float = Field(
+        default=0.22,
+        description="Chevron height relative to track row height.",
+    )
+    chevron_vertical_offset_ratio: float = Field(
+        default=0.0,
+        description="Vertical offset ratio used when drawing directional chevrons.",
+    )
+    chevron_width_fraction: float = Field(
+        default=0.035,
+        description="Default chevron width as fraction of viewport width.",
+    )
+    chevron_min_width_bp: float = Field(
+        default=40.0,
+        description="Minimum chevron width in base pairs.",
+    )
+    chevron_margin_bp: float = Field(
+        default=20.0,
+        description="Margin near transcript edges where chevrons are omitted.",
+    )
+    chevron_target_spacing_bp: float = Field(
+        default=6000.0,
+        description="Target spacing in bp between directional chevrons.",
+    )
+    chevron_max_count: int = Field(default=14, description="Maximum number of chevrons drawn per gene body.")
+    gene_label_font_size: int = Field(default=8, description="Font size for gene name labels.")
+    gene_label_style: GeneLabelStyle = Field(
+        default=GeneLabelStyle.ITALIC,
+        description="Font style for gene name labels.",
+    )
+
+    model_config = ConfigDict(use_enum_values=True)
 
 
 class Genes(Track):
     """Track for displaying gene annotations from BED12 or GTF files."""
 
-    data: Path | str | pd.DataFrame | None = None
-    genome: str | None = None
-    aesthetics: GenesAesthetics = GenesAesthetics()
-    height: float = 1.5
+    data: Path | str | pd.DataFrame | None = Field(
+        default=None,
+        description="Gene annotation source (BED12/GTF file path or DataFrame).",
+    )
+    genome: str | None = Field(
+        default=None,
+        description="Bundled genome key used when data is not provided (e.g., hg38).",
+    )
+    aesthetics: GenesAesthetics = Field(
+        default_factory=GenesAesthetics,
+        description="Visual styling options for genes, exons, introns, and labels.",
+    )
+    height: float = Field(default=1.5, description="Relative panel height for this track.")
 
-    row_scale: float = 1.0
-    small_relative: float = 0.01
-    gene_count: int = 0
+    row_scale: float = Field(default=1.0, description="Internal row scaling factor used during layout.")
+    small_relative: float = Field(
+        default=0.01,
+        description="Internal small-offset ratio used for annotation geometry.",
+    )
+    gene_count: int = Field(default=0, description="Number of genes drawn in the last plotting pass.")
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 

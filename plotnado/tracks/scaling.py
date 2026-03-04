@@ -2,10 +2,10 @@
 Scaling utilities for genomic tracks.
 """
 
-from typing import Literal
 import numpy as np
 import pandas as pd
 from .base import GenomicRegion, Track
+from .enums import ScalingMethod
 
 
 class Autoscaler:
@@ -90,7 +90,7 @@ class Scaler:
         self,
         tracks: list[Track],
         gr: GenomicRegion,
-        method: Literal["max", "mean", "total"] = "mean",
+        method: ScalingMethod = ScalingMethod.MEAN,
     ):
         self.tracks = tracks
         self.gr = gr
@@ -120,11 +120,11 @@ class Scaler:
         if not data_list:
             return np.array([])
 
-        if self.method == "max":
+        if self.method == ScalingMethod.MAX:
             arr = [np.nanmax(d) if d.size > 0 else 0 for d in data_list]
-        elif self.method == "mean":
+        elif self.method == ScalingMethod.MEAN:
             arr = [np.nanmean(d) if d.size > 0 else 0 for d in data_list]
-        elif self.method == "total":
+        elif self.method == ScalingMethod.TOTAL:
             arr = [np.nansum(d) if d.size > 0 else 0 for d in data_list]
         else:
             arr = [1.0] * len(data_list)

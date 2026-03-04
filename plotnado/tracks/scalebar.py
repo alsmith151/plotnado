@@ -2,31 +2,37 @@
 Scale bar track for showing genomic distances.
 """
 
-from typing import Literal
-
 import matplotlib.axes
 import matplotlib.patches
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
 from .region import GenomicRegion
 from .base import Track
 from .utils import clean_axis, format_distance
-from .enums import Position
+from .enums import PlotStyle, Position
 
 
 class ScaleBarAesthetics(BaseModel):
     """Visual configuration for scale bars."""
 
-    style: Literal["std"] = "std"
-    color: str = "#333333"  # Dark gray
-    position: Position | Literal["left", "right", "center"] = Position.LEFT
-    scale_distance: float | None = None
-    font_size: int = 8
-    title: str = "Scale"
-    bar_linewidth: float = 3.0
-    tick_linewidth: float = 2.0
-    tick_height: float = 0.1
-    label_offset: float = 0.25
+    style: PlotStyle = Field(default=PlotStyle.STD, description="Scale bar style variant.")
+    color: str = Field(default="#333333", description="Color of scale bar line, ticks, and label.")
+    position: Position = Field(default=Position.LEFT, description="Horizontal anchor of the scale bar.")
+    scale_distance: float | None = Field(
+        default=None,
+        description="Explicit scale bar length in base pairs; auto-selected if omitted.",
+    )
+    font_size: int = Field(default=8, description="Font size for the scale label.")
+    title: str = Field(default="Scale", description="Human-readable name for this style preset.")
+    bar_linewidth: float = Field(default=3.0, description="Line width of the main horizontal scale bar.")
+    tick_linewidth: float = Field(default=2.0, description="Line width of terminal scale ticks.")
+    tick_height: float = Field(default=0.1, description="Half-height of terminal ticks in axis units.")
+    label_offset: float = Field(
+        default=0.25,
+        description="Vertical distance between bar baseline and text label.",
+    )
+
+    model_config = ConfigDict(use_enum_values=True)
 
 
 class ScaleBar(Track):
@@ -34,9 +40,12 @@ class ScaleBar(Track):
     Track showing a scale bar with distance annotation.
     """
 
-    title: str = "ScaleBar"
-    aesthetics: ScaleBarAesthetics = ScaleBarAesthetics()
-    height: float = 0.3
+    title: str = Field(default="ScaleBar", description="Optional title for the scale bar track.")
+    aesthetics: ScaleBarAesthetics = Field(
+        default_factory=ScaleBarAesthetics,
+        description="Visual style options for the scale bar and label.",
+    )
+    height: float = Field(default=0.3, description="Relative panel height for this compact track.")
 
     def fetch_data(self, gr: GenomicRegion) -> None:
         return None

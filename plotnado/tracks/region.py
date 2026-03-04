@@ -2,8 +2,10 @@
 Genomic region model.
 """
 
-from typing import Any, Literal
-from pydantic import BaseModel
+from typing import Any
+from pydantic import BaseModel, ConfigDict, Field
+
+from .enums import Strand
 
 
 class GenomicRegion(BaseModel):
@@ -17,10 +19,12 @@ class GenomicRegion(BaseModel):
         strand: Strand ('+' or '-')
     """
 
-    chromosome: str
-    start: int
-    end: int
-    strand: Literal["+", "-"] = "+"
+    chromosome: str = Field(description="Chromosome name (for example `chr1`).")
+    start: int = Field(description="0-based inclusive start coordinate.")
+    end: int = Field(description="0-based exclusive end coordinate.")
+    strand: Strand = Field(default=Strand.PLUS, description="Strand orientation for directional operations.")
+
+    model_config = ConfigDict(use_enum_values=True)
 
     @property
     def length(self) -> int:

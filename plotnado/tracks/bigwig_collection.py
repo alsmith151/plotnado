@@ -4,7 +4,7 @@ from pathlib import Path
 
 import matplotlib.axes
 import pandas as pd
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from .base import LabelConfig, Track, TrackLabeller
 from .bigwig import BigWigTrack, BigwigAesthetics
@@ -15,18 +15,30 @@ from .enums import CollectionStyle
 
 
 class BigWigCollectionAesthetics(BaseModel):
-    colors: list[str] | None = None
-    labels: list[str] | None = None
-    alpha: float = 0.6
-    style: CollectionStyle = CollectionStyle.OVERLAY
+    colors: list[str] | None = Field(
+        default=None,
+        description="Optional per-file colors used when creating component tracks.",
+    )
+    labels: list[str] | None = Field(
+        default=None,
+        description="Optional legend/title labels for each file in the collection.",
+    )
+    alpha: float = Field(default=0.6, description="Opacity applied to rendered collection traces.")
+    style: CollectionStyle = Field(
+        default=CollectionStyle.OVERLAY,
+        description="Collection layout mode: overlay all traces or stack them.",
+    )
 
     model_config = ConfigDict(use_enum_values=True)
 
 
 class BigWigCollection(Track):
-    files: list[str]
-    aesthetics: BigWigCollectionAesthetics = BigWigCollectionAesthetics()
-    height: float = 2.0
+    files: list[str] = Field(description="List of BigWig file paths for the collection.")
+    aesthetics: BigWigCollectionAesthetics = Field(
+        default_factory=BigWigCollectionAesthetics,
+        description="Collection-level visual style and layout options.",
+    )
+    height: float = Field(default=2.0, description="Relative panel height for this track.")
 
     def _build_tracks(self) -> list[BigWigTrack]:
         defaults = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd"]

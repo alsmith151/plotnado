@@ -2,17 +2,16 @@
 NarrowPeak track for visualizing ChIP-seq/ATAC-seq peaks.
 """
 
-from typing import List, Optional, Literal
-
 import matplotlib.axes
 import matplotlib.cm
 import matplotlib.colors
 import matplotlib.patches
+from pydantic import Field
 
 from .bed import BedTrack, BedAesthetics
 from .region import GenomicRegion
 from .utils import clean_axis
-from .enums import DisplayMode
+from .enums import DisplayMode, NarrowPeakColorBy
 
 
 class NarrowPeakAesthetics(BedAesthetics):
@@ -27,16 +26,23 @@ class NarrowPeakAesthetics(BedAesthetics):
         show_summit: Whether to draw a vertical line at the peak summit
     """
 
-    color: str = "#d95f02"  # Default orange for peaks
-    color_by: Optional[Literal["score", "signalValue", "pValue", "qValue"]] = (
-        "signalValue"
+    color: str = Field(default="#d95f02", description="Fallback color for peaks.")
+    color_by: NarrowPeakColorBy | None = Field(
+        default=NarrowPeakColorBy.SIGNAL_VALUE,
+        description="Optional narrowPeak field used for colormap-based coloring.",
     )
-    cmap: str = "Oranges"
-    min_score: Optional[float] = None
-    max_score: Optional[float] = None
-    show_summit: bool = True
-    summit_color: str = "black"
-    summit_width: float = 1.0
+    cmap: str = Field(default="Oranges", description="Colormap used when color_by is enabled.")
+    min_score: float | None = Field(
+        default=None,
+        description="Optional lower score bound for colormap normalization.",
+    )
+    max_score: float | None = Field(
+        default=None,
+        description="Optional upper score bound for colormap normalization.",
+    )
+    show_summit: bool = Field(default=True, description="Draw summit marker when peak offset is available.")
+    summit_color: str = Field(default="black", description="Color of summit marker lines.")
+    summit_width: float = Field(default=1.0, description="Line width of summit marker lines.")
 
 
 class NarrowPeakTrack(BedTrack):
@@ -48,7 +54,10 @@ class NarrowPeakTrack(BedTrack):
         aesthetics: Visual styling configuration
     """
 
-    aesthetics: NarrowPeakAesthetics = NarrowPeakAesthetics()
+    aesthetics: NarrowPeakAesthetics = Field(
+        default_factory=NarrowPeakAesthetics,
+        description="NarrowPeak-specific visual styling options.",
+    )
 
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
         """Plot narrowPeak records."""
@@ -61,7 +70,7 @@ class NarrowPeakTrack(BedTrack):
             return
 
         row_scale = 1.0 / max(1, self.max_rows)
-        row_last_positions: List[int] = []
+        row_last_positions: list[int] = []
 
         # Setup colormap if needed
         cmap = None

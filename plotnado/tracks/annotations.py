@@ -5,7 +5,7 @@ Annotation tracks for horizontal and vertical reference lines.
 from typing import Any
 
 import matplotlib.axes
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from .region import GenomicRegion
 from .base import Track
@@ -23,11 +23,11 @@ class AnnotationAesthetics(BaseModel):
         zorder: Plotting order
     """
 
-    color: str = "red"
-    linestyle: str = "--"
-    linewidth: float = 1.0
-    alpha: float = 0.8
-    zorder: int = 10
+    color: str = Field(default="red", description="Color used to draw reference lines.")
+    linestyle: str = Field(default="--", description="Matplotlib line style pattern for the line.")
+    linewidth: float = Field(default=1.0, description="Line width for the reference line.")
+    alpha: float = Field(default=0.8, description="Opacity of the reference line (0-1).")
+    zorder: int = Field(default=10, description="Matplotlib z-order used when drawing the line.")
 
 
 class HLineTrack(Track):
@@ -39,9 +39,12 @@ class HLineTrack(Track):
         aesthetics: Visual configuration
     """
 
-    y_value: float
-    aesthetics: AnnotationAesthetics = AnnotationAesthetics()
-    height: float = 0.0  # Usually overlaid, so zero standalone height
+    y_value: float = Field(description="Y-axis value where the horizontal line is drawn.")
+    aesthetics: AnnotationAesthetics = Field(
+        default_factory=AnnotationAesthetics,
+        description="Visual styling options for the horizontal reference line.",
+    )
+    height: float = Field(default=0.0, description="Zero-height overlay track.")
 
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
         """Plot horizontal line."""
@@ -64,9 +67,12 @@ class VLineTrack(Track):
         aesthetics: Visual configuration
     """
 
-    x_position: int | str
-    aesthetics: AnnotationAesthetics = AnnotationAesthetics()
-    height: float = 0.0
+    x_position: int | str = Field(description="Genomic position where the vertical line is drawn.")
+    aesthetics: AnnotationAesthetics = Field(
+        default_factory=AnnotationAesthetics,
+        description="Visual styling options for the vertical reference line.",
+    )
+    height: float = Field(default=0.0, description="Zero-height overlay track.")
 
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
         """Plot vertical line."""

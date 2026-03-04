@@ -7,7 +7,7 @@ from pathlib import Path
 import matplotlib.axes
 import matplotlib.patches
 import pandas as pd
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from .region import GenomicRegion
 from .base import Track
@@ -24,10 +24,16 @@ class HighlightsAesthetics(BaseModel):
         edge_color: Edge color (None for no edge)
     """
 
-    color: str = "yellow"
-    alpha: float = 0.3
-    edge_color: str | None = None
-    linewidth: float = 1.0
+    color: str = Field(default="yellow", description="Fill color for highlighted regions.")
+    alpha: float = Field(default=0.3, description="Opacity of highlighted regions (0-1).")
+    edge_color: str | None = Field(
+        default=None,
+        description="Optional border color for highlighted regions.",
+    )
+    linewidth: float = Field(
+        default=1.0,
+        description="Border line width when edge_color is provided.",
+    )
 
 
 class HighlightsFromFile(Track):
@@ -42,9 +48,14 @@ class HighlightsFromFile(Track):
         aesthetics: Visual styling configuration
     """
 
-    data: Path | pd.DataFrame | str
-    aesthetics: HighlightsAesthetics = HighlightsAesthetics()
-    height: float = 0.0  # Zero height means it spans all tracks
+    data: Path | pd.DataFrame | str = Field(
+        description="BED/BigBed-like regions data source for highlight overlays.",
+    )
+    aesthetics: HighlightsAesthetics = Field(
+        default_factory=HighlightsAesthetics,
+        description="Visual style options for highlighted regions.",
+    )
+    height: float = Field(default=0.0, description="Zero-height overlay track spanning plotted axes.")
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 

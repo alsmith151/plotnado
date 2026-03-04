@@ -77,13 +77,15 @@ class TestBigWigDiff:
         assert mock_ax.bar.call_count == 2
         mock_ax.axhline.assert_called_once()
 
-    def test_flattened_aesthetic_kwargs_supported(self):
+    def test_nested_aesthetic_configuration(self):
         track = BigWigDiff(
             file_a="a.bw",
             file_b="b.bw",
-            positive_color="#ff0000",
-            bar_alpha=0.2,
-            zero_line_width=1.5,
+            aesthetics=BigWigDiffAesthetics(
+                positive_color="#ff0000",
+                bar_alpha=0.2,
+                zero_line_width=1.5,
+            ),
         )
 
         assert track.positive_color == "#ff0000"

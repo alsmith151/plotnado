@@ -65,19 +65,8 @@ class TestBigwigAesthetics:
         with pytest.raises(ValidationError):
             BigwigAesthetics(style="invalid_style")
 
-    def test_flattened_track_kwargs_sync_to_aesthetics(self):
-        """Track constructor should accept flattened aesthetics kwargs."""
-        track = BigWigTrack(color="red", alpha=0.35, style="line")
-
-        assert track.color == "red"
-        assert track.alpha == 0.35
-        assert track.style == "line"
-        assert track.aesthetics.color == "red"
-        assert track.aesthetics.alpha == 0.35
-        assert track.aesthetics.style == "line"
-
-    def test_nested_aesthetics_still_works(self):
-        """Legacy nested aesthetics input remains supported."""
+    def test_track_uses_nested_aesthetics(self):
+        """Track constructor accepts nested aesthetics only."""
         track = BigWigTrack(aesthetics=BigwigAesthetics(color="purple", alpha=0.5))
 
         assert track.color == "purple"
@@ -85,23 +74,14 @@ class TestBigwigAesthetics:
         assert track.aesthetics.color == "purple"
         assert track.aesthetics.alpha == 0.5
 
-    def test_explicit_flattened_kwargs_override_nested(self):
-        """Explicit flattened kwargs should win over nested aesthetics."""
-        track = BigWigTrack(
-            color="orange",
-            aesthetics=BigwigAesthetics(color="purple", alpha=0.5),
-        )
-
-        assert track.color == "orange"
-        assert track.aesthetics.color == "orange"
-
-    def test_signature_exposes_flattened_aesthetic_fields(self):
-        """Constructor signature should expose flattened kwargs for notebook discoverability."""
+    def test_track_signature_does_not_expose_flattened_aesthetics(self):
+        """Constructor signature should expose nested aesthetics model only."""
         signature = inspect.signature(BigWigTrack)
 
-        assert "color" in signature.parameters
-        assert "alpha" in signature.parameters
-        assert "style" in signature.parameters
+        assert "aesthetics" in signature.parameters
+        assert "color" not in signature.parameters
+        assert "alpha" not in signature.parameters
+        assert "style" not in signature.parameters
 
     def test_track_options_reports_track_and_aesthetic_sections(self):
         """Programmatic option discovery should split track vs aesthetics fields."""
@@ -241,8 +221,10 @@ class TestGenomicAxisAesthetics:
         assert aesthetics.tick_linewidth == 1.2
         assert aesthetics.chromosome_fontweight == "bold"
 
-    def test_genomic_axis_flattens_aesthetics(self):
-        track = GenomicAxis(axis_linewidth=2.0, tick_color="purple")
+    def test_genomic_axis_uses_nested_aesthetics(self):
+        track = GenomicAxis(
+            aesthetics=GenomicAxisAesthetics(axis_linewidth=2.0, tick_color="purple")
+        )
 
         assert track.axis_linewidth == 2.0
         assert track.tick_color == "purple"

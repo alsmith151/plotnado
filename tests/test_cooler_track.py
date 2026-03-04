@@ -49,8 +49,11 @@ class TestCoolerTrack:
         assert matrix.shape == (2, 2)
         assert np.allclose(matrix, np.array([[1.0, 2.0], [3.0, 4.0]]))
 
-    def test_flattened_min_max_kwargs(self):
-        track = CoolerTrack(file="a.cool", min_value=-1.0, max_value=2.0)
+    def test_nested_min_max_kwargs(self):
+        track = CoolerTrack(
+            file="a.cool",
+            aesthetics=CoolerAesthetics(min_value=-1.0, max_value=2.0),
+        )
         assert track.min_value == -1.0
         assert track.max_value == 2.0
         assert track.aesthetics.min_value == -1.0

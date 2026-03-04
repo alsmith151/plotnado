@@ -45,4 +45,21 @@ When using `Figure.add_track()`, you can pass aliases instead of constructing tr
 
 For full details (constructor arguments, examples, and old→new migration mapping), see [Track Aliases](track_aliases.md).
 
+## Shorthand Composition
+
+`Figure` methods support shorthand composition for readability.
+
+- Pass track fields directly (for example `title=...`, `height=...`).
+- Pass aesthetics fields directly (for example `color=...`, `alpha=...`) and they are auto-packed into `aesthetics`.
+- Pass label fields directly (for example `plot_title=False`) and they are auto-packed into `label`.
+
+```python
+from plotnado import Figure
+
+fig = Figure()
+fig.bigwig("chip.bw", title="ChIP", color="#1f77b4", alpha=0.7, plot_title=False)
+```
+
+Explicit nested models still work and can be mixed with shorthand; shorthand values take precedence for the keys provided.
+
 

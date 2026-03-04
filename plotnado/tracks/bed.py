@@ -8,7 +8,7 @@ from typing import Any
 import matplotlib.axes
 import matplotlib.patches
 import pandas as pd
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from .region import GenomicRegion
 from .base import Track
@@ -29,16 +29,25 @@ class BedAesthetics(BaseModel):
         max_rows: Maximum number of rows for expanded display
     """
 
-    color: str = "steelblue"
-    edge_color: str = "black"
-    alpha: float = 0.8
-    interval_height: float = 0.45
-    display: DisplayMode = DisplayMode.COLLAPSED
-    max_rows: int = 5
-    show_labels: bool = False
-    label_field: str = "name"
-    font_size: int = 8
-    rect_linewidth: float = 1.0
+    color: str = Field(default="steelblue", description="Fill color for interval rectangles.")
+    edge_color: str = Field(default="black", description="Stroke color for interval borders.")
+    alpha: float = Field(default=0.8, description="Opacity of interval rectangles (0-1).")
+    interval_height: float = Field(
+        default=0.45,
+        description="Rectangle height in normalized track coordinates.",
+    )
+    display: DisplayMode = Field(
+        default=DisplayMode.COLLAPSED,
+        description="Collapsed draws all intervals on one row; expanded stacks overlaps.",
+    )
+    max_rows: int = Field(default=5, description="Maximum stacked rows when display is expanded.")
+    show_labels: bool = Field(default=False, description="Show text labels for intervals.")
+    label_field: str = Field(
+        default="name",
+        description="Column name used to populate interval labels.",
+    )
+    font_size: int = Field(default=8, description="Font size for interval labels.")
+    rect_linewidth: float = Field(default=1.0, description="Border line width for interval rectangles.")
 
 
 class BedTrack(Track):
@@ -52,9 +61,15 @@ class BedTrack(Track):
         aesthetics: Visual styling configuration
     """
 
-    data: Path | pd.DataFrame | str | Any | None = None
-    aesthetics: BedAesthetics = BedAesthetics()
-    height: float = 1.0
+    data: Path | pd.DataFrame | str | Any | None = Field(
+        default=None,
+        description="BED/BigBed path or in-memory interval table-like object.",
+    )
+    aesthetics: BedAesthetics = Field(
+        default_factory=BedAesthetics,
+        description="Visual styling options for interval rendering.",
+    )
+    height: float = Field(default=1.0, description="Relative panel height for this track.")
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 

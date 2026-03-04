@@ -10,7 +10,7 @@ import matplotlib.colors
 import matplotlib.patches
 import matplotlib.path
 import pandas as pd
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from .region import GenomicRegion
 from .base import Track
@@ -31,16 +31,34 @@ class LinksAesthetics(BaseModel):
         color_by_score: Whether to use the score column for coloring
     """
 
-    color: str = "steelblue"
-    edge_color: str | None = None
-    alpha: float = 0.6
-    linewidth: float = 1.0
-    cmap: str = "viridis"
-    max_height: float = 0.8
-    color_by_score: bool = False
-    min_score: float | None = None
-    max_score: float | None = None
-    y_baseline: float = 0.1
+    color: str = Field(default="steelblue", description="Default arc color when score coloring is disabled.")
+    edge_color: str | None = Field(
+        default=None,
+        description="Optional stroke override for arc edges.",
+    )
+    alpha: float = Field(default=0.6, description="Opacity of interaction arcs (0-1).")
+    linewidth: float = Field(default=1.0, description="Line width for interaction arcs.")
+    cmap: str = Field(default="viridis", description="Colormap used when coloring arcs by score.")
+    max_height: float = Field(
+        default=0.8,
+        description="Maximum normalized arc height relative to track bounds.",
+    )
+    color_by_score: bool = Field(
+        default=False,
+        description="Use score column values to map each arc color via cmap.",
+    )
+    min_score: float | None = Field(
+        default=None,
+        description="Optional minimum score bound for score-based color mapping.",
+    )
+    max_score: float | None = Field(
+        default=None,
+        description="Optional maximum score bound for score-based color mapping.",
+    )
+    y_baseline: float = Field(
+        default=0.1,
+        description="Baseline y position from which arcs originate.",
+    )
 
 
 class LinksTrack(Track):
@@ -54,9 +72,14 @@ class LinksTrack(Track):
         aesthetics: Visual styling configuration
     """
 
-    data: Path | pd.DataFrame | str
-    aesthetics: LinksAesthetics = LinksAesthetics()
-    height: float = 2.0
+    data: Path | pd.DataFrame | str = Field(
+        description="BEDPE-like interactions data source (file path or DataFrame).",
+    )
+    aesthetics: LinksAesthetics = Field(
+        default_factory=LinksAesthetics,
+        description="Visual styling options for interaction arcs.",
+    )
+    height: float = Field(default=2.0, description="Relative panel height for this track.")
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 

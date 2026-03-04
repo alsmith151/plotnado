@@ -1,14 +1,13 @@
 """Difference track for two BigWig signals."""
 
-from typing import Literal
-
 import matplotlib.axes
 import numpy as np
 import pandas as pd
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
 from .base import Track, TrackLabeller
 from .bigwig import BigWigTrack
+from .enums import BigWigDiffMethod
 from .region import GenomicRegion
 from .utils import clean_axis
 
@@ -16,21 +15,29 @@ from .utils import clean_axis
 class BigWigDiffAesthetics(BaseModel):
     """Visual configuration for BigWigDiff tracks."""
 
-    positive_color: str = "#d62728"
-    negative_color: str = "#1f77b4"
-    linewidth: float = 1.0
-    bar_alpha: float = 0.45
-    zero_line_color: str = "#333333"
-    zero_line_width: float = 0.8
-    zero_line_alpha: float = 0.8
+    positive_color: str = Field(default="#d62728", description="Bar color for positive differences.")
+    negative_color: str = Field(default="#1f77b4", description="Bar color for negative differences.")
+    linewidth: float = Field(default=1.0, description="Edge line width for diff bars.")
+    bar_alpha: float = Field(default=0.45, description="Opacity of diff bars (0-1).")
+    zero_line_color: str = Field(default="#333333", description="Color of the horizontal zero baseline.")
+    zero_line_width: float = Field(default=0.8, description="Line width for the zero baseline.")
+    zero_line_alpha: float = Field(default=0.8, description="Opacity of the zero baseline.")
+
+    model_config = ConfigDict(use_enum_values=True)
 
 
 class BigWigDiff(Track):
-    file_a: str
-    file_b: str
-    method: Literal["subtract", "ratio", "log2ratio"] = "subtract"
-    aesthetics: BigWigDiffAesthetics = BigWigDiffAesthetics()
-    height: float = 1.5
+    file_a: str = Field(description="Path to first BigWig input.")
+    file_b: str = Field(description="Path to second BigWig input.")
+    method: BigWigDiffMethod = Field(
+        default=BigWigDiffMethod.SUBTRACT,
+        description="Computation used to derive differential signal values.",
+    )
+    aesthetics: BigWigDiffAesthetics = Field(
+        default_factory=BigWigDiffAesthetics,
+        description="Visual styling for positive/negative diff bars and zero line.",
+    )
+    height: float = Field(default=1.5, description="Relative panel height for this track.")
 
     def _align(self, a: pd.DataFrame, b: pd.DataFrame) -> pd.DataFrame:
         merged = pd.merge(a, b, on=["chrom", "start", "end"], suffixes=("_a", "_b"))

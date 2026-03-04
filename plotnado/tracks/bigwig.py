@@ -9,7 +9,7 @@ import matplotlib.patches
 import numpy as np
 import pandas as pd
 import pybigtools
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from pydantic import ConfigDict
 
 from .region import GenomicRegion
@@ -27,15 +27,27 @@ class BigwigAesthetics(BaseModel):
         style: Plot style ('std', 'line', 'scatter', 'heatmap')
     """
 
-    style: PlotStyle = PlotStyle.FILL
-    color: str = "#2171b5"  # Genome browser blue
-    fill: bool = True
-    alpha: float = 0.85
-    linewidth: float = 1.0
-    scatter_point_size: float = 1.0
+    style: PlotStyle = Field(
+        default=PlotStyle.FILL,
+        description="Rendering mode for the signal (fill, line, scatter, etc.).",
+    )
+    color: str = Field(default="#2171b5", description="Primary color used to draw the signal.")
+    fill: bool = Field(default=True, description="Fill the area under the signal curve when supported.")
+    alpha: float = Field(default=0.85, description="Opacity for rendered signal glyphs (0-1).")
+    linewidth: float = Field(default=1.0, description="Line width for line/fragment style rendering.")
+    scatter_point_size: float = Field(
+        default=1.0,
+        description="Marker area for scatter style rendering.",
+    )
 
-    min_value: float | None = None
-    max_value: float | None = None
+    min_value: float | None = Field(
+        default=None,
+        description="Optional fixed lower y-limit; auto-derived when omitted.",
+    )
+    max_value: float | None = Field(
+        default=None,
+        description="Optional fixed upper y-limit; auto-derived when omitted.",
+    )
 
     model_config = ConfigDict(use_enum_values=True)
 
@@ -49,11 +61,23 @@ class BigWigTrack(Track):
         aesthetics: Visual styling configuration
     """
 
-    data: Path | pd.DataFrame | str | None = None
-    aesthetics: BigwigAesthetics = BigwigAesthetics()
+    data: Path | pd.DataFrame | str | None = Field(
+        default=None,
+        description="BigWig file path or bedgraph-like DataFrame data source.",
+    )
+    aesthetics: BigwigAesthetics = Field(
+        default_factory=BigwigAesthetics,
+        description="Visual styling options for this BigWig track.",
+    )
 
-    y_min: float | None = None
-    y_max: float | None = None
+    y_min: float | None = Field(
+        default=None,
+        description="Computed lower y-limit for the last plotted region.",
+    )
+    y_max: float | None = Field(
+        default=None,
+        description="Computed upper y-limit for the last plotted region.",
+    )
 
     def _plot_stairs(
         self, ax: matplotlib.axes.Axes, gr: GenomicRegion, values: pd.DataFrame

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import matplotlib.axes
 import pandas as pd
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from .region import GenomicRegion
 from .base import LabelConfig, Track, TrackLabeller
@@ -20,11 +20,20 @@ class BigwigOverlayAesthetics(BaseModel):
     Aesthetics for BigWig overlay tracks.
     """
 
-    colors: list[str] | None = None
-    alpha: float = 0.5
-    show_labels: bool = True
-    min_value: float | None = None
-    max_value: float | None = None
+    colors: list[str] | None = Field(
+        default=None,
+        description="Optional per-track color overrides for overlaid subtracks.",
+    )
+    alpha: float = Field(default=0.5, description="Opacity applied to overlaid signal traces.")
+    show_labels: bool = Field(default=True, description="Render labels for component tracks in overlay contexts.")
+    min_value: float | None = Field(
+        default=None,
+        description="Optional shared minimum y-value for all overlaid tracks.",
+    )
+    max_value: float | None = Field(
+        default=None,
+        description="Optional shared maximum y-value for all overlaid tracks.",
+    )
 
 
 class BigwigOverlay(Track):
@@ -36,9 +45,14 @@ class BigwigOverlay(Track):
         aesthetics: Visual configuration
     """
 
-    tracks: list[BigWigTrack | Path | str]
-    aesthetics: BigwigOverlayAesthetics = BigwigOverlayAesthetics()
-    height: float = 2.0
+    tracks: list[BigWigTrack | Path | str] = Field(
+        description="List of BigWigTrack instances or BigWig file paths to overlay.",
+    )
+    aesthetics: BigwigOverlayAesthetics = Field(
+        default_factory=BigwigOverlayAesthetics,
+        description="Overlay-level visual styling and shared y-range settings.",
+    )
+    height: float = Field(default=2.0, description="Relative panel height for this track.")
 
     _track_instances: list[BigWigTrack] = []
 

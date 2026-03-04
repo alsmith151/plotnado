@@ -2,7 +2,7 @@
 
 from enum import Enum
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, Field, model_validator
 
 from .tracks.base import LabelConfig
 
@@ -18,17 +18,20 @@ class BuiltinTheme(str, Enum):
 class Theme(BaseModel):
     """Figure-level theme defaults for tracks and labels."""
 
-    color: str | None = None
-    alpha: float | None = None
-    linewidth: float | None = None
-    font_size: int | None = None
-    font_family: str | None = None
-    cmap: str | None = None
+    color: str | None = Field(default=None, description="Default color applied to compatible track aesthetics.")
+    alpha: float | None = Field(default=None, description="Default opacity applied to compatible track aesthetics.")
+    linewidth: float | None = Field(default=None, description="Default line width applied to compatible track aesthetics.")
+    font_size: int | None = Field(default=None, description="Default font size for compatible track text elements.")
+    font_family: str | None = Field(default=None, description="Global font family applied to labels and text when unset.")
+    cmap: str | None = Field(default=None, description="Default colormap for compatible matrix/continuous tracks.")
 
-    highlight_color: str = "#ffd700"
-    highlight_alpha: float = 0.15
+    highlight_color: str = Field(default="#ffd700", description="Default color used for region highlights.")
+    highlight_alpha: float = Field(default=0.15, description="Default opacity used for region highlights.")
 
-    label: LabelConfig = LabelConfig()
+    label: LabelConfig = Field(
+        default_factory=LabelConfig,
+        description="Default label styling configuration merged into tracks.",
+    )
 
     @model_validator(mode="after")
     def _sync_label_fonts(self) -> "Theme":

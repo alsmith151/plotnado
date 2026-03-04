@@ -5,10 +5,11 @@ Genomic axis track for showing coordinate scale.
 import matplotlib.axes
 import matplotlib.ticker
 import numpy as np
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
 from .region import GenomicRegion
 from .base import Track
+from .enums import FontWeight
 
 
 class GenomicAxisAesthetics(BaseModel):
@@ -22,16 +23,24 @@ class GenomicAxisAesthetics(BaseModel):
         show_chromosome: Whether to show chromosome name
     """
 
-    color: str = "#666666"  # Gray for axis line
-    font_size: int = 9
-    num_ticks: int = 5
-    show_chromosome: bool = True
-    use_human_readable_labels: bool = False
-    tick_height: float = 0.15  # Increased slightly for visibility
-    axis_linewidth: float = 1.5
-    tick_color: str = "#333333"
-    tick_linewidth: float = 1.2
-    chromosome_fontweight: str = "bold"
+    color: str = Field(default="#666666", description="Color of axis baseline and chromosome label.")
+    font_size: int = Field(default=9, description="Font size for tick and chromosome labels.")
+    num_ticks: int = Field(default=5, description="Target number of tick marks across the region.")
+    show_chromosome: bool = Field(default=True, description="Render chromosome name label near the axis.")
+    use_human_readable_labels: bool = Field(
+        default=False,
+        description="Format genomic coordinates using k/M suffixes instead of raw integers.",
+    )
+    tick_height: float = Field(default=0.15, description="Tick length drawn downward from axis baseline.")
+    axis_linewidth: float = Field(default=1.5, description="Line width of the horizontal axis baseline.")
+    tick_color: str = Field(default="#333333", description="Color for tick marks and tick labels.")
+    tick_linewidth: float = Field(default=1.2, description="Line width of tick marks.")
+    chromosome_fontweight: FontWeight = Field(
+        default=FontWeight.BOLD,
+        description="Font weight of the chromosome text label.",
+    )
+
+    model_config = ConfigDict(use_enum_values=True)
 
 
 class GenomicAxis(Track):
@@ -41,10 +50,16 @@ class GenomicAxis(Track):
     Displays tick marks and labels for the genomic region.
     """
 
-    title: str = ""
-    aesthetics: GenomicAxisAesthetics = GenomicAxisAesthetics()
-    show_chromosome: bool = False
-    height: float = 0.2  # Reduced height for tighter layout
+    title: str = Field(default="", description="Optional title shown for the axis track.")
+    aesthetics: GenomicAxisAesthetics = Field(
+        default_factory=GenomicAxisAesthetics,
+        description="Visual style options for axis baseline, ticks, and labels.",
+    )
+    show_chromosome: bool = Field(
+        default=False,
+        description="Whether to draw the chromosome name on this axis track.",
+    )
+    height: float = Field(default=0.2, description="Relative panel height for this compact track.")
 
     def fetch_data(self, gr: GenomicRegion) -> None:
         return None

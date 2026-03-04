@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from loguru import logger
+from pydantic import BaseModel
 
 from .tracks import (
     BedTrack,
@@ -35,6 +36,7 @@ from .tracks import (
     Track,
     VLineTrack,
     BigwigOverlay,
+    LabelConfig,
     list_options,
 )
 from .theme import BuiltinTheme, Theme
@@ -116,7 +118,7 @@ class Figure:
         return self
 
     def _apply_autocolor_to_track(self, track: Track, index: int) -> Track:
-        if self._autocolor_palette is None or not hasattr(track, "color"):
+        if self._autocolor_palette is None or not track.has_aesthetic("color"):
             return track
 
         import matplotlib.colors as mcolors
@@ -130,8 +132,8 @@ class Figure:
 
         Args:
             data: BigWig data source, typically a file path or compatible dataframe.
-            **kwargs: Additional `BigWigTrack` options passed through to `add_track`.
-                See `Figure.track_options("bigwig")`.
+            **kwargs: `BigWigTrack` constructor kwargs; shorthand composition routes
+                aesthetics and label fields automatically.
 
         Returns:
             Self for method chaining.
@@ -143,8 +145,8 @@ class Figure:
 
         Args:
             genome: Genome identifier used for bundled gene annotations.
-            **kwargs: Additional `Genes` options passed through to `add_track`.
-                See `Figure.track_options("genes")`.
+            **kwargs: `Genes` constructor kwargs; shorthand composition routes
+                aesthetics and label fields automatically.
 
         Returns:
             Self for method chaining.
@@ -155,8 +157,8 @@ class Figure:
         """Add a genomic coordinate axis track.
 
         Args:
-            **kwargs: Additional `GenomicAxis` options passed through to `add_track`.
-                See `Figure.track_options("axis")`.
+            **kwargs: `GenomicAxis` constructor kwargs; shorthand composition routes
+                aesthetics and label fields automatically.
 
         Returns:
             Self for method chaining.
@@ -167,8 +169,8 @@ class Figure:
         """Add a genomic scale bar track.
 
         Args:
-            **kwargs: Additional `ScaleBar` options passed through to `add_track`.
-                See `Figure.track_options("scalebar")`.
+            **kwargs: `ScaleBar` constructor kwargs; shorthand composition routes
+                aesthetics and label fields automatically.
 
         Returns:
             Self for method chaining.
@@ -180,8 +182,8 @@ class Figure:
 
         Args:
             height: Spacer height used to separate neighboring tracks.
-            **kwargs: Additional `Spacer` options passed through to `add_track`.
-                See `Figure.track_options("spacer")`.
+            **kwargs: `Spacer` constructor kwargs; shorthand composition routes
+                label fields automatically.
 
         Returns:
             Self for method chaining.
@@ -193,8 +195,8 @@ class Figure:
 
         Args:
             data: BED data source, typically a file path or compatible dataframe.
-            **kwargs: Additional `BedTrack` options passed through to `add_track`.
-                See `Figure.track_options("bed")`.
+            **kwargs: `BedTrack` constructor kwargs; shorthand composition routes
+                aesthetics and label fields automatically.
 
         Returns:
             Self for method chaining.
@@ -206,8 +208,8 @@ class Figure:
 
         Args:
             file: Cooler file path.
-            **kwargs: Additional `CoolerTrack` options passed through to `add_track`.
-                See `Figure.track_options("cooler")`.
+            **kwargs: `CoolerTrack` constructor kwargs; shorthand composition routes
+                aesthetics and label fields automatically.
 
         Returns:
             Self for method chaining.
@@ -219,8 +221,8 @@ class Figure:
 
         Args:
             files: List of BigWig file paths.
-            **kwargs: Additional `BigWigCollection` options passed through to `add_track`.
-                See `Figure.track_options("bigwig_collection")`.
+            **kwargs: `BigWigCollection` constructor kwargs; shorthand composition
+                routes aesthetics and label fields automatically.
 
         Returns:
             Self for method chaining.
@@ -233,8 +235,8 @@ class Figure:
         Args:
             file_a: First BigWig file path.
             file_b: Second BigWig file path.
-            **kwargs: Additional `BigWigDiff` options passed through to `add_track`.
-                See `Figure.track_options("bigwig_diff")`.
+            **kwargs: `BigWigDiff` constructor kwargs; shorthand composition routes
+                aesthetics and label fields automatically.
 
         Returns:
             Self for method chaining.
@@ -246,8 +248,8 @@ class Figure:
 
         Args:
             tracks: Track inputs for overlay, usually paths or `BigWigTrack` objects.
-            **kwargs: Additional `BigwigOverlay` options passed through to `add_track`.
-                See `Figure.track_options("bigwig_overlay")`.
+            **kwargs: `BigwigOverlay` constructor kwargs; shorthand composition
+                routes aesthetics and label fields automatically.
 
         Returns:
             Self for method chaining.
@@ -259,8 +261,8 @@ class Figure:
 
         Args:
             data: NarrowPeak data source, typically a file path or compatible dataframe.
-            **kwargs: Additional `NarrowPeakTrack` options passed through to `add_track`.
-                See `Figure.track_options("narrowpeak")`.
+            **kwargs: `NarrowPeakTrack` constructor kwargs; shorthand composition
+                routes aesthetics and label fields automatically.
 
         Returns:
             Self for method chaining.
@@ -272,8 +274,8 @@ class Figure:
 
         Args:
             data: BEDPE-like data source for links.
-            **kwargs: Additional `LinksTrack` options passed through to `add_track`.
-                See `Figure.track_options("links")`.
+            **kwargs: `LinksTrack` constructor kwargs; shorthand composition routes
+                aesthetics and label fields automatically.
 
         Returns:
             Self for method chaining.
@@ -285,8 +287,8 @@ class Figure:
 
         Args:
             data: Highlight interval data source.
-            **kwargs: Additional `HighlightsFromFile` options passed through to `add_track`.
-                See `Figure.track_options("highlight")`.
+            **kwargs: `HighlightsFromFile` constructor kwargs; shorthand composition
+                routes aesthetics and label fields automatically.
 
         Returns:
             Self for method chaining.
@@ -298,8 +300,8 @@ class Figure:
 
         Args:
             y_value: Y value where the line is drawn.
-            **kwargs: Additional `HLineTrack` options passed through to `add_track`.
-                See `Figure.track_options("hline")`.
+            **kwargs: `HLineTrack` constructor kwargs; shorthand composition routes
+                aesthetics and label fields automatically.
 
         Returns:
             Self for method chaining.
@@ -311,8 +313,8 @@ class Figure:
 
         Args:
             x_position: Genomic coordinate for the line.
-            **kwargs: Additional `VLineTrack` options passed through to `add_track`.
-                See `Figure.track_options("vline")`.
+            **kwargs: `VLineTrack` constructor kwargs; shorthand composition routes
+                aesthetics and label fields automatically.
 
         Returns:
             Self for method chaining.
@@ -325,12 +327,15 @@ class Figure:
 
         theme = self.theme
         for field_name in ("color", "alpha", "linewidth", "font_size", "cmap"):
-            if not hasattr(track, field_name):
+            if not track.has_aesthetic(field_name):
                 continue
             theme_value = getattr(theme, field_name)
             if theme_value is None:
                 continue
-            model_field = track.__class__.model_fields.get(field_name)
+            aesthetics_model = track.aesthetics_model()
+            if aesthetics_model is None:
+                continue
+            model_field = aesthetics_model.model_fields.get(field_name)
             if model_field is None:
                 continue
             if getattr(track, field_name) == model_field.default:
@@ -402,7 +407,7 @@ class Figure:
 
         cmap = plt.get_cmap(palette)
         for index, track in enumerate(self.tracks):
-            if hasattr(track, "color"):
+            if track.has_aesthetic("color"):
                 track.color = mcolors.to_hex(cmap(index % cmap.N))
         return self
 
@@ -426,7 +431,56 @@ class Figure:
             raise ValueError(
                 f"Unknown track alias: {alias}. Available: {list(alias_map.keys())}"
             )
-        return alias_map[key](**kwargs)
+        track_cls = alias_map[key]
+
+        track_fields = set(track_cls.model_fields.keys())
+        aesthetics_model = track_cls.aesthetics_model()
+        aesthetics_fields = (
+            set(aesthetics_model.model_fields.keys()) if aesthetics_model is not None else set()
+        )
+        label_fields = set(LabelConfig.model_fields.keys())
+
+        track_kwargs: dict[str, Any] = {}
+        aesthetics_overrides: dict[str, Any] = {}
+        label_overrides: dict[str, Any] = {}
+
+        for field_name, field_value in kwargs.items():
+            if field_name in {"aesthetics", "label"} or field_name in track_fields:
+                track_kwargs[field_name] = field_value
+            elif field_name in aesthetics_fields:
+                aesthetics_overrides[field_name] = field_value
+            elif field_name in label_fields:
+                label_overrides[field_name] = field_value
+            else:
+                track_kwargs[field_name] = field_value
+
+        if aesthetics_model is not None and aesthetics_overrides:
+            base_aesthetics = track_kwargs.get("aesthetics")
+            if isinstance(base_aesthetics, BaseModel):
+                payload = base_aesthetics.model_dump()
+            elif isinstance(base_aesthetics, dict):
+                payload = dict(base_aesthetics)
+            elif base_aesthetics is None:
+                payload = {}
+            else:
+                payload = {}
+            payload.update(aesthetics_overrides)
+            track_kwargs["aesthetics"] = aesthetics_model(**payload)
+
+        if label_overrides:
+            base_label = track_kwargs.get("label")
+            if isinstance(base_label, BaseModel):
+                label_payload = base_label.model_dump()
+            elif isinstance(base_label, dict):
+                label_payload = dict(base_label)
+            elif base_label is None:
+                label_payload = {}
+            else:
+                label_payload = {}
+            label_payload.update(label_overrides)
+            track_kwargs["label"] = LabelConfig(**label_payload)
+
+        return track_cls(**track_kwargs)
 
     @staticmethod
     def _alias_map() -> dict[str, type[Track]]:
@@ -894,3 +948,69 @@ class Figure:
             "</table>"
         )
         return table
+
+
+def _format_method_option_docs(alias: str) -> str:
+    options = Figure.track_options(alias)
+    lines = [
+        "Auto-generated options (authoritative):",
+        "",
+        "Shorthand composition:",
+        "- Pass track fields directly in kwargs.",
+        "- Pass aesthetics fields directly in kwargs (auto-packed into `aesthetics`).",
+        "- Pass label fields directly in kwargs (auto-packed into `label`).",
+        "",
+    ]
+
+    for section in ("track", "aesthetics", "label"):
+        section_data = options.get(section, {})
+        lines.append(f"{section.title()} fields:")
+        if not section_data:
+            lines.append("- (none)")
+            lines.append("")
+            continue
+
+        for field_name, meta in sorted(section_data.items()):
+            description = meta.get("description") or "No description provided."
+            lines.append(
+                f"- {field_name} ({meta['type']}, default={meta['default']}): {description}"
+            )
+        lines.append("")
+
+    return "\n".join(lines).rstrip()
+
+
+def _inject_figure_method_option_docs() -> None:
+    method_alias_map = {
+        "bigwig": "bigwig",
+        "genes": "genes",
+        "axis": "axis",
+        "scalebar": "scalebar",
+        "spacer": "spacer",
+        "bed": "bed",
+        "cooler": "cooler",
+        "bigwig_collection": "bigwig_collection",
+        "bigwig_diff": "bigwig_diff",
+        "bigwig_overlay": "bigwig_overlay",
+        "narrowpeak": "narrowpeak",
+        "links": "links",
+        "highlights": "highlight",
+        "hline": "hline",
+        "vline": "vline",
+    }
+
+    marker = "Auto-generated options (authoritative):"
+    for method_name, alias in method_alias_map.items():
+        method = getattr(Figure, method_name, None)
+        if method is None:
+            continue
+
+        base_doc = (method.__doc__ or "").rstrip()
+        if marker in base_doc:
+            base_doc = base_doc.split(marker, 1)[0].rstrip()
+
+        generated = _format_method_option_docs(alias)
+        method.__doc__ = f"{base_doc}\n\n{generated}".strip()
+
+
+_inject_figure_method_option_docs()

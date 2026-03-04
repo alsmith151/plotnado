@@ -10,7 +10,14 @@ import matplotlib.pyplot as plt
 
 from plotnado import Figure
 from plotnado.theme import Theme
-from plotnado.tracks import BigWigTrack, ScaleBar, BedTrack, LabelConfig
+from plotnado.tracks import (
+    BedAesthetics,
+    BedTrack,
+    BigWigTrack,
+    BigwigAesthetics,
+    LabelConfig,
+    ScaleBar,
+)
 
 
 class TestFigureRefactor:
@@ -44,7 +51,7 @@ class TestFigureRefactor:
             }
         )
         fig = Figure(theme=Theme(color="#111111"))
-        fig.add_track(BigWigTrack(data=df, color="#ff0000"))
+        fig.add_track(BigWigTrack(data=df, aesthetics=BigwigAesthetics(color="#ff0000")))
 
         assert fig.tracks[0].color == "#ff0000"
 
@@ -92,6 +99,50 @@ class TestFigureRefactor:
         assert "## BigWigTrack options" in markdown
         assert "### Aesthetics fields" in markdown
         assert "| color |" in markdown
+
+    def test_alias_constructor_routes_aesthetic_shorthand_kwargs(self):
+        df = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [100, 200],
+                "end": [200, 300],
+                "value": [1.0, 2.0],
+            }
+        )
+
+        fig = Figure().add_track("bigwig", data=df, color="#ff0000", alpha=0.25)
+        track = fig.tracks[0]
+
+        assert track.aesthetics.color == "#ff0000"
+        assert track.aesthetics.alpha == 0.25
+
+    def test_alias_constructor_routes_label_shorthand_kwargs(self):
+        fig = Figure().add_track("scalebar", plot_title=False, scale_size=11)
+        track = fig.tracks[0]
+
+        assert track.label.plot_title is False
+        assert track.label.scale_size == 11
+
+    def test_explicit_nested_model_and_shorthand_merge(self):
+        df = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [100, 200],
+                "end": [200, 300],
+                "value": [1.0, 2.0],
+            }
+        )
+
+        fig = Figure().add_track(
+            "bigwig",
+            data=df,
+            aesthetics=BigwigAesthetics(color="#00aa00", alpha=0.5),
+            alpha=0.2,
+        )
+        track = fig.tracks[0]
+
+        assert track.aesthetics.color == "#00aa00"
+        assert track.aesthetics.alpha == 0.2
 
     def test_extend_parameter(self):
         fig = Figure().add_track(ScaleBar())
@@ -257,7 +308,7 @@ class TestFigureRefactor:
         )
         theme = Theme(font_family="Arial", label=LabelConfig(scale_font="Times New Roman"))
         fig = Figure(theme=theme)
-        fig.add_track(BedTrack(data=data, show_labels=True))
+        fig.add_track(BedTrack(data=data, aesthetics=BedAesthetics(show_labels=True)))
 
         out = fig.plot("chr1:50-250", show=False)
 

@@ -3,43 +3,79 @@ Base track classes.
 """
 
 from abc import ABC
-from typing import Any, Literal
+from enum import Enum
+from typing import Any, get_args, get_origin
 
 import matplotlib.axes
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field
 from pydantic_core import PydanticUndefined
 
-from ._meta import TrackMeta
+from .enums import DataRangeStyle, FontWeight, Position
 from .region import GenomicRegion
 
 
 class LabelConfig(BaseModel):
     """Unified label configuration for all tracks."""
 
-    plot_title: bool = True
-    plot_scale: bool = True
-    label_on_track: bool = False
-    data_range_style: Literal["text", "colorbar", "none"] = "text"
-    label_box_enabled: bool = True
-    label_box_alpha: float = 0.9
+    plot_title: bool = Field(default=True, description="Show the track title text.")
+    plot_scale: bool = Field(default=True, description="Show the y-scale range annotation.")
+    label_on_track: bool = Field(
+        default=False,
+        description="Draw labels inside the track plotting area instead of margins.",
+    )
+    data_range_style: DataRangeStyle = Field(
+        default=DataRangeStyle.TEXT,
+        description="How to render the data range annotation for the track.",
+    )
+    label_box_enabled: bool = Field(
+        default=True,
+        description="Draw a translucent white box behind label text for legibility.",
+    )
+    label_box_alpha: float = Field(
+        default=0.9,
+        description="Opacity of the label background box (0-1).",
+    )
 
-    title_location: Literal["left", "right"] = "left"
-    title_height: float = 0.8
-    title_size: int = 10
-    title_color: str = "#333333"
-    title_font: str = "DejaVu Sans"
-    title_weight: Literal["normal", "bold"] = "bold"
+    title_location: Position = Field(
+        default=Position.LEFT,
+        description="Side of the track where the title is anchored.",
+    )
+    title_height: float = Field(
+        default=0.8,
+        description="Relative vertical position for title text in data coordinates.",
+    )
+    title_size: int = Field(default=10, description="Font size for the title label.")
+    title_color: str = Field(default="#333333", description="Text color for title label.")
+    title_font: str = Field(default="DejaVu Sans", description="Font family for title label.")
+    title_weight: FontWeight = Field(
+        default=FontWeight.BOLD,
+        description="Font weight for title label.",
+    )
 
-    scale_location: Literal["left", "right"] = "right"
-    scale_height: float = 0.8
-    scale_precision: int = 2
-    scale_size: int = 9
-    scale_color: str = "#666666"
-    scale_font: str = "DejaVu Sans"
-    scale_weight: Literal["normal", "bold"] = "normal"
+    scale_location: Position = Field(
+        default=Position.RIGHT,
+        description="Side of the track where scale text is anchored.",
+    )
+    scale_height: float = Field(
+        default=0.8,
+        description="Relative vertical position for scale text in data coordinates.",
+    )
+    scale_precision: int = Field(
+        default=2,
+        description="Decimal precision used when formatting scale values.",
+    )
+    scale_size: int = Field(default=9, description="Font size for scale annotation.")
+    scale_color: str = Field(default="#666666", description="Text color for scale annotation.")
+    scale_font: str = Field(default="DejaVu Sans", description="Font family for scale annotation.")
+    scale_weight: FontWeight = Field(
+        default=FontWeight.NORMAL,
+        description="Font weight for scale annotation.",
+    )
+
+    model_config = ConfigDict(use_enum_values=True)
 
 
-class Track(BaseModel, ABC, metaclass=TrackMeta):
+class Track(BaseModel, ABC):
     """
     Abstract base class for all track types.
 
@@ -48,56 +84,65 @@ class Track(BaseModel, ABC, metaclass=TrackMeta):
         height: Relative height of the track (default 1.0)
     """
 
-    title: str | None = None
-    data: Any | None = None
-    height: float = 1.0
-    autoscale_group: str | None = None
-    label: LabelConfig = Field(default_factory=LabelConfig)
+    title: str | None = Field(
+        default=None,
+        description="Display title for the track panel.",
+    )
+    data: Any | None = Field(
+        default=None,
+        description="Primary data source consumed by the track implementation.",
+    )
+    height: float = Field(
+        default=1.0,
+        description="Relative vertical height allocated to this track.",
+    )
+    autoscale_group: str | None = Field(
+        default=None,
+        description="Tracks sharing the same group id are y-scaled together.",
+    )
+    label: LabelConfig = Field(
+        default_factory=LabelConfig,
+        description="Unified label and scale rendering configuration.",
+    )
 
     model_config = ConfigDict(arbitrary_types_allowed=True, extra="forbid")
 
-    @model_validator(mode="before")
     @classmethod
-    def _merge_nested_aesthetics(cls, data: Any) -> Any:
-        """Allow nested aesthetics input while exposing flattened kwargs."""
-        if not isinstance(data, dict) or "aesthetics" not in data:
-            return data
+    def aesthetics_model(cls) -> type[BaseModel] | None:
+        field_info = cls.model_fields.get("aesthetics")
+        annotation = getattr(field_info, "annotation", None)
+        if isinstance(annotation, type) and issubclass(annotation, BaseModel):
+            return annotation
+        return None
 
-        aesthetics_data = data.get("aesthetics")
-        if isinstance(aesthetics_data, BaseModel):
-            aesthetics_data = aesthetics_data.model_dump()
+    @classmethod
+    def aesthetics_field_names(cls) -> set[str]:
+        model = cls.aesthetics_model()
+        if model is None:
+            return set()
+        return set(model.model_fields.keys())
 
-        if not isinstance(aesthetics_data, dict):
-            return data
+    def __getattr__(self, name: str) -> Any:
+        aesthetics = self.__dict__.get("aesthetics")
+        if isinstance(aesthetics, BaseModel) and name in aesthetics.__class__.model_fields:
+            return getattr(aesthetics, name)
+        raise AttributeError(f"{self.__class__.__name__!s} has no attribute {name!r}")
 
-        merged = dict(data)
-        for key, value in aesthetics_data.items():
-            if key in cls.model_fields and key != "aesthetics":
-                merged.setdefault(key, value)
-        return merged
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name in type(self).model_fields:
+            super().__setattr__(name, value)
+            return
 
-    @model_validator(mode="after")
-    def _sync_aesthetics_model(self) -> "Track":
-        """Keep `self.aesthetics` aligned with flattened aesthetic fields."""
-        aesthetics_class = getattr(type(self), "__track_aesthetics_class__", None)
-        if aesthetics_class is None or "aesthetics" not in type(self).model_fields:
-            return self
+        aesthetics = self.__dict__.get("aesthetics")
+        if isinstance(aesthetics, BaseModel) and name in aesthetics.__class__.model_fields:
+            setattr(aesthetics, name, value)
+            return
 
-        aesthetics_payload: dict[str, Any] = {}
-        current_aesthetics = getattr(self, "aesthetics", None)
-        if isinstance(current_aesthetics, BaseModel):
-            aesthetics_payload.update(current_aesthetics.model_dump())
-        elif isinstance(current_aesthetics, dict):
-            aesthetics_payload.update(current_aesthetics)
+        super().__setattr__(name, value)
 
-        for field_name in getattr(
-            type(self), "__track_flattened_aesthetics_fields__", set()
-        ):
-            if field_name in type(self).model_fields:
-                aesthetics_payload[field_name] = getattr(self, field_name)
-
-        object.__setattr__(self, "aesthetics", aesthetics_class(**aesthetics_payload))
-        return self
+    def has_aesthetic(self, name: str) -> bool:
+        aesthetics = getattr(self, "aesthetics", None)
+        return isinstance(aesthetics, BaseModel) and name in aesthetics.__class__.model_fields
 
     def fetch_data(self, gr: GenomicRegion) -> Any:
         """Fetch data for the given genomic region."""
@@ -127,14 +172,35 @@ class Track(BaseModel, ABC, metaclass=TrackMeta):
             return value.__class__.__name__
         return value.__class__.__name__
 
+    @staticmethod
+    def _enum_choices(annotation: Any) -> list[Any] | None:
+        if isinstance(annotation, type) and issubclass(annotation, Enum):
+            return [member.value for member in annotation]
+
+        origin = get_origin(annotation)
+        if origin is None:
+            return None
+
+        choices: list[Any] = []
+        for arg in get_args(annotation):
+            arg_choices = Track._enum_choices(arg)
+            if not arg_choices:
+                continue
+            for choice in arg_choices:
+                if choice not in choices:
+                    choices.append(choice)
+
+        return choices or None
+
+    @staticmethod
+    def _render_choices(choices: list[Any] | None) -> str:
+        if not choices:
+            return "—"
+        return ", ".join(str(choice) for choice in choices)
+
     @classmethod
     def options(cls) -> dict[str, dict[str, dict[str, Any]]]:
         """Return programmatically generated option metadata for this track."""
-        native_fields = set(getattr(cls, "__track_native_fields__", set()))
-        flattened_fields = set(
-            getattr(cls, "__track_flattened_aesthetics_fields__", set())
-        )
-
         track_options: dict[str, dict[str, Any]] = {}
         aesthetics_options: dict[str, dict[str, Any]] = {}
         label_options: dict[str, dict[str, Any]] = {}
@@ -142,17 +208,24 @@ class Track(BaseModel, ABC, metaclass=TrackMeta):
         for field_name, field_info in cls.model_fields.items():
             if field_name in {"aesthetics", "label"}:
                 continue
-            section = (
-                aesthetics_options
-                if field_name in flattened_fields and field_name not in native_fields
-                else track_options
-            )
-            section[field_name] = {
+            track_options[field_name] = {
                 "type": cls._render_type_name(field_info.annotation),
                 "default": cls._render_default(field_info.default),
                 "required": field_info.is_required(),
                 "description": field_info.description,
+                "choices": cls._enum_choices(field_info.annotation),
             }
+
+        aesthetics_model = cls.aesthetics_model()
+        if aesthetics_model is not None:
+            for field_name, field_info in aesthetics_model.model_fields.items():
+                aesthetics_options[field_name] = {
+                    "type": cls._render_type_name(field_info.annotation),
+                    "default": cls._render_default(field_info.default),
+                    "required": field_info.is_required(),
+                    "description": field_info.description,
+                    "choices": cls._enum_choices(field_info.annotation),
+                }
 
         label_info = cls.model_fields.get("label")
         if label_info and isinstance(label_info.annotation, type) and issubclass(
@@ -164,6 +237,7 @@ class Track(BaseModel, ABC, metaclass=TrackMeta):
                     "default": cls._render_default(field_info.default),
                     "required": field_info.is_required(),
                     "description": field_info.description,
+                    "choices": cls._enum_choices(field_info.annotation),
                 }
 
         return {
@@ -182,11 +256,11 @@ class Track(BaseModel, ABC, metaclass=TrackMeta):
             if not options[section]:
                 continue
             lines.append(f"### {section.title()} fields")
-            lines.append("| Name | Type | Default | Required |")
-            lines.append("|---|---|---|---|")
+            lines.append("| Name | Type | Default | Choices | Required | Description |")
+            lines.append("|---|---|---|---|---|---|")
             for name, meta in options[section].items():
                 lines.append(
-                    f"| {name} | {meta['type']} | {meta['default']} | {meta['required']} |"
+                    f"| {name} | {meta['type']} | {meta['default']} | {cls._render_choices(meta.get('choices'))} | {meta['required']} | {meta.get('description') or '—'} |"
                 )
             lines.append("")
 
@@ -239,7 +313,7 @@ class TrackLabeller(BaseModel):
     plot_title: bool = True
     plot_scale: bool = True
     label_on_track: bool = False
-    data_range_style: Literal["text", "colorbar", "none"] = "text"
+    data_range_style: DataRangeStyle = DataRangeStyle.TEXT
     label_box_enabled: bool = True
     label_box_alpha: float = 0.9
 
@@ -247,8 +321,8 @@ class TrackLabeller(BaseModel):
     title_size: int = 10
     title_color: str = "#333333"  # Darker gray
     title_font: str = "DejaVu Sans"
-    title_weight: Literal["normal", "bold"] = "bold"
-    title_location: Literal["left", "right"] = "left"
+    title_weight: FontWeight = FontWeight.BOLD
+    title_location: Position = Position.LEFT
     title_height: float = 0.8
 
     scale_min: float = 0
@@ -257,11 +331,11 @@ class TrackLabeller(BaseModel):
     scale_size: int = 9
     scale_color: str = "#666666"  # Gray
     scale_font: str = "DejaVu Sans"
-    scale_weight: Literal["normal", "bold"] = "normal"
-    scale_location: Literal["left", "right"] = "right"
+    scale_weight: FontWeight = FontWeight.NORMAL
+    scale_location: Position = Position.RIGHT
     scale_height: float = 0.8
 
-    model_config = ConfigDict(arbitrary_types_allowed=True)
+    model_config = ConfigDict(arbitrary_types_allowed=True, use_enum_values=True)
 
     @classmethod
     def from_config(
@@ -360,7 +434,7 @@ class TrackLabeller(BaseModel):
         self,
         ax: matplotlib.axes.Axes,
         gr: GenomicRegion,
-        location: Literal["left", "right"],
+        location: Position,
     ) -> None:
         y_min = self._format_scale(self.y_min)
         y_max = self._format_scale(self.y_max)
@@ -391,7 +465,7 @@ class TrackLabeller(BaseModel):
         should_plot_scale = self.plot_scale and self.data_range_style == "text"
         should_plot_title = self.plot_title and bool(self.title)
 
-        title_side: Literal["left", "right"]
+        title_side: Position
         if self.label_on_track:
             title_side = "left"
         else:

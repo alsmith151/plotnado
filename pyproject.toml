@@ -28,6 +28,35 @@ classifiers = [
 cooler = ["cooler", "capcruncher"]
 toml = ["tomli; python_version < '3.11'", "tomli-w"]
 dev = ["pytest", "pytest-mock", "pytest-assume"]
+docs = [
+	"mkdocs>=1.6.1",
+	"mkdocstrings>=1.0.3",
+	"mkdocs-literate-nav>=0.6.2",
+	"mkdocs-gen-files>=0.6.0",
+	"mkdocs-jupyter>=0.25.1",
+	"mkdocs-click>=0.9.0",
+	"pymdown-extensions>=10.21",
+	"tomli-w",
+	"mkdocstrings[python]>=1.0.3",
+]
+all = [
+	"cooler",
+	"capcruncher",
+	"tomli; python_version < '3.11'",
+	"tomli-w",
+	"pytest",
+	"pytest-mock",
+	"pytest-assume",
+	"mkdocs>=1.6.1",
+	"mkdocstrings>=1.0.3",
+	"mkdocs-literate-nav>=0.6.2",
+	"mkdocs-gen-files>=0.6.0",
+	"mkdocs-jupyter>=0.25.1",
+	"mkdocs-click>=0.9.0",
+	"pymdown-extensions>=10.21",
+	"mkdocstrings[python]>=1.0.3",
+]
+
 
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
