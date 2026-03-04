@@ -4,6 +4,7 @@ numpy
 pandas
 pydantic>=2.0.0
 loguru
+pandera
 
 # Genomics
 pybigtools
