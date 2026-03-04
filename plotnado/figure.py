@@ -6,7 +6,7 @@ import importlib.resources
 import json
 import math
 from pathlib import Path
-from typing import Any, Self
+from typing import Any, Self, Unpack, overload
 
 import matplotlib.axes
 import matplotlib.figure
@@ -40,7 +40,38 @@ from .tracks import (
     LabelConfig,
     list_options,
 )
+from .tracks.enums import (
+    BigWigDiffMethod,
+    CollectionStyle,
+    CoolerTransform,
+    DataRangeStyle,
+    DisplayMode,
+    FontWeight,
+    GeneLabelOverlapStrategy,
+    GeneLabelStyle,
+    NarrowPeakColorBy,
+    PlotStyle,
+    Position,
+)
 from .theme import BuiltinTheme, Theme
+from ._kwargs import (
+    AxisKwargs,
+    BedKwargs,
+    BigwigCollectionKwargs,
+    BigwigDiffKwargs,
+    BigwigKwargs,
+    BigwigOverlayKwargs,
+    CoolerKwargs,
+    GenesKwargs,
+    HighlightsKwargs,
+    HlineKwargs,
+    LinksKwargs,
+    NarrowpeakKwargs,
+    OverlayKwargs,
+    ScalebarKwargs,
+    SpacerKwargs,
+    VlineKwargs,
+)
 
 
 class Figure:
@@ -128,7 +159,48 @@ class Figure:
         track.color = mcolors.to_hex(cmap(index % cmap.N))
         return track
 
-    def bigwig(self, data: Any, /, **kwargs: Any) -> Self:
+    # BEGIN AUTO-GENERATED OVERLOAD: bigwig
+    @overload
+    def bigwig(
+        self,
+        data: Any,
+        /,
+        *,
+        title: str | None = ...,
+        height: float = ...,
+        autoscale_group: str | None = ...,
+        y_min: float | None = ...,
+        y_max: float | None = ...,
+        style: PlotStyle = ...,
+        color: str = ...,
+        fill: bool = ...,
+        alpha: float = ...,
+        linewidth: float = ...,
+        scatter_point_size: float = ...,
+        min_value: float | None = ...,
+        max_value: float | None = ...,
+        plot_title: bool = ...,
+        plot_scale: bool = ...,
+        label_on_track: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_enabled: bool = ...,
+        label_box_alpha: float = ...,
+        title_location: Position = ...,
+        title_height: float = ...,
+        title_size: int = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_weight: FontWeight = ...,
+        scale_location: Position = ...,
+        scale_height: float = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: bigwig
+    def bigwig(self, data: Any, /, **kwargs: Unpack[BigwigKwargs]) -> Self:
         """Add a BigWig signal track.
 
         Args:
@@ -141,7 +213,73 @@ class Figure:
         """
         return self.add_track("bigwig", data=data, **kwargs)
 
-    def genes(self, genome: str = "hg38", /, **kwargs: Any) -> Self:
+    # BEGIN AUTO-GENERATED OVERLOAD: genes
+    @overload
+    def genes(
+        self,
+        genome: str = "hg38",
+        /,
+        *,
+        title: str | None = ...,
+        data: Path | str | pd.DataFrame | None = ...,
+        height: float = ...,
+        autoscale_group: str | None = ...,
+        row_scale: float = ...,
+        small_relative: float = ...,
+        gene_count: int = ...,
+        style: PlotStyle = ...,
+        color: str = ...,
+        fill: bool = ...,
+        alpha: float = ...,
+        display: DisplayMode = ...,
+        minimum_gene_length: int = ...,
+        max_number_of_rows: int = ...,
+        interval_height: float = ...,
+        arrow_size: float = ...,
+        exon_linewidth: float = ...,
+        exon_edge_color: str = ...,
+        exon_color: str = ...,
+        intron_linewidth: float = ...,
+        intron_color: str = ...,
+        chevron_height_ratio: float = ...,
+        chevron_vertical_offset_ratio: float = ...,
+        chevron_width_fraction: float = ...,
+        chevron_min_width_bp: float = ...,
+        chevron_margin_bp: float = ...,
+        chevron_target_spacing_bp: float = ...,
+        chevron_max_count: int = ...,
+        gene_label_font_size: int = ...,
+        gene_label_style: GeneLabelStyle = ...,
+        show_labels: bool = ...,
+        label_overlap_strategy: GeneLabelOverlapStrategy = ...,
+        label_max_chars: int = ...,
+        label_offset_fraction: float = ...,
+        label_stagger_offset: float = ...,
+        label_vertical_offset: float = ...,
+        label_connectors: bool = ...,
+        label_connector_linewidth: float = ...,
+        plot_title: bool = ...,
+        plot_scale: bool = ...,
+        label_on_track: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_enabled: bool = ...,
+        label_box_alpha: float = ...,
+        title_location: Position = ...,
+        title_height: float = ...,
+        title_size: int = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_weight: FontWeight = ...,
+        scale_location: Position = ...,
+        scale_height: float = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: genes
+    def genes(self, genome: str = "hg38", /, **kwargs: Unpack[GenesKwargs]) -> Self:
         """Add a genes annotation track.
 
         Args:
@@ -154,7 +292,47 @@ class Figure:
         """
         return self.add_track("genes", genome=genome, **kwargs)
 
-    def axis(self, **kwargs: Any) -> Self:
+    # BEGIN AUTO-GENERATED OVERLOAD: axis
+    @overload
+    def axis(
+        self,
+        *,
+        title: str = ...,
+        data: Any | None = ...,
+        height: float = ...,
+        autoscale_group: str | None = ...,
+        show_chromosome: bool = ...,
+        color: str = ...,
+        font_size: int = ...,
+        num_ticks: int = ...,
+        use_human_readable_labels: bool = ...,
+        tick_height: float = ...,
+        axis_linewidth: float = ...,
+        tick_color: str = ...,
+        tick_linewidth: float = ...,
+        chromosome_fontweight: FontWeight = ...,
+        plot_title: bool = ...,
+        plot_scale: bool = ...,
+        label_on_track: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_enabled: bool = ...,
+        label_box_alpha: float = ...,
+        title_location: Position = ...,
+        title_height: float = ...,
+        title_size: int = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_weight: FontWeight = ...,
+        scale_location: Position = ...,
+        scale_height: float = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: axis
+    def axis(self, **kwargs: Unpack[AxisKwargs]) -> Self:
         """Add a genomic coordinate axis track.
 
         Args:
@@ -166,7 +344,46 @@ class Figure:
         """
         return self.add_track("axis", **kwargs)
 
-    def scalebar(self, **kwargs: Any) -> Self:
+    # BEGIN AUTO-GENERATED OVERLOAD: scalebar
+    @overload
+    def scalebar(
+        self,
+        *,
+        title: str = ...,
+        data: Any | None = ...,
+        height: float = ...,
+        autoscale_group: str | None = ...,
+        style: PlotStyle = ...,
+        color: str = ...,
+        position: Position = ...,
+        scale_distance: float | None = ...,
+        font_size: int = ...,
+        bar_linewidth: float = ...,
+        tick_linewidth: float = ...,
+        tick_height: float = ...,
+        label_offset: float = ...,
+        plot_title: bool = ...,
+        plot_scale: bool = ...,
+        label_on_track: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_enabled: bool = ...,
+        label_box_alpha: float = ...,
+        title_location: Position = ...,
+        title_height: float = ...,
+        title_size: int = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_weight: FontWeight = ...,
+        scale_location: Position = ...,
+        scale_height: float = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: scalebar
+    def scalebar(self, **kwargs: Unpack[ScalebarKwargs]) -> Self:
         """Add a genomic scale bar track.
 
         Args:
@@ -178,7 +395,38 @@ class Figure:
         """
         return self.add_track("scalebar", **kwargs)
 
-    def spacer(self, height: float = 0.5, **kwargs: Any) -> Self:
+    # BEGIN AUTO-GENERATED OVERLOAD: spacer
+    @overload
+    def spacer(
+        self,
+        height: float = 0.5,
+        /,
+        *,
+        title: str = ...,
+        data: Any | None = ...,
+        autoscale_group: str | None = ...,
+        plot_title: bool = ...,
+        plot_scale: bool = ...,
+        label_on_track: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_enabled: bool = ...,
+        label_box_alpha: float = ...,
+        title_location: Position = ...,
+        title_height: float = ...,
+        title_size: int = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_weight: FontWeight = ...,
+        scale_location: Position = ...,
+        scale_height: float = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: spacer
+    def spacer(self, height: float = 0.5, **kwargs: Unpack[SpacerKwargs]) -> Self:
         """Add an empty spacer track.
 
         Args:
@@ -191,7 +439,48 @@ class Figure:
         """
         return self.add_track("spacer", height=height, **kwargs)
 
-    def bed(self, data: Any, /, **kwargs: Any) -> Self:
+    # BEGIN AUTO-GENERATED OVERLOAD: bed
+    @overload
+    def bed(
+        self,
+        data: Any,
+        /,
+        *,
+        title: str | None = ...,
+        height: float = ...,
+        autoscale_group: str | None = ...,
+        color: str = ...,
+        edge_color: str = ...,
+        alpha: float = ...,
+        interval_height: float = ...,
+        display: DisplayMode = ...,
+        max_rows: int = ...,
+        show_labels: bool = ...,
+        label_field: str = ...,
+        font_size: int = ...,
+        rect_linewidth: float = ...,
+        plot_title: bool = ...,
+        plot_scale: bool = ...,
+        label_on_track: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_enabled: bool = ...,
+        label_box_alpha: float = ...,
+        title_location: Position = ...,
+        title_height: float = ...,
+        title_size: int = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_weight: FontWeight = ...,
+        scale_location: Position = ...,
+        scale_height: float = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: bed
+    def bed(self, data: Any, /, **kwargs: Unpack[BedKwargs]) -> Self:
         """Add a BED interval track.
 
         Args:
@@ -204,7 +493,45 @@ class Figure:
         """
         return self.add_track("bed", data=data, **kwargs)
 
-    def cooler(self, file: str, /, **kwargs: Any) -> Self:
+    # BEGIN AUTO-GENERATED OVERLOAD: cooler
+    @overload
+    def cooler(
+        self,
+        file: str,
+        /,
+        *,
+        title: str | None = ...,
+        data: Any | None = ...,
+        height: float = ...,
+        autoscale_group: str | None = ...,
+        resolution: int | None = ...,
+        balance: bool = ...,
+        transform: CoolerTransform = ...,
+        cmap: str = ...,
+        min_value: float | None = ...,
+        max_value: float | None = ...,
+        plot_title: bool = ...,
+        plot_scale: bool = ...,
+        label_on_track: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_enabled: bool = ...,
+        label_box_alpha: float = ...,
+        title_location: Position = ...,
+        title_height: float = ...,
+        title_size: int = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_weight: FontWeight = ...,
+        scale_location: Position = ...,
+        scale_height: float = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: cooler
+    def cooler(self, file: str, /, **kwargs: Unpack[CoolerKwargs]) -> Self:
         """Add a cooler/mcool matrix track.
 
         Args:
@@ -217,7 +544,45 @@ class Figure:
         """
         return self.add_track("cooler", file=file, **kwargs)
 
-    def bigwig_collection(self, files: list[str], /, **kwargs: Any) -> Self:
+    # BEGIN AUTO-GENERATED OVERLOAD: bigwig_collection
+    @overload
+    def bigwig_collection(
+        self,
+        files: list[str],
+        /,
+        *,
+        title: str | None = ...,
+        data: Any | None = ...,
+        height: float = ...,
+        autoscale_group: str | None = ...,
+        colors: list[str] | None = ...,
+        labels: list[str] | None = ...,
+        alpha: float = ...,
+        style: CollectionStyle = ...,
+        plot_title: bool = ...,
+        plot_scale: bool = ...,
+        label_on_track: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_enabled: bool = ...,
+        label_box_alpha: float = ...,
+        title_location: Position = ...,
+        title_height: float = ...,
+        title_size: int = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_weight: FontWeight = ...,
+        scale_location: Position = ...,
+        scale_height: float = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: bigwig_collection
+    def bigwig_collection(
+        self, files: list[str], /, **kwargs: Unpack[BigwigCollectionKwargs]
+    ) -> Self:
         """Add a collection track for multiple BigWig files.
 
         Args:
@@ -230,7 +595,50 @@ class Figure:
         """
         return self.add_track("bigwig_collection", files=files, **kwargs)
 
-    def bigwig_diff(self, file_a: str, file_b: str, /, **kwargs: Any) -> Self:
+    # BEGIN AUTO-GENERATED OVERLOAD: bigwig_diff
+    @overload
+    def bigwig_diff(
+        self,
+        file_a: str,
+        file_b: str,
+        /,
+        *,
+        title: str | None = ...,
+        data: Any | None = ...,
+        height: float = ...,
+        autoscale_group: str | None = ...,
+        method: BigWigDiffMethod = ...,
+        positive_color: str = ...,
+        negative_color: str = ...,
+        linewidth: float = ...,
+        bar_alpha: float = ...,
+        zero_line_color: str = ...,
+        zero_line_width: float = ...,
+        zero_line_alpha: float = ...,
+        plot_title: bool = ...,
+        plot_scale: bool = ...,
+        label_on_track: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_enabled: bool = ...,
+        label_box_alpha: float = ...,
+        title_location: Position = ...,
+        title_height: float = ...,
+        title_size: int = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_weight: FontWeight = ...,
+        scale_location: Position = ...,
+        scale_height: float = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: bigwig_diff
+    def bigwig_diff(
+        self, file_a: str, file_b: str, /, **kwargs: Unpack[BigwigDiffKwargs]
+    ) -> Self:
         """Add a two-signal BigWig difference track.
 
         Args:
@@ -244,7 +652,46 @@ class Figure:
         """
         return self.add_track("bigwig_diff", file_a=file_a, file_b=file_b, **kwargs)
 
-    def bigwig_overlay(self, tracks: list[Any], /, **kwargs: Any) -> Self:
+    # BEGIN AUTO-GENERATED OVERLOAD: bigwig_overlay
+    @overload
+    def bigwig_overlay(
+        self,
+        tracks: list[Any],
+        /,
+        *,
+        title: str | None = ...,
+        data: Any | None = ...,
+        height: float = ...,
+        autoscale_group: str | None = ...,
+        colors: list[str] | None = ...,
+        alpha: float = ...,
+        show_labels: bool = ...,
+        min_value: float | None = ...,
+        max_value: float | None = ...,
+        plot_title: bool = ...,
+        plot_scale: bool = ...,
+        label_on_track: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_enabled: bool = ...,
+        label_box_alpha: float = ...,
+        title_location: Position = ...,
+        title_height: float = ...,
+        title_size: int = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_weight: FontWeight = ...,
+        scale_location: Position = ...,
+        scale_height: float = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: bigwig_overlay
+    def bigwig_overlay(
+        self, tracks: list[Any], /, **kwargs: Unpack[BigwigOverlayKwargs]
+    ) -> Self:
         """Add an overlay track containing multiple BigWig signals.
 
         Args:
@@ -257,7 +704,44 @@ class Figure:
         """
         return self.add_track("bigwig_overlay", tracks=tracks, **kwargs)
 
-    def overlay(self, tracks: list[Any], /, **kwargs: Any) -> Self:
+    # BEGIN AUTO-GENERATED OVERLOAD: overlay
+    @overload
+    def overlay(
+        self,
+        tracks: list[Any],
+        /,
+        *,
+        title: str | None = ...,
+        data: Any | None = ...,
+        height: float = ...,
+        autoscale_group: str | None = ...,
+        colors: list[str] | None = ...,
+        alpha: float = ...,
+        show_labels: bool = ...,
+        min_value: float | None = ...,
+        max_value: float | None = ...,
+        plot_title: bool = ...,
+        plot_scale: bool = ...,
+        label_on_track: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_enabled: bool = ...,
+        label_box_alpha: float = ...,
+        title_location: Position = ...,
+        title_height: float = ...,
+        title_size: int = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_weight: FontWeight = ...,
+        scale_location: Position = ...,
+        scale_height: float = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: overlay
+    def overlay(self, tracks: list[Any], /, **kwargs: Unpack[OverlayKwargs]) -> Self:
         """Add a generic overlay track for multiple tracks on one axis.
 
         Args:
@@ -270,7 +754,55 @@ class Figure:
         """
         return self.add_track("overlay", tracks=tracks, **kwargs)
 
-    def narrowpeak(self, data: Any, /, **kwargs: Any) -> Self:
+    # BEGIN AUTO-GENERATED OVERLOAD: narrowpeak
+    @overload
+    def narrowpeak(
+        self,
+        data: Any,
+        /,
+        *,
+        title: str | None = ...,
+        height: float = ...,
+        autoscale_group: str | None = ...,
+        color: str = ...,
+        edge_color: str = ...,
+        alpha: float = ...,
+        interval_height: float = ...,
+        display: DisplayMode = ...,
+        max_rows: int = ...,
+        show_labels: bool = ...,
+        label_field: str = ...,
+        font_size: int = ...,
+        rect_linewidth: float = ...,
+        color_by: NarrowPeakColorBy | None = ...,
+        cmap: str = ...,
+        min_score: float | None = ...,
+        max_score: float | None = ...,
+        show_summit: bool = ...,
+        summit_color: str = ...,
+        summit_width: float = ...,
+        plot_title: bool = ...,
+        plot_scale: bool = ...,
+        label_on_track: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_enabled: bool = ...,
+        label_box_alpha: float = ...,
+        title_location: Position = ...,
+        title_height: float = ...,
+        title_size: int = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_weight: FontWeight = ...,
+        scale_location: Position = ...,
+        scale_height: float = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: narrowpeak
+    def narrowpeak(self, data: Any, /, **kwargs: Unpack[NarrowpeakKwargs]) -> Self:
         """Add a narrowPeak interval track.
 
         Args:
@@ -283,7 +815,48 @@ class Figure:
         """
         return self.add_track("narrowpeak", data=data, **kwargs)
 
-    def links(self, data: Any, /, **kwargs: Any) -> Self:
+    # BEGIN AUTO-GENERATED OVERLOAD: links
+    @overload
+    def links(
+        self,
+        data: Any,
+        /,
+        *,
+        title: str | None = ...,
+        height: float = ...,
+        autoscale_group: str | None = ...,
+        color: str = ...,
+        edge_color: str | None = ...,
+        alpha: float = ...,
+        linewidth: float = ...,
+        cmap: str = ...,
+        max_height: float = ...,
+        color_by_score: bool = ...,
+        min_score: float | None = ...,
+        max_score: float | None = ...,
+        y_baseline: float = ...,
+        plot_title: bool = ...,
+        plot_scale: bool = ...,
+        label_on_track: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_enabled: bool = ...,
+        label_box_alpha: float = ...,
+        title_location: Position = ...,
+        title_height: float = ...,
+        title_size: int = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_weight: FontWeight = ...,
+        scale_location: Position = ...,
+        scale_height: float = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: links
+    def links(self, data: Any, /, **kwargs: Unpack[LinksKwargs]) -> Self:
         """Add a genomic links/arcs track.
 
         Args:
@@ -296,7 +869,42 @@ class Figure:
         """
         return self.add_track("links", data=data, **kwargs)
 
-    def highlights(self, data: Any, /, **kwargs: Any) -> Self:
+    # BEGIN AUTO-GENERATED OVERLOAD: highlights
+    @overload
+    def highlights(
+        self,
+        data: Any,
+        /,
+        *,
+        title: str | None = ...,
+        height: float = ...,
+        autoscale_group: str | None = ...,
+        color: str = ...,
+        alpha: float = ...,
+        edge_color: str | None = ...,
+        linewidth: float = ...,
+        plot_title: bool = ...,
+        plot_scale: bool = ...,
+        label_on_track: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_enabled: bool = ...,
+        label_box_alpha: float = ...,
+        title_location: Position = ...,
+        title_height: float = ...,
+        title_size: int = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_weight: FontWeight = ...,
+        scale_location: Position = ...,
+        scale_height: float = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: highlights
+    def highlights(self, data: Any, /, **kwargs: Unpack[HighlightsKwargs]) -> Self:
         """Add file-based highlighted regions spanning tracks.
 
         Args:
@@ -309,7 +917,44 @@ class Figure:
         """
         return self.add_track("highlight", data=data, **kwargs)
 
-    def hline(self, y_value: float, /, **kwargs: Any) -> Self:
+    # BEGIN AUTO-GENERATED OVERLOAD: hline
+    @overload
+    def hline(
+        self,
+        y_value: float,
+        /,
+        *,
+        title: str | None = ...,
+        data: Any | None = ...,
+        height: float = ...,
+        autoscale_group: str | None = ...,
+        color: str = ...,
+        linestyle: str = ...,
+        linewidth: float = ...,
+        alpha: float = ...,
+        zorder: int = ...,
+        plot_title: bool = ...,
+        plot_scale: bool = ...,
+        label_on_track: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_enabled: bool = ...,
+        label_box_alpha: float = ...,
+        title_location: Position = ...,
+        title_height: float = ...,
+        title_size: int = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_weight: FontWeight = ...,
+        scale_location: Position = ...,
+        scale_height: float = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: hline
+    def hline(self, y_value: float, /, **kwargs: Unpack[HlineKwargs]) -> Self:
         """Add a horizontal reference line.
 
         Args:
@@ -322,7 +967,44 @@ class Figure:
         """
         return self.add_track("hline", y_value=y_value, **kwargs)
 
-    def vline(self, x_position: int | str, /, **kwargs: Any) -> Self:
+    # BEGIN AUTO-GENERATED OVERLOAD: vline
+    @overload
+    def vline(
+        self,
+        x_position: int | str,
+        /,
+        *,
+        title: str | None = ...,
+        data: Any | None = ...,
+        height: float = ...,
+        autoscale_group: str | None = ...,
+        color: str = ...,
+        linestyle: str = ...,
+        linewidth: float = ...,
+        alpha: float = ...,
+        zorder: int = ...,
+        plot_title: bool = ...,
+        plot_scale: bool = ...,
+        label_on_track: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_enabled: bool = ...,
+        label_box_alpha: float = ...,
+        title_location: Position = ...,
+        title_height: float = ...,
+        title_size: int = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_weight: FontWeight = ...,
+        scale_location: Position = ...,
+        scale_height: float = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: vline
+    def vline(self, x_position: int | str, /, **kwargs: Unpack[VlineKwargs]) -> Self:
         """Add a vertical reference line.
 
         Args:

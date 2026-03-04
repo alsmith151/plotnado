@@ -19,6 +19,10 @@ For development from source:
 git clone https://github.com/alsmith151/plotnado
 cd plotnado
 pip install -e .[dev,docs]
+
+# optional but recommended: run local quality hooks before every commit
+pip install pre-commit
+pre-commit install
 ```
 
 ## Quick Start

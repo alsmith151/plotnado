@@ -21,6 +21,26 @@ class Autoscaler:
         self.tracks = tracks
         self.gr = gr
 
+    @staticmethod
+    def _supports_autoscale(track: Track) -> bool:
+        return hasattr(track, "aesthetics") and (
+            hasattr(track.aesthetics, "min_value") or hasattr(track.aesthetics, "max_value")
+        )
+
+    @staticmethod
+    def _extract_numeric_values(data: pd.DataFrame | np.ndarray) -> np.ndarray:
+        if isinstance(data, pd.DataFrame):
+            if "value" in data.columns:
+                series = pd.to_numeric(data["value"], errors="coerce")
+                return series.dropna().to_numpy(dtype=float)
+            return np.array([], dtype=float)
+
+        flattened = np.asarray(data).ravel()
+        if flattened.size == 0:
+            return np.array([], dtype=float)
+        numeric = pd.to_numeric(pd.Series(flattened), errors="coerce").dropna()
+        return numeric.to_numpy(dtype=float)
+
     @property
     def data(self) -> np.ndarray:
         """
@@ -28,17 +48,13 @@ class Autoscaler:
         """
         _data = []
         for t in self.tracks:
+            if not self._supports_autoscale(t):
+                continue
             data = t.fetch_data(self.gr)
-            if isinstance(data, pd.DataFrame):
-                # Assume the signal value is in the 'value' column
-                if "value" in data.columns:
-                    values = data["value"].values
-                else:
-                    # Fallback to last column
-                    values = data.values[:, -1]
-                _data.append(values)
-            elif isinstance(data, np.ndarray):
-                _data.append(data.flatten())
+            if isinstance(data, (pd.DataFrame, np.ndarray)):
+                values = self._extract_numeric_values(data)
+                if values.size > 0:
+                    _data.append(values)
 
         if not _data:
             return np.array([0])
@@ -74,11 +90,12 @@ class Autoscaler:
             max_value = min_value + 1
 
         for track in self.tracks:
-            if hasattr(track, "aesthetics"):
-                if hasattr(track.aesthetics, "min_value"):
-                    track.aesthetics.min_value = min_value
-                if hasattr(track.aesthetics, "max_value"):
-                    track.aesthetics.max_value = max_value
+            if not self._supports_autoscale(track):
+                continue
+            if hasattr(track.aesthetics, "min_value"):
+                track.aesthetics.min_value = min_value
+            if hasattr(track.aesthetics, "max_value"):
+                track.aesthetics.max_value = max_value
 
 
 class Scaler:

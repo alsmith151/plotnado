@@ -7,7 +7,7 @@ name = "plotnado"
 authors = [{ name = "Alastair Smith", email = "alastair.smith@ndcls.ox.ac.uk" }]
 description = "A simple plotting library for making genomic tracks"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 license = "GPL-3.0-or-later"
 dynamic = ["version", "dependencies"]
 scripts = { "plotnado" =  "plotnado.cli.cli:main" }
@@ -17,8 +17,6 @@ classifiers = [
 	"Intended Audience :: Science/Research",
 	"Programming Language :: Python :: 3",
 	"Programming Language :: Python :: 3 :: Only",
-	"Programming Language :: Python :: 3.10",
-	"Programming Language :: Python :: 3.11",
 	"Programming Language :: Python :: 3.12",
 	"Topic :: Scientific/Engineering :: Bio-Informatics",
 	"Topic :: Scientific/Engineering :: Visualization",
@@ -27,7 +25,7 @@ classifiers = [
 [project.optional-dependencies]
 cooler = ["cooler", "capcruncher"]
 toml = ["tomli; python_version < '3.11'", "tomli-w"]
-dev = ["pytest", "pytest-mock", "pytest-assume"]
+dev = ["pytest", "pytest-mock", "pytest-assume", "pre-commit"]
 docs = [
 	"mkdocs>=1.6.1",
 	"mkdocstrings>=1.0.3",
@@ -47,6 +45,7 @@ all = [
 	"pytest",
 	"pytest-mock",
 	"pytest-assume",
+	"pre-commit",
 	"mkdocs>=1.6.1",
 	"mkdocstrings>=1.0.3",
 	"mkdocs-literate-nav>=0.6.2",
