@@ -29,3 +29,4 @@ class BedgraphDataFrame(pd.DataFrame):
         super().__init__(*args, **kwargs)
         if not self.empty:
             BedgraphDataFrameSchema.validate(self, inplace=True)
+            self["chrom"] = self["chrom"].astype(object)
