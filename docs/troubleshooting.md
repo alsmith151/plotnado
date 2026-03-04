@@ -5,8 +5,8 @@
 Check supported aliases:
 
 ```python
-from plotnado import Figure
-Figure.available_track_aliases()
+from plotnado import GenomicFigure
+GenomicFigure.available_track_aliases()
 ```
 
 ## Empty plots

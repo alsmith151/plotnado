@@ -23,7 +23,7 @@ from .theme import BuiltinTheme, Theme
 from .tracks import GenomicRegion, Track
 
 
-class Figure:
+class GenomicFigure:
     def __init__(
         self,
         tracks: list[Track] | None = ...,
@@ -620,7 +620,7 @@ class Figure:
     def to_toml(self, path: str) -> None: ...
 
     @classmethod
-    def from_toml(cls, path: str) -> Figure: ...
+    def from_toml(cls, path: str) -> GenomicFigure: ...
 
     def save(
         self,

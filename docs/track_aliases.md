@@ -1,11 +1,11 @@
 # Track Aliases
 
-`Figure.add_track()` accepts either a concrete track instance or a string alias with kwargs.
+`GenomicFigure.add_track()` accepts either a concrete track instance or a string alias with kwargs.
 
 ```python
-from plotnado import Figure
+from plotnado import GenomicFigure
 
-fig = Figure()
+fig = GenomicFigure()
 fig.add_track("scalebar", position="right")
 fig.add_track("axis")
 fig.add_track("genes", genome="hg38")
@@ -46,9 +46,9 @@ fig.add_track("bigwig", data="signal.bw", color="#1f77b4", alpha=0.7)
 ## Example
 
 ```python
-from plotnado import Figure
+from plotnado import GenomicFigure
 
-fig = Figure(width=12)
+fig = GenomicFigure(width=12)
 fig.axis()
 fig.genes("hg38")
 fig.add_track("bigwig", data="chipseq.bw", title="ChIP", style="fill")

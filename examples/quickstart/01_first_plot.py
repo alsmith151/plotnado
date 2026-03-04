@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from plotnado import Figure
+from plotnado import GenomicFigure
 
 
 def synthetic_signal(start: int = 1_000_000, end: int = 1_100_000, step: int = 1_000) -> pd.DataFrame:
@@ -18,7 +18,7 @@ def main() -> None:
     outdir = Path(__file__).resolve().parents[1] / "output"
     outdir.mkdir(parents=True, exist_ok=True)
 
-    fig = Figure(width=11)
+    fig = GenomicFigure(width=11)
     fig.scalebar()
     fig.axis()
     fig.genes("hg38", title="Genes")

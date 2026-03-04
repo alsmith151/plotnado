@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from plotnado import Figure
+from plotnado import GenomicFigure
 
 
 def bed_intervals() -> pd.DataFrame:
@@ -39,7 +39,7 @@ def main() -> None:
     outdir = Path(__file__).resolve().parents[1] / "output"
     outdir.mkdir(parents=True, exist_ok=True)
 
-    fig = Figure(track_height=1.25)
+    fig = GenomicFigure(track_height=1.25)
     fig.scalebar()
     fig.axis()
     fig.bed(bed_intervals(), title="BED intervals", display="expanded", show_labels=True)

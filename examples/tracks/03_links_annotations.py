@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from plotnado import Figure
+from plotnado import GenomicFigure
 
 
 def link_df() -> pd.DataFrame:
@@ -25,7 +25,7 @@ def main() -> None:
     outdir = Path(__file__).resolve().parents[1] / "output"
     outdir.mkdir(parents=True, exist_ok=True)
 
-    fig = Figure(track_height=1.2)
+    fig = GenomicFigure(track_height=1.2)
     fig.axis()
     fig.links(link_df(), title="Loops", color_by_score=True, cmap="viridis", alpha=0.8)
     fig.hline(0.1, color="#666666", linewidth=0.8)

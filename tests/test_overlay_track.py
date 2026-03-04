@@ -1,6 +1,6 @@
 import pandas as pd
 
-from plotnado import Figure
+from plotnado import GenomicFigure
 from plotnado.tracks import BigWigTrack, BigwigOverlay, OverlayTrack
 
 
@@ -38,7 +38,7 @@ def test_bigwigoverlay_backwards_compatible():
 
 
 def test_figure_overlay_alias_plots():
-    fig = Figure()
+    fig = GenomicFigure()
     fig.add_track(
         "overlay",
         tracks=[

@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from plotnado import Figure
+from plotnado import GenomicFigure
 
 
 def make_signal(phase: float = 0.0) -> pd.DataFrame:
@@ -19,11 +19,11 @@ def main() -> None:
     outdir.mkdir(parents=True, exist_ok=True)
 
     print("Available aliases:")
-    print(Figure.available_track_aliases())
+    print(GenomicFigure.available_track_aliases())
     print("\nBigWig options (track/aesthetics/label):")
-    print(Figure.track_options("bigwig"))
+    print(GenomicFigure.track_options("bigwig"))
 
-    fig = Figure().autocolor("Set2")
+    fig = GenomicFigure().autocolor("Set2")
     fig.add_track("scalebar")
     fig.add_track("axis")
     fig.add_track("bigwig", data=make_signal(0.0), title="Replicate A", alpha=0.7, plot_title=True)

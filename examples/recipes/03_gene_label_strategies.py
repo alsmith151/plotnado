@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 import random
 import pandas as pd
-from plotnado import Figure
+from plotnado import GenomicFigure
 
 
 def dense_gene_annotations() -> pd.DataFrame:
@@ -35,7 +35,7 @@ def main() -> None:
 
     genes_df = dense_gene_annotations()
 
-    fig = Figure(width=12, track_height=1.2)
+    fig = GenomicFigure(width=12, track_height=1.2)
     fig.scalebar()
     fig.axis()
 

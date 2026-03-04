@@ -4,7 +4,7 @@ from pathlib import Path
 
 import mkdocs_gen_files
 
-from plotnado.figure import Figure
+from plotnado.figure import GenomicFigure
 
 nav = mkdocs_gen_files.Nav()
 
@@ -64,12 +64,12 @@ def _format_section_rows(options: dict[str, dict], section: str) -> list[str]:
 
 
 def _generate_aesthetics_reference() -> None:
-    alias_map = Figure.available_track_aliases()
+    alias_map = GenomicFigure.available_track_aliases()
     class_by_aliases: dict[str, list[str]] = {}
     class_by_name: dict[str, type] = {}
     for alias, class_name in alias_map.items():
         class_by_aliases.setdefault(class_name, []).append(alias)
-        track_cls = Figure._alias_map()[alias]
+        track_cls = GenomicFigure._alias_map()[alias]
         class_by_name[class_name] = track_cls
 
     lines = [

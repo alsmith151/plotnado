@@ -1,4 +1,4 @@
-"""Figure class for composing and plotting genomic tracks."""
+"""GenomicFigure class for composing and plotting genomic tracks."""
 
 from __future__ import annotations
 
@@ -74,12 +74,12 @@ from ._kwargs import (
 )
 
 
-class Figure:
+class GenomicFigure:
     """Compose and plot multiple genomic tracks.
 
     Example:
         fig = (
-            Figure()
+            GenomicFigure()
             .bigwig("signal.bw", title="H3K27ac")
             .genes()
             .axis()
@@ -1061,8 +1061,8 @@ class Figure:
         """Return programmatic option metadata for a track alias or class.
 
         Examples:
-            Figure.track_options("bigwig")
-            Figure.track_options(BigWigTrack)
+            GenomicFigure.track_options("bigwig")
+            GenomicFigure.track_options(BigWigTrack)
         """
         if isinstance(track, str):
             key = track.lower()
@@ -1352,6 +1352,7 @@ class Figure:
                 text_artist.set_fontfamily(font_family)
 
         fig.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.05)
+
         if show:
             plt.show()
         else:
@@ -1544,8 +1545,8 @@ class Figure:
             handle.write(tomli_w.dumps(payload).encode("utf-8"))
 
     @classmethod
-    def from_toml(cls, path: str) -> "Figure":
-        """Load a `Figure` definition from a TOML file."""
+    def from_toml(cls, path: str) -> "GenomicFigure":
+        """Load a `GenomicFigure` definition from a TOML file."""
         try:
             import tomllib
         except ImportError:
@@ -1614,7 +1615,7 @@ class Figure:
             parts.append("theme=custom")
         parts.append(f"autoscale={self._autoscale}")
         parts.append(f"highlights={len(self._highlight_regions)}")
-        return f"Figure({', '.join(parts)})"
+        return f"GenomicFigure({', '.join(parts)})"
 
     def _repr_html_(self) -> str:
         import html
@@ -1649,7 +1650,7 @@ class Figure:
 
 
 def _format_method_option_docs(alias: str) -> str:
-    options = Figure.track_options(alias)
+    options = GenomicFigure.track_options(alias)
     lines = [
         "Auto-generated options (authoritative):",
         "",
@@ -1702,7 +1703,7 @@ def _inject_figure_method_option_docs() -> None:
 
     marker = "Auto-generated options (authoritative):"
     for method_name, alias in method_alias_map.items():
-        method = getattr(Figure, method_name, None)
+        method = getattr(GenomicFigure, method_name, None)
         if method is None:
             continue
 

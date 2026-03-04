@@ -79,7 +79,7 @@ def track_options(
         plotnado track-options bigwig -f markdown
         plotnado track-options --all -f json
     """
-    aliases = pn.Figure.available_track_aliases()
+    aliases = pn.GenomicFigure.available_track_aliases()
     valid_sections = {"track", "aesthetics", "label"}
     valid_formats = {"table", "markdown", "json"}
 
@@ -110,7 +110,7 @@ def track_options(
 
     if output_format == "json":
         payload = {
-            alias: pn.Figure.track_options(alias)
+            alias: pn.GenomicFigure.track_options(alias)
             for alias in normalized_aliases
         }
         if section:
@@ -124,7 +124,7 @@ def track_options(
     if output_format == "markdown":
         for index, alias in enumerate(normalized_aliases):
             if section:
-                options = pn.Figure.track_options(alias)
+                options = pn.GenomicFigure.track_options(alias)
                 typer.echo(f"## {alias}\n")
                 typer.echo(f"### {section.title()} fields\n")
                 typer.echo("| Name | Type | Default | Choices | Required | Description |")
@@ -142,13 +142,13 @@ def track_options(
                         f"| {field_name} | {type_cell} | {default_cell} | {choices_text} | {required_cell} | {description_cell} |"
                     )
             else:
-                typer.echo(pn.Figure.track_options_markdown(alias))
+                typer.echo(pn.GenomicFigure.track_options_markdown(alias))
             if index != len(normalized_aliases) - 1:
                 typer.echo("\n")
         return
 
     for alias in normalized_aliases:
-        _emit_options_table(alias, pn.Figure.track_options(alias), section)
+        _emit_options_table(alias, pn.GenomicFigure.track_options(alias), section)
 
 
 @app.command()
@@ -181,7 +181,7 @@ def plot(
         plotnado chr1:1000000-2000000 -o output.png
     """
     # Create a basic figure with scale and genes
-    figure = pn.Figure(width=width)
+    figure = pn.GenomicFigure(width=width)
     figure.add_track("scalebar")
     figure.add_track("genes", genome="hg38")
 

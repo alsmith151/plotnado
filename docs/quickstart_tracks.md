@@ -1,13 +1,13 @@
 # Build Tracks Fast
 
-Use aliases with `Figure.add_track()` or chain helper methods.
+Use aliases with `GenomicFigure.add_track()` or chain helper methods.
 
 ## Alias workflow
 
 ```python
-from plotnado import Figure
+from plotnado import GenomicFigure
 
-fig = Figure()
+fig = GenomicFigure()
 fig.add_track("scalebar")
 fig.add_track("axis")
 fig.add_track("genes", genome="hg38")
@@ -24,11 +24,11 @@ You can pass many aesthetics and label options directly:
 ## Discover aliases and options
 
 ```python
-from plotnado import Figure
+from plotnado import GenomicFigure
 
-Figure.available_track_aliases()
-Figure.track_options("bigwig")
-Figure.track_options_markdown("genes")
+GenomicFigure.available_track_aliases()
+GenomicFigure.track_options("bigwig")
+GenomicFigure.track_options_markdown("genes")
 ```
 
 Or from CLI:

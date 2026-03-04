@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from plotnado import Figure
+from plotnado import GenomicFigure
 
 
 def signal(scale: float, phase: float = 0.0) -> pd.DataFrame:
@@ -18,7 +18,7 @@ def main() -> None:
     outdir = Path(__file__).resolve().parents[1] / "output"
     outdir.mkdir(parents=True, exist_ok=True)
 
-    fig = Figure(track_height=1.25)
+    fig = GenomicFigure(track_height=1.25)
     fig.autoscale(True)
     fig.highlight("chr1:1,032,000-1,046,000")
     fig.highlight_style(color="#ffdd57", alpha=0.22)

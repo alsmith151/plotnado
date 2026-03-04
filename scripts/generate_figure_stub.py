@@ -1,4 +1,4 @@
-"""Generate static type stub for Figure hover/autocomplete in IDEs.
+"""Generate static type stub for GenomicFigure hover/autocomplete in IDEs.
 
 This script writes `plotnado/figure.pyi` with explicit keyword-only parameters
 for fluent track methods so hover shows available options directly.
@@ -243,7 +243,7 @@ def generate() -> str:
         "from .tracks import GenomicRegion, Track",
         "",
         "",
-        "class Figure:",
+        "class GenomicFigure:",
         "    def __init__(",
         "        self,",
         "        tracks: list[Track] | None = ...,",
@@ -302,7 +302,7 @@ def generate() -> str:
             "    def to_toml(self, path: str) -> None: ...",
             "",
             "    @classmethod",
-            "    def from_toml(cls, path: str) -> Figure: ...",
+            "    def from_toml(cls, path: str) -> GenomicFigure: ...",
             "",
             "    def save(",
             "        self,",

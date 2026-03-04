@@ -8,11 +8,11 @@ Use this section when you need API-level details beyond the task-oriented guides
 ## Discover options at runtime
 
 ```python
-from plotnado import Figure, BigWigTrack, list_options
+from plotnado import GenomicFigure, BigWigTrack, list_options
 
-Figure.available_track_aliases()
-Figure.track_options("bigwig")
-Figure.track_options_markdown("bigwig")
+GenomicFigure.available_track_aliases()
+GenomicFigure.track_options("bigwig")
+GenomicFigure.track_options_markdown("bigwig")
 
 BigWigTrack.options()
 BigWigTrack.options_markdown()
@@ -27,7 +27,7 @@ Each option payload is split into:
 
 ## Common entry points
 
-- `plotnado.Figure`: high-level composition (`add_track`, `plot`, `plot_regions`, `plot_gene`, `to_toml`, `from_toml`).
+- `plotnado.GenomicFigure`: high-level composition (`add_track`, `plot`, `plot_regions`, `plot_gene`, `to_toml`, `from_toml`).
 - `plotnado.Theme`: built-in or custom visual defaults.
 - `plotnado.tracks.*`: concrete track classes when you want explicit model construction.
 

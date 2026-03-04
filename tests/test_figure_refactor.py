@@ -8,7 +8,7 @@ import pytest
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 
-from plotnado import Figure
+from plotnado import GenomicFigure
 from plotnado.theme import Theme
 from plotnado.tracks import (
     BedAesthetics,
@@ -36,7 +36,7 @@ class TestFigureRefactor:
                 "value": [1.0, 2.0],
             }
         )
-        fig = Figure(theme=Theme(color="#111111"))
+        fig = GenomicFigure(theme=Theme(color="#111111"))
         fig.add_track(BigWigTrack(data=df))
 
         assert fig.tracks[0].color == "#111111"
@@ -50,28 +50,28 @@ class TestFigureRefactor:
                 "value": [1.0, 2.0],
             }
         )
-        fig = Figure(theme=Theme(color="#111111"))
+        fig = GenomicFigure(theme=Theme(color="#111111"))
         fig.add_track(BigWigTrack(data=df, aesthetics=BigwigAesthetics(color="#ff0000")))
 
         assert fig.tracks[0].color == "#ff0000"
 
     def test_theme_controls_highlight_defaults(self):
-        fig = Figure(theme=Theme(highlight_color="#00ff00", highlight_alpha=0.33))
+        fig = GenomicFigure(theme=Theme(highlight_color="#00ff00", highlight_alpha=0.33))
         assert fig.highlight_color == "#00ff00"
         assert fig.highlight_alpha == 0.33
 
     def test_theme_string_resolves_builtin(self):
-        fig = Figure(theme="minimal")
+        fig = GenomicFigure(theme="minimal")
         assert fig.theme is not None
         assert fig.theme == Theme.minimal()
         assert fig.highlight_color == Theme.minimal().highlight_color
 
     def test_theme_string_unknown_raises(self):
         with pytest.raises(ValueError, match="Unknown builtin theme"):
-            Figure(theme="unknown")
+            GenomicFigure(theme="unknown")
 
     def test_highlight_style_configuration(self):
-        fig = Figure().highlight_style(color="#123456", alpha=0.2)
+        fig = GenomicFigure().highlight_style(color="#123456", alpha=0.2)
         assert fig.highlight_color == "#123456"
         assert fig.highlight_alpha == 0.2
 
@@ -80,22 +80,22 @@ class TestFigureRefactor:
         assert fig.highlight_alpha == 0.4
 
     def test_available_track_aliases_contains_bigwig(self):
-        aliases = Figure.available_track_aliases()
+        aliases = GenomicFigure.available_track_aliases()
         assert "bigwig" in aliases
         assert aliases["bigwig"] == "BigWigTrack"
 
     def test_track_options_by_alias(self):
-        options = Figure.track_options("bigwig")
+        options = GenomicFigure.track_options("bigwig")
         assert "aesthetics" in options
         assert "track" in options
         assert "color" in options["aesthetics"]
 
     def test_track_options_unknown_alias_raises(self):
         with pytest.raises(ValueError, match="Unknown track alias"):
-            Figure.track_options("missing")
+            GenomicFigure.track_options("missing")
 
     def test_track_options_markdown_by_alias(self):
-        markdown = Figure.track_options_markdown("bigwig")
+        markdown = GenomicFigure.track_options_markdown("bigwig")
         assert "## BigWigTrack options" in markdown
         assert "### Aesthetics fields" in markdown
         assert "| color |" in markdown
@@ -110,14 +110,14 @@ class TestFigureRefactor:
             }
         )
 
-        fig = Figure().add_track("bigwig", data=df, color="#ff0000", alpha=0.25)
+        fig = GenomicFigure().add_track("bigwig", data=df, color="#ff0000", alpha=0.25)
         track = fig.tracks[0]
 
         assert track.aesthetics.color == "#ff0000"
         assert track.aesthetics.alpha == 0.25
 
     def test_alias_constructor_routes_label_shorthand_kwargs(self):
-        fig = Figure().add_track("scalebar", plot_title=False, scale_size=11)
+        fig = GenomicFigure().add_track("scalebar", plot_title=False, scale_size=11)
         track = fig.tracks[0]
 
         assert track.label.plot_title is False
@@ -133,7 +133,7 @@ class TestFigureRefactor:
             }
         )
 
-        fig = Figure().add_track(
+        fig = GenomicFigure().add_track(
             "bigwig",
             data=df,
             aesthetics=BigwigAesthetics(color="#00aa00", alpha=0.5),
@@ -145,7 +145,7 @@ class TestFigureRefactor:
         assert track.aesthetics.alpha == 0.2
 
     def test_extend_parameter(self):
-        fig = Figure().add_track(ScaleBar())
+        fig = GenomicFigure().add_track(ScaleBar())
         out = fig.plot("chr1:100-200", show=False, extend=0.5)
 
         xlim = out.axes[0].get_xlim()
@@ -153,13 +153,13 @@ class TestFigureRefactor:
         assert xlim[1] == 250
 
     def test_plot_regions_list(self):
-        fig = Figure().add_track(ScaleBar())
+        fig = GenomicFigure().add_track(ScaleBar())
         plots = fig.plot_regions(["chr1:100-200", "chr1:300-400"], show=False)
 
         assert len(plots) == 2
 
     def test_plot_regions_grid_mode(self):
-        fig = Figure().add_track(ScaleBar())
+        fig = GenomicFigure().add_track(ScaleBar())
         plots = fig.plot_regions(
             ["chr1:100-200", "chr1:300-400", "chr1:500-600"],
             ncols=2,
@@ -170,7 +170,7 @@ class TestFigureRefactor:
         assert len(plots[0].axes) == 4
 
     def test_plot_regions_invalid_ncols(self):
-        fig = Figure().add_track(ScaleBar())
+        fig = GenomicFigure().add_track(ScaleBar())
 
         with pytest.raises(ValueError, match="ncols must be >= 1"):
             fig.plot_regions(["chr1:100-200"], ncols=0, show=False)
@@ -181,7 +181,7 @@ class TestFigureRefactor:
             handle.write("chr1\t300\t400\n")
             bed_path = handle.name
 
-        fig = Figure().add_track(ScaleBar())
+        fig = GenomicFigure().add_track(ScaleBar())
         plots = fig.plot_regions(bed_path, show=False)
 
         assert len(plots) == 2
@@ -195,7 +195,7 @@ class TestFigureRefactor:
             {"chrom": ["chr1", "chr1"], "start": [100, 150], "end": [150, 200], "value": [10.0, 20.0]}
         )
 
-        fig = Figure()
+        fig = GenomicFigure()
         fig.add_track(BigWigTrack(data=df1, autoscale_group="g1"))
         fig.add_track(BigWigTrack(data=df2, autoscale_group="g1"))
 
@@ -214,7 +214,7 @@ class TestFigureRefactor:
             }
         )
 
-        fig = Figure().autocolor("tab10")
+        fig = GenomicFigure().autocolor("tab10")
         fig.add_track(BigWigTrack(data=df))
 
         expected = mcolors.to_hex(plt.get_cmap("tab10")(0))
@@ -230,7 +230,7 @@ class TestFigureRefactor:
             }
         )
 
-        fig = Figure(theme="publication").autocolor("tab10")
+        fig = GenomicFigure(theme="publication").autocolor("tab10")
         fig.add_track(BigWigTrack(data=df))
 
         expected = mcolors.to_hex(plt.get_cmap("tab10")(0))
@@ -238,22 +238,22 @@ class TestFigureRefactor:
 
     def test_toml_roundtrip(self):
         pytest.importorskip("tomli_w")
-        fig = Figure().add_track(ScaleBar())
+        fig = GenomicFigure().add_track(ScaleBar())
 
         with tempfile.NamedTemporaryFile(suffix=".toml", delete=False) as handle:
             path = handle.name
 
         fig.to_toml(path)
-        loaded = Figure.from_toml(path)
+        loaded = GenomicFigure.from_toml(path)
 
-        assert isinstance(loaded, Figure)
+        assert isinstance(loaded, GenomicFigure)
         assert len(loaded.tracks) == 1
         assert loaded.tracks[0].__class__.__name__ == "ScaleBar"
         Path(path).unlink(missing_ok=True)
 
     def test_toml_uses_track_tables(self):
         pytest.importorskip("tomli_w")
-        fig = Figure().add_track(ScaleBar())
+        fig = GenomicFigure().add_track(ScaleBar())
 
         with tempfile.NamedTemporaryFile(suffix=".toml", delete=False) as handle:
             path = handle.name
@@ -283,7 +283,7 @@ class TestFigureRefactor:
         expected_length = int(match["end"]) - int(match["start"])
         expected_extend = int(expected_length * 0.5)
 
-        fig = Figure().add_track(ScaleBar())
+        fig = GenomicFigure().add_track(ScaleBar())
         out = fig.plot_gene(gene, extend=0.5, show=False)
 
         xlim = out.axes[0].get_xlim()
@@ -291,7 +291,7 @@ class TestFigureRefactor:
         assert xlim[1] == int(match["end"]) + expected_extend
 
     def test_plot_gene_adds_genes_track_when_missing(self):
-        fig = Figure().add_track(ScaleBar())
+        fig = GenomicFigure().add_track(ScaleBar())
         out = fig.plot_gene("DDX11L1", show=False)
 
         assert out is not None
@@ -307,7 +307,7 @@ class TestFigureRefactor:
             }
         )
         theme = Theme(font_family="Arial", label=LabelConfig(scale_font="Times New Roman"))
-        fig = Figure(theme=theme)
+        fig = GenomicFigure(theme=theme)
         fig.add_track(BedTrack(data=data, aesthetics=BedAesthetics(show_labels=True)))
 
         out = fig.plot("chr1:50-250", show=False)

@@ -55,4 +55,4 @@ For full per-field options and descriptions:
 
 - [Track Aliases](track_aliases.md)
 - [Aesthetics Reference](aesthetics_reference.md)
-- `Figure.track_options("<alias>")`
+- `GenomicFigure.track_options("<alias>")`

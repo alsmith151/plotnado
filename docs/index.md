@@ -11,7 +11,7 @@ pip install plotnado
 ## 5-minute quick start
 
 ```python
-from plotnado import Figure
+from plotnado import GenomicFigure
 import numpy as np
 import pandas as pd
 
@@ -23,7 +23,7 @@ signal = pd.DataFrame({
 	"value": 5 + 2 * np.sin(np.linspace(0, 6, len(bins))),
 })
 
-fig = Figure()
+fig = GenomicFigure()
 fig.scalebar().axis().genes("hg38")
 fig.bigwig(signal, title="Synthetic signal", style="fill")
 fig.save("quickstart.png", "chr1:1,010,000-1,080,000")
@@ -68,11 +68,11 @@ Sample outputs:
 ## Option discovery
 
 ```python
-from plotnado import Figure
+from plotnado import GenomicFigure
 
-Figure.available_track_aliases()
-Figure.track_options("bigwig")
-Figure.track_options_markdown("genes")
+GenomicFigure.available_track_aliases()
+GenomicFigure.track_options("bigwig")
+GenomicFigure.track_options_markdown("genes")
 ```
 
 

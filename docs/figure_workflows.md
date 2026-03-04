@@ -30,7 +30,7 @@ fig.plot_gene("DDX11L1", extend=0.5)
 
 ```python
 fig.to_toml("figure.toml")
-loaded = Figure.from_toml("figure.toml")
+loaded = GenomicFigure.from_toml("figure.toml")
 loaded.save("figure.png", "chr1:1,000,000-1,100,000")
 ```
 

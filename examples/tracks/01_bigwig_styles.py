@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from plotnado import Figure
+from plotnado import GenomicFigure
 
 
 def signal(style_shift: float) -> pd.DataFrame:
@@ -18,7 +18,7 @@ def main() -> None:
     outdir = Path(__file__).resolve().parents[1] / "output"
     outdir.mkdir(parents=True, exist_ok=True)
 
-    fig = Figure(track_height=1.25)
+    fig = GenomicFigure(track_height=1.25)
     fig.scalebar()
     fig.bigwig(signal(0.0), title="fill", style="fill", color="#1f77b4")
     fig.bigwig(signal(0.8), title="fragment", style="fragment", color="#d62728")

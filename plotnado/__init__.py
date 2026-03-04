@@ -5,7 +5,7 @@ A lightweight Python package for creating genome browser-style plots
 without heavy dependencies like CoolBox.
 """
 
-from .figure import Figure
+from .figure import GenomicFigure
 from .theme import Theme
 from .tracks import (
     # Enums
@@ -67,7 +67,7 @@ except ImportError:
     __version__ = "unknown"
 
 __all__ = [
-    "Figure",
+    "GenomicFigure",
     "Theme",
     # Enums
     "DisplayMode",

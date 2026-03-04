@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from plotnado import Figure, Theme
+from plotnado import GenomicFigure, Theme
 
 
 def signal() -> pd.DataFrame:
@@ -18,7 +18,7 @@ def main() -> None:
     outdir = Path(__file__).resolve().parents[1] / "output"
     outdir.mkdir(parents=True, exist_ok=True)
 
-    fig = Figure(theme=Theme.publication())
+    fig = GenomicFigure(theme=Theme.publication())
     fig.scalebar(plot_scale=True, scale_size=10)
     fig.axis(num_ticks=4)
     fig.bigwig(
@@ -35,7 +35,7 @@ def main() -> None:
     fig.save(image_out, "chr1:1,010,000-1,080,000", dpi=220)
     print(f"Saved {image_out}")
 
-    toml_fig = Figure(theme=Theme.publication())
+    toml_fig = GenomicFigure(theme=Theme.publication())
     toml_fig.scalebar(plot_scale=True, scale_size=10)
     toml_fig.axis(num_ticks=4)
     toml_fig.genes("hg38", title="Genes", title_location="left")
@@ -43,7 +43,7 @@ def main() -> None:
     toml_out = outdir / "recipe_theme_labels.toml"
     try:
         toml_fig.to_toml(str(toml_out))
-        loaded = Figure.from_toml(str(toml_out))
+        loaded = GenomicFigure.from_toml(str(toml_out))
         reloaded_out = outdir / "recipe_theme_labels_from_toml.png"
         loaded.save(reloaded_out, "chr1:1,010,000-1,080,000", dpi=220)
         print(f"Saved {toml_out} and {reloaded_out}")
