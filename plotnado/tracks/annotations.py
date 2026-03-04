@@ -13,16 +13,10 @@ from .base import Track
 
 class AnnotationAesthetics(BaseModel):
     """
-    Aesthetics configuration for annotation lines.
-
-    Attributes:
-        color: Line color
-        linestyle: Line style ('-', '--', ':', etc.)
-        linewidth: Line width
-        alpha: Transparency (0-1)
-        zorder: Plotting order
+    Defines visual properties for annotation reference lines, including
+    color, linestyle, linewidth, alpha (opacity), and zorder for rendering
+    order in Matplotlib plots.
     """
-
     color: str = Field(default="red", description="Color used to draw reference lines.")
     linestyle: str = Field(default="--", description="Matplotlib line style pattern for the line.")
     linewidth: float = Field(default=1.0, description="Line width for the reference line.")

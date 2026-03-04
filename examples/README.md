@@ -16,5 +16,6 @@ This folder contains runnable, current-API examples.
 - `examples/tracks/03_links_annotations.py` - links plus horizontal/vertical annotation lines.
 - `examples/recipes/01_autoscale_overlay_highlight.py` - autoscale, overlay, highlight styles.
 - `examples/recipes/02_theme_labels_toml.py` - theme, label controls, TOML round-trip.
+- `examples/recipes/03_gene_label_strategies.py` - compare gene label overlap strategies (stagger/suppress/auto-expand).
 
 All scripts write output images into `examples/output/` by default.

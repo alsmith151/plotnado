@@ -70,6 +70,14 @@ class GeneLabelStyle(str, Enum):
     OBLIQUE = "oblique"
 
 
+class GeneLabelOverlapStrategy(str, Enum):
+    """Collision handling strategies for gene labels."""
+
+    STAGGER = "stagger"
+    SUPPRESS = "suppress"
+    AUTO_EXPAND = "auto_expand"
+
+
 class CoolerTransform(str, Enum):
     """Matrix transform options for cooler-like tracks."""
 

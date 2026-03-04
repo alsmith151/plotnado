@@ -358,3 +358,136 @@ class TestGenes:
         assert abs(lower_arm[1] - ypos) < 1e-6
         assert abs(upper_arm[1] - ypos) < 1e-6
         assert abs((ypos - lower_arm[0]) - (upper_arm[0] - ypos)) < 1e-6
+
+    def test_plot_genes_stagger_labels_uses_alternating_vertical_offsets(self, mock_ax, genomic_region):
+        data = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [1100, 1110],
+                "end": [1120, 1130],
+                "geneid": ["GENE_ALPHA", "GENE_BETA"],
+                "block_count": [1, 1],
+                "block_sizes": [[20], [20]],
+                "block_starts": [[0], [0]],
+            }
+        )
+        genes = Genes(
+            data=data,
+            aesthetics=GenesAesthetics(display="collapsed", label_overlap_strategy="stagger"),
+        )
+
+        genes.plot_genes(mock_ax, genomic_region)
+
+        assert len(mock_ax.text.call_args_list) == 2
+        y_values = [call.args[1] for call in mock_ax.text.call_args_list]
+        assert y_values[0] != y_values[1]
+
+    def test_plot_genes_suppress_hides_overlapping_labels(self, mock_ax, genomic_region):
+        data = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [1100, 1110],
+                "end": [1120, 1130],
+                "geneid": ["GENE_ALPHA", "GENE_BETA"],
+                "block_count": [1, 1],
+                "block_sizes": [[20], [20]],
+                "block_starts": [[0], [0]],
+            }
+        )
+        genes = Genes(
+            data=data,
+            aesthetics=GenesAesthetics(display="collapsed", label_overlap_strategy="suppress"),
+        )
+
+        genes.plot_genes(mock_ax, genomic_region)
+
+        assert len(mock_ax.text.call_args_list) == 1
+
+    def test_plot_genes_show_labels_false_skips_label_text(self, mock_ax, genomic_region):
+        data = pd.DataFrame(
+            {
+                "chrom": ["chr1"],
+                "start": [1100],
+                "end": [1200],
+                "geneid": ["GENE_ALPHA"],
+                "block_count": [1],
+                "block_sizes": [[100]],
+                "block_starts": [[0]],
+            }
+        )
+        genes = Genes(data=data, aesthetics=GenesAesthetics(show_labels=False))
+
+        genes.plot_genes(mock_ax, genomic_region)
+
+        assert len(mock_ax.text.call_args_list) == 0
+
+    def test_plot_genes_label_is_centered_on_gene_anchor(self, mock_ax, genomic_region):
+        data = pd.DataFrame(
+            {
+                "chrom": ["chr1"],
+                "start": [1900],
+                "end": [1990],
+                "geneid": ["GENE_AT_RIGHT_EDGE"],
+                "block_count": [1],
+                "block_sizes": [[90]],
+                "block_starts": [[0]],
+            }
+        )
+        genes = Genes(data=data, aesthetics=GenesAesthetics(display="collapsed"))
+
+        genes.plot_genes(mock_ax, genomic_region)
+
+        assert len(mock_ax.text.call_args_list) == 1
+        label_x = mock_ax.text.call_args.args[0]
+        expected_center = (1900 + 1990) / 2
+        assert abs(label_x - expected_center) < 1e-6
+        assert mock_ax.text.call_args.kwargs["ha"] == "center"
+
+    def test_plot_genes_auto_expand_switches_from_collapsed_on_collisions(
+        self, mock_ax, genomic_region
+    ):
+        data = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [1100, 1110],
+                "end": [1120, 1130],
+                "geneid": ["GENE_ALPHA", "GENE_BETA"],
+                "block_count": [1, 1],
+                "block_sizes": [[20], [20]],
+                "block_starts": [[0], [0]],
+            }
+        )
+        genes = Genes(
+            data=data,
+            aesthetics=GenesAesthetics(display="collapsed", label_overlap_strategy="auto_expand"),
+        )
+
+        genes.plot_genes(mock_ax, genomic_region)
+
+        assert len(mock_ax.text.call_args_list) >= 1
+        assert mock_ax.set_ylim.call_args.args[1] > 1.1
+
+    def test_plot_genes_expanded_row_allocation_accounts_for_label_footprint(
+        self, mock_ax, genomic_region
+    ):
+        data = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [1200, 1260],
+                "end": [1250, 1300],
+                "geneid": ["VERY_LONG_GENE_LABEL_A", "VERY_LONG_GENE_LABEL_B"],
+                "block_count": [1, 1],
+                "block_sizes": [[50], [40]],
+                "block_starts": [[0], [0]],
+            }
+        )
+        genes = Genes(
+            data=data,
+            aesthetics=GenesAesthetics(display="expanded", label_overlap_strategy="suppress"),
+        )
+
+        genes.plot_genes(mock_ax, genomic_region)
+
+        y_values = [call.args[1] for call in mock_ax.text.call_args_list]
+        assert len(y_values) == 2
+        assert len(set(y_values)) == 2

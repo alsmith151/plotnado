@@ -14,6 +14,7 @@ SCRIPTS = [
     "tracks/03_links_annotations.py",
     "recipes/01_autoscale_overlay_highlight.py",
     "recipes/02_theme_labels_toml.py",
+    "recipes/03_gene_label_strategies.py",
 ]
 
 
