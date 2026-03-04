@@ -8,6 +8,10 @@ from plotnado.figure import Figure
 
 nav = mkdocs_gen_files.Nav()
 
+
+def _markdown_cell(value: object) -> str:
+    return str(value).replace("|", "\\|")
+
 for path in sorted(Path("plotnado").rglob("*.py")):
 
     module_path = path.relative_to(".").with_suffix("")
@@ -46,11 +50,14 @@ def _format_section_rows(options: dict[str, dict], section: str) -> list[str]:
     ]
     section_data = options.get(section, {})
     for field_name, meta in sorted(section_data.items()):
-        description = meta.get("description") or "—"
+        description = _markdown_cell(meta.get("description") or "—")
         choices = meta.get("choices") or []
-        choices_text = ", ".join(str(choice) for choice in choices) if choices else "—"
+        choices_text = _markdown_cell(", ".join(str(choice) for choice in choices) if choices else "—")
+        type_cell = _markdown_cell(meta["type"])
+        default_cell = _markdown_cell(meta["default"])
+        required_cell = _markdown_cell(meta["required"])
         rows.append(
-            f"| {field_name} | {meta['type']} | {meta['default']} | {choices_text} | {meta['required']} | {description} |"
+            f"| {field_name} | {type_cell} | {default_cell} | {choices_text} | {required_cell} | {description} |"
         )
     rows.append("")
     return rows

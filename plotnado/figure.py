@@ -972,8 +972,10 @@ def _format_method_option_docs(alias: str) -> str:
 
         for field_name, meta in sorted(section_data.items()):
             description = meta.get("description") or "No description provided."
+            choices = meta.get("choices") or []
+            choices_text = f", choices={choices}" if choices else ""
             lines.append(
-                f"- {field_name} ({meta['type']}, default={meta['default']}): {description}"
+                f"- {field_name} ({meta['type']}, default={meta['default']}{choices_text}): {description}"
             )
         lines.append("")
 

@@ -26,6 +26,10 @@ class OutputFormat(str, Enum):
 app = typer.Typer(help="Plotnado - Simple genomic track visualization")
 
 
+def _markdown_cell(value: object) -> str:
+    return str(value).replace("|", "\\|")
+
+
 def _emit_options_table(track_alias: str, options: dict[str, dict], section: str | None) -> None:
     sections = [section] if section else ["track", "aesthetics", "label"]
     typer.echo(f"\n[{track_alias}]")
@@ -36,10 +40,12 @@ def _emit_options_table(track_alias: str, options: dict[str, dict], section: str
             typer.echo("    (none)")
             continue
         for field_name, meta in section_options.items():
+            choices = meta.get("choices") or []
+            choices_text = ",".join(str(choice) for choice in choices) if choices else "—"
             typer.echo(
                 "    "
                 f"{field_name}: type={meta['type']}, default={meta['default']}, "
-                f"required={meta['required']}"
+                f"choices={choices_text}, required={meta['required']}"
             )
 
 
@@ -121,11 +127,19 @@ def track_options(
                 options = pn.Figure.track_options(alias)
                 typer.echo(f"## {alias}\n")
                 typer.echo(f"### {section.title()} fields\n")
-                typer.echo("| Name | Type | Default | Required | Description |")
-                typer.echo("|---|---|---|---|---|")
+                typer.echo("| Name | Type | Default | Choices | Required | Description |")
+                typer.echo("|---|---|---|---|---|---|")
                 for field_name, meta in options.get(section, {}).items():
+                    choices = meta.get("choices") or []
+                    choices_text = _markdown_cell(
+                        ", ".join(str(choice) for choice in choices) if choices else "—"
+                    )
+                    type_cell = _markdown_cell(meta["type"])
+                    default_cell = _markdown_cell(meta["default"])
+                    required_cell = _markdown_cell(meta["required"])
+                    description_cell = _markdown_cell(meta.get("description") or "—")
                     typer.echo(
-                        f"| {field_name} | {meta['type']} | {meta['default']} | {meta['required']} | {meta.get('description') or '—'} |"
+                        f"| {field_name} | {type_cell} | {default_cell} | {choices_text} | {required_cell} | {description_cell} |"
                     )
             else:
                 typer.echo(pn.Figure.track_options_markdown(alias))

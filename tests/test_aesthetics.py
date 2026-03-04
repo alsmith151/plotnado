@@ -95,6 +95,14 @@ class TestBigwigAesthetics:
         assert "color" in options["aesthetics"]
         assert "alpha" in options["aesthetics"]
         assert "style" in options["aesthetics"]
+        assert options["aesthetics"]["style"]["choices"] == [
+            "std",
+            "fill",
+            "line",
+            "scatter",
+            "heatmap",
+            "fragment",
+        ]
         assert "plot_title" in options["label"]
 
     def test_list_options_helper_matches_track_options(self):

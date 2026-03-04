@@ -166,6 +166,8 @@ class Track(BaseModel, ABC):
             return "—"
         if value is PydanticUndefined:
             return "*(required)*"
+        if isinstance(value, Enum):
+            return value.value
         if isinstance(value, (str, int, float, bool, list, dict)):
             return value
         if isinstance(value, BaseModel):
@@ -197,6 +199,10 @@ class Track(BaseModel, ABC):
         if not choices:
             return "—"
         return ", ".join(str(choice) for choice in choices)
+
+    @staticmethod
+    def _markdown_cell(value: Any) -> str:
+        return str(value).replace("|", "\\|")
 
     @classmethod
     def options(cls) -> dict[str, dict[str, dict[str, Any]]]:
@@ -259,8 +265,13 @@ class Track(BaseModel, ABC):
             lines.append("| Name | Type | Default | Choices | Required | Description |")
             lines.append("|---|---|---|---|---|---|")
             for name, meta in options[section].items():
+                type_cell = cls._markdown_cell(meta["type"])
+                default_cell = cls._markdown_cell(meta["default"])
+                choices_cell = cls._markdown_cell(cls._render_choices(meta.get("choices")))
+                required_cell = cls._markdown_cell(meta["required"])
+                description_cell = cls._markdown_cell(meta.get("description") or "—")
                 lines.append(
-                    f"| {name} | {meta['type']} | {meta['default']} | {cls._render_choices(meta.get('choices'))} | {meta['required']} | {meta.get('description') or '—'} |"
+                    f"| {name} | {type_cell} | {default_cell} | {choices_cell} | {required_cell} | {description_cell} |"
                 )
             lines.append("")
 
