@@ -2,132 +2,99 @@
 
 [![Tests](https://github.com/alsmith151/plotnado/actions/workflows/run_tests.yml/badge.svg)](https://github.com/alsmith151/plotnado/actions/workflows/run_tests.yml)
 
-PlotNado is a lightweight Python package for creating genome browser-style plots with a focus on simplicity, rich aesthetics, and performance.
+PlotNado is a lightweight Python package for building genome browser-style figures with a modern, chainable API.
 
 > [!NOTE]
-> This new version of PlotNado is independent and does not require CoolBox.
+> This version of PlotNado is independent and does not require CoolBox.
 
-## Key Features
-
-- **Rich Aesthetics**: Premium default designs with support for custom palettes and styles.
-- **Multiple Track Types**:
-  - `BigWigTrack`: Signal data visualization with stairs or scatter styles.
-  - `Genes`: Intelligent gene annotation display with intron/exon structure and collision-aware labels.
-  - `BedTrack`: Simple and clean BED record display.
-  - `GenomicAxis`: Clear x-axis with genomic coordinates.
-  - `Highlights`: Highlight specific regions across all tracks.
-- **Advanced Plotting**:
-  - `BigwigOverlay`: Overlay multiple signals on a single axis.
-  - `Autoscaler`: Automatically share y-axis scales across tracks.
-  - `Figure API`: High-level API for easy composition, automatic coloring, and region manipulation.
-
-## Installation
+## Install
 
 ```bash
-pip install git+https://github.com/alsmith151/plotnado
+pip install plotnado
 ```
 
-## Build Documentation
+For development from source:
 
 ```bash
-python -m pip install -r requirements-docs.txt
-python -m mkdocs build --strict
+git clone https://github.com/alsmith151/plotnado
+cd plotnado
+pip install -e .[dev,docs]
 ```
 
-## Basic Usage
+## Quick Start
 
 ```python
 from plotnado import Figure
+import numpy as np
+import pandas as pd
+
+bins = np.arange(1_000_000, 1_100_000, 1_000)
+signal = pd.DataFrame({
+    "chrom": "chr1",
+    "start": bins,
+    "end": bins + 1_000,
+    "value": 5 + 2 * np.sin(np.linspace(0, 6, len(bins))),
+})
 
 fig = Figure()
-fig.add_track('scalebar')
-fig.add_track('axis')
-fig.add_track('genes', genome='hg38')
-fig.add_track('bigwig', data='signal.bw', title='ChIP-seq')
-
-fig.plot('chr1:1,000,000-1,100,000')
+fig.scalebar()
+fig.axis()
+fig.genes("hg38")
+fig.bigwig(signal, title="Synthetic signal", style="fill", color="#1f77b4")
+fig.save("quickstart.png", "chr1:1,010,000-1,080,000")
 ```
 
-## Advanced Usage
+## Examples
+
+- Start with `python examples/basic_figure.py`
+- Then run `python examples/advanced_features.py`
+- Full curated suite: `python examples/run_examples.py`
+- Additional focused examples live in:
+  - `examples/quickstart/`
+  - `examples/tracks/`
+  - `examples/recipes/`
+
+All scripts write outputs to `examples/output/`.
+
+## Key Features
+
+- Chainable `Figure` API for fast composition.
+- Alias-based track creation (`fig.add_track("bigwig", ...)`).
+- Track option introspection at runtime.
+- Built-in themes, autocolor, autoscale, and highlight overlays.
+- Broad track support: BigWig, BED, narrowPeak, genes, axis, scalebar, links, `OverlayTrack`, cooler-based matrix tracks.
+
+## Discover Track Options
 
 ```python
-fig = Figure()
-fig.autoscale(True).autocolor(palette='Set1')
-fig.highlight('chr1:1045000-1055000')
+from plotnado import Figure, BigWigTrack
 
-fig.add_track('bigwig_overlay', tracks=[...])
-fig.plot('chr1:1000000-1100000')
-```
-
-## Theme and Font Selection
-
-Set a single font for all plot text using `Theme(font_family=...)`.
-
-```python
-from plotnado import Figure, Theme
-
-theme = Theme(font_family="Arial")
-fig = Figure(theme=theme)
-fig.add_track("axis")
-fig.add_track("genes", genome="hg38")
-fig.plot("chr1:1,000,000-1,100,000")
-```
-
-## Discoverability in IDE and notebooks
-
-```python
-from plotnado import BigWigTrack, Figure, LabelConfig
-
-# Programmatic option discovery
-BigWigTrack.options()            # dict with track/aesthetics/label sections
-BigWigTrack.options_markdown()   # notebook-friendly markdown table
-
-# Alias-based discovery
 Figure.available_track_aliases()
 Figure.track_options("bigwig")
-
-# Unified label config
-track = BigWigTrack(
-  color="#1f77b4",
-  label=LabelConfig(plot_title=True, plot_scale=True, label_box_alpha=0.8),
-)
+Figure.track_options_markdown("bigwig")
+BigWigTrack.options_markdown()
 ```
 
-## Track Aliases
+## Documentation
 
-`Figure.add_track()` accepts either a track instance or a string alias. The following aliases are supported:
+- Docs home: `docs/index.md`
+- Quick start: `docs/quickstart.md`
+- Track catalog + options: `docs/track_catalog.md`
+- API and generated references: `docs/api_reference.md`
 
-Full docs page: `docs/track_aliases.md`.
+Build docs locally:
 
-| Alias | Track Class | Notes |
-|---|---|---|
-| `scalebar` | `ScaleBar` | Scale bar track |
-| `scale` | `ScaleBar` | Synonym for `scalebar` |
-| `axis` | `GenomicAxis` | Genomic coordinate axis |
-| `genes` | `Genes` | Gene annotations (`genome` or `data`) |
-| `spacer` | `Spacer` | Empty spacing track |
-| `bigwig` | `BigWigTrack` | BigWig signal track |
-| `bed` | `BedTrack` | BED/BigBed intervals |
-| `highlight` | `HighlightsFromFile` | Region highlighting from BED/BigBed |
-| `bigwig_overlay` | `BigwigOverlay` | Overlay multiple BigWig tracks |
-| `bigwig_collection` | `BigWigCollection` | Collection track (`overlay`/`stacked`) |
-| `bigwig_diff` | `BigWigDiff` | Difference/ratio between two BigWig tracks |
-| `narrowpeak` | `NarrowPeakTrack` | NarrowPeak intervals |
-| `links` | `LinksTrack` | BEDPE-style interaction arcs |
-| `hline` | `HLineTrack` | Horizontal annotation line |
-| `vline` | `VLineTrack` | Vertical annotation line |
-| `cooler` | `CoolerTrack` | Cooler matrix heatmap (`.cool`/`.mcool`) |
-| `capcruncher` | `CapcruncherTrack` | CapCruncher-style Cooler track |
-| `cooler_average` | `CoolerAverage` | Average matrix across multiple Cooler files |
+```bash
+pip install -e .[docs]
+mkdocs build --strict
+mkdocs serve
+```
 
-Example:
+## CLI
 
 ```python
-fig = Figure()
-fig.add_track("cooler", file="sample.mcool", resolution=10000)
-fig.add_track("bigwig_diff", file_a="a.bw", file_b="b.bw", method="log2ratio")
-fig.add_track("vline", x_position=1050000)
+plotnado plot chr1:1,000,000-1,100,000 -o browser_view.png
+plotnado track-options bigwig
+plotnado track-options --all --output-format json
 ```
-
-For more examples, see the `examples/` directory.
 

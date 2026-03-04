@@ -36,7 +36,7 @@ from .bed import BedTrack, BedAesthetics
 from .axis import GenomicAxis, GenomicAxisAesthetics
 from .highlight import HighlightsFromFile, HighlightsAesthetics
 from .scaling import Autoscaler, Scaler
-from .overlay import BigwigOverlay, BigwigOverlayAesthetics
+from .overlay import OverlayTrack, OverlayTrackAesthetics, BigwigOverlay, BigwigOverlayAesthetics
 from .bigwig_collection import BigWigCollection, BigWigCollectionAesthetics
 from .bigwig_diff import BigWigDiff, BigWigDiffAesthetics
 from .cooler_track import CoolerTrack, CapcruncherTrack, CoolerAverage
@@ -92,6 +92,8 @@ __all__ = [
     "HighlightsAesthetics",
     "Autoscaler",
     "Scaler",
+    "OverlayTrack",
+    "OverlayTrackAesthetics",
     "BigwigOverlay",
     "BigwigOverlayAesthetics",
     "BigWigCollection",

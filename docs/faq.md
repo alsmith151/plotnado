@@ -1,0 +1,38 @@
+# FAQ
+
+## Do I need CoolBox?
+
+No. PlotNado is independent and does not require CoolBox.
+
+## Can I use DataFrames instead of files?
+
+Yes. BigWig-like signals, BED-like intervals, highlights, and links can be created from in-memory DataFrames.
+
+## How do I discover all options for a track?
+
+Use runtime introspection:
+
+```python
+from plotnado import Figure
+Figure.track_options("bigwig")
+Figure.track_options_markdown("bigwig")
+```
+
+or CLI:
+
+```bash
+plotnado track-options bigwig
+```
+
+## How do I apply consistent style to all tracks?
+
+Use `Figure(theme=...)` with `Theme.default()`, `Theme.minimal()`, or `Theme.publication()`.
+
+## How do I share figure definitions?
+
+Use TOML:
+
+```python
+fig.to_toml("plot.toml")
+loaded = Figure.from_toml("plot.toml")
+```

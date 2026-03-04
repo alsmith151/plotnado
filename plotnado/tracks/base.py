@@ -123,12 +123,19 @@ class Track(BaseModel, ABC):
         return set(model.model_fields.keys())
 
     def __getattr__(self, name: str) -> Any:
+        if name.startswith("_"):
+            return BaseModel.__getattr__(self, name)
+
         aesthetics = self.__dict__.get("aesthetics")
         if isinstance(aesthetics, BaseModel) and name in aesthetics.__class__.model_fields:
             return getattr(aesthetics, name)
         raise AttributeError(f"{self.__class__.__name__!s} has no attribute {name!r}")
 
     def __setattr__(self, name: str, value: Any) -> None:
+        if name.startswith("_"):
+            BaseModel.__setattr__(self, name, value)
+            return
+
         if name in type(self).model_fields:
             super().__setattr__(name, value)
             return

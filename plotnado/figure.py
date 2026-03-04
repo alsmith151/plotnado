@@ -31,6 +31,7 @@ from .tracks import (
     HLineTrack,
     LinksTrack,
     NarrowPeakTrack,
+    OverlayTrack,
     ScaleBar,
     Spacer,
     Track,
@@ -100,7 +101,7 @@ class Figure:
                 f"Unknown builtin theme: {theme}. Available: {[item.value for item in BuiltinTheme]}"
             ) from exc
 
-    def add_track(self, track: str | Track, **kwargs) -> Self:
+    def add_track(self, track: str | Track, **kwargs: Any) -> Self:
         """Add a track instance or track alias to the figure.
 
         Args:
@@ -127,7 +128,7 @@ class Figure:
         track.color = mcolors.to_hex(cmap(index % cmap.N))
         return track
 
-    def bigwig(self, data: Any, /, **kwargs) -> Self:
+    def bigwig(self, data: Any, /, **kwargs: Any) -> Self:
         """Add a BigWig signal track.
 
         Args:
@@ -140,7 +141,7 @@ class Figure:
         """
         return self.add_track("bigwig", data=data, **kwargs)
 
-    def genes(self, genome: str = "hg38", /, **kwargs) -> Self:
+    def genes(self, genome: str = "hg38", /, **kwargs: Any) -> Self:
         """Add a genes annotation track.
 
         Args:
@@ -153,7 +154,7 @@ class Figure:
         """
         return self.add_track("genes", genome=genome, **kwargs)
 
-    def axis(self, **kwargs) -> Self:
+    def axis(self, **kwargs: Any) -> Self:
         """Add a genomic coordinate axis track.
 
         Args:
@@ -165,7 +166,7 @@ class Figure:
         """
         return self.add_track("axis", **kwargs)
 
-    def scalebar(self, **kwargs) -> Self:
+    def scalebar(self, **kwargs: Any) -> Self:
         """Add a genomic scale bar track.
 
         Args:
@@ -177,7 +178,7 @@ class Figure:
         """
         return self.add_track("scalebar", **kwargs)
 
-    def spacer(self, height: float = 0.5, **kwargs) -> Self:
+    def spacer(self, height: float = 0.5, **kwargs: Any) -> Self:
         """Add an empty spacer track.
 
         Args:
@@ -190,7 +191,7 @@ class Figure:
         """
         return self.add_track("spacer", height=height, **kwargs)
 
-    def bed(self, data: Any, /, **kwargs) -> Self:
+    def bed(self, data: Any, /, **kwargs: Any) -> Self:
         """Add a BED interval track.
 
         Args:
@@ -203,7 +204,7 @@ class Figure:
         """
         return self.add_track("bed", data=data, **kwargs)
 
-    def cooler(self, file: str, /, **kwargs) -> Self:
+    def cooler(self, file: str, /, **kwargs: Any) -> Self:
         """Add a cooler/mcool matrix track.
 
         Args:
@@ -216,7 +217,7 @@ class Figure:
         """
         return self.add_track("cooler", file=file, **kwargs)
 
-    def bigwig_collection(self, files: list[str], /, **kwargs) -> Self:
+    def bigwig_collection(self, files: list[str], /, **kwargs: Any) -> Self:
         """Add a collection track for multiple BigWig files.
 
         Args:
@@ -229,7 +230,7 @@ class Figure:
         """
         return self.add_track("bigwig_collection", files=files, **kwargs)
 
-    def bigwig_diff(self, file_a: str, file_b: str, /, **kwargs) -> Self:
+    def bigwig_diff(self, file_a: str, file_b: str, /, **kwargs: Any) -> Self:
         """Add a two-signal BigWig difference track.
 
         Args:
@@ -243,7 +244,7 @@ class Figure:
         """
         return self.add_track("bigwig_diff", file_a=file_a, file_b=file_b, **kwargs)
 
-    def bigwig_overlay(self, tracks: list[Any], /, **kwargs) -> Self:
+    def bigwig_overlay(self, tracks: list[Any], /, **kwargs: Any) -> Self:
         """Add an overlay track containing multiple BigWig signals.
 
         Args:
@@ -256,7 +257,20 @@ class Figure:
         """
         return self.add_track("bigwig_overlay", tracks=tracks, **kwargs)
 
-    def narrowpeak(self, data: Any, /, **kwargs) -> Self:
+    def overlay(self, tracks: list[Any], /, **kwargs: Any) -> Self:
+        """Add a generic overlay track for multiple tracks on one axis.
+
+        Args:
+            tracks: Track inputs for overlay, usually track instances or BigWig paths.
+            **kwargs: `OverlayTrack` constructor kwargs; shorthand composition
+                routes aesthetics and label fields automatically.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("overlay", tracks=tracks, **kwargs)
+
+    def narrowpeak(self, data: Any, /, **kwargs: Any) -> Self:
         """Add a narrowPeak interval track.
 
         Args:
@@ -269,7 +283,7 @@ class Figure:
         """
         return self.add_track("narrowpeak", data=data, **kwargs)
 
-    def links(self, data: Any, /, **kwargs) -> Self:
+    def links(self, data: Any, /, **kwargs: Any) -> Self:
         """Add a genomic links/arcs track.
 
         Args:
@@ -282,7 +296,7 @@ class Figure:
         """
         return self.add_track("links", data=data, **kwargs)
 
-    def highlights(self, data: Any, /, **kwargs) -> Self:
+    def highlights(self, data: Any, /, **kwargs: Any) -> Self:
         """Add file-based highlighted regions spanning tracks.
 
         Args:
@@ -295,7 +309,7 @@ class Figure:
         """
         return self.add_track("highlight", data=data, **kwargs)
 
-    def hline(self, y_value: float, /, **kwargs) -> Self:
+    def hline(self, y_value: float, /, **kwargs: Any) -> Self:
         """Add a horizontal reference line.
 
         Args:
@@ -308,7 +322,7 @@ class Figure:
         """
         return self.add_track("hline", y_value=y_value, **kwargs)
 
-    def vline(self, x_position: int | str, /, **kwargs) -> Self:
+    def vline(self, x_position: int | str, /, **kwargs: Any) -> Self:
         """Add a vertical reference line.
 
         Args:
@@ -424,7 +438,7 @@ class Figure:
             self.highlight_alpha = alpha
         return self
 
-    def _create_track_from_alias(self, alias: str, **kwargs) -> Track:
+    def _create_track_from_alias(self, alias: str, **kwargs: Any) -> Track:
         alias_map = self._alias_map()
         key = alias.lower()
         if key not in alias_map:
@@ -493,7 +507,8 @@ class Figure:
             "bed": BedTrack,
             "axis": GenomicAxis,
             "highlight": HighlightsFromFile,
-            "bigwig_overlay": BigwigOverlay,
+            "bigwig_overlay": OverlayTrack,
+            "overlay": OverlayTrack,
             "narrowpeak": NarrowPeakTrack,
             "links": LinksTrack,
             "hline": HLineTrack,
@@ -555,7 +570,7 @@ class Figure:
         region: str | GenomicRegion,
         show: bool = False,
         extend: float | int | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> matplotlib.figure.Figure | None:
         """Render all tracks for a single genomic region.
 
@@ -669,7 +684,7 @@ class Figure:
                 return track
         return Genes(genome="hg38")
 
-    def plot_gene(self, gene: str, extend: float = 0.5, **kwargs) -> matplotlib.figure.Figure | None:
+    def plot_gene(self, gene: str, extend: float = 0.5, **kwargs: Any) -> matplotlib.figure.Figure | None:
         """Resolve a gene symbol to a region and plot it.
 
         Args:
@@ -720,7 +735,7 @@ class Figure:
             self.tracks.pop()
 
     def plot_regions(
-        self, regions: list[str] | str, ncols: int = 1, **kwargs
+        self, regions: list[str] | str, ncols: int = 1, **kwargs: Any
     ) -> list[matplotlib.figure.Figure]:
         """Plot one or many regions, optionally composing a multi-column grid.
 
@@ -797,6 +812,7 @@ class Figure:
                 BigWigCollection,
                 BigWigDiff,
                 BigwigOverlay,
+                OverlayTrack,
                 Genes,
                 GenomicAxis,
                 HighlightsFromFile,
@@ -891,7 +907,7 @@ class Figure:
         path: str | Path,
         region: str | GenomicRegion,
         dpi: int = 300,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Render one region and write it to disk."""
         fig = self.plot(region, show=False)
@@ -994,6 +1010,7 @@ def _inject_figure_method_option_docs() -> None:
         "bigwig_collection": "bigwig_collection",
         "bigwig_diff": "bigwig_diff",
         "bigwig_overlay": "bigwig_overlay",
+        "overlay": "overlay",
         "narrowpeak": "narrowpeak",
         "links": "links",
         "highlights": "highlight",

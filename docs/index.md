@@ -1,65 +1,78 @@
 # PlotNado
 
-PlotNado is a Python package for quick genome-browser-style plots with a Pydantic-first track architecture and a lightweight plotting API.
+PlotNado is a Python package for making clean, publication-ready genome browser plots with a fast, chainable API.
 
-# Installation
-
-To install PlotNado, you can use pip:
+## Install
 
 ```bash
-pip install git+https://github.com/alsmith151/plotnado
-
-# Once this is on pypi, you will be able to install it with:
-#pip install plotnado
-
+pip install plotnado
 ```
 
-# Usage
+## 5-minute quick start
 
-* Basic plotting [example notebook](basic_example.ipynb).
-* Simple overlays of multiple tracks [example notebook](simple_overlays.ipynb).
+```python
+from plotnado import Figure
+import numpy as np
+import pandas as pd
 
-## Track aliases
+bins = np.arange(1_000_000, 1_100_000, 1_000)
+signal = pd.DataFrame({
+	"chrom": "chr1",
+	"start": bins,
+	"end": bins + 1_000,
+	"value": 5 + 2 * np.sin(np.linspace(0, 6, len(bins))),
+})
 
-When using `Figure.add_track()`, you can pass aliases instead of constructing track classes directly.
+fig = Figure()
+fig.scalebar().axis().genes("hg38")
+fig.bigwig(signal, title="Synthetic signal", style="fill")
+fig.save("quickstart.png", "chr1:1,010,000-1,080,000")
+```
 
-| Alias | Track Class |
-|---|---|
-| `scalebar` / `scale` | `ScaleBar` |
-| `axis` | `GenomicAxis` |
-| `genes` | `Genes` |
-| `spacer` | `Spacer` |
-| `bigwig` | `BigWigTrack` |
-| `bed` | `BedTrack` |
-| `highlight` | `HighlightsFromFile` |
-| `bigwig_overlay` | `BigwigOverlay` |
-| `bigwig_collection` | `BigWigCollection` |
-| `bigwig_diff` | `BigWigDiff` |
-| `narrowpeak` | `NarrowPeakTrack` |
-| `links` | `LinksTrack` |
-| `hline` | `HLineTrack` |
-| `vline` | `VLineTrack` |
-| `cooler` | `CoolerTrack` |
-| `capcruncher` | `CapcruncherTrack` |
-| `cooler_average` | `CoolerAverage` |
+Example output:
 
-For full details (constructor arguments, examples, and old→new migration mapping), see [Track Aliases](track_aliases.md).
+![Quickstart plot](images/examples/quickstart_first_plot.png)
 
-## Shorthand Composition
+## Learn by task
 
-`Figure` methods support shorthand composition for readability.
+- New user setup: [Installation](installation.md)
+- First figure quickly: [Quick Start](quickstart.md)
+- Add tracks faster with aliases: [Build Tracks Fast](quickstart_tracks.md)
+- Browse track types and options: [Track Catalog](track_catalog.md)
+- Multi-panel plotting and figure workflows: [Figure Workflows](figure_workflows.md)
+- Practical configurations: [Recipes](recipes.md)
+- Input data formats and requirements: [Data Inputs](data_inputs.md)
+- CLI usage and option discovery: [CLI](cli.md)
 
-- Pass track fields directly (for example `title=...`, `height=...`).
-- Pass aesthetics fields directly (for example `color=...`, `alpha=...`) and they are auto-packed into `aesthetics`.
-- Pass label fields directly (for example `plot_title=False`) and they are auto-packed into `label`.
+## Example scripts
+
+Run these from the repository root:
+
+```bash
+python examples/basic_figure.py
+python examples/advanced_features.py
+python examples/run_examples.py
+```
+
+Focused examples are organized in:
+
+- `examples/quickstart/`
+- `examples/tracks/`
+- `examples/recipes/`
+
+Sample outputs:
+
+![Basic figure](images/examples/basic_figure.png)
+![Advanced features](images/examples/advanced_features.png)
+
+## Option discovery
 
 ```python
 from plotnado import Figure
 
-fig = Figure()
-fig.bigwig("chip.bw", title="ChIP", color="#1f77b4", alpha=0.7, plot_title=False)
+Figure.available_track_aliases()
+Figure.track_options("bigwig")
+Figure.track_options_markdown("genes")
 ```
-
-Explicit nested models still work and can be mixed with shorthand; shorthand values take precedence for the keys provided.
 
 
