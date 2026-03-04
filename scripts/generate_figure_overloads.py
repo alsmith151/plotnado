@@ -110,7 +110,7 @@ def _compose_fields(
     label_fields: list[tuple[str, str]] = []
     seen: set[str] = set()
 
-    for name, field_info in track_cls.model_fields.items():
+    for name, field_info in sorted(track_cls.model_fields.items()):
         if name in {"aesthetics", "label"}:
             continue
         if name in positional_args:
@@ -123,13 +123,13 @@ def _compose_fields(
     if include_aesthetics:
         aesthetics_model = getattr(track_cls, "aesthetics_model")()
         if aesthetics_model is not None:
-            for name, field_info in aesthetics_model.model_fields.items():
+            for name, field_info in sorted(aesthetics_model.model_fields.items()):
                 if name in seen:
                     continue
                 aesthetics_fields.append((name, _annotation_to_str(field_info.annotation)))
                 seen.add(name)
 
-    for name, field_info in LabelConfig.model_fields.items():
+    for name, field_info in sorted(LabelConfig.model_fields.items()):
         if name in seen:
             continue
         label_fields.append((name, _annotation_to_str(field_info.annotation)))
