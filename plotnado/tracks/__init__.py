@@ -44,7 +44,7 @@ from .cooler_track import CoolerTrack, CapcruncherTrack, CoolerAverage
 from .peaks import NarrowPeakTrack, NarrowPeakAesthetics
 from .links import LinksTrack, LinksAesthetics
 from .annotations import HLineTrack, VLineTrack, AnnotationAesthetics
-<<<<<<< HEAD
+
 from .quantnado import (
     QuantNadoCoverageTrack,
     QuantNadoCoverageAesthetics,
@@ -55,8 +55,7 @@ from .quantnado import (
     QuantNadoVariantTrack,
     QuantNadoVariantAesthetics,
 )
-=======
->>>>>>> 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
+ 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
 
 GeneTrack = Genes
 AxisTrack = GenomicAxis
@@ -125,7 +124,7 @@ __all__ = [
     "HLineTrack",
     "VLineTrack",
     "AnnotationAesthetics",
-<<<<<<< HEAD
+
     "QuantNadoCoverageTrack",
     "QuantNadoCoverageAesthetics",
     "QuantNadoStrandedCoverageTrack",
@@ -134,6 +133,5 @@ __all__ = [
     "QuantNadoMethylationAesthetics",
     "QuantNadoVariantTrack",
     "QuantNadoVariantAesthetics",
-=======
->>>>>>> 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
+ 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
 ]
