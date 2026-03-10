@@ -1,6 +1,6 @@
 # Track Catalog
 
-This page summarizes major track types and points to runnable scripts.
+This page summarizes major track families and points to runnable scripts.
 
 ## Structural tracks
 
@@ -10,36 +10,30 @@ This page summarizes major track types and points to runnable scripts.
 
 ## Signal tracks
 
-- `bigwig` (`BigWigTrack`): continuous or interval signal (`style`: `fill`, `fragment`, `scatter`).
-- `overlay` (`OverlayTrack`): generic overlay panel for multiple tracks/signals.
-- `bigwig_overlay` (`BigwigOverlay`): backward-compatible alias of `OverlayTrack`.
-- `bigwig_collection` (`BigWigCollection`): collection workflows for multiple BigWigs.
+- `bigwig` (`BigWigTrack`): continuous/interval signal (`style`: `fill`, `fragment`, `scatter`, `std`).
+- `overlay` (`OverlayTrack`): multi-signal overlay panel.
+- `bigwig_overlay` (`BigwigOverlay`): compatibility alias for `overlay`.
+- `bigwig_collection` (`BigWigCollection`): multi-BigWig collection workflows.
 - `bigwig_diff` (`BigWigDiff`): subtraction/ratio/log2ratio between two tracks.
 
-Runnable scripts:
+Scripts:
 
 - `examples/tracks/01_bigwig_styles.py`
 - `examples/recipes/01_autoscale_overlay_highlight.py`
 
-![BigWig styles](images/examples/track_bigwig_styles.png)
-![Overlay recipe](images/examples/recipe_autoscale_overlay_highlight.png)
-
 ## Interval and annotation tracks
 
 - `bed` (`BedTrack`): interval rectangles with optional labels.
-- `narrowpeak` (`NarrowPeakTrack`): peak-specific intervals with summit and score-based colors.
-- `genes` (`Genes`): gene models from bundled genome annotations or custom files.
+- `narrowpeak` (`NarrowPeakTrack`): peak intervals with summit/score support.
+- `genes` (`Genes`): gene models from bundled or custom annotations.
 - `links` (`LinksTrack`): arcs for BEDPE-style interactions.
-- `hline` / `vline`: reference lines.
 - `highlight` (`HighlightsFromFile`): region overlays.
+- `hline` / `vline`: reference lines.
 
-Runnable scripts:
+Scripts:
 
 - `examples/tracks/02_bed_and_narrowpeak.py`
 - `examples/tracks/03_links_annotations.py`
-
-![BED and narrowPeak](images/examples/track_bed_and_narrowpeak.png)
-![Links and annotations](images/examples/track_links_annotations.png)
 
 ## Matrix tracks
 
@@ -47,24 +41,32 @@ Runnable scripts:
 - `capcruncher` (`CapcruncherTrack`)
 - `cooler_average` (`CoolerAverage`)
 
-These require cooler-compatible input files.
-
+These require cooler-compatible files.
 
 ## QuantNado tracks
 
-- `quantnado_coverage` (`QuantNadoCoverageTrack`): single-sample coverage track.
-- `quantnado_stranded_coverage` (`QuantNadoStrandedCoverageTrack`): mirrored +/− strand coverage.
-- `quantnado_methylation` (`QuantNadoMethylationTrack`): per-CpG methylation scatter.
-- `quantnado_variant` (`QuantNadoVariantTrack`): variant allele-frequency lollipop track.
+- `quantnado_coverage`
+- `quantnado_stranded_coverage`
+- `quantnado_methylation`
+- `quantnado_variant`
 
-These tracks accept either:
+These support object-backed and array-backed workflows.
 
-- a live `quantnado` object (or `dataset_path`) for region-time fetching, or
-- precomputed xarray-like arrays with dims `(sample, position)`.
-## Option reference
+## Field-level options
 
-For full per-field options and descriptions:
+- Runtime introspection: `GenomicFigure.track_options("<alias>")`
+- Full generated table: [Aesthetics Reference](aesthetics_reference.md)
+- Script mapping by track: [Example Coverage](example_coverage.md)
 
-- [Track Aliases](track_aliases.md)
-- [Aesthetics Reference](aesthetics_reference.md)
-- `GenomicFigure.track_options("<alias>")`
+## Coverage snapshot
+
+| Track / alias | Coverage | Primary example(s) |
+|---|---|---|
+| `scalebar`, `axis`, `genes` | Runnable script | `examples/quickstart/01_first_plot.py`, `examples/recipes/03_gene_label_strategies.py` |
+| `bigwig` | Runnable script | `examples/tracks/01_bigwig_styles.py`, `examples/basic_figure.py` |
+| `bed`, `narrowpeak` | Runnable script | `examples/tracks/02_bed_and_narrowpeak.py` |
+| `links`, `hline`, `vline` | Runnable script | `examples/tracks/03_links_annotations.py` |
+| `highlight`, `overlay` | Runnable script | `examples/recipes/01_autoscale_overlay_highlight.py` |
+| `bigwig_collection`, `bigwig_diff` | Documented pattern | `docs/recipes.md` |
+| `cooler`, `capcruncher`, `cooler_average` | Documented pattern | `docs/track_catalog.md` |
+| QuantNado aliases | Documented pattern | `docs/quickstart_tracks.md` |

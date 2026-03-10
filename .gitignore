@@ -10,6 +10,7 @@ plotnado_figures/
 *.pdf
 *.png
 *.svg
+!docs/assets/plotnado-logo.svg
 template.toml
 genes_to_json.ipynb
 plot_chipment_and_mcc.ipynb

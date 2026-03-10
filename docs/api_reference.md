@@ -25,6 +25,37 @@ Each option payload is split into:
 - `aesthetics`: style model fields (`aesthetics={...}` or shorthand kwargs).
 - `label`: label controls (`label={...}` or shorthand kwargs).
 
+## `GenomicFigure` helper methods: automatic kwargs
+
+For helper methods like `gf.bigwig(...)`, kwargs can be provided in shorthand form and PlotNado routes them automatically:
+
+- Track fields: passed directly.
+- Aesthetics fields: routed into `aesthetics`.
+- Label fields: routed into `label`.
+
+```python
+from plotnado import GenomicFigure
+
+gf = GenomicFigure()
+gf.bigwig(
+    "signal.bw",
+    title="Sample A",      # label
+    title_color="black",   # label
+    style="std",           # aesthetics
+    color="#1f77b4",       # aesthetics
+    alpha=0.8,             # aesthetics
+)
+```
+
+`color_group` is a track-level kwarg and works well with `gf.autocolor()` for consistent sample coloring:
+
+```python
+gf = GenomicFigure(theme="publication")
+gf.autocolor()
+gf.bed("sampleA.bigBed", title="A peaks", color_group="sampleA")
+gf.bigwig("sampleA.bw", title="A signal", color_group="sampleA")
+```
+
 ## Common entry points
 
 - `plotnado.GenomicFigure`: high-level composition (`add_track`, `plot`, `plot_regions`, `plot_gene`, `to_toml`, `from_toml`).

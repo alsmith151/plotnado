@@ -3,8 +3,10 @@ nav:
   - Home: index.md
   - Installation: installation.md
   - Quick Start: quickstart.md
-  - Build Tracks Fast: quickstart_tracks.md
+  - Best Practices: best_practices.md
+  - Track Construction: quickstart_tracks.md
   - Track Catalog: track_catalog.md
+  - Example Coverage: example_coverage.md
   - Figure Workflows: figure_workflows.md
   - Recipes: recipes.md
   - Data Inputs: data_inputs.md
@@ -19,6 +21,8 @@ nav:
 
 theme:
   name: mkdocs
+  logo: assets/plotnado-logo.svg
+  favicon: assets/plotnado-logo.svg
 markdown_extensions:
   - toc:
       permalink: true
