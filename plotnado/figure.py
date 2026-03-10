@@ -145,19 +145,38 @@ class GenomicFigure:
         if isinstance(track, str):
             track = self._create_track_from_alias(track, **kwargs)
         track = self._apply_theme_to_track(track)
-        track = self._apply_autocolor_to_track(track, index=len(self.tracks))
+        track = self._apply_autocolor_to_track(track)
         self.tracks.append(track)
         return self
 
-    def _apply_autocolor_to_track(self, track: Track, index: int) -> Track:
-        if self._autocolor_palette is None or not track.has_aesthetic("color"):
+    def _apply_autocolor_to_track(self, track: Track) -> Track:
+        if self._autocolor_palette is None or not self._should_autocolor_track(track):
             return track
 
         import matplotlib.colors as mcolors
 
         cmap = plt.get_cmap(self._autocolor_palette)
+        index = sum(1 for existing_track in self.tracks if self._should_autocolor_track(existing_track))
         track.color = mcolors.to_hex(cmap(index % cmap.N))
         return track
+
+    @staticmethod
+    def _is_meta_track(track: Track) -> bool:
+        return isinstance(
+            track,
+            (
+                ScaleBar,
+                GenomicAxis,
+                HighlightsFromFile,
+                Spacer,
+                HLineTrack,
+                VLineTrack,
+            ),
+        )
+
+    @classmethod
+    def _should_autocolor_track(cls, track: Track) -> bool:
+        return track.has_aesthetic("color") and not cls._is_meta_track(track)
 
     # BEGIN AUTO-GENERATED OVERLOAD: bigwig
     @overload
@@ -1102,9 +1121,11 @@ class GenomicFigure:
         import matplotlib.colors as mcolors
 
         cmap = plt.get_cmap(palette)
-        for index, track in enumerate(self.tracks):
-            if track.has_aesthetic("color"):
-                track.color = mcolors.to_hex(cmap(index % cmap.N))
+        color_index = 0
+        for track in self.tracks:
+            if self._should_autocolor_track(track):
+                track.color = mcolors.to_hex(cmap(color_index % cmap.N))
+                color_index += 1
         return self
 
     def highlight(self, region: str | GenomicRegion) -> Self:

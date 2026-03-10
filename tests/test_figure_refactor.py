@@ -236,6 +236,40 @@ class TestFigureRefactor:
         expected = mcolors.to_hex(plt.get_cmap("tab10")(0))
         assert fig.tracks[0].color == expected
 
+    def test_autocolor_skips_meta_tracks_and_keeps_data_palette_contiguous(self):
+        signal_df = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [100, 200],
+                "end": [200, 300],
+                "value": [1.0, 2.0],
+            }
+        )
+        highlight_df = pd.DataFrame(
+            {
+                "chrom": ["chr1"],
+                "start": [120],
+                "end": [180],
+            }
+        )
+
+        fig = GenomicFigure().autocolor("tab10")
+        fig.add_track("axis")
+        fig.add_track("scale")
+        fig.add_track("highlight", data=highlight_df)
+        fig.add_track(BigWigTrack(data=signal_df))
+        fig.add_track(BigWigTrack(data=signal_df))
+
+        cmap = plt.get_cmap("tab10")
+        expected_first = mcolors.to_hex(cmap(0))
+        expected_second = mcolors.to_hex(cmap(1))
+
+        assert fig.tracks[0].color == "#666666"
+        assert fig.tracks[1].color == "#333333"
+        assert fig.tracks[2].color == "yellow"
+        assert fig.tracks[3].color == expected_first
+        assert fig.tracks[4].color == expected_second
+
     def test_toml_roundtrip(self):
         pytest.importorskip("tomli_w")
         fig = GenomicFigure().add_track(ScaleBar())
