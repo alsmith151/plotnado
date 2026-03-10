@@ -25,3 +25,6 @@ test.def
 .jupyter/labconfig/page_config.json
 .local/share/jupyter/runtime/jupyter_cookie_secret
 .DS_Store
+plan-apiUsabilityOverhaul.prompt.md
+pytestdebug.log
+run_tests.py

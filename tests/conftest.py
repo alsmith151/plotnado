@@ -102,6 +102,12 @@ def mock_warning(recwarn):
         raise AssertionError(f"Warnings were raised: {recwarn.list}")
 
 
+
+@pytest.fixture
+def mock_access():
+    """Return a mocked access function for testing."""
+    return MagicMock(return_value=True)
+
 @pytest.fixture
 def clean_up_temp_files():
     """Fixture to clean up temporary files after tests."""

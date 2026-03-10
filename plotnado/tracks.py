@@ -5,6 +5,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 import shutil
+from enum import Enum
 
 import matplotlib.axes
 import matplotlib.axis
@@ -579,11 +580,166 @@ class ScaleBar(Track):
         # Clean the axis
         clean_axis(ax)
 
+def check_command(command: str) -> bool:
+    """
+    Check if a command is available in the system PATH.
+
+    Args:
+        command (str): The command to check
+
+    Returns:
+        bool: True if the command is available, False otherwise
+    """
+    try:
+        subprocess.run([command, "--version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return True
+    except FileNotFoundError:
+        return False
+
+
+
+class FileType(Enum):
+    """
+    Enum for file types
+    """
+    GTF = "gtf"
+    BED4 = "bed4"
+    BED6 = "bed6"
+    BED12 = "bed12"
+    GFF = "gff"
+    VCF = "vcf"
+    BAM = "bam"
+    BIGWIG = "bigwig"
+    BIGBED = "bigbed"
+    FASTA = "fasta"
+    FASTQ = "fastq"
+    GFF = "gff"
+
+
+
+class GenomicsFile(BaseModel):
+    """
+    A class to represent the file type of a file.
+    """
+    file: Path
+    file_type: FileType
+    is_compressed: bool = False
+    is_tabix_indexed: bool = False
+
+    @staticmethod
+    def _has_tabix_index(file: Path) -> bool:
+        """
+        Check if the file has a tabix index.
+
+        Args:
+            file (Path): The file to check
+
+        Returns:
+            bool: True if the file has a tabix index, False otherwise
+        """
+        has_tabix_index = False
+
+        if file.with_suffix(".tbi").exists():
+            has_tabix_index = True
+        elif file.with_suffix(".gz.tbi").exists():
+            has_tabix_index = True
+        elif file.suffix == '.tbi':
+            has_tabix_index = True
+        
+        return has_tabix_index
+
+    @staticmethod
+    def get_bed_type(file: Path) -> FileType:
+        """
+        Get the bed type of a file.
+
+        Args:
+            file (Path): The file to check
+
+        Returns:
+            FileType: The bed type of the file
+        """
+        df = pd.read_csv(file, sep="\t", header=None, nrows=2)
+
+        if df.shape[1] == 4:
+            return FileType.BED4
+        elif df.shape[1] == 6:
+            return FileType.BED6
+        elif df.shape[1] == 12:
+            return FileType.BED12
+        else:
+            raise ValueError("Unknown BED file format")
+
+    @classmethod
+    def from_file(cls, file: Path) -> "GenomicsFile":
+        """
+        Create a GenomicsFile object from a file.
+
+        Args:
+            file (Path): The file to create the object from
+
+        Returns:
+            GenomicsFile: The GenomicsFile object
+        """
+
+        is_compressed = file.suffix == ".gz"
+        is_tabix_indexed = cls._has_tabix_index(file)
+
+        if is_compressed:
+            file = file.with_suffix("")
+        
+        match file.suffix.lower():
+            case ".gtf":
+                file_type = FileType.GTF
+            case ".bed":
+                # Check if the file is bed4, bed6 or bed12
+                file_type = cls.get_bed_type(file)
+            case ".gff":
+                file_type = FileType.GFF
+            case "bigwig" | ".bw":
+                file_type = FileType.BIGWIG
+            case "bigbed" | ".bb":
+                file_type = FileType.BIGBED
+            case _:
+                raise ValueError(f"Unsupported track type: {file.suffix}")
+            
+        return cls(
+            file=file,
+            file_type=file_type,
+            is_compressed=is_compressed,
+            is_tabix_indexed=is_tabix_indexed,
+        )
+
+class TabixIndxer:
+    """
+    A class to create a tabix index for files
+    """
+    def __init__(self, file: Path):
+        self.file = file
+
+    
+
+
+
+
+
+
+
+
+
 
 def tabix_gtf(file: Path) -> Path:
     """
     Create a tabix index for a GTF file using pathlib and subprocess without shell=True.
+    
     """
+
+    # Check if all required commands are available
+    for cmd in ["sort", "bgzip", "tabix"]:
+        if not check_command(cmd):
+            raise RuntimeError(f"{cmd} command not found. Please install it.")
+
+
     # Define temporary and output file paths
     sorted_file = file.parent / f"{file.name}.sorted"
     gz_file = file.parent / f"{file.name}.gz"
@@ -679,17 +835,33 @@ class Genes(Track):
     current_row_num: int = 0
 
     def fetch_data(self, gr: GenomicRegion) -> pd.DataFrame:
+        """
+        Fetch the data from the disk or from a dataframe.
+
+        Args:
+            gr (GenomicRegion): The genomic region to fetch the data for
+        Returns:
+            pd.DataFrame: The data for the genomic region
+        Raises:
+            ValueError: If the data is not in the correct format
+        """
         if self.data is None and self.genome is None:
             raise ValueError("Either data or genome must be provided")
         elif self.data is None:
             # Data stored in a json based genes database within the package
             data = self._fetch_genes_from_package(gr)
         elif isinstance(self.data, Path):
+            # Data stored in a file
             fn_string = str(self.data)
+
             if fn_string.endswith(".gtf.gz") or fn_string.endswith(".gtf"):
+                # Data is in gtf format
                 data = self._fetch_from_disk_gtf(gr)
+
             elif fn_string.endswith(".bed.gz") or fn_string.endswith(".bed"):
+                # Data is in bed format
                 data = self._fetch_from_disk_bed12(gr)
+
             else:
                 raise ValueError(
                     "Unsupported file format. Only .gtf and .bed files are supported."
@@ -784,6 +956,10 @@ class Genes(Track):
             except OSError:
                 # Assume that the user does not have permission to write to the directory
                 # and the file is not tabix indexed
+                logger.warning(
+                    "Cannot write to the directory. Creating a temporary file."
+                    " Please make sure that the file is tabix indexed to avoid this warning."
+                )
                 temp_file = tempfile.NamedTemporaryFile(delete=False)
                 shutil.copy(data_path, temp_file.name)
                 data = tabix_gtf(Path(temp_file.name))

@@ -48,6 +48,39 @@ class TestGenes:
         assert isinstance(genes_df, pd.DataFrame)
         assert not genes_df.empty
 
+
+    @patch('os.access')
+    @patch('os.path.dirname')
+    def test_handle_write_permission_error(self, mock_dirname, mock_gettempdir, mock_access, genomic_region, test_gtf_file, mock_ax):
+        """Test that Genes handles write permission errors."""
+        # Setup
+        mock_access.return_value = False
+        mock_dirname.return_value = "/fake/readonly/dir"
+
+        # Create a Genes instance with the test GTF file
+        genes = Genes(
+            title="Test Genes",
+            aesthetics=GenesAesthetics(),
+            data=test_gtf_file
+        )
+
+        # Check data fetching works despite persmission issues
+        data = genes.fetch_data(genomic_region)
+        assert not data.empty
+        
+        # Test the plotting functionality to ensure it works with write permission issues
+        genes.plot_genes(ax=mock_ax, gr=genomic_region)
+        
+        # Verify expected behavior
+        mock_access.assert_called()  # Permission check was performed
+        mock_gettempdir.assert_called()  # Temp directory was used as fallback
+        
+        # Verify the plot was set up correctly
+        mock_ax.set_xlim.assert_called_once_with(genomic_region.start, genomic_region.end)
+        mock_ax.set_ylim.assert_called_once_with(0, 1)
+
+            
+
     @patch.object(Genes, "fetch_data")
     @patch.object(Genes, "_allocate_row_index")
     @patch.object(Genes, "_compute_extended_end_bp")
