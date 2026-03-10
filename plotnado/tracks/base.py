@@ -100,6 +100,10 @@ class Track(BaseModel, ABC):
         default=None,
         description="Tracks sharing the same group id are y-scaled together.",
     )
+    color_group: str | None = Field(
+        default=None,
+        description="Tracks sharing this id use the same autocolor/theme-palette color.",
+    )
     label: LabelConfig = Field(
         default_factory=LabelConfig,
         description="Unified label and scale rendering configuration.",

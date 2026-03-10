@@ -147,9 +147,10 @@ class GenomicFigure:
         if isinstance(track, str):
             track = self._create_track_from_alias(track, **kwargs)
         track = self._apply_theme_to_track(track)
-        track = self._apply_autocolor_to_track(track)
         self.tracks.append(track)
-        if self._autocolor_palette is None:
+        if self._autocolor_palette is not None:
+            self._apply_autocolor()
+        else:
             self._apply_theme_palette()
         return self
 
@@ -158,6 +159,14 @@ class GenomicFigure:
         aesthetics = getattr(track, "aesthetics", None)
         explicit_fields = getattr(aesthetics, "model_fields_set", set())
         return field_name in explicit_fields
+
+    @staticmethod
+    def _set_auto_color(track: Track, color: str) -> None:
+        track.color = color
+        aesthetics = getattr(track, "aesthetics", None)
+        explicit_fields = getattr(aesthetics, "model_fields_set", None)
+        if isinstance(explicit_fields, set):
+            explicit_fields.discard("color")
 
     @staticmethod
     def _label_field_explicitly_set(track: Track, field_name: str) -> bool:
@@ -203,25 +212,28 @@ class GenomicFigure:
         if not auto_color_tracks:
             return
 
-        for index, track in enumerate(auto_color_tracks):
-            track.color = self.theme.palette[index % len(self.theme.palette)]
+        explicit_group_colors = {
+            track.color_group: track.color
+            for track in eligible_tracks
+            if track.color_group and self._aesthetic_explicitly_set(track, "color")
+        }
 
-    def _apply_autocolor_to_track(self, track: Track) -> Track:
-        if self._autocolor_palette is None or not self._should_autocolor_track(track):
-            return track
+        assigned_groups: dict[str, str] = {}
+        palette_index = 0
+        for track in auto_color_tracks:
+            group = track.color_group
+            if group and group in explicit_group_colors:
+                self._set_auto_color(track, explicit_group_colors[group])
+                continue
+            if group and group in assigned_groups:
+                self._set_auto_color(track, assigned_groups[group])
+                continue
 
-        import matplotlib.colors as mcolors
-
-        index = sum(1 for existing_track in self.tracks if self._should_autocolor_track(existing_track))
-        if isinstance(self._autocolor_palette, list):
-            if not self._autocolor_palette:
-                return track
-            track.color = self._autocolor_palette[index % len(self._autocolor_palette)]
-            return track
-
-        cmap = plt.get_cmap(self._autocolor_palette)
-        track.color = mcolors.to_hex(cmap(index % cmap.N))
-        return track
+            color = self.theme.palette[palette_index % len(self.theme.palette)]
+            palette_index += 1
+            self._set_auto_color(track, color)
+            if group:
+                assigned_groups[group] = color
 
     @staticmethod
     def _is_meta_track(track: Track) -> bool:
@@ -249,6 +261,7 @@ class GenomicFigure:
         /,
         *,
         autoscale_group: str | None = ...,
+        color_group: str | None = ...,
         height: float = ...,
         title: str | None = ...,
         y_max: float | None = ...,
@@ -310,6 +323,7 @@ class GenomicFigure:
         /,
         *,
         autoscale_group: str | None = ...,
+        color_group: str | None = ...,
         data: Path | str | DataFrame | None = ...,
         gene_count: int = ...,
         height: float = ...,
@@ -389,6 +403,7 @@ class GenomicFigure:
         self,
         *,
         autoscale_group: str | None = ...,
+        color_group: str | None = ...,
         data: Any | None = ...,
         height: float = ...,
         show_chromosome: bool = ...,
@@ -441,6 +456,7 @@ class GenomicFigure:
         self,
         *,
         autoscale_group: str | None = ...,
+        color_group: str | None = ...,
         data: Any | None = ...,
         height: float = ...,
         title: str = ...,
@@ -494,6 +510,7 @@ class GenomicFigure:
         /,
         *,
         autoscale_group: str | None = ...,
+        color_group: str | None = ...,
         data: Any | None = ...,
         title: str = ...,
         data_range_style: DataRangeStyle = ...,
@@ -538,6 +555,7 @@ class GenomicFigure:
         /,
         *,
         autoscale_group: str | None = ...,
+        color_group: str | None = ...,
         height: float = ...,
         title: str | None = ...,
         alpha: float = ...,
@@ -593,6 +611,7 @@ class GenomicFigure:
         *,
         autoscale_group: str | None = ...,
         balance: bool = ...,
+        color_group: str | None = ...,
         data: Any | None = ...,
         height: float = ...,
         resolution: int | None = ...,
@@ -643,6 +662,7 @@ class GenomicFigure:
         /,
         *,
         autoscale_group: str | None = ...,
+        color_group: str | None = ...,
         data: Any | None = ...,
         height: float = ...,
         title: str | None = ...,
@@ -695,6 +715,7 @@ class GenomicFigure:
         /,
         *,
         autoscale_group: str | None = ...,
+        color_group: str | None = ...,
         data: Any | None = ...,
         height: float = ...,
         method: BigWigDiffMethod = ...,
@@ -751,6 +772,7 @@ class GenomicFigure:
         /,
         *,
         autoscale_group: str | None = ...,
+        color_group: str | None = ...,
         data: Any | None = ...,
         height: float = ...,
         title: str | None = ...,
@@ -803,6 +825,7 @@ class GenomicFigure:
         /,
         *,
         autoscale_group: str | None = ...,
+        color_group: str | None = ...,
         data: Any | None = ...,
         height: float = ...,
         title: str | None = ...,
@@ -853,6 +876,7 @@ class GenomicFigure:
         /,
         *,
         autoscale_group: str | None = ...,
+        color_group: str | None = ...,
         height: float = ...,
         title: str | None = ...,
         alpha: float = ...,
@@ -914,6 +938,7 @@ class GenomicFigure:
         /,
         *,
         autoscale_group: str | None = ...,
+        color_group: str | None = ...,
         height: float = ...,
         title: str | None = ...,
         alpha: float = ...,
@@ -968,6 +993,7 @@ class GenomicFigure:
         /,
         *,
         autoscale_group: str | None = ...,
+        color_group: str | None = ...,
         height: float = ...,
         title: str | None = ...,
         alpha: float = ...,
@@ -1016,6 +1042,7 @@ class GenomicFigure:
         /,
         *,
         autoscale_group: str | None = ...,
+        color_group: str | None = ...,
         data: Any | None = ...,
         height: float = ...,
         title: str | None = ...,
@@ -1066,6 +1093,7 @@ class GenomicFigure:
         /,
         *,
         autoscale_group: str | None = ...,
+        color_group: str | None = ...,
         data: Any | None = ...,
         height: float = ...,
         title: str | None = ...,
@@ -1200,21 +1228,51 @@ class GenomicFigure:
                 palette = "tab10"
 
         self._autocolor_palette = palette
+        self._apply_autocolor()
+        return self
+
+    def _apply_autocolor(self) -> None:
+        if self._autocolor_palette is None:
+            return
+
         import matplotlib.colors as mcolors
 
+        auto_tracks = [
+            track
+            for track in self.tracks
+            if self._should_autocolor_track(track)
+        ]
+        if not auto_tracks:
+            return
+
+        explicit_group_colors = {
+            track.color_group: track.color
+            for track in auto_tracks
+            if track.color_group and self._aesthetic_explicitly_set(track, "color")
+        }
+        assigned_groups: dict[str, str] = {}
         color_index = 0
-        for track in self.tracks:
-            if not self._should_autocolor_track(track):
+
+        for track in auto_tracks:
+            group = track.color_group
+            if group and group in explicit_group_colors:
+                self._set_auto_color(track, explicit_group_colors[group])
                 continue
-            if isinstance(palette, list):
-                if not palette:
+            if group and group in assigned_groups:
+                self._set_auto_color(track, assigned_groups[group])
+                continue
+
+            if isinstance(self._autocolor_palette, list):
+                if not self._autocolor_palette:
                     continue
-                track.color = palette[color_index % len(palette)]
+                color = self._autocolor_palette[color_index % len(self._autocolor_palette)]
             else:
-                cmap = plt.get_cmap(palette)
-                track.color = mcolors.to_hex(cmap(color_index % cmap.N))
+                cmap = plt.get_cmap(self._autocolor_palette)
+                color = mcolors.to_hex(cmap(color_index % cmap.N))
             color_index += 1
-        return self
+            self._set_auto_color(track, color)
+            if group:
+                assigned_groups[group] = color
 
     def highlight(self, region: str | GenomicRegion) -> Self:
         """Register a genomic region to draw as a background highlight."""

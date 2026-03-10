@@ -27,6 +27,7 @@ class BigwigKwargs(TypedDict, total=False):
     title: str | None
     height: float
     autoscale_group: str | None
+    color_group: str | None
     y_min: float | None
     y_max: float | None
     style: PlotStyle
@@ -69,6 +70,7 @@ class GenesKwargs(TypedDict, total=False):
     data: Path | str | DataFrame | None
     height: float
     autoscale_group: str | None
+    color_group: str | None
     row_scale: float
     small_relative: float
     gene_count: int
@@ -130,6 +132,7 @@ class AxisKwargs(TypedDict, total=False):
     data: Any | None
     height: float
     autoscale_group: str | None
+    color_group: str | None
     show_chromosome: bool
     color: str
     font_size: int
@@ -165,6 +168,7 @@ class ScalebarKwargs(TypedDict, total=False):
     data: Any | None
     height: float
     autoscale_group: str | None
+    color_group: str | None
     style: PlotStyle
     color: str
     position: Position
@@ -198,6 +202,7 @@ class SpacerKwargs(TypedDict, total=False):
     title: str
     data: Any | None
     autoscale_group: str | None
+    color_group: str | None
     plot_title: bool
     plot_scale: bool
     label_on_track: bool
@@ -222,6 +227,7 @@ class BedKwargs(TypedDict, total=False):
     title: str | None
     height: float
     autoscale_group: str | None
+    color_group: str | None
     color: str
     edge_color: str
     alpha: float
@@ -257,6 +263,7 @@ class CoolerKwargs(TypedDict, total=False):
     data: Any | None
     height: float
     autoscale_group: str | None
+    color_group: str | None
     resolution: int | None
     balance: bool
     transform: CoolerTransform
@@ -288,6 +295,7 @@ class BigwigCollectionKwargs(TypedDict, total=False):
     data: Any | None
     height: float
     autoscale_group: str | None
+    color_group: str | None
     colors: list[str] | None
     labels: list[str] | None
     alpha: float
@@ -317,6 +325,7 @@ class BigwigDiffKwargs(TypedDict, total=False):
     data: Any | None
     height: float
     autoscale_group: str | None
+    color_group: str | None
     method: BigWigDiffMethod
     positive_color: str
     negative_color: str
@@ -350,6 +359,7 @@ class BigwigOverlayKwargs(TypedDict, total=False):
     data: Any | None
     height: float
     autoscale_group: str | None
+    color_group: str | None
     colors: list[str] | None
     alpha: float
     show_labels: bool
@@ -380,6 +390,7 @@ class OverlayKwargs(TypedDict, total=False):
     data: Any | None
     height: float
     autoscale_group: str | None
+    color_group: str | None
     colors: list[str] | None
     alpha: float
     show_labels: bool
@@ -409,6 +420,7 @@ class NarrowpeakKwargs(TypedDict, total=False):
     title: str | None
     height: float
     autoscale_group: str | None
+    color_group: str | None
     color: str
     edge_color: str
     alpha: float
@@ -450,6 +462,7 @@ class LinksKwargs(TypedDict, total=False):
     title: str | None
     height: float
     autoscale_group: str | None
+    color_group: str | None
     color: str
     edge_color: str | None
     alpha: float
@@ -484,6 +497,7 @@ class HighlightsKwargs(TypedDict, total=False):
     title: str | None
     height: float
     autoscale_group: str | None
+    color_group: str | None
     color: str
     alpha: float
     edge_color: str | None
@@ -513,6 +527,7 @@ class HlineKwargs(TypedDict, total=False):
     data: Any | None
     height: float
     autoscale_group: str | None
+    color_group: str | None
     color: str
     linestyle: str
     linewidth: float
@@ -543,6 +558,7 @@ class VlineKwargs(TypedDict, total=False):
     data: Any | None
     height: float
     autoscale_group: str | None
+    color_group: str | None
     color: str
     linestyle: str
     linewidth: float
@@ -573,6 +589,7 @@ class CapcruncherKwargs(TypedDict, total=False):
     data: Any | None
     height: float
     autoscale_group: str | None
+    color_group: str | None
     resolution: int | None
     balance: bool
     transform: CoolerTransform
@@ -606,6 +623,7 @@ class CoolerAverageKwargs(TypedDict, total=False):
     data: Any | None
     height: float
     autoscale_group: str | None
+    color_group: str | None
     resolution: int | None
     balance: bool
     transform: CoolerTransform

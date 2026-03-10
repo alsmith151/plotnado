@@ -131,13 +131,14 @@ class BedTrack(Track):
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
         """Plot BED records."""
         data = self.fetch_data(gr)
+        bed_label = self.label.model_copy(update={"plot_scale": False})
 
         if data.empty:
             ax.set_xlim(gr.start, gr.end)
             ax.set_ylim(0, 1)
             if self.label.plot_title or self.label.plot_scale:
                 TrackLabeller.from_config(
-                    self.label,
+                    bed_label,
                     gr,
                     0,
                     1,
@@ -197,7 +198,7 @@ class BedTrack(Track):
         ax.set_ylim(0, 1)
         if self.label.plot_title or self.label.plot_scale:
             TrackLabeller.from_config(
-                self.label,
+                bed_label,
                 gr,
                 0,
                 1,

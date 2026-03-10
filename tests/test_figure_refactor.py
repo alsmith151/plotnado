@@ -270,6 +270,24 @@ class TestFigureRefactor:
         assert fig.tracks[0].color == "#101010"
         assert fig.tracks[1].color == palette[0]
 
+    def test_publication_theme_auto_palette_respects_color_group(self):
+        df = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [100, 200],
+                "end": [200, 300],
+                "value": [1.0, 2.0],
+            }
+        )
+
+        fig = GenomicFigure()
+        fig.add_track(BigWigTrack(data=df, color_group="histone"))
+        fig.add_track(BigWigTrack(data=df, color_group="histone"))
+        fig.add_track(BigWigTrack(data=df, color_group="atac"))
+
+        assert fig.tracks[0].color == fig.tracks[1].color
+        assert fig.tracks[2].color != fig.tracks[0].color
+
     def test_autocolor_applies_when_enabled_before_add_track(self):
         df = pd.DataFrame(
             {
@@ -305,6 +323,25 @@ class TestFigureRefactor:
         assert palette is not None
         assert fig.tracks[0].color == palette[0]
         assert fig.tracks[1].color == palette[1]
+
+    def test_autocolor_respects_color_group(self):
+        df = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [100, 200],
+                "end": [200, 300],
+                "value": [1.0, 2.0],
+            }
+        )
+        fig = GenomicFigure(theme=None)
+        fig.add_track(BigWigTrack(data=df, color_group="group_a"))
+        fig.add_track(BigWigTrack(data=df, color_group="group_a"))
+        fig.add_track(BigWigTrack(data=df, color_group="group_b"))
+
+        fig.autocolor("tab10")
+
+        assert fig.tracks[0].color == fig.tracks[1].color
+        assert fig.tracks[2].color != fig.tracks[0].color
 
     def test_autocolor_overrides_theme_default_for_new_tracks(self):
         df = pd.DataFrame(

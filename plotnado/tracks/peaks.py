@@ -28,6 +28,10 @@ class NarrowPeakAesthetics(BedAesthetics):
     """
 
     color: str = Field(default="#d95f02", description="Fallback color for peaks.")
+    interval_height: float = Field(
+        default=0.28,
+        description="Rectangle height in normalized track coordinates for peak intervals.",
+    )
     color_by: NarrowPeakColorBy | None = Field(
         default=NarrowPeakColorBy.SIGNAL_VALUE,
         description="Optional narrowPeak field used for colormap-based coloring.",
@@ -63,13 +67,14 @@ class NarrowPeakTrack(BedTrack):
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
         """Plot narrowPeak records."""
         data = self.fetch_data(gr)
+        peak_label = self.label.model_copy(update={"plot_scale": False})
 
         if data.empty:
             ax.set_xlim(gr.start, gr.end)
             ax.set_ylim(0, 1)
             if self.label.plot_title or self.label.plot_scale:
                 TrackLabeller.from_config(
-                    self.label,
+                    peak_label,
                     gr,
                     0,
                     1,
@@ -170,7 +175,7 @@ class NarrowPeakTrack(BedTrack):
         ax.set_ylim(0, 1)
         if self.label.plot_title or self.label.plot_scale:
             TrackLabeller.from_config(
-                self.label,
+                peak_label,
                 gr,
                 0,
                 1,
