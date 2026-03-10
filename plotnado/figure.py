@@ -114,7 +114,7 @@ class GenomicFigure:
         )
         self.highlight_alpha = self.theme.highlight_alpha if self.theme is not None else 0.15
         self._highlight_regions: list[GenomicRegion] = []
-        self._autocolor_palette: str | None = None
+        self._autocolor_palette: str | list[str] | None = None
         self._autoscale: bool = False
 
         if self.theme is not None:
@@ -212,8 +212,14 @@ class GenomicFigure:
 
         import matplotlib.colors as mcolors
 
-        cmap = plt.get_cmap(self._autocolor_palette)
         index = sum(1 for existing_track in self.tracks if self._should_autocolor_track(existing_track))
+        if isinstance(self._autocolor_palette, list):
+            if not self._autocolor_palette:
+                return track
+            track.color = self._autocolor_palette[index % len(self._autocolor_palette)]
+            return track
+
+        cmap = plt.get_cmap(self._autocolor_palette)
         track.color = mcolors.to_hex(cmap(index % cmap.N))
         return track
 
@@ -1185,17 +1191,29 @@ class GenomicFigure:
         self._autoscale = enable
         return self
 
-    def autocolor(self, palette: str = "tab10") -> Self:
+    def autocolor(self, palette: str | list[str] | None = None) -> Self:
         """Apply a matplotlib palette across tracks that expose a `color` field."""
+        if palette is None:
+            if self.theme is not None and self.theme.palette:
+                palette = list(self.theme.palette)
+            else:
+                palette = "tab10"
+
         self._autocolor_palette = palette
         import matplotlib.colors as mcolors
 
-        cmap = plt.get_cmap(palette)
         color_index = 0
         for track in self.tracks:
-            if self._should_autocolor_track(track):
+            if not self._should_autocolor_track(track):
+                continue
+            if isinstance(palette, list):
+                if not palette:
+                    continue
+                track.color = palette[color_index % len(palette)]
+            else:
+                cmap = plt.get_cmap(palette)
                 track.color = mcolors.to_hex(cmap(color_index % cmap.N))
-                color_index += 1
+            color_index += 1
         return self
 
     def highlight(self, region: str | GenomicRegion) -> Self:

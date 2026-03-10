@@ -286,6 +286,26 @@ class TestFigureRefactor:
         expected = mcolors.to_hex(plt.get_cmap("tab10")(0))
         assert fig.tracks[0].color == expected
 
+    def test_autocolor_without_palette_uses_theme_palette(self):
+        df = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [100, 200],
+                "end": [200, 300],
+                "value": [1.0, 2.0],
+            }
+        )
+
+        fig = GenomicFigure(theme="publication")
+        fig.add_track(BigWigTrack(data=df))
+        fig.add_track(BigWigTrack(data=df))
+        fig.autocolor()
+
+        palette = Theme.publication().palette
+        assert palette is not None
+        assert fig.tracks[0].color == palette[0]
+        assert fig.tracks[1].color == palette[1]
+
     def test_autocolor_overrides_theme_default_for_new_tracks(self):
         df = pd.DataFrame(
             {

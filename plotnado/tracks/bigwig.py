@@ -101,9 +101,18 @@ class BigWigTrack(Track):
         self, ax: matplotlib.axes.Axes, gr: GenomicRegion, values: pd.DataFrame
     ) -> None:
         """Plot as stairs."""
-        edges = np.linspace(gr.start, gr.end, values.shape[0] + 1)
+        if values.empty:
+            return
+
+        ordered = values.sort_values(["start", "end"]).reset_index(drop=True)
+        starts = ordered["start"].to_numpy(dtype=float)
+        ends = ordered["end"].to_numpy(dtype=float)
+        signal = ordered["value"].to_numpy(dtype=float)
+
+        # Preserve true BigWig bin geometry instead of using evenly-spaced edges.
+        edges = np.concatenate(([starts[0]], ends))
         ax.stairs(
-            values=values["value"],
+            values=signal,
             edges=edges,
             linewidth=self.linewidth,
             color=self.color,
