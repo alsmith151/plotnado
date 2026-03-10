@@ -17,6 +17,10 @@ from plotnado.tracks import (
     BigWigTrack,
     BigwigAesthetics,
     LabelConfig,
+    QuantNadoCoverageTrack,
+    QuantNadoMethylationTrack,
+    QuantNadoStrandedCoverageTrack,
+    QuantNadoVariantTrack,
     ScaleBar,
 )
 
@@ -112,6 +116,13 @@ class TestFigureRefactor:
         assert "bigwig" in aliases
         assert aliases["bigwig"] == "BigWigTrack"
 
+    def test_available_track_aliases_contains_quantnado(self):
+        aliases = GenomicFigure.available_track_aliases()
+        assert aliases["quantnado_coverage"] == "QuantNadoCoverageTrack"
+        assert aliases["quantnado_stranded_coverage"] == "QuantNadoStrandedCoverageTrack"
+        assert aliases["quantnado_methylation"] == "QuantNadoMethylationTrack"
+        assert aliases["quantnado_variant"] == "QuantNadoVariantTrack"
+
     def test_track_options_by_alias(self):
         options = GenomicFigure.track_options("bigwig")
         assert "aesthetics" in options
@@ -151,6 +162,27 @@ class TestFigureRefactor:
         assert track.label.plot_title is False
         assert track.label.scale_size == 11
 
+    def test_quantnado_alias_constructor_routes_aesthetic_shorthand_kwargs(self):
+        xr = pytest.importorskip("xarray")
+        coverage_data = xr.DataArray(
+            [[1.0, 2.0, 3.0]],
+            dims=("sample", "position"),
+            coords={"sample": ["s1"], "position": [100, 101, 102]},
+        )
+
+        fig = GenomicFigure(theme=None).add_track(
+            "quantnado_coverage",
+            sample="s1",
+            coverage_data=coverage_data,
+            color="#ff00ff",
+            alpha=0.4,
+        )
+        track = fig.tracks[0]
+
+        assert isinstance(track, QuantNadoCoverageTrack)
+        assert track.color == "#ff00ff"
+        assert track.alpha == 0.4
+
     def test_explicit_nested_model_and_shorthand_merge(self):
         df = pd.DataFrame(
             {
@@ -171,6 +203,24 @@ class TestFigureRefactor:
 
         assert track.aesthetics.color == "#00aa00"
         assert track.aesthetics.alpha == 0.2
+
+    def test_quantnado_helper_methods_append_expected_tracks(self):
+        xr = pytest.importorskip("xarray")
+        base = xr.DataArray(
+            [[1.0, 2.0, 3.0]],
+            dims=("sample", "position"),
+            coords={"sample": ["s1"], "position": [100, 101, 102]},
+        )
+        fig = GenomicFigure(theme=None)
+        fig.quantnado_coverage("s1", coverage_data=base)
+        fig.quantnado_stranded_coverage("s1", coverage_fwd_data=base, coverage_rev_data=base)
+        fig.quantnado_methylation("s1", methylation_data=base)
+        fig.quantnado_variant("s1", allele_depth_ref_data=base, allele_depth_alt_data=base)
+
+        assert isinstance(fig.tracks[0], QuantNadoCoverageTrack)
+        assert isinstance(fig.tracks[1], QuantNadoStrandedCoverageTrack)
+        assert isinstance(fig.tracks[2], QuantNadoMethylationTrack)
+        assert isinstance(fig.tracks[3], QuantNadoVariantTrack)
 
     def test_extend_parameter(self):
         fig = GenomicFigure().add_track(ScaleBar())

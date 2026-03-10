@@ -651,3 +651,164 @@ class CoolerAverageKwargs(TypedDict, total=False):
     scale_color: str
     scale_font: str
     scale_weight: FontWeight
+
+class QuantnadoCoverageKwargs(TypedDict, total=False):
+    title: str | None
+    data: Any | None
+    height: float
+    autoscale_group: str | None
+    color_group: str | None
+    quantnado: Any | None
+    dataset_path: str | None
+    coverage_data: Any | None
+    color: str
+    alpha: float
+    fill: bool
+    linewidth: float
+    min_value: float | None
+    max_value: float | None
+    show_baseline: bool
+    baseline_color: str
+    baseline_alpha: float
+    baseline_linewidth: float
+    plot_title: bool
+    plot_scale: bool
+    label_on_track: bool
+    data_range_style: DataRangeStyle
+    label_box_enabled: bool
+    label_box_alpha: float
+    title_location: Position
+    title_height: float
+    title_size: int
+    title_color: str
+    title_font: str
+    title_weight: FontWeight
+    scale_location: Position
+    scale_height: float
+    scale_precision: int
+    scale_size: int
+    scale_color: str
+    scale_font: str
+    scale_weight: FontWeight
+
+class QuantnadoStrandedCoverageKwargs(TypedDict, total=False):
+    title: str | None
+    data: Any | None
+    height: float
+    autoscale_group: str | None
+    color_group: str | None
+    quantnado: Any | None
+    dataset_path: str | None
+    coverage_fwd_data: Any | None
+    coverage_rev_data: Any | None
+    color: str
+    reverse_color: str | None
+    alpha: float
+    fill: bool
+    linewidth: float
+    min_value: float | None
+    max_value: float | None
+    show_baseline: bool
+    baseline_color: str
+    baseline_alpha: float
+    baseline_linewidth: float
+    plot_title: bool
+    plot_scale: bool
+    label_on_track: bool
+    data_range_style: DataRangeStyle
+    label_box_enabled: bool
+    label_box_alpha: float
+    title_location: Position
+    title_height: float
+    title_size: int
+    title_color: str
+    title_font: str
+    title_weight: FontWeight
+    scale_location: Position
+    scale_height: float
+    scale_precision: int
+    scale_size: int
+    scale_color: str
+    scale_font: str
+    scale_weight: FontWeight
+
+class QuantnadoMethylationKwargs(TypedDict, total=False):
+    title: str | None
+    data: Any | None
+    height: float
+    autoscale_group: str | None
+    color_group: str | None
+    quantnado: Any | None
+    dataset_path: str | None
+    methylation_variable: str
+    methylation_data: Any | None
+    color: str
+    alpha: float
+    point_size: float
+    min_value: float | None
+    max_value: float | None
+    plot_title: bool
+    plot_scale: bool
+    label_on_track: bool
+    data_range_style: DataRangeStyle
+    label_box_enabled: bool
+    label_box_alpha: float
+    title_location: Position
+    title_height: float
+    title_size: int
+    title_color: str
+    title_font: str
+    title_weight: FontWeight
+    scale_location: Position
+    scale_height: float
+    scale_precision: int
+    scale_size: int
+    scale_color: str
+    scale_font: str
+    scale_weight: FontWeight
+
+class QuantnadoVariantKwargs(TypedDict, total=False):
+    title: str | None
+    data: Any | None
+    height: float
+    autoscale_group: str | None
+    color_group: str | None
+    quantnado: Any | None
+    dataset_path: str | None
+    allele_depth_ref_variable: str
+    allele_depth_alt_variable: str
+    genotype_variable: str
+    fetch_genotype: bool
+    allele_depth_ref_data: Any | None
+    allele_depth_alt_data: Any | None
+    genotype_data: Any | None
+    het_color: str
+    hom_alt_color: str
+    alpha: float
+    linewidth: float
+    marker_size: float
+    min_value: float | None
+    max_value: float | None
+    show_baseline: bool
+    baseline_color: str
+    baseline_alpha: float
+    baseline_linewidth: float
+    plot_title: bool
+    plot_scale: bool
+    label_on_track: bool
+    data_range_style: DataRangeStyle
+    label_box_enabled: bool
+    label_box_alpha: float
+    title_location: Position
+    title_height: float
+    title_size: int
+    title_color: str
+    title_font: str
+    title_weight: FontWeight
+    scale_location: Position
+    scale_height: float
+    scale_precision: int
+    scale_size: int
+    scale_color: str
+    scale_font: str
+    scale_weight: FontWeight

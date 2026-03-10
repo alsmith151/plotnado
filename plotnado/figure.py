@@ -1146,6 +1146,52 @@ class GenomicFigure:
         """
         return self.add_track("vline", x_position=x_position, **kwargs)
 
+    # BEGIN AUTO-GENERATED OVERLOAD: quantnado_coverage
+    @overload
+    def quantnado_coverage(
+        self,
+        sample: str,
+        /,
+        *,
+        autoscale_group: str | None = ...,
+        color_group: str | None = ...,
+        coverage_data: Any | None = ...,
+        data: Any | None = ...,
+        dataset_path: str | None = ...,
+        height: float = ...,
+        quantnado: Any | None = ...,
+        title: str | None = ...,
+        alpha: float = ...,
+        baseline_alpha: float = ...,
+        baseline_color: str = ...,
+        baseline_linewidth: float = ...,
+        color: str = ...,
+        fill: bool = ...,
+        linewidth: float = ...,
+        max_value: float | None = ...,
+        min_value: float | None = ...,
+        show_baseline: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_alpha: float = ...,
+        label_box_enabled: bool = ...,
+        label_on_track: bool = ...,
+        plot_scale: bool = ...,
+        plot_title: bool = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_height: float = ...,
+        scale_location: Position = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_weight: FontWeight = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_height: float = ...,
+        title_location: Position = ...,
+        title_size: int = ...,
+        title_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: quantnado_coverage
     def quantnado_coverage(
         self, sample: str, /, **kwargs: Unpack[QuantnadoCoverageKwargs]
     ) -> Self:
@@ -1160,6 +1206,54 @@ class GenomicFigure:
         """
         return self.add_track("quantnado_coverage", sample=sample, **kwargs)
 
+    # BEGIN AUTO-GENERATED OVERLOAD: quantnado_stranded_coverage
+    @overload
+    def quantnado_stranded_coverage(
+        self,
+        sample: str,
+        /,
+        *,
+        autoscale_group: str | None = ...,
+        color_group: str | None = ...,
+        coverage_fwd_data: Any | None = ...,
+        coverage_rev_data: Any | None = ...,
+        data: Any | None = ...,
+        dataset_path: str | None = ...,
+        height: float = ...,
+        quantnado: Any | None = ...,
+        title: str | None = ...,
+        alpha: float = ...,
+        baseline_alpha: float = ...,
+        baseline_color: str = ...,
+        baseline_linewidth: float = ...,
+        color: str = ...,
+        fill: bool = ...,
+        linewidth: float = ...,
+        max_value: float | None = ...,
+        min_value: float | None = ...,
+        reverse_color: str | None = ...,
+        show_baseline: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_alpha: float = ...,
+        label_box_enabled: bool = ...,
+        label_on_track: bool = ...,
+        plot_scale: bool = ...,
+        plot_title: bool = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_height: float = ...,
+        scale_location: Position = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_weight: FontWeight = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_height: float = ...,
+        title_location: Position = ...,
+        title_size: int = ...,
+        title_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: quantnado_stranded_coverage
     def quantnado_stranded_coverage(
         self, sample: str, /, **kwargs: Unpack[QuantnadoStrandedCoverageKwargs]
     ) -> Self:
@@ -1174,6 +1268,48 @@ class GenomicFigure:
         """
         return self.add_track("quantnado_stranded_coverage", sample=sample, **kwargs)
 
+    # BEGIN AUTO-GENERATED OVERLOAD: quantnado_methylation
+    @overload
+    def quantnado_methylation(
+        self,
+        sample: str,
+        /,
+        *,
+        autoscale_group: str | None = ...,
+        color_group: str | None = ...,
+        data: Any | None = ...,
+        dataset_path: str | None = ...,
+        height: float = ...,
+        methylation_data: Any | None = ...,
+        methylation_variable: str = ...,
+        quantnado: Any | None = ...,
+        title: str | None = ...,
+        alpha: float = ...,
+        color: str = ...,
+        max_value: float | None = ...,
+        min_value: float | None = ...,
+        point_size: float = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_alpha: float = ...,
+        label_box_enabled: bool = ...,
+        label_on_track: bool = ...,
+        plot_scale: bool = ...,
+        plot_title: bool = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_height: float = ...,
+        scale_location: Position = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_weight: FontWeight = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_height: float = ...,
+        title_location: Position = ...,
+        title_size: int = ...,
+        title_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: quantnado_methylation
     def quantnado_methylation(
         self, sample: str, /, **kwargs: Unpack[QuantnadoMethylationKwargs]
     ) -> Self:
@@ -1188,6 +1324,59 @@ class GenomicFigure:
         """
         return self.add_track("quantnado_methylation", sample=sample, **kwargs)
 
+    # BEGIN AUTO-GENERATED OVERLOAD: quantnado_variant
+    @overload
+    def quantnado_variant(
+        self,
+        sample: str,
+        /,
+        *,
+        allele_depth_alt_data: Any | None = ...,
+        allele_depth_alt_variable: str = ...,
+        allele_depth_ref_data: Any | None = ...,
+        allele_depth_ref_variable: str = ...,
+        autoscale_group: str | None = ...,
+        color_group: str | None = ...,
+        data: Any | None = ...,
+        dataset_path: str | None = ...,
+        fetch_genotype: bool = ...,
+        genotype_data: Any | None = ...,
+        genotype_variable: str = ...,
+        height: float = ...,
+        quantnado: Any | None = ...,
+        title: str | None = ...,
+        alpha: float = ...,
+        baseline_alpha: float = ...,
+        baseline_color: str = ...,
+        baseline_linewidth: float = ...,
+        het_color: str = ...,
+        hom_alt_color: str = ...,
+        linewidth: float = ...,
+        marker_size: float = ...,
+        max_value: float | None = ...,
+        min_value: float | None = ...,
+        show_baseline: bool = ...,
+        data_range_style: DataRangeStyle = ...,
+        label_box_alpha: float = ...,
+        label_box_enabled: bool = ...,
+        label_on_track: bool = ...,
+        plot_scale: bool = ...,
+        plot_title: bool = ...,
+        scale_color: str = ...,
+        scale_font: str = ...,
+        scale_height: float = ...,
+        scale_location: Position = ...,
+        scale_precision: int = ...,
+        scale_size: int = ...,
+        scale_weight: FontWeight = ...,
+        title_color: str = ...,
+        title_font: str = ...,
+        title_height: float = ...,
+        title_location: Position = ...,
+        title_size: int = ...,
+        title_weight: FontWeight = ...,
+    ) -> Self: ...
+    # END AUTO-GENERATED OVERLOAD: quantnado_variant
     def quantnado_variant(
         self, sample: str, /, **kwargs: Unpack[QuantnadoVariantKwargs]
     ) -> Self:
