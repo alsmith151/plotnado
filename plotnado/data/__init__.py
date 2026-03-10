@@ -1,3 +1,0 @@
-"""
-Plotnado data module.
-"""

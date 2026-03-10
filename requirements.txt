@@ -1,16 +1,17 @@
-# Core dependencies
-matplotlib
-numpy
+coolbox @ git+https://github.com/GangCaoLab/CoolBox.git
+cooler<=0.10.2
+cython<=3.0.10
+h5py
+matplotlib<3.9
+numpy<2.0.0
 pandas
-pydantic>=2.0.0
+polars
 loguru
-pandera
-
-# Genomics
-pybigtools
-pyranges1
-
-# CLI
-typer
+pyBigWig
+pyranges
+pybedtools
+scipy
+seaborn
+toml
 tqdm
-tomli-w
+typer
