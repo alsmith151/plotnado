@@ -1,0 +1,3 @@
+"""
+Plotnado CLI module.
+"""
