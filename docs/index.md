@@ -1,6 +1,8 @@
 # PlotNado
 
-PlotNado is a Python package for making clean, publication-ready genome browser plots with a fast, chainable API.
+![PlotNado logo](assets/plotnado-logo.svg)
+
+PlotNado is a Python library for clean, publication-ready genome browser figures with a fast, chainable API.
 
 ## Install
 
@@ -8,71 +10,28 @@ PlotNado is a Python package for making clean, publication-ready genome browser 
 pip install plotnado
 ```
 
-## 5-minute quick start
-
-```python
-from plotnado import GenomicFigure
-import numpy as np
-import pandas as pd
-
-bins = np.arange(1_000_000, 1_100_000, 1_000)
-signal = pd.DataFrame({
-	"chrom": "chr1",
-	"start": bins,
-	"end": bins + 1_000,
-	"value": 5 + 2 * np.sin(np.linspace(0, 6, len(bins))),
-})
-
-fig = GenomicFigure()
-fig.scalebar().axis().genes("hg38")
-fig.bigwig(signal, title="Synthetic signal", style="fill")
-fig.save("quickstart.png", "chr1:1,010,000-1,080,000")
-```
-
-Example output:
-
-![Quickstart plot](images/examples/quickstart_first_plot.png)
-
-## Learn by task
-
-- New user setup: [Installation](installation.md)
-- First figure quickly: [Quick Start](quickstart.md)
-- Add tracks faster with aliases: [Build Tracks Fast](quickstart_tracks.md)
-- Browse track types and options: [Track Catalog](track_catalog.md)
-- Multi-panel plotting and figure workflows: [Figure Workflows](figure_workflows.md)
-- Practical configurations: [Recipes](recipes.md)
-- Input data formats and requirements: [Data Inputs](data_inputs.md)
-- CLI usage and option discovery: [CLI](cli.md)
-
-## Example scripts
-
-Run these from the repository root:
-
-```bash
-python examples/basic_figure.py
-python examples/advanced_features.py
-python examples/run_examples.py
-```
-
-Focused examples are organized in:
-
-- `examples/quickstart/`
-- `examples/tracks/`
-- `examples/recipes/`
-
-Sample outputs:
-
-![Basic figure](images/examples/basic_figure.png)
-![Advanced features](images/examples/advanced_features.png)
-
-## Option discovery
+## Preferred workflow style
 
 ```python
 from plotnado import GenomicFigure
 
-GenomicFigure.available_track_aliases()
-GenomicFigure.track_options("bigwig")
-GenomicFigure.track_options_markdown("genes")
+gf = GenomicFigure(theme="publication")
+gf.autocolor()
+gf.scalebar()
+gf.genes("hg38", display="expanded", minimum_gene_length=1e5)
+
+gf.bigwig("signal_1.bw", title="H3K4me1", color_group="H3K4me1", style="std")
+gf.bigwig("signal_2.bw", title="H3K4me3", color_group="H3K4me3", style="std")
+
+gf.axis()
+gf.plot_gene("GNAQ")
 ```
 
+## Read by task
 
+- New environment setup: [Installation](installation.md)
+- First successful figure: [Quick Start](quickstart.md)
+- Ways to add tracks: [Track Construction](quickstart_tracks.md)
+- Production guidance: [Best Practices](best_practices.md)
+- Track families and support matrix: [Track Catalog](track_catalog.md)
+- CLI and runtime option discovery: [CLI](cli.md) and [API Reference](api_reference.md)

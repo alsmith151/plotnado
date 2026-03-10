@@ -1,27 +1,132 @@
-# Build Tracks Fast
+# Track Construction
 
-Use aliases with `GenomicFigure.add_track()` or chain helper methods.
+This page shows the different ways to add tracks to a `GenomicFigure`.
 
-## Alias workflow
+## 1) Preferred chain-helper style
+
+This is concise and works well for interactive analysis.
 
 ```python
 from plotnado import GenomicFigure
 
-fig = GenomicFigure()
-fig.add_track("scalebar")
-fig.add_track("axis")
-fig.add_track("genes", genome="hg38")
-fig.add_track("bigwig", data="signal.bw", title="ChIP", color="#1f77b4", alpha=0.7)
+gf = GenomicFigure(theme="publication")
+gf.autocolor()
+gf.scalebar()
+gf.genes("hg38", display="expanded", minimum_gene_length=1e5)
+
+gf.bed(
+    "https://.../THP1H3K4me3_bigBed.bigBed",
+    title="THP1 H3K4me3 peaks",
+    title_color="black",
+    color_group="THP1 H3K4me3",
+    draw_edges=False,
+)
+
+gf.bigwig(
+    "https://.../THP1H3K4me1_bigWig.bigWig",
+    title="THP1 H3K4me1",
+    title_color="black",
+    color_group="THP1 H3K4me1",
+    style="std",
+)
+
+gf.axis()
+gf.plot_gene("GNAQ")
 ```
 
-## Shorthand kwargs
+## 2) Generic alias entrypoint (`add_track`)
 
-You can pass many aesthetics and label options directly:
+Best when alias names come from config/TOML/CLI inputs.
 
-- Aesthetics fields (for example `color`, `alpha`, `style`) are routed to `aesthetics`.
-- Label fields (for example `plot_title`, `title_location`) are routed to `label`.
+```python
+gf.add_track("scalebar")
+gf.add_track("genes", genome="hg38")
+gf.add_track("bigwig", data="signal.bw", title="ChIP", style="std")
+```
 
-## Discover aliases and options
+## 3) Explicit track objects
+
+Best when you want strict object construction and reuse track instances.
+
+```python
+from plotnado import BigWigTrack
+
+gf.add_track(
+    BigWigTrack(
+        data="signal.bw",
+        title="ChIP",
+        style="std",
+    )
+)
+```
+
+## 4) Mixed approach (recommended in real projects)
+
+- Use helper methods for most tracks.
+- Use explicit classes only for custom/advanced tracks.
+- Keep structural tracks first (`scalebar`, `axis`, `genes`) for readability.
+
+## Automatic kwarg routing in `GenomicFigure` methods
+
+When you use helper methods like `gf.bigwig(...)`, PlotNado can automatically route kwargs into nested models:
+
+- Track kwargs stay at track level (for example `data`, `autoscale_group`).
+- Aesthetics kwargs are auto-packed into `aesthetics` (for example `style`, `color`, `alpha`).
+- Label kwargs are auto-packed into `label` (for example `title`, `title_color`, `title_location`).
+
+Shorthand (recommended):
+
+```python
+gf.bigwig(
+    "signal.bw",
+    title="H3K4me3",
+    title_color="black",
+    style="std",
+    color="#1f77b4",
+    alpha=0.8,
+)
+```
+
+Equivalent explicit form:
+
+```python
+gf.bigwig(
+    "signal.bw",
+    aesthetics={"style": "std", "color": "#1f77b4", "alpha": 0.8},
+    label={"title": "H3K4me3", "title_color": "black"},
+)
+```
+
+## Color management (`autocolor`, `color_group`)
+
+Use `autocolor()` to assign colors automatically from the active theme.
+
+```python
+gf = GenomicFigure(theme="publication")
+gf.autocolor()
+gf.bigwig("sample_a.bw", title="Sample A")
+gf.bigwig("sample_b.bw", title="Sample B")
+```
+
+Use `color_group` when multiple tracks should share the same assigned color.
+
+```python
+gf = GenomicFigure(theme="publication")
+gf.autocolor()
+
+gf.bed("peaks_a.bigBed", title="A peaks", color_group="A")
+gf.bigwig("signal_a.bw", title="A signal", color_group="A")
+
+gf.bed("peaks_b.bigBed", title="B peaks", color_group="B")
+gf.bigwig("signal_b.bw", title="B signal", color_group="B")
+```
+
+Practical rule:
+
+- Same biological sample/condition: same `color_group`.
+- Different sample/condition: different `color_group`.
+
+## Option discovery
 
 ```python
 from plotnado import GenomicFigure
@@ -31,45 +136,4 @@ GenomicFigure.track_options("bigwig")
 GenomicFigure.track_options_markdown("genes")
 ```
 
-Or from CLI:
-
-```bash
-plotnado track-options
-plotnado track-options bigwig
-plotnado track-options --all --output-format json
-```
-
-Runnable example: `python examples/quickstart/02_aliases_and_options.py`
-
-Example output:
-
-![Alias and options quickstart](images/examples/quickstart_aliases_and_options.png)
-
-
-## QuantNado-backed tracks
-
-Object-backed mode (fetch at plot time):
-
-```python
-from plotnado import GenomicFigure
-from quantnado import QuantNado
-
-qn = QuantNado.open("dataset.zarr")
-fig = GenomicFigure()
-fig.quantnado_coverage("sample1", quantnado=qn, title="Coverage")
-fig.quantnado_methylation("sample1", quantnado=qn, title="Methylation")
-fig.plot("chr1:100000-110000")
-```
-
-Array-backed mode (precomputed xarray-like arrays):
-
-```python
-fig = GenomicFigure()
-fig.quantnado_variant(
-    "sample1",
-    allele_depth_ref_data=ref_da,
-    allele_depth_alt_data=alt_da,
-    title="Variant AF",
-)
-fig.plot("chr1:100000-110000")
-```
+See [Track Aliases](track_aliases.md) for alias notes, [Example Coverage](example_coverage.md) for runnable script mapping, and [Best Practices](best_practices.md) for production guidance.
