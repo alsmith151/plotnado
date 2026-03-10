@@ -35,6 +35,10 @@ class BigwigKwargs(TypedDict, total=False):
     alpha: float
     linewidth: float
     scatter_point_size: float
+    show_baseline: bool
+    baseline_color: str
+    baseline_alpha: float
+    baseline_linewidth: float
     min_value: float | None
     max_value: float | None
     plot_title: bool
@@ -59,7 +63,7 @@ class BigwigKwargs(TypedDict, total=False):
 
 class GenesKwargs(TypedDict, total=False):
     title: str | None
-    data: Path | str | pd.DataFrame | None
+    data: Path | str | DataFrame | None
     height: float
     autoscale_group: str | None
     row_scale: float

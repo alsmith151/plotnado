@@ -9,6 +9,7 @@ import matplotlib.patches
 from pydantic import Field
 
 from .bed import BedTrack, BedAesthetics
+from .base import TrackLabeller
 from .region import GenomicRegion
 from .utils import clean_axis
 from .enums import DisplayMode, NarrowPeakColorBy
@@ -42,7 +43,7 @@ class NarrowPeakAesthetics(BedAesthetics):
     )
     show_summit: bool = Field(default=True, description="Draw summit marker when peak offset is available.")
     summit_color: str = Field(default="black", description="Color of summit marker lines.")
-    summit_width: float = Field(default=1.0, description="Line width of summit marker lines.")
+    summit_width: float = Field(default=0.8, description="Line width of summit marker lines.")
 
 
 class NarrowPeakTrack(BedTrack):
@@ -66,7 +67,17 @@ class NarrowPeakTrack(BedTrack):
         if data.empty:
             ax.set_xlim(gr.start, gr.end)
             ax.set_ylim(0, 1)
-            clean_axis(ax)
+            if self.label.plot_title or self.label.plot_scale:
+                TrackLabeller.from_config(
+                    self.label,
+                    gr,
+                    0,
+                    1,
+                    title=self.title or "",
+                    title_color=self.color,
+                ).plot(ax, gr)
+            else:
+                clean_axis(ax)
             return
 
         row_scale = 1.0 / max(1, self.max_rows)
@@ -119,7 +130,7 @@ class NarrowPeakTrack(BedTrack):
                 (start, ypos - self.interval_height / 2),
                 end - start,
                 self.interval_height,
-                linewidth=1,
+                linewidth=self.rect_linewidth,
                 edgecolor=self.edge_color,
                 facecolor=current_color,
                 alpha=self.alpha,
@@ -157,4 +168,14 @@ class NarrowPeakTrack(BedTrack):
 
         ax.set_xlim(gr.start, gr.end)
         ax.set_ylim(0, 1)
-        clean_axis(ax)
+        if self.label.plot_title or self.label.plot_scale:
+            TrackLabeller.from_config(
+                self.label,
+                gr,
+                0,
+                1,
+                title=self.title or "",
+                title_color=self.color,
+            ).plot(ax, gr)
+        else:
+            clean_axis(ax)

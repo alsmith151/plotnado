@@ -159,6 +159,7 @@ class OverlayTrack(Track):
                 y_min,
                 y_max,
                 title=self.title,
+                title_color=self._track_instances[0].color if self._track_instances else None,
             )
             labeller.plot(ax, gr)
         else:

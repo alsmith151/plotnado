@@ -2,6 +2,7 @@ import tempfile
 import importlib.resources
 import json
 from pathlib import Path
+from unittest.mock import patch
 
 import pandas as pd
 import pytest
@@ -21,6 +22,33 @@ from plotnado.tracks import (
 
 
 class TestFigureRefactor:
+    def test_default_figure_uses_publication_theme(self):
+        fig = GenomicFigure()
+
+        assert fig.theme == Theme.publication()
+        assert fig.highlight_color == Theme.publication().highlight_color
+
+    def test_theme_none_opt_out(self):
+        fig = GenomicFigure(theme=None)
+
+        assert fig.theme is None
+        assert fig.highlight_color == "#ffd700"
+        assert fig.highlight_alpha == 0.15
+
+    def test_default_publication_theme_disables_label_boxes(self):
+        df = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [100, 200],
+                "end": [200, 300],
+                "value": [1.0, 2.0],
+            }
+        )
+        fig = GenomicFigure()
+        fig.add_track(BigWigTrack(data=df))
+
+        assert fig.tracks[0].label.label_box_enabled is False
+
     def test_theme_font_family_syncs_label_fonts(self):
         theme = Theme(font_family="Arial")
 
@@ -204,6 +232,44 @@ class TestFigureRefactor:
         ylim2 = out.axes[1].get_ylim()
         assert ylim1 == ylim2
 
+    def test_publication_theme_auto_palette_applies_to_multiple_signal_tracks(self):
+        df = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [100, 200],
+                "end": [200, 300],
+                "value": [1.0, 2.0],
+            }
+        )
+
+        fig = GenomicFigure()
+        fig.add_track(BigWigTrack(data=df))
+        fig.add_track(BigWigTrack(data=df))
+
+        palette = Theme.publication().palette
+        assert palette is not None
+        assert fig.tracks[0].color == palette[0]
+        assert fig.tracks[1].color == palette[1]
+
+    def test_publication_theme_auto_palette_respects_explicit_color(self):
+        df = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [100, 200],
+                "end": [200, 300],
+                "value": [1.0, 2.0],
+            }
+        )
+
+        fig = GenomicFigure()
+        fig.add_track(BigWigTrack(data=df, aesthetics=BigwigAesthetics(color="#101010")))
+        fig.add_track(BigWigTrack(data=df))
+
+        palette = Theme.publication().palette
+        assert palette is not None
+        assert fig.tracks[0].color == "#101010"
+        assert fig.tracks[1].color == palette[0]
+
     def test_autocolor_applies_when_enabled_before_add_track(self):
         df = pd.DataFrame(
             {
@@ -357,3 +423,15 @@ class TestFigureRefactor:
 
         assert fonts
         assert set(fonts) == {"Arial"}
+
+    def test_save_default_dpi_is_600(self):
+        fig = GenomicFigure().add_track(ScaleBar())
+
+        with patch.object(fig, "plot") as mock_plot:
+            mock_matplotlib_figure = plt.figure()
+            mock_plot.return_value = mock_matplotlib_figure
+            with patch.object(mock_matplotlib_figure, "savefig") as mock_savefig:
+                fig.save("out.png", "chr1:100-200")
+                mock_savefig.assert_called_once()
+                assert mock_savefig.call_args.kwargs["dpi"] == 600
+            plt.close(mock_matplotlib_figure)

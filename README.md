@@ -66,6 +66,8 @@ fig.bigwig(signal, title="Synthetic signal", style="fill", color="#1f77b4")
 fig.save("quickstart.png", "chr1:1,010,000-1,080,000")
 ```
 
+`GenomicFigure()` now uses publication-style defaults automatically. Use `GenomicFigure(theme=None)` to opt out.
+
 ## Examples
 
 - Start with `python examples/basic_figure.py`
@@ -119,4 +121,3 @@ plotnado plot chr1:1,000,000-1,100,000 -o browser_view.png
 plotnado track-options bigwig
 plotnado track-options --all --output-format json
 ```
-

@@ -10,6 +10,7 @@ from typing import Any, Self, Unpack, overload
 
 import matplotlib.axes
 import matplotlib.figure
+import matplotlib.lines
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -92,8 +93,8 @@ class GenomicFigure:
         self,
         tracks: list[Track] | None = None,
         width: float = 12,
-        track_height: float = 2.0,
-        theme: Theme | BuiltinTheme | str | None = None,
+        track_height: float = 1.25,
+        theme: Theme | BuiltinTheme | str | None = BuiltinTheme.PUBLICATION,
     ):
         """Create a figure container for genomic tracks.
 
@@ -118,6 +119,7 @@ class GenomicFigure:
 
         if self.theme is not None:
             self.tracks = [self._apply_theme_to_track(track) for track in self.tracks]
+            self._apply_theme_palette()
 
     @staticmethod
     def _resolve_theme(theme: Theme | BuiltinTheme | str | None) -> Theme | None:
@@ -147,7 +149,62 @@ class GenomicFigure:
         track = self._apply_theme_to_track(track)
         track = self._apply_autocolor_to_track(track)
         self.tracks.append(track)
+        if self._autocolor_palette is None:
+            self._apply_theme_palette()
         return self
+
+    @staticmethod
+    def _aesthetic_explicitly_set(track: Track, field_name: str) -> bool:
+        aesthetics = getattr(track, "aesthetics", None)
+        explicit_fields = getattr(aesthetics, "model_fields_set", set())
+        return field_name in explicit_fields
+
+    @staticmethod
+    def _label_field_explicitly_set(track: Track, field_name: str) -> bool:
+        label = getattr(track, "label", None)
+        explicit_fields = getattr(label, "model_fields_set", set())
+        return field_name in explicit_fields
+
+    @staticmethod
+    def _is_theme_palette_eligible(track: Track) -> bool:
+        if not track.has_aesthetic("color"):
+            return False
+        if isinstance(
+            track,
+            (
+                ScaleBar,
+                GenomicAxis,
+                HighlightsFromFile,
+                Spacer,
+                HLineTrack,
+                VLineTrack,
+                Genes,
+                CoolerTrack,
+                CapcruncherTrack,
+                CoolerAverage,
+            ),
+        ):
+            return False
+        return True
+
+    def _apply_theme_palette(self) -> None:
+        if self.theme is None or not self.theme.auto_palette or not self.theme.palette:
+            return
+
+        eligible_tracks = [track for track in self.tracks if self._is_theme_palette_eligible(track)]
+        if len(eligible_tracks) < 2:
+            return
+
+        auto_color_tracks = [
+            track
+            for track in eligible_tracks
+            if self._is_theme_palette_eligible(track) and not self._aesthetic_explicitly_set(track, "color")
+        ]
+        if not auto_color_tracks:
+            return
+
+        for index, track in enumerate(auto_color_tracks):
+            track.color = self.theme.palette[index % len(self.theme.palette)]
 
     def _apply_autocolor_to_track(self, track: Track) -> Track:
         if self._autocolor_palette is None or not self._should_autocolor_track(track):
@@ -191,12 +248,16 @@ class GenomicFigure:
         y_max: float | None = ...,
         y_min: float | None = ...,
         alpha: float = ...,
+        baseline_alpha: float = ...,
+        baseline_color: str = ...,
+        baseline_linewidth: float = ...,
         color: str = ...,
         fill: bool = ...,
         linewidth: float = ...,
         max_value: float | None = ...,
         min_value: float | None = ...,
         scatter_point_size: float = ...,
+        show_baseline: bool = ...,
         style: PlotStyle = ...,
         data_range_style: DataRangeStyle = ...,
         label_box_alpha: float = ...,
@@ -240,7 +301,7 @@ class GenomicFigure:
         /,
         *,
         autoscale_group: str | None = ...,
-        data: Path | str | pd.DataFrame | None = ...,
+        data: Path | str | DataFrame | None = ...,
         gene_count: int = ...,
         height: float = ...,
         row_scale: float = ...,
@@ -1055,6 +1116,8 @@ class GenomicFigure:
             model_field = aesthetics_model.model_fields.get(field_name)
             if model_field is None:
                 continue
+            if self._aesthetic_explicitly_set(track, field_name):
+                continue
             if getattr(track, field_name) == model_field.default:
                 setattr(track, field_name, theme_value)
 
@@ -1064,6 +1127,8 @@ class GenomicFigure:
                 current_value = getattr(track.label, field_name)
                 theme_value = getattr(theme.label, field_name)
                 default_value = getattr(default_label, field_name)
+                if self._label_field_explicitly_set(track, field_name):
+                    continue
                 if current_value == default_value and theme_value != default_value:
                     setattr(track.label, field_name, theme_value)
 
@@ -1305,7 +1370,8 @@ class GenomicFigure:
 
         from matplotlib.gridspec import GridSpec
 
-        gs = GridSpec(len(main_tracks), 1, height_ratios=heights, hspace=0.1)
+        hspace = self.theme.subplot_hspace if self.theme is not None else 0.08
+        gs = GridSpec(len(main_tracks), 1, height_ratios=heights, hspace=hspace)
         axes = [fig.add_subplot(gs[index]) for index in range(len(main_tracks))]
 
         def create_overlay_ax(zorder: int, label: str):
@@ -1374,7 +1440,42 @@ class GenomicFigure:
             for text_artist in axis.texts:
                 text_artist.set_fontfamily(font_family)
 
-        fig.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.05)
+        if self.theme is not None:
+            fig.subplots_adjust(
+                left=self.theme.margin_left,
+                right=self.theme.margin_right,
+                top=self.theme.margin_top,
+                bottom=self.theme.margin_bottom,
+            )
+            if self.theme.separator_color and len(axes) > 1:
+                left = axes[0].get_position().x0
+                right = axes[0].get_position().x1
+                for index, axis in enumerate(axes[:-1]):
+                    track_above = main_tracks[index]
+                    track_below = main_tracks[index + 1]
+                    if isinstance(track_above, Genes):
+                        continue
+                    if (
+                        isinstance(track_above, ScaleBar)
+                        and isinstance(track_below, Genes)
+                    ) or (
+                        isinstance(track_above, Genes)
+                        and isinstance(track_below, ScaleBar)
+                    ):
+                        continue
+                    y = axis.get_position().y0
+                    separator = matplotlib.lines.Line2D(
+                        [left, right],
+                        [y, y],
+                        transform=fig.transFigure,
+                        color=self.theme.separator_color,
+                        alpha=self.theme.separator_alpha,
+                        linewidth=self.theme.separator_linewidth,
+                        zorder=20,
+                    )
+                    fig.add_artist(separator)
+        else:
+            fig.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.05)
 
         if show:
             plt.show()
@@ -1612,7 +1713,7 @@ class GenomicFigure:
         self,
         path: str | Path,
         region: str | GenomicRegion,
-        dpi: int = 300,
+        dpi: int = 600,
         **kwargs: Any,
     ) -> None:
         """Render one region and write it to disk."""

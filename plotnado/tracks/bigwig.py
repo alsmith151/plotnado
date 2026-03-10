@@ -28,17 +28,21 @@ class BigwigAesthetics(BaseModel):
     """
 
     style: PlotStyle = Field(
-        default=PlotStyle.FILL,
-        description="Rendering mode for the signal (fill, line, scatter, etc.).",
+        default=PlotStyle.STD,
+        description="Style for rendering the signal track, for options see PlotStyle enum.",
     )
     color: str = Field(default="#2171b5", description="Primary color used to draw the signal.")
     fill: bool = Field(default=True, description="Fill the area under the signal curve when supported.")
-    alpha: float = Field(default=0.85, description="Opacity for rendered signal glyphs (0-1).")
-    linewidth: float = Field(default=1.0, description="Line width for line/fragment style rendering.")
+    alpha: float = Field(default=0.9, description="Opacity for rendered signal glyphs (0-1).")
+    linewidth: float = Field(default=0.8, description="Line width for line/fragment style rendering.")
     scatter_point_size: float = Field(
         default=1.0,
         description="Marker area for scatter style rendering.",
     )
+    show_baseline: bool = Field(default=True, description="Draw a subtle baseline at y=0.")
+    baseline_color: str = Field(default="#b8bec8", description="Color of the y=0 signal baseline.")
+    baseline_alpha: float = Field(default=0.85, description="Opacity of the y=0 signal baseline.")
+    baseline_linewidth: float = Field(default=0.6, description="Line width of the y=0 signal baseline.")
 
     min_value: float | None = Field(
         default=None,
@@ -206,21 +210,53 @@ class BigWigTrack(Track):
             linewidth=max(self.linewidth, 0.4),
             alpha=self.alpha,
         )
+    
+    def _plot_heatmap(
+        self, ax: matplotlib.axes.Axes, gr: GenomicRegion, data: pd.DataFrame
+    ) -> None:
+        """Plot as heatmap."""
+        import matplotlib.pyplot as plt
+
+        if data.empty:
+            return
+
+        x = (data["start"] + data["end"]) / 2
+        y = np.zeros_like(x)
+        values = data["value"].to_numpy(dtype=float)
+
+        # Create a colormap based on the values
+        norm = plt.Normalize(vmin=values.min(), vmax=values.max())
+        cmap = plt.get_cmap(self.color)
+        colors = cmap(norm(values))
+
+        ax.imshow(
+            colors[np.newaxis, :, :],
+            aspect="auto",
+            extent=(gr.start, gr.end, self.y_min, self.y_max),
+            alpha=self.alpha,
+        )
 
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
         """Plot the BigWig track."""
         data = self.fetch_data(gr)
 
         # Plot based on style
-        if self.style == "scatter":
-            self._plot_scatter(ax, gr, data)
-        elif self.style == "line":
-            self._plot_line(ax, gr, data)
-        elif self.style == "fragment":
-            self._plot_fragment(ax, gr, data)
-        elif self.style in ["std", "fill", "heatmap"]:
-            self._plot_fill(ax, gr, data)
-
+        match self.style:
+            case PlotStyle.STD:
+                self._plot_stairs(ax, gr, data)
+            case PlotStyle.FILL:
+                self._plot_fill(ax, gr, data)
+            case PlotStyle.LINE:
+                self._plot_line(ax, gr, data)
+            case PlotStyle.SCATTER:
+                self._plot_scatter(ax, gr, data)
+            case PlotStyle.FRAGMENT:
+                self._plot_fragment(ax, gr, data)
+            case PlotStyle.HEATMAP:
+                self._heatmap(ax, gr, data)
+            case _:
+                raise ValueError(f"Unsupported plot style: {self.style}")
+        
         # Set axis limits
         ax.set_xlim(gr.start, gr.end)
 
@@ -246,6 +282,14 @@ class BigWigTrack(Track):
             self.y_max = self.y_min + 1
 
         ax.set_ylim(ymin=self.y_min, ymax=self.y_max)
+        if self.show_baseline and self.y_min <= 0 <= self.y_max:
+            ax.axhline(
+                0,
+                color=self.baseline_color,
+                alpha=self.baseline_alpha,
+                linewidth=self.baseline_linewidth,
+                zorder=0,
+            )
 
         # Add labels
         if self.label.plot_title or self.label.plot_scale:
@@ -255,6 +299,7 @@ class BigWigTrack(Track):
                 self.y_min,
                 self.y_max,
                 title=self.title or "",
+                title_color=self.color,
             )
             labeller.plot(ax, gr)
         else:

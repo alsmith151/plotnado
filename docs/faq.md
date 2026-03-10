@@ -26,7 +26,10 @@ plotnado track-options bigwig
 
 ## How do I apply consistent style to all tracks?
 
-Use `GenomicFigure(theme=...)` with `Theme.default()`, `Theme.minimal()`, or `Theme.publication()`.
+`GenomicFigure()` uses publication defaults automatically. Use:
+
+- `GenomicFigure(theme=...)` with `Theme.default()`, `Theme.minimal()`, or `Theme.publication()`.
+- `GenomicFigure(theme=None)` to opt out of themed defaults.
 
 ## How do I share figure definitions?
 

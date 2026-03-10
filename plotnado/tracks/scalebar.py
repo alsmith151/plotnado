@@ -24,8 +24,8 @@ class ScaleBarAesthetics(BaseModel):
     )
     font_size: int = Field(default=8, description="Font size for the scale label.")
     title: str = Field(default="Scale", description="Human-readable name for this style preset.")
-    bar_linewidth: float = Field(default=3.0, description="Line width of the main horizontal scale bar.")
-    tick_linewidth: float = Field(default=2.0, description="Line width of terminal scale ticks.")
+    bar_linewidth: float = Field(default=1.8, description="Line width of the main horizontal scale bar.")
+    tick_linewidth: float = Field(default=1.4, description="Line width of terminal scale ticks.")
     tick_height: float = Field(default=0.1, description="Half-height of terminal ticks in axis units.")
     label_offset: float = Field(
         default=0.25,

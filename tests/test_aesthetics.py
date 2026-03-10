@@ -32,9 +32,13 @@ class TestBigwigAesthetics:
         assert aesthetics.style == "fill"  # Changed for genome browser style
         assert aesthetics.color == "#2171b5"  # Genome browser blue
         assert aesthetics.fill is True
-        assert aesthetics.alpha == 0.85  # Slightly transparent
+        assert aesthetics.alpha == 0.9
         assert aesthetics.scatter_point_size == 1.0
-        assert aesthetics.linewidth == 1.0
+        assert aesthetics.linewidth == 0.8
+        assert aesthetics.show_baseline is True
+        assert aesthetics.baseline_color == "#b8bec8"
+        assert aesthetics.baseline_alpha == 0.85
+        assert aesthetics.baseline_linewidth == 0.6
         assert aesthetics.min_value is None
         assert aesthetics.max_value is None
 
@@ -137,8 +141,8 @@ class TestScaleBarAesthetics:
         assert aesthetics.scale_distance is None
         assert aesthetics.title == "Scale"
         assert aesthetics.font_size == 8
-        assert aesthetics.bar_linewidth == 3.0
-        assert aesthetics.tick_linewidth == 2.0
+        assert aesthetics.bar_linewidth == 1.8
+        assert aesthetics.tick_linewidth == 1.4
         assert aesthetics.tick_height == 0.1
         assert aesthetics.label_offset == 0.25
 
@@ -184,7 +188,7 @@ class TestGenesAesthetics:
         assert aesthetics.exon_color == "black"
         assert aesthetics.intron_linewidth == 0.5
         assert aesthetics.intron_color == "black"
-        assert aesthetics.gene_label_font_size == 8
+        assert aesthetics.gene_label_font_size == 10
         assert aesthetics.gene_label_style == "italic"
         assert aesthetics.label_overlap_strategy == "auto"
         assert aesthetics.label_min_overlap_bp == 200
@@ -228,9 +232,9 @@ class TestGenomicAxisAesthetics:
         assert aesthetics.num_ticks == 5
         assert aesthetics.show_chromosome is True
         assert aesthetics.tick_height == 0.15
-        assert aesthetics.axis_linewidth == 1.5
+        assert aesthetics.axis_linewidth == 1.1
         assert aesthetics.tick_color == "#333333"
-        assert aesthetics.tick_linewidth == 1.2
+        assert aesthetics.tick_linewidth == 0.9
         assert aesthetics.chromosome_fontweight == "bold"
 
     def test_genomic_axis_uses_nested_aesthetics(self):
@@ -247,7 +251,7 @@ class TestGenomicAxisAesthetics:
 class TestAdditionalAesthetics:
     def test_bed_defaults(self):
         aesthetics = BedAesthetics()
-        assert aesthetics.rect_linewidth == 1.0
+        assert aesthetics.rect_linewidth == 0.7
 
     def test_highlight_defaults(self):
         aesthetics = HighlightsAesthetics()
@@ -256,3 +260,4 @@ class TestAdditionalAesthetics:
     def test_links_defaults(self):
         aesthetics = LinksAesthetics()
         assert aesthetics.y_baseline == 0.1
+        assert aesthetics.linewidth == 0.8

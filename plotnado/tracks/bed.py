@@ -11,7 +11,7 @@ import pandas as pd
 from pydantic import BaseModel, ConfigDict, Field
 
 from .region import GenomicRegion
-from .base import Track
+from .base import Track, TrackLabeller
 from .utils import clean_axis, read_bed_regions
 from .enums import DisplayMode
 
@@ -31,7 +31,7 @@ class BedAesthetics(BaseModel):
 
     color: str = Field(default="steelblue", description="Fill color for interval rectangles.")
     edge_color: str = Field(default="black", description="Stroke color for interval borders.")
-    alpha: float = Field(default=0.8, description="Opacity of interval rectangles (0-1).")
+    alpha: float = Field(default=0.78, description="Opacity of interval rectangles (0-1).")
     interval_height: float = Field(
         default=0.45,
         description="Rectangle height in normalized track coordinates.",
@@ -47,7 +47,7 @@ class BedAesthetics(BaseModel):
         description="Column name used to populate interval labels.",
     )
     font_size: int = Field(default=8, description="Font size for interval labels.")
-    rect_linewidth: float = Field(default=1.0, description="Border line width for interval rectangles.")
+    rect_linewidth: float = Field(default=0.7, description="Border line width for interval rectangles.")
 
 
 class BedTrack(Track):
@@ -135,7 +135,17 @@ class BedTrack(Track):
         if data.empty:
             ax.set_xlim(gr.start, gr.end)
             ax.set_ylim(0, 1)
-            clean_axis(ax)
+            if self.label.plot_title or self.label.plot_scale:
+                TrackLabeller.from_config(
+                    self.label,
+                    gr,
+                    0,
+                    1,
+                    title=self.title or "",
+                    title_color=self.color,
+                ).plot(ax, gr)
+            else:
+                clean_axis(ax)
             return
 
         row_scale = 1.0 / max(1, self.max_rows)
@@ -185,4 +195,14 @@ class BedTrack(Track):
 
         ax.set_xlim(gr.start, gr.end)
         ax.set_ylim(0, 1)
-        clean_axis(ax)
+        if self.label.plot_title or self.label.plot_scale:
+            TrackLabeller.from_config(
+                self.label,
+                gr,
+                0,
+                1,
+                title=self.title or "",
+                title_color=self.color,
+            ).plot(ax, gr)
+        else:
+            clean_axis(ax)

@@ -24,6 +24,25 @@ class Theme(BaseModel):
     font_size: int | None = Field(default=None, description="Default font size for compatible track text elements.")
     font_family: str | None = Field(default=None, description="Global font family applied to labels and text when unset.")
     cmap: str | None = Field(default=None, description="Default colormap for compatible matrix/continuous tracks.")
+    palette: list[str] | None = Field(
+        default=None,
+        description="Optional default palette used for automatic multi-track signal coloring.",
+    )
+    auto_palette: bool = Field(
+        default=False,
+        description="Automatically color eligible signal tracks using the theme palette.",
+    )
+    separator_color: str | None = Field(
+        default=None,
+        description="Optional horizontal separator color drawn between stacked tracks.",
+    )
+    separator_alpha: float = Field(default=0.25, description="Opacity of figure-level track separators.")
+    separator_linewidth: float = Field(default=0.6, description="Line width of figure-level track separators.")
+    subplot_hspace: float = Field(default=0.05, description="Vertical spacing between stacked track axes.")
+    margin_left: float = Field(default=0.08, description="Figure subplot left margin fraction.")
+    margin_right: float = Field(default=0.985, description="Figure subplot right margin fraction.")
+    margin_top: float = Field(default=0.97, description="Figure subplot top margin fraction.")
+    margin_bottom: float = Field(default=0.04, description="Figure subplot bottom margin fraction.")
 
     highlight_color: str = Field(default="#ffd700", description="Default color used for region highlights.")
     highlight_alpha: float = Field(default=0.15, description="Default opacity used for region highlights.")
@@ -64,20 +83,44 @@ class Theme(BaseModel):
     @classmethod
     def publication(cls) -> "Theme":
         return cls(
-            color="#1f2937",
-            alpha=0.9,
-            linewidth=1.2,
-            font_size=9,
+            color=None,
+            alpha=None,
+            linewidth=None,
+            font_size=None,
             font_family="DejaVu Sans",
-            cmap="viridis",
-            highlight_color="#fde68a",
-            highlight_alpha=0.2,
+            cmap="magma",
+            palette=[
+                "#7A3E8E",
+                "#2C7FB8",
+                "#E15759",
+                "#111111",
+                "#2CA02C",
+                "#3B78B4",
+                "#E7298A",
+                "#F28E2B",
+                "#56B4E9",
+                "#0B775E",
+            ],
+            auto_palette=True,
+            separator_color="#b8bec8",
+            separator_alpha=0.35,
+            separator_linewidth=0.6,
+            subplot_hspace=0.03,
+            margin_left=0.07,
+            margin_right=0.985,
+            margin_top=0.975,
+            margin_bottom=0.035,
+            highlight_color="#e9b2a8",
+            highlight_alpha=0.22,
             label=LabelConfig(
-                title_weight="bold",
-                title_size=10,
-                scale_size=9,
-                label_box_enabled=True,
-                label_box_alpha=0.85,
+                title_weight="normal",
+                title_size=11,
+                scale_size=11,
+                scale_color="#2f2f2f",
+                label_box_enabled=False,
+                label_box_alpha=0.0,
+                title_height=0.86,
+                scale_height=0.86,
             ),
         )
 

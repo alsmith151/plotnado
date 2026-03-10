@@ -172,7 +172,7 @@ def plot(
     dpi: Annotated[
         int,
         typer.Option("--dpi", help="Resolution in dots per inch"),
-    ] = 300,
+    ] = 600,
 ):
     """
     Create a simple genome browser plot.

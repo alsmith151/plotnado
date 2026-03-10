@@ -363,7 +363,18 @@ class TrackLabeller(BaseModel):
         y_min: float,
         y_max: float,
         title: str = "",
+        title_color: str | None = None,
     ) -> "TrackLabeller":
+        resolved_title_color = label.title_color
+        default_label = LabelConfig()
+        label_fields_set = getattr(label, "model_fields_set", set())
+        if (
+            title_color is not None
+            and "title_color" not in label_fields_set
+            and label.title_color == default_label.title_color
+        ):
+            resolved_title_color = title_color
+
         return cls(
             gr=gr,
             y_min=y_min,
@@ -380,7 +391,7 @@ class TrackLabeller(BaseModel):
             title_location=label.title_location,
             title_height=label.title_height,
             title_size=label.title_size,
-            title_color=label.title_color,
+            title_color=resolved_title_color,
             title_font=label.title_font,
             title_weight=label.title_weight,
             scale_location=label.scale_location,

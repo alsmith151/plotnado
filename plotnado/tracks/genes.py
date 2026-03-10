@@ -86,7 +86,7 @@ class GenesAesthetics(BaseModel):
         description="Target spacing in bp between directional chevrons.",
     )
     chevron_max_count: int = Field(default=10, description="Maximum number of chevrons drawn per gene body.")
-    gene_label_font_size: int = Field(default=8, description="Font size for gene name labels.")
+    gene_label_font_size: int = Field(default=10, description="Font size for gene name labels.")
     gene_label_style: GeneLabelStyle = Field(
         default=GeneLabelStyle.ITALIC,
         description="Font style for gene name labels.",
@@ -653,7 +653,10 @@ class Genes(Track):
                             connector_y=base_y,
                             draw_connector=(
                                 bool(self.label_connectors)
-                                and abs(x_pos - center_x) > 1e-6
+                                and (
+                                    abs(x_pos - center_x) > 1e-6
+                                    or abs(y_pos - base_y) > 1e-6
+                                )
                             ),
                         )
                         break
@@ -724,7 +727,11 @@ class Genes(Track):
                         connector_x=center_x,
                         connector_y=base_y,
                         draw_connector=(
-                            bool(self.label_connectors) and abs(x_pos - center_x) > 1e-6
+                            bool(self.label_connectors)
+                            and (
+                                abs(x_pos - center_x) > 1e-6
+                                or abs(y_pos - base_y) > 1e-6
+                            )
                         ),
                     )
                 )
@@ -764,7 +771,11 @@ class Genes(Track):
                     connector_x=center_x,
                     connector_y=base_y,
                     draw_connector=(
-                        bool(self.label_connectors) and abs(x_pos - center_x) > 1e-6
+                        bool(self.label_connectors)
+                        and (
+                            abs(x_pos - center_x) > 1e-6
+                            or abs(y_pos - base_y) > 1e-6
+                        )
                     ),
                 )
             )
@@ -907,7 +918,7 @@ class Genes(Track):
                 or center + marker_right_extent > allowed_right
             ):
                 continue
-            (line,) = ax.plot(
+            line_artists = ax.plot(
                 [center],
                 [chevron_y],
                 linestyle="None",
@@ -918,7 +929,8 @@ class Genes(Track):
                 markeredgewidth=marker_edge_width,
                 zorder=1.5,
             )
-            line.set_clip_path(clip_rect.get_path(), clip_rect.get_transform())
+            if isinstance(line_artists, (list, tuple)) and line_artists:
+                line_artists[0].set_clip_path(clip_rect.get_path(), clip_rect.get_transform())
 
     def _resolve_chevron_width(
         self,

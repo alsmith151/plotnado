@@ -13,7 +13,7 @@ import pandas as pd
 from pydantic import BaseModel, ConfigDict, Field
 
 from .region import GenomicRegion
-from .base import Track
+from .base import Track, TrackLabeller
 from .utils import clean_axis
 
 
@@ -36,8 +36,8 @@ class LinksAesthetics(BaseModel):
         default=None,
         description="Optional stroke override for arc edges.",
     )
-    alpha: float = Field(default=0.6, description="Opacity of interaction arcs (0-1).")
-    linewidth: float = Field(default=1.0, description="Line width for interaction arcs.")
+    alpha: float = Field(default=0.55, description="Opacity of interaction arcs (0-1).")
+    linewidth: float = Field(default=0.8, description="Line width for interaction arcs.")
     cmap: str = Field(default="viridis", description="Colormap used when coloring arcs by score.")
     max_height: float = Field(
         default=0.8,
@@ -119,7 +119,17 @@ class LinksTrack(Track):
         if data.empty:
             ax.set_xlim(gr.start, gr.end)
             ax.set_ylim(0, 1)
-            clean_axis(ax)
+            if self.label.plot_title or self.label.plot_scale:
+                TrackLabeller.from_config(
+                    self.label,
+                    gr,
+                    0,
+                    1,
+                    title=self.title or "",
+                    title_color=self.color,
+                ).plot(ax, gr)
+            else:
+                clean_axis(ax)
             return
 
         # Setup coloring
@@ -192,4 +202,14 @@ class LinksTrack(Track):
 
         ax.set_xlim(gr.start, gr.end)
         ax.set_ylim(0, 1)  # Internal coordinate system for track height
-        clean_axis(ax)
+        if self.label.plot_title or self.label.plot_scale:
+            TrackLabeller.from_config(
+                self.label,
+                gr,
+                0,
+                1,
+                title=self.title or "",
+                title_color=self.color,
+            ).plot(ax, gr)
+        else:
+            clean_axis(ax)

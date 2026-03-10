@@ -105,6 +105,7 @@ class BigWigCollection(Track):
                 y_min,
                 y_max,
                 title=self.title,
+                title_color=tracks[0].color if tracks else None,
             ).plot(ax, gr)
         else:
             clean_axis(ax)

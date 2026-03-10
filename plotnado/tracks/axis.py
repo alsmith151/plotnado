@@ -32,9 +32,9 @@ class GenomicAxisAesthetics(BaseModel):
         description="Format genomic coordinates using k/M suffixes instead of raw integers.",
     )
     tick_height: float = Field(default=0.15, description="Tick length drawn downward from axis baseline.")
-    axis_linewidth: float = Field(default=1.5, description="Line width of the horizontal axis baseline.")
+    axis_linewidth: float = Field(default=1.1, description="Line width of the horizontal axis baseline.")
     tick_color: str = Field(default="#333333", description="Color for tick marks and tick labels.")
-    tick_linewidth: float = Field(default=1.2, description="Line width of tick marks.")
+    tick_linewidth: float = Field(default=0.9, description="Line width of tick marks.")
     chromosome_fontweight: FontWeight = Field(
         default=FontWeight.BOLD,
         description="Font weight of the chromosome text label.",

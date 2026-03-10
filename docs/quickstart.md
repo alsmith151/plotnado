@@ -23,6 +23,8 @@ fig.bigwig(signal, title="Synthetic signal", style="fill")
 fig.save("quickstart.png", "chr1:1,010,000-1,080,000")
 ```
 
+`GenomicFigure()` applies publication-quality styling by default. Pass `theme=None` for unthemed rendering.
+
 ## 2) Run a ready-made script
 
 ```bash
