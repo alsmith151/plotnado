@@ -45,6 +45,17 @@ from .peaks import NarrowPeakTrack, NarrowPeakAesthetics
 from .links import LinksTrack, LinksAesthetics
 from .annotations import HLineTrack, VLineTrack, AnnotationAesthetics
 
+from .quantnado import (
+    QuantNadoCoverageTrack,
+    QuantNadoCoverageAesthetics,
+    QuantNadoStrandedCoverageTrack,
+    QuantNadoStrandedCoverageAesthetics,
+    QuantNadoMethylationTrack,
+    QuantNadoMethylationAesthetics,
+    QuantNadoVariantTrack,
+    QuantNadoVariantAesthetics,
+)
+
 GeneTrack = Genes
 AxisTrack = GenomicAxis
 ScaleBarTrack = ScaleBar
@@ -112,4 +123,13 @@ __all__ = [
     "HLineTrack",
     "VLineTrack",
     "AnnotationAesthetics",
+
+    "QuantNadoCoverageTrack",
+    "QuantNadoCoverageAesthetics",
+    "QuantNadoStrandedCoverageTrack",
+    "QuantNadoStrandedCoverageAesthetics",
+    "QuantNadoMethylationTrack",
+    "QuantNadoMethylationAesthetics",
+    "QuantNadoVariantTrack",
+    "QuantNadoVariantAesthetics",
 ]
