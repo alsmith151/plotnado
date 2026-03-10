@@ -2,9 +2,20 @@
 
 from unittest.mock import MagicMock, patch
 
+import matplotlib.markers
+import matplotlib.pyplot as plt
 import pandas as pd
 
 from plotnado.tracks import Genes, GenesAesthetics, GenomicRegion
+
+
+def _chevron_calls(ax: MagicMock) -> list:
+    return [
+        call
+        for call in ax.plot.call_args_list
+        if call.kwargs.get("marker")
+        in {matplotlib.markers.CARETRIGHTBASE, matplotlib.markers.CARETLEFTBASE}
+    ]
 
 
 class TestGenes:
@@ -192,7 +203,7 @@ class TestGenes:
 
         genes._draw_gene_with_introns(ax, gene, ypos=0.5)
 
-        assert ax.plot.call_count >= 3
+        assert len(_chevron_calls(ax)) >= 1
 
     def test_draw_gene_with_introns_chevrons_follow_minus_strand(self):
         ax = MagicMock()
@@ -210,8 +221,7 @@ class TestGenes:
 
         genes._draw_gene_with_introns(ax, gene, ypos=0.5)
 
-        first_chevron_x = ax.plot.call_args_list[1].args[0]
-        assert first_chevron_x[0] > first_chevron_x[1]
+        assert _chevron_calls(ax)[0].kwargs["marker"] == matplotlib.markers.CARETLEFTBASE
 
     def test_draw_gene_with_introns_chevrons_centered_on_intron_midpoint(self):
         ax = MagicMock()
@@ -232,8 +242,8 @@ class TestGenes:
         intron_start = 1000 + 300
         intron_end = 1000 + 1200
         intron_mid = (intron_start + intron_end) / 2
-        first_chevron_x = ax.plot.call_args_list[1].args[0]
-        chevron_mid = sum(first_chevron_x) / 2
+        first_chevron_x = _chevron_calls(ax)[0].args[0]
+        chevron_mid = first_chevron_x[0]
 
         assert abs(chevron_mid - intron_mid) < 1e-6
 
@@ -253,8 +263,8 @@ class TestGenes:
 
         genes._draw_gene_with_introns(ax, gene, ypos=0.5)
 
-        chevron_line_calls = ax.plot.call_args_list[1::2]
-        centers = [sum(call.args[0]) / 2 for call in chevron_line_calls]
+        chevron_line_calls = _chevron_calls(ax)
+        centers = [call.args[0][0] for call in chevron_line_calls]
 
         assert len(centers) >= 6
         spacings = [centers[index + 1] - centers[index] for index in range(len(centers) - 1)]
@@ -280,8 +290,8 @@ class TestGenes:
         intron_start = 1000 + 500
         intron_end = 1000 + 90000
         intron_mid = (intron_start + intron_end) / 2
-        chevron_line_calls = ax.plot.call_args_list[1::2]
-        centers = [sum(call.args[0]) / 2 for call in chevron_line_calls]
+        chevron_line_calls = _chevron_calls(ax)
+        centers = [call.args[0][0] for call in chevron_line_calls]
 
         assert any(abs(center - intron_mid) < 1e-6 for center in centers)
 
@@ -304,7 +314,7 @@ class TestGenes:
 
         genes._draw_gene_with_introns(ax, gene, ypos=0.5)
 
-        chevron_line_calls = ax.plot.call_args_list[1::2]
+        chevron_line_calls = _chevron_calls(ax)
         assert len(chevron_line_calls) < 6
 
     def test_draw_gene_with_introns_respects_chevron_vertical_offset(self):
@@ -330,8 +340,8 @@ class TestGenes:
         ypos = 0.5
         genes._draw_gene_with_introns(ax, gene, ypos=ypos)
 
-        first_chevron_y = ax.plot.call_args_list[1].args[1]
-        chevron_peak = first_chevron_y[1]
+        first_chevron_y = _chevron_calls(ax)[0].args[1]
+        chevron_peak = first_chevron_y[0]
         expected_peak = ypos - max(genes.interval_height * genes.chevron_height_ratio, 0.01)
         assert abs(chevron_peak - expected_peak) < 1e-6
 
@@ -352,12 +362,82 @@ class TestGenes:
         ypos = 0.5
         genes._draw_gene_with_introns(ax, gene, ypos=ypos)
 
-        lower_arm = ax.plot.call_args_list[1].args[1]
-        upper_arm = ax.plot.call_args_list[2].args[1]
+        first_chevron_y = _chevron_calls(ax)[0].args[1]
 
-        assert abs(lower_arm[1] - ypos) < 1e-6
-        assert abs(upper_arm[1] - ypos) < 1e-6
-        assert abs((ypos - lower_arm[0]) - (upper_arm[0] - ypos)) < 1e-6
+        assert abs(first_chevron_y[0] - ypos) < 1e-6
+
+    def test_draw_gene_with_introns_reduces_chevron_width_when_gene_height_shrinks(self):
+        fig, ax = plt.subplots(figsize=(6, 1.5))
+        ax.set_xlim(1000, 6000)
+        ax.set_ylim(0, 1)
+
+        default_genes = Genes(data=pd.DataFrame(), aesthetics=GenesAesthetics(interval_height=0.2))
+        short_genes = Genes(data=pd.DataFrame(), aesthetics=GenesAesthetics(interval_height=0.02))
+        gene = pd.Series(
+            {
+                "start": 1000,
+                "end": 6000,
+                "strand": "+",
+                "block_starts": [0, 4000],
+                "block_sizes": [400, 500],
+                "block_count": 2,
+            }
+        )
+
+        default_genes._draw_gene_with_introns(ax, gene, ypos=0.7)
+        default_marker_size = ax.lines[1].get_markersize()
+
+        short_genes._draw_gene_with_introns(ax, gene, ypos=0.3)
+        short_marker = ax.lines[3]
+        short_marker_size = short_marker.get_markersize()
+
+        plt.close(fig)
+
+        assert short_marker.get_marker() == matplotlib.markers.CARETRIGHTBASE
+        assert short_marker_size < default_marker_size
+        assert short_marker_size >= 4.0
+
+    def test_draw_gene_with_introns_keeps_chevrons_within_intron_bounds(self):
+        fig, ax = plt.subplots(figsize=(6, 1.5))
+        ax.set_xlim(1000, 6000)
+        ax.set_ylim(0, 1)
+
+        genes = Genes(data=pd.DataFrame())
+        gene = pd.Series(
+            {
+                "start": 1000,
+                "end": 6000,
+                "strand": "+",
+                "block_starts": [0, 4000],
+                "block_sizes": [400, 500],
+                "block_count": 2,
+            }
+        )
+
+        intron_start = 1400
+        intron_end = 5000
+        genes._draw_gene_with_introns(ax, gene, ypos=0.5)
+
+        chevrons = ax.lines[1:]
+        assert chevrons
+
+        for chevron in chevrons:
+            assert chevron.get_clip_path() is not None
+            left_extent, right_extent = genes._resolve_chevron_marker_extents(
+                ax=ax,
+                marker=chevron.get_marker(),
+                marker_size=chevron.get_markersize(),
+                marker_edge_width=chevron.get_markeredgewidth(),
+            )
+            boundary_padding = genes._resolve_chevron_boundary_padding(
+                ax=ax,
+                marker_edge_width=chevron.get_markeredgewidth(),
+            )
+            center = chevron.get_xdata()[0]
+            assert center - left_extent - boundary_padding >= intron_start
+            assert center + right_extent + boundary_padding <= intron_end
+
+        plt.close(fig)
 
     def test_plot_genes_stagger_labels_uses_alternating_vertical_offsets(self, mock_ax, genomic_region):
         data = pd.DataFrame(
@@ -403,6 +483,107 @@ class TestGenes:
 
         assert len(mock_ax.text.call_args_list) == 1
 
+    def test_plot_genes_auto_strategy_shows_dense_labels(self, mock_ax, genomic_region):
+        data = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [1100, 1110],
+                "end": [1120, 1130],
+                "geneid": ["GENE_ALPHA", "GENE_BETA"],
+                "block_count": [1, 1],
+                "block_sizes": [[20], [20]],
+                "block_starts": [[0], [0]],
+            }
+        )
+        genes = Genes(data=data, aesthetics=GenesAesthetics(display="collapsed"))
+
+        genes.plot_genes(mock_ax, genomic_region)
+
+        assert len(mock_ax.text.call_args_list) == 2
+
+    def test_plot_genes_default_enum_auto_strategy_stacks_dense_labels(
+        self, mock_ax, genomic_region
+    ):
+        data = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [1100, 1110],
+                "end": [1120, 1130],
+                "geneid": ["GENE_ALPHA", "GENE_BETA"],
+                "block_count": [1, 1],
+                "block_sizes": [[20], [20]],
+                "block_starts": [[0], [0]],
+            }
+        )
+        genes = Genes(data=data)
+
+        genes.plot_genes(mock_ax, genomic_region)
+
+        y_values = [call.args[1] for call in mock_ax.text.call_args_list]
+        assert len(y_values) == 2
+        assert len(set(y_values)) == 2
+
+    def test_plot_genes_auto_strategy_avoids_connectors_by_default(
+        self, mock_ax, genomic_region
+    ):
+        data = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [1100, 1110],
+                "end": [1120, 1130],
+                "geneid": ["GENE_ALPHA", "GENE_BETA"],
+                "block_count": [1, 1],
+                "block_sizes": [[20], [20]],
+                "block_starts": [[0], [0]],
+            }
+        )
+        genes = Genes(
+            data=data,
+            aesthetics=GenesAesthetics(display="collapsed", label_overlap_strategy="auto"),
+        )
+
+        genes.plot_genes(mock_ax, genomic_region)
+
+        connector_calls = [
+            call
+            for call in mock_ax.plot.call_args_list
+            if len(call.args) >= 2 and len(call.args[0]) == 2 and len(call.args[1]) == 2
+        ]
+        assert len(connector_calls) == 0
+
+    def test_plot_genes_auto_strategy_can_draw_connectors_when_enabled(
+        self, mock_ax, genomic_region
+    ):
+        data = pd.DataFrame(
+            {
+                "chrom": ["chr1"],
+                "start": [1940],
+                "end": [1998],
+                "geneid": ["GENE_AT_EDGE_WITH_LONG_NAME"],
+                "block_count": [1],
+                "block_sizes": [[58]],
+                "block_starts": [[0]],
+            }
+        )
+        genes = Genes(
+            data=data,
+            aesthetics=GenesAesthetics(
+                display="collapsed",
+                label_overlap_strategy="auto",
+                label_connectors=True,
+                label_max_chars=26,
+            ),
+        )
+
+        genes.plot_genes(mock_ax, genomic_region)
+
+        connector_calls = [
+            call
+            for call in mock_ax.plot.call_args_list
+            if len(call.args) >= 2 and len(call.args[0]) == 2 and len(call.args[1]) == 2
+        ]
+        assert connector_calls
+
     def test_plot_genes_show_labels_false_skips_label_text(self, mock_ax, genomic_region):
         data = pd.DataFrame(
             {
@@ -421,6 +602,55 @@ class TestGenes:
 
         assert len(mock_ax.text.call_args_list) == 0
 
+    def test_plot_genes_skips_labels_for_tiny_edge_overlap(self, mock_ax, genomic_region):
+        data = pd.DataFrame(
+            {
+                "chrom": ["chr1"],
+                "start": [1990],
+                "end": [3000],
+                "geneid": ["EDGE_GENE"],
+                "block_count": [1],
+                "block_sizes": [[1010]],
+                "block_starts": [[0]],
+            }
+        )
+        genes = Genes(
+            data=data,
+            aesthetics=GenesAesthetics(
+                display="collapsed",
+                label_overlap_strategy="auto",
+                label_min_overlap_bp=120,
+                label_min_overlap_fraction=0.2,
+            ),
+        )
+
+        genes.plot_genes(mock_ax, genomic_region)
+
+        assert len(mock_ax.text.call_args_list) == 0
+
+    def test_plot_genes_skips_labels_for_genes_outside_viewport(self, mock_ax, genomic_region):
+        data = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [50, 1200],
+                "end": [120, 1300],
+                "geneid": ["OUTSIDE", "INSIDE"],
+                "block_count": [1, 1],
+                "block_sizes": [[70], [100]],
+                "block_starts": [[0], [0]],
+            }
+        )
+        genes = Genes(
+            data=data,
+            aesthetics=GenesAesthetics(display="collapsed", label_overlap_strategy="auto"),
+        )
+
+        genes.plot_genes(mock_ax, genomic_region)
+
+        labels = [call.args[2] for call in mock_ax.text.call_args_list]
+        assert "OUTSIDE" not in labels
+        assert "INSIDE" in labels
+
     def test_plot_genes_label_is_centered_on_gene_anchor(self, mock_ax, genomic_region):
         data = pd.DataFrame(
             {
@@ -433,7 +663,10 @@ class TestGenes:
                 "block_starts": [[0]],
             }
         )
-        genes = Genes(data=data, aesthetics=GenesAesthetics(display="collapsed"))
+        genes = Genes(
+            data=data,
+            aesthetics=GenesAesthetics(display="collapsed", label_overlap_strategy="suppress"),
+        )
 
         genes.plot_genes(mock_ax, genomic_region)
 
@@ -442,6 +675,33 @@ class TestGenes:
         expected_center = (1900 + 1990) / 2
         assert abs(label_x - expected_center) < 1e-6
         assert mock_ax.text.call_args.kwargs["ha"] == "center"
+
+    def test_plot_genes_smart_expanded_auto_grows_rows_past_max(
+        self, mock_ax, genomic_region
+    ):
+        data = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [1100, 1110],
+                "end": [1400, 1410],
+                "geneid": ["GENE_ALPHA", "GENE_BETA"],
+                "block_count": [1, 1],
+                "block_sizes": [[300], [300]],
+                "block_starts": [[0], [0]],
+            }
+        )
+        genes = Genes(
+            data=data,
+            aesthetics=GenesAesthetics(
+                display="expanded",
+                label_overlap_strategy="smart",
+                max_number_of_rows=1,
+            ),
+        )
+
+        genes.plot_genes(mock_ax, genomic_region)
+
+        assert mock_ax.set_ylim.call_args.args[1] > 1.1
 
     def test_plot_genes_auto_expand_switches_from_collapsed_on_collisions(
         self, mock_ax, genomic_region

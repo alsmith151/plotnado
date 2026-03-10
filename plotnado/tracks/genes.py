@@ -5,10 +5,12 @@ Genes track for displaying gene annotations.
 import importlib.resources
 import json
 from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
 
 import matplotlib.axes
 import matplotlib.font_manager
+import matplotlib.markers
 import matplotlib.patches
 import matplotlib.textpath
 import pandas as pd
@@ -57,7 +59,7 @@ class GenesAesthetics(BaseModel):
     exon_linewidth: float = Field(default=0.8, description="Line width for exon outlines.")
     exon_edge_color: str = Field(default="black", description="Edge color for exon rectangles.")
     exon_color: str = Field(default="black", description="Fill color for exon rectangles.")
-    intron_linewidth: float = Field(default=0.8, description="Line width for intron connector lines.")
+    intron_linewidth: float = Field(default=0.5, description="Line width for intron connector lines.")
     intron_color: str = Field(default="black", description="Color for intron connector lines.")
     chevron_height_ratio: float = Field(
         default=0.22,
@@ -80,10 +82,10 @@ class GenesAesthetics(BaseModel):
         description="Margin near transcript edges where chevrons are omitted.",
     )
     chevron_target_spacing_bp: float = Field(
-        default=6000.0,
+        default=9000.0,
         description="Target spacing in bp between directional chevrons.",
     )
-    chevron_max_count: int = Field(default=14, description="Maximum number of chevrons drawn per gene body.")
+    chevron_max_count: int = Field(default=10, description="Maximum number of chevrons drawn per gene body.")
     gene_label_font_size: int = Field(default=8, description="Font size for gene name labels.")
     gene_label_style: GeneLabelStyle = Field(
         default=GeneLabelStyle.ITALIC,
@@ -91,9 +93,10 @@ class GenesAesthetics(BaseModel):
     )
     show_labels: bool = Field(default=True, description="Draw gene name labels.")
     label_overlap_strategy: GeneLabelOverlapStrategy = Field(
-        default=GeneLabelOverlapStrategy.STAGGER,
+        default=GeneLabelOverlapStrategy.AUTO,
         description=(
-            "How to handle overlapping labels: stagger alternates vertical offsets, "
+            "How to handle overlapping labels: auto resolves by display mode, smart uses "
+            "lane stacking + horizontal nudging, stagger alternates vertical offsets, "
             "suppress hides collisions, auto_expand switches collapsed mode to expanded."
         ),
     )
@@ -112,6 +115,18 @@ class GenesAesthetics(BaseModel):
     label_vertical_offset: float = Field(
         default=0.14,
         description="Vertical offset (in row units) for non-stagger label placement.",
+    )
+    label_min_overlap_bp: int = Field(
+        default=200,
+        description=(
+            "Do not draw labels for genes clipped at viewport edges when visible overlap is below this bp threshold."
+        ),
+    )
+    label_min_overlap_fraction: float = Field(
+        default=0.15,
+        description=(
+            "Do not draw labels for clipped edge genes when overlap is below this fraction of total gene length."
+        ),
     )
     label_connectors: bool = Field(
         default=False,
@@ -150,6 +165,18 @@ class Genes(Track):
     gene_count: int = Field(default=0, description="Number of genes drawn in the last plotting pass.")
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    @staticmethod
+    def _enum_token(value: object) -> str:
+        if isinstance(value, Enum):
+            return str(value.value).lower()
+        if hasattr(value, "value"):
+            raw_value = getattr(value, "value")
+            return str(raw_value).lower()
+        raw = str(value)
+        if "." in raw:
+            raw = raw.split(".")[-1]
+        return raw.lower()
 
     def _fetch_genes_from_package(self, gr: GenomicRegion) -> pd.DataFrame:
         try:
@@ -414,7 +441,46 @@ class Genes(Track):
         except (TypeError, ValueError, RuntimeError):
             return fallback_bp
 
+    def _resolve_effective_label_strategy(self, display_mode: str) -> str:
+        strategy = self._enum_token(self.label_overlap_strategy)
+        if strategy != "auto":
+            return strategy
+        if display_mode == "collapsed":
+            return "smart"
+        return "smart"
+
+    @staticmethod
+    def _label_interval_from_anchor(anchor_x: float, width: float, ha: str) -> tuple[float, float]:
+        if ha == "left":
+            return anchor_x, anchor_x + width
+        if ha == "right":
+            return anchor_x - width, anchor_x
+        half_width = width / 2.0
+        return anchor_x - half_width, anchor_x + half_width
+
     def _resolve_label_geometry(
+        self,
+        raw_label: str,
+        anchor_x: float,
+        ha: str,
+        gr: GenomicRegion,
+        bp_per_px: float,
+        dpi: float,
+    ) -> tuple[str, float, str, float, float, bool]:
+        max_chars = max(1, int(self.label_max_chars))
+        fallback_start, fallback_end = self._label_interval_from_anchor(anchor_x, 1.0, ha)
+
+        for char_count in range(max_chars, 0, -1):
+            label = self._truncate_label(raw_label, char_count)
+            width = max(1.0, self._measure_label_width_bp(label, bp_per_px=bp_per_px, dpi=dpi))
+            label_start, label_end = self._label_interval_from_anchor(anchor_x, width, ha)
+            fallback_start, fallback_end = label_start, label_end
+            if label_start >= gr.start and label_end <= gr.end:
+                return label, anchor_x, ha, label_start, label_end, True
+
+        return "", anchor_x, ha, fallback_start, fallback_end, False
+
+    def _label_candidates(
         self,
         raw_label: str,
         gene_start: int,
@@ -422,40 +488,61 @@ class Genes(Track):
         gr: GenomicRegion,
         bp_per_px: float,
         dpi: float,
-    ) -> tuple[str, float, str, float, float, bool]:
-        max_chars = max(1, int(self.label_max_chars))
-
-        def label_width_bp(text: str) -> float:
-            return max(1.0, self._measure_label_width_bp(text, bp_per_px=bp_per_px, dpi=dpi))
-
-        label = self._truncate_label(raw_label, max_chars)
+    ) -> list[tuple[str, float, str, float, float, bool]]:
         center_x = (float(gene_start) + float(gene_end)) / 2.0
-        width = label_width_bp(label)
-        label_start = center_x - (width / 2.0)
-        label_end = center_x + (width / 2.0)
-        if label_start >= gr.start and label_end <= gr.end:
-            return label, center_x, "center", label_start, label_end, True
+        offset_bp = max(0.0, float(self.label_offset_fraction) * float(gr.length))
+        right_anchor = min(float(gr.end), float(gene_end) + offset_bp)
+        left_anchor = max(float(gr.start), float(gene_start) - offset_bp)
 
-        available_width = max(0.0, min(2.0 * (center_x - gr.start), 2.0 * (gr.end - center_x)))
-        if available_width <= 0:
-            return "", center_x, "center", label_start, label_end, False
+        candidates = [
+            self._resolve_label_geometry(
+                raw_label=raw_label,
+                anchor_x=center_x,
+                ha="center",
+                gr=gr,
+                bp_per_px=bp_per_px,
+                dpi=dpi,
+            ),
+            self._resolve_label_geometry(
+                raw_label=raw_label,
+                anchor_x=right_anchor,
+                ha="left",
+                gr=gr,
+                bp_per_px=bp_per_px,
+                dpi=dpi,
+            ),
+            self._resolve_label_geometry(
+                raw_label=raw_label,
+                anchor_x=left_anchor,
+                ha="right",
+                gr=gr,
+                bp_per_px=bp_per_px,
+                dpi=dpi,
+            ),
+        ]
+        return [candidate for candidate in candidates if candidate[5]]
 
-        avg_char_bp = max(self._measure_label_width_bp("M", bp_per_px=bp_per_px, dpi=dpi), 1.0)
-        fit_chars = max(2, min(max_chars, int(available_width / max(avg_char_bp, 1e-6))))
+    def _should_label_gene(self, gene: pd.Series, gr: GenomicRegion, bp_per_px: float) -> bool:
+        gene_start = int(gene["start"])
+        gene_end = int(gene["end"])
+        gene_len = max(1, gene_end - gene_start)
+        overlap_start = max(gene_start, int(gr.start))
+        overlap_end = min(gene_end, int(gr.end))
+        overlap_bp = max(0, overlap_end - overlap_start)
+        overlap_fraction = overlap_bp / float(gene_len)
+        clipped_at_edge = gene_start < int(gr.start) or gene_end > int(gr.end)
 
-        fit_label = self._truncate_label(raw_label, fit_chars)
-        fit_width = label_width_bp(fit_label)
-        while fit_chars > 1 and fit_width > available_width:
-            fit_chars -= 1
-            fit_label = self._truncate_label(raw_label, fit_chars)
-            fit_width = label_width_bp(fit_label)
+        # Skip labels for genes with no visible body in the current viewport.
+        if overlap_bp < max(1.0, bp_per_px):
+            return False
 
-        if fit_chars <= 1 or fit_width > available_width:
-            return "", center_x, "center", label_start, label_end, False
-
-        fit_start = center_x - (fit_width / 2.0)
-        fit_end = center_x + (fit_width / 2.0)
-        return fit_label, center_x, "center", fit_start, fit_end, True
+        if (
+            clipped_at_edge
+            and overlap_bp < int(self.label_min_overlap_bp)
+            and overlap_fraction < float(self.label_min_overlap_fraction)
+        ):
+            return False
+        return True
 
     def _compute_label_placements(
         self,
@@ -481,18 +568,37 @@ class Genes(Track):
                 for row in row_indices
             ], False
 
-        strategy = str(self.label_overlap_strategy)
+        strategy = self._resolve_effective_label_strategy(self._enum_token(self.display))
         bp_per_px = self._estimate_bp_per_px(ax, gr)
         dpi = self._resolve_figure_dpi(ax)
         row_last_end: dict[int, float] = {}
         row_lane_last_end: dict[tuple[int, int], float] = {}
         row_next_lane: dict[int, int] = {}
+        smart_lane_last_end: dict[tuple[int, int], float] = {}
         had_collisions = False
+        min_gap_bp = max(2.0 * bp_per_px, 0.4 * float(self.gene_label_font_size) * bp_per_px)
+        lane_step = max(0.01, float(self.label_stagger_offset) * float(self.row_scale))
 
         for (_, gene), row_index in zip(genes_df.iterrows(), row_indices):
             raw_label = str(gene.get("geneid", "gene"))
             base_y = self.get_y_pos(row_index)
-            text, x_pos, ha, label_start, label_end, visible = self._resolve_label_geometry(
+            center_x = (float(gene["start"]) + float(gene["end"])) / 2.0
+            if not self._should_label_gene(gene, gr, bp_per_px):
+                placements.append(
+                    LabelPlacement(
+                        text="",
+                        x=center_x,
+                        y=base_y,
+                        ha="center",
+                        visible=False,
+                        row_index=row_index,
+                        connector_x=center_x,
+                        connector_y=base_y,
+                        draw_connector=False,
+                    )
+                )
+                continue
+            candidates = self._label_candidates(
                 raw_label=raw_label,
                 gene_start=int(gene["start"]),
                 gene_end=int(gene["end"]),
@@ -501,22 +607,81 @@ class Genes(Track):
                 dpi=dpi,
             )
 
-            if not visible:
+            if not candidates:
                 placements.append(
                     LabelPlacement(
                         text="",
-                        x=x_pos,
+                        x=center_x,
                         y=base_y,
-                        ha=ha,
+                        ha="center",
                         visible=False,
                         row_index=row_index,
-                        connector_x=(float(gene["start"]) + float(gene["end"])) / 2.0,
+                        connector_x=center_x,
                         connector_y=base_y,
                         draw_connector=False,
                     )
                 )
                 continue
 
+            if strategy == "smart":
+                chosen: LabelPlacement | None = None
+                for lane_index in range(max(1, len(genes_df) + 1)):
+                    y_pos = (
+                        base_y
+                        + (float(self.label_vertical_offset) * float(self.row_scale))
+                        + (lane_index * lane_step)
+                    )
+                    lane_key = (row_index, lane_index)
+                    last_end = smart_lane_last_end.get(lane_key, float("-inf"))
+
+                    for text, x_pos, ha, label_start, label_end, _ in candidates:
+                        if label_start <= (last_end + min_gap_bp):
+                            continue
+
+                        smart_lane_last_end[lane_key] = label_end
+                        displaced = lane_index > 0
+                        if displaced:
+                            had_collisions = True
+                        chosen = LabelPlacement(
+                            text=text,
+                            x=x_pos,
+                            y=y_pos,
+                            ha=ha,
+                            visible=True,
+                            row_index=row_index,
+                            connector_x=center_x,
+                            connector_y=base_y,
+                            draw_connector=(
+                                bool(self.label_connectors)
+                                and abs(x_pos - center_x) > 1e-6
+                            ),
+                        )
+                        break
+
+                    if chosen is not None:
+                        break
+
+                if chosen is not None:
+                    placements.append(chosen)
+                    continue
+
+                had_collisions = True
+                placements.append(
+                    LabelPlacement(
+                        text=candidates[0][0],
+                        x=candidates[0][1],
+                        y=base_y,
+                        ha=candidates[0][2],
+                        visible=False,
+                        row_index=row_index,
+                        connector_x=center_x,
+                        connector_y=base_y,
+                        draw_connector=False,
+                    )
+                )
+                continue
+
+            text, x_pos, ha, label_start, label_end, _ = candidates[0]
             if strategy == "stagger":
                 preferred_lane = row_next_lane.get(row_index, 0)
                 row_next_lane[row_index] = 1 - preferred_lane
@@ -539,7 +704,7 @@ class Genes(Track):
                             ha=ha,
                             visible=False,
                             row_index=row_index,
-                            connector_x=(float(gene["start"]) + float(gene["end"])) / 2.0,
+                            connector_x=center_x,
                             connector_y=base_y,
                             draw_connector=False,
                         )
@@ -556,9 +721,11 @@ class Genes(Track):
                         ha=ha,
                         visible=True,
                         row_index=row_index,
-                        connector_x=(float(gene["start"]) + float(gene["end"])) / 2.0,
+                        connector_x=center_x,
                         connector_y=base_y,
-                        draw_connector=False,
+                        draw_connector=(
+                            bool(self.label_connectors) and abs(x_pos - center_x) > 1e-6
+                        ),
                     )
                 )
                 continue
@@ -576,7 +743,7 @@ class Genes(Track):
                             ha=ha,
                             visible=False,
                             row_index=row_index,
-                            connector_x=(float(gene["start"]) + float(gene["end"])) / 2.0,
+                            connector_x=center_x,
                             connector_y=base_y,
                             draw_connector=False,
                         )
@@ -594,9 +761,11 @@ class Genes(Track):
                     ha=ha,
                     visible=True,
                     row_index=row_index,
-                    connector_x=(float(gene["start"]) + float(gene["end"])) / 2.0,
+                    connector_x=center_x,
                     connector_y=base_y,
-                    draw_connector=False,
+                    draw_connector=(
+                        bool(self.label_connectors) and abs(x_pos - center_x) > 1e-6
+                    ),
                 )
             )
 
@@ -674,11 +843,34 @@ class Genes(Track):
         if intron_len <= 0:
             return
 
-        chevron_height = max(self.interval_height * self.chevron_height_ratio, 0.01)
+        chevron_height = self._resolve_chevron_height(ax=ax)
         chevron_y = ypos - (chevron_height * self.chevron_vertical_offset_ratio)
-        chevron_width = max(self.chevron_min_width_bp, intron_len * self.chevron_width_fraction)
-        margin = (chevron_width / 2) + self.chevron_margin_bp
-        usable_len = intron_len - (2 * margin)
+        direction = self._strand_direction(strand)
+        marker = self._strand_marker(direction)
+        chevron_width = self._resolve_chevron_width(
+            ax=ax,
+            intron_len=intron_len,
+            chevron_height=chevron_height,
+        )
+        marker_size = self._resolve_chevron_marker_size(ax=ax, chevron_height=chevron_height)
+        marker_edge_width = self._resolve_chevron_marker_edge_width()
+        marker_left_extent, marker_right_extent = self._resolve_chevron_marker_extents(
+            ax=ax,
+            marker=marker,
+            marker_size=marker_size,
+            marker_edge_width=marker_edge_width,
+        )
+        boundary_padding = self._resolve_chevron_boundary_padding(
+            ax=ax,
+            marker_edge_width=marker_edge_width,
+        )
+        left_extent = max(chevron_width / 2, marker_left_extent)
+        right_extent = max(chevron_width / 2, marker_right_extent)
+        allowed_left = intron_start + boundary_padding
+        allowed_right = intron_end - boundary_padding
+        start_center = allowed_left + self.chevron_margin_bp + left_extent
+        end_center = allowed_right - self.chevron_margin_bp - right_extent
+        usable_len = end_center - start_center
         if usable_len <= 0:
             return
 
@@ -691,9 +883,6 @@ class Genes(Track):
             else:
                 chevron_count -= 1
 
-        direction = self._strand_direction(strand)
-        start_center = intron_start + margin
-        end_center = intron_end - margin
         midpoint = (intron_start + intron_end) / 2.0
 
         if chevron_count == 1:
@@ -705,24 +894,173 @@ class Genes(Track):
             first_center = midpoint - half_span
             centers = [first_center + (index * spacing) for index in range(chevron_count)]
 
+        clip_rect = self._build_chevron_clip_rect(
+            ax=ax,
+            intron_start=allowed_left,
+            intron_end=allowed_right,
+            chevron_y=chevron_y,
+            chevron_height=chevron_height,
+        )
         for center in centers:
-            x_tail = center - (direction * chevron_width / 2)
-            x_tip = center + (direction * chevron_width / 2)
+            if (
+                center - marker_left_extent < allowed_left
+                or center + marker_right_extent > allowed_right
+            ):
+                continue
+            (line,) = ax.plot(
+                [center],
+                [chevron_y],
+                linestyle="None",
+                marker=marker,
+                markersize=marker_size,
+                markerfacecolor="none",
+                markeredgecolor=self.intron_color,
+                markeredgewidth=marker_edge_width,
+                zorder=1.5,
+            )
+            line.set_clip_path(clip_rect.get_path(), clip_rect.get_transform())
 
-            ax.plot(
-                [x_tail, x_tip],
-                [chevron_y - chevron_height, chevron_y],
-                color=self.intron_color,
-                linewidth=self.intron_linewidth,
-                zorder=1,
-            )
-            ax.plot(
-                [x_tail, x_tip],
-                [chevron_y + chevron_height, chevron_y],
-                color=self.intron_color,
-                linewidth=self.intron_linewidth,
-                zorder=1,
-            )
+    def _resolve_chevron_width(
+        self,
+        ax: matplotlib.axes.Axes,
+        intron_len: float,
+        chevron_height: float,
+    ) -> float:
+        width_from_span = max(self.chevron_min_width_bp, intron_len * self.chevron_width_fraction)
+        width_from_display = self._chevron_width_from_display(ax=ax, chevron_height=chevron_height)
+        if width_from_display is None:
+            return width_from_span
+        return min(width_from_span, width_from_display)
+
+    def _resolve_chevron_marker_size(
+        self,
+        ax: matplotlib.axes.Axes,
+        chevron_height: float,
+    ) -> float:
+        scales = self._data_pixel_scales(ax)
+        dpi = float(getattr(getattr(ax, "figure", None), "dpi", 72.0) or 72.0)
+        if scales is None:
+            return max(3.5, chevron_height * 54.0)
+
+        _, px_per_y = scales
+        marker_height_px = max(6.0, 1.6 * chevron_height * px_per_y)
+        return marker_height_px * 72.0 / dpi
+
+    def _resolve_chevron_marker_edge_width(self) -> float:
+        return max(0.4, 0.8 * self.intron_linewidth)
+
+    def _resolve_chevron_marker_extents(
+        self,
+        ax: matplotlib.axes.Axes,
+        marker: int,
+        marker_size: float,
+        marker_edge_width: float,
+    ) -> tuple[float, float]:
+        scales = self._data_pixel_scales(ax)
+        if scales is None:
+            fallback = self.chevron_min_width_bp / 2
+            return fallback, fallback
+
+        px_per_x, _ = scales
+        dpi = float(getattr(getattr(ax, "figure", None), "dpi", 72.0) or 72.0)
+        marker_style = matplotlib.markers.MarkerStyle(marker)
+        marker_path = marker_style.get_path().transformed(marker_style.get_transform())
+        vertices = marker_path.vertices
+        min_x = abs(float(vertices[:, 0].min()))
+        max_x = abs(float(vertices[:, 0].max()))
+        points_to_px = dpi / 72.0
+        left_extent_px = (min_x * marker_size * points_to_px) + (marker_edge_width / 2.0)
+        right_extent_px = (max_x * marker_size * points_to_px) + (marker_edge_width / 2.0)
+        return left_extent_px / px_per_x, right_extent_px / px_per_x
+
+    def _resolve_chevron_boundary_padding(
+        self,
+        ax: matplotlib.axes.Axes,
+        marker_edge_width: float,
+    ) -> float:
+        scales = self._data_pixel_scales(ax)
+        if scales is None:
+            return 0.0
+
+        px_per_x, _ = scales
+        padding_px = max(1.5, marker_edge_width)
+        return padding_px / px_per_x
+
+    def _build_chevron_clip_rect(
+        self,
+        ax: matplotlib.axes.Axes,
+        intron_start: float,
+        intron_end: float,
+        chevron_y: float,
+        chevron_height: float,
+    ) -> matplotlib.patches.Rectangle:
+        clip_half_height = max(self.row_scale, chevron_height * 4.0)
+        return matplotlib.patches.Rectangle(
+            (intron_start, chevron_y - clip_half_height),
+            intron_end - intron_start,
+            clip_half_height * 2.0,
+            transform=ax.transData,
+        )
+
+    def _resolve_chevron_height(self, ax: matplotlib.axes.Axes) -> float:
+        height_from_row = max(self.interval_height * self.chevron_height_ratio, 0.01)
+        height_from_display = self._chevron_height_from_display(ax=ax)
+        if height_from_display is None:
+            return height_from_row
+        return max(height_from_row, height_from_display)
+
+    def _chevron_width_from_display(
+        self,
+        ax: matplotlib.axes.Axes,
+        chevron_height: float,
+    ) -> float | None:
+        scales = self._data_pixel_scales(ax)
+        if scales is None:
+            return None
+        px_per_x, px_per_y = scales
+
+        chevron_height_px = chevron_height * px_per_y
+        # Keep reduced-height chevrons visibly open instead of collapsing into a single stroke.
+        min_visible_width_px = 8.0
+        full_width_px = max(min_visible_width_px, 3.0 * chevron_height_px)
+        return full_width_px / px_per_x
+
+    def _chevron_height_from_display(
+        self,
+        ax: matplotlib.axes.Axes,
+    ) -> float | None:
+        scales = self._data_pixel_scales(ax)
+        if scales is None:
+            return None
+        _, px_per_y = scales
+        min_visible_half_height_px = max(3.0, 2.0 * self.intron_linewidth)
+        return min_visible_half_height_px / px_per_y
+
+    def _data_pixel_scales(self, ax: matplotlib.axes.Axes) -> tuple[float, float] | None:
+        trans_data = getattr(ax, "transData", None)
+        if trans_data is None:
+            return None
+
+        try:
+            origin = trans_data.transform((0.0, 0.0))
+            x_unit = trans_data.transform((1.0, 0.0))
+            y_unit = trans_data.transform((0.0, 1.0))
+        except Exception:
+            return None
+
+        px_per_x = abs(float(x_unit[0]) - float(origin[0]))
+        px_per_y = abs(float(y_unit[1]) - float(origin[1]))
+        if px_per_x <= 0 or px_per_y <= 0:
+            return None
+        return px_per_x, px_per_y
+
+    @staticmethod
+    def _strand_marker(direction: int) -> int:
+        return (
+            matplotlib.markers.CARETRIGHTBASE
+            if direction >= 0
+            else matplotlib.markers.CARETLEFTBASE
+        )
 
     @staticmethod
     def _strand_direction(strand: str) -> int:
@@ -765,6 +1103,14 @@ class Genes(Track):
         if label is not None:
             if not label.visible:
                 return
+            if label.draw_connector and self.label_connectors:
+                ax.plot(
+                    [label.connector_x, label.x],
+                    [label.connector_y, label.y],
+                    color=self.intron_color,
+                    linewidth=self.label_connector_linewidth,
+                    zorder=0.5,
+                )
             ax.text(
                 label.x,
                 label.y,
@@ -801,8 +1147,8 @@ class Genes(Track):
 
         genes_df = genes_df.sort_values(["start", "end"]).reset_index(drop=True)
 
-        strategy = str(self.label_overlap_strategy)
-        display_mode = str(self.display)
+        display_mode = self._enum_token(self.display)
+        strategy = self._resolve_effective_label_strategy(display_mode)
         bp_per_px = self._estimate_bp_per_px(ax, gr)
         dpi = self._resolve_figure_dpi(ax)
 
@@ -820,7 +1166,8 @@ class Genes(Track):
                         int(gene["start"]),
                         end_bp,
                     )
-                    row_index = min(row_index, self.max_number_of_rows - 1)
+                    if strategy != "smart":
+                        row_index = min(row_index, self.max_number_of_rows - 1)
                 else:
                     row_index = 0
                 row_indices.append(row_index)
@@ -845,7 +1192,11 @@ class Genes(Track):
 
         ax.set_xlim(gr.start, gr.end)
         rows = max(1, max_row_index + 1)
-        ax.set_ylim(-0.1, rows * self.row_scale + 0.1)
+        label_top = rows * self.row_scale
+        for placement in placements:
+            if placement.visible:
+                label_top = max(label_top, placement.y)
+        ax.set_ylim(-0.1, label_top + 0.15)
 
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
         self.plot_genes(ax, gr)

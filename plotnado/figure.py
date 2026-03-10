@@ -269,6 +269,8 @@ class GenomicFigure:
         label_connector_linewidth: float = ...,
         label_connectors: bool = ...,
         label_max_chars: int = ...,
+        label_min_overlap_bp: int = ...,
+        label_min_overlap_fraction: float = ...,
         label_offset_fraction: float = ...,
         label_overlap_strategy: GeneLabelOverlapStrategy = ...,
         label_stagger_offset: float = ...,

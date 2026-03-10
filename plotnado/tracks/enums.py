@@ -73,6 +73,8 @@ class GeneLabelStyle(str, Enum):
 class GeneLabelOverlapStrategy(str, Enum):
     """Collision handling strategies for gene labels."""
 
+    AUTO = "auto"
+    SMART = "smart"
     STAGGER = "stagger"
     SUPPRESS = "suppress"
     AUTO_EXPAND = "auto_expand"

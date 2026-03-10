@@ -94,6 +94,8 @@ class GenesKwargs(TypedDict, total=False):
     label_offset_fraction: float
     label_stagger_offset: float
     label_vertical_offset: float
+    label_min_overlap_bp: int
+    label_min_overlap_fraction: float
     label_connectors: bool
     label_connector_linewidth: float
     plot_title: bool

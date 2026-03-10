@@ -182,10 +182,14 @@ class TestGenesAesthetics:
         assert aesthetics.exon_linewidth == 0.8
         assert aesthetics.exon_edge_color == "black"
         assert aesthetics.exon_color == "black"
-        assert aesthetics.intron_linewidth == 0.8
+        assert aesthetics.intron_linewidth == 0.5
         assert aesthetics.intron_color == "black"
         assert aesthetics.gene_label_font_size == 8
         assert aesthetics.gene_label_style == "italic"
+        assert aesthetics.label_overlap_strategy == "auto"
+        assert aesthetics.label_min_overlap_bp == 200
+        assert aesthetics.label_min_overlap_fraction == 0.15
+        assert aesthetics.label_connectors is False
 
     def test_custom_values(self):
         """Test custom values."""
