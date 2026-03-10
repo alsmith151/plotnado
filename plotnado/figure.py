@@ -39,6 +39,10 @@ from .tracks import (
     VLineTrack,
     BigwigOverlay,
     LabelConfig,
+    QuantNadoCoverageTrack,
+    QuantNadoStrandedCoverageTrack,
+    QuantNadoMethylationTrack,
+    QuantNadoVariantTrack,
     list_options,
 )
 from .tracks.enums import (
@@ -69,6 +73,10 @@ from ._kwargs import (
     LinksKwargs,
     NarrowpeakKwargs,
     OverlayKwargs,
+    QuantnadoCoverageKwargs,
+    QuantnadoMethylationKwargs,
+    QuantnadoStrandedCoverageKwargs,
+    QuantnadoVariantKwargs,
     ScalebarKwargs,
     SpacerKwargs,
     VlineKwargs,
@@ -1138,6 +1146,62 @@ class GenomicFigure:
         """
         return self.add_track("vline", x_position=x_position, **kwargs)
 
+    def quantnado_coverage(
+        self, sample: str, /, **kwargs: Unpack[QuantnadoCoverageKwargs]
+    ) -> Self:
+        """Add a QuantNado coverage track for one sample.
+
+        Args:
+            sample: QuantNado sample name to render.
+            **kwargs: `QuantNadoCoverageTrack` constructor kwargs.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("quantnado_coverage", sample=sample, **kwargs)
+
+    def quantnado_stranded_coverage(
+        self, sample: str, /, **kwargs: Unpack[QuantnadoStrandedCoverageKwargs]
+    ) -> Self:
+        """Add a QuantNado stranded coverage track for one sample.
+
+        Args:
+            sample: QuantNado sample name to render.
+            **kwargs: `QuantNadoStrandedCoverageTrack` constructor kwargs.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("quantnado_stranded_coverage", sample=sample, **kwargs)
+
+    def quantnado_methylation(
+        self, sample: str, /, **kwargs: Unpack[QuantnadoMethylationKwargs]
+    ) -> Self:
+        """Add a QuantNado methylation track for one sample.
+
+        Args:
+            sample: QuantNado sample name to render.
+            **kwargs: `QuantNadoMethylationTrack` constructor kwargs.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("quantnado_methylation", sample=sample, **kwargs)
+
+    def quantnado_variant(
+        self, sample: str, /, **kwargs: Unpack[QuantnadoVariantKwargs]
+    ) -> Self:
+        """Add a QuantNado variant allele-frequency track for one sample.
+
+        Args:
+            sample: QuantNado sample name to render.
+            **kwargs: `QuantNadoVariantTrack` constructor kwargs.
+
+        Returns:
+            Self for method chaining.
+        """
+        return self.add_track("quantnado_variant", sample=sample, **kwargs)
+
     def _apply_theme_to_track(self, track: Track) -> Track:
         if self.theme is None:
             return track
@@ -1369,6 +1433,10 @@ class GenomicFigure:
             "cooler_average": CoolerAverage,
             "bigwig_collection": BigWigCollection,
             "bigwig_diff": BigWigDiff,
+            "quantnado_coverage": QuantNadoCoverageTrack,
+            "quantnado_stranded_coverage": QuantNadoStrandedCoverageTrack,
+            "quantnado_methylation": QuantNadoMethylationTrack,
+            "quantnado_variant": QuantNadoVariantTrack,
         }
 
     @staticmethod
@@ -1716,6 +1784,10 @@ class GenomicFigure:
                 CoolerTrack,
                 CapcruncherTrack,
                 CoolerAverage,
+                QuantNadoCoverageTrack,
+                QuantNadoStrandedCoverageTrack,
+                QuantNadoMethylationTrack,
+                QuantNadoVariantTrack,
             ]
         }
 
@@ -1907,6 +1979,10 @@ def _inject_figure_method_option_docs() -> None:
         "highlights": "highlight",
         "hline": "hline",
         "vline": "vline",
+        "quantnado_coverage": "quantnado_coverage",
+        "quantnado_stranded_coverage": "quantnado_stranded_coverage",
+        "quantnado_methylation": "quantnado_methylation",
+        "quantnado_variant": "quantnado_variant",
     }
 
     marker = "Auto-generated options (authoritative):"

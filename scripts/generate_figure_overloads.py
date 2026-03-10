@@ -31,6 +31,10 @@ from plotnado.tracks import (
     LinksTrack,
     NarrowPeakTrack,
     OverlayTrack,
+    QuantNadoCoverageTrack,
+    QuantNadoMethylationTrack,
+    QuantNadoStrandedCoverageTrack,
+    QuantNadoVariantTrack,
     ScaleBar,
     Spacer,
     VLineTrack,
@@ -184,6 +188,16 @@ def generate_blocks() -> dict[str, str]:
         ("highlights", HighlightsFromFile, ["data: Any"], {"data"}, True),
         ("hline", HLineTrack, ["y_value: float"], {"y_value"}, True),
         ("vline", VLineTrack, ["x_position: int | str"], {"x_position"}, True),
+        ("quantnado_coverage", QuantNadoCoverageTrack, ["sample: str"], {"sample"}, True),
+        (
+            "quantnado_stranded_coverage",
+            QuantNadoStrandedCoverageTrack,
+            ["sample: str"],
+            {"sample"},
+            True,
+        ),
+        ("quantnado_methylation", QuantNadoMethylationTrack, ["sample: str"], {"sample"}, True),
+        ("quantnado_variant", QuantNadoVariantTrack, ["sample: str"], {"sample"}, True),
     ]
 
     blocks: dict[str, str] = {}

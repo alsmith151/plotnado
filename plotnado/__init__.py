@@ -59,6 +59,14 @@ from .tracks import (
     VLineTrack,
     AnnotationAesthetics,
     Autoscaler,
+    QuantNadoCoverageTrack,
+    QuantNadoCoverageAesthetics,
+    QuantNadoStrandedCoverageTrack,
+    QuantNadoStrandedCoverageAesthetics,
+    QuantNadoMethylationTrack,
+    QuantNadoMethylationAesthetics,
+    QuantNadoVariantTrack,
+    QuantNadoVariantAesthetics,
 )
 
 try:
@@ -120,4 +128,12 @@ __all__ = [
     "VLineTrack",
     "AnnotationAesthetics",
     "Autoscaler",
+    "QuantNadoCoverageTrack",
+    "QuantNadoCoverageAesthetics",
+    "QuantNadoStrandedCoverageTrack",
+    "QuantNadoStrandedCoverageAesthetics",
+    "QuantNadoMethylationTrack",
+    "QuantNadoMethylationAesthetics",
+    "QuantNadoVariantTrack",
+    "QuantNadoVariantAesthetics",
 ]

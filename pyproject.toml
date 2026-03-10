@@ -24,6 +24,7 @@ classifiers = [
 
 [project.optional-dependencies]
 cooler = ["cooler", "capcruncher"]
+quantnado = ["quantnado"]
 toml = ["tomli; python_version < '3.11'", "tomli-w"]
 dev = ["pytest", "pytest-mock", "pytest-assume", "pre-commit"]
 docs = [
@@ -40,6 +41,7 @@ docs = [
 all = [
 	"cooler",
 	"capcruncher",
+	"quantnado",
 	"tomli; python_version < '3.11'",
 	"tomli-w",
 	"pytest",

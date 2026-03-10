@@ -49,6 +49,18 @@ Runnable scripts:
 
 These require cooler-compatible input files.
 
+## QuantNado tracks
+
+- `quantnado_coverage` (`QuantNadoCoverageTrack`): single-sample coverage track.
+- `quantnado_stranded_coverage` (`QuantNadoStrandedCoverageTrack`): mirrored +/− strand coverage.
+- `quantnado_methylation` (`QuantNadoMethylationTrack`): per-CpG methylation scatter.
+- `quantnado_variant` (`QuantNadoVariantTrack`): variant allele-frequency lollipop track.
+
+These tracks accept either:
+
+- a live `quantnado` object (or `dataset_path`) for region-time fetching, or
+- precomputed xarray-like arrays with dims `(sample, position)`.
+
 ## Option reference
 
 For full per-field options and descriptions:
