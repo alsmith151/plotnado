@@ -39,6 +39,9 @@ class BigwigKwargs(TypedDict, total=False):
     baseline_color: str
     baseline_alpha: float
     baseline_linewidth: float
+    smoothing_window: int
+    smoothing_method: Literal['mean', 'median']
+    smoothing_center: bool
     min_value: float | None
     max_value: float | None
     plot_title: bool

@@ -3,6 +3,7 @@ BigWig track for signal visualization.
 """
 
 from pathlib import Path
+from typing import Literal
 
 import matplotlib.axes
 import matplotlib.patches
@@ -43,6 +44,19 @@ class BigwigAesthetics(BaseModel):
     baseline_color: str = Field(default="#b8bec8", description="Color of the y=0 signal baseline.")
     baseline_alpha: float = Field(default=0.85, description="Opacity of the y=0 signal baseline.")
     baseline_linewidth: float = Field(default=0.6, description="Line width of the y=0 signal baseline.")
+    smoothing_window: int = Field(
+        default=1,
+        ge=1,
+        description="Rolling window size in bins for optional signal smoothing.",
+    )
+    smoothing_method: Literal["mean", "median"] = Field(
+        default="mean",
+        description="Aggregation used for smoothing when smoothing_window > 1.",
+    )
+    smoothing_center: bool = Field(
+        default=True,
+        description="Center the smoothing window around each bin when enabled.",
+    )
 
     min_value: float | None = Field(
         default=None,
@@ -129,6 +143,24 @@ class BigWigTrack(Track):
         else:
             df = self._fetch_from_disk(gr)
         return BedgraphDataFrame(df)
+
+    def _apply_smoothing(self, data: pd.DataFrame) -> pd.DataFrame:
+        """Apply optional rolling smoothing to signal values."""
+        if data.empty or self.smoothing_window <= 1:
+            return data
+
+        smoothed = data.sort_values(["start", "end"]).copy()
+        values = pd.to_numeric(smoothed["value"], errors="coerce")
+        rolling = values.rolling(
+            window=int(self.smoothing_window),
+            min_periods=1,
+            center=bool(self.smoothing_center),
+        )
+        if self.smoothing_method == "median":
+            smoothed["value"] = rolling.median()
+        else:
+            smoothed["value"] = rolling.mean()
+        return smoothed
 
     def _plot_fill(
         self, ax: matplotlib.axes.Axes, gr: GenomicRegion, data: pd.DataFrame
@@ -238,7 +270,7 @@ class BigWigTrack(Track):
 
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
         """Plot the BigWig track."""
-        data = self.fetch_data(gr)
+        data = self._apply_smoothing(self.fetch_data(gr))
 
         # Plot based on style
         match self.style:

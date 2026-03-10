@@ -199,6 +199,46 @@ class TestBigWigTrack:
         assert kwargs["alpha"] == 0.7
         assert list(kwargs["width"]) == [100.0, 40.0]
 
+    def test_apply_smoothing_mean(self):
+        track = BigWigTrack(
+            aesthetics=BigwigAesthetics(
+                smoothing_window=3,
+                smoothing_method="mean",
+                smoothing_center=True,
+            )
+        )
+        data = BedgraphDataFrame(
+            {
+                "chrom": ["chr1"] * 5,
+                "start": [0, 10, 20, 30, 40],
+                "end": [10, 20, 30, 40, 50],
+                "value": [0.0, 0.0, 10.0, 0.0, 0.0],
+            }
+        )
+
+        smoothed = track._apply_smoothing(data)
+        assert smoothed["value"].round(4).tolist() == [0.0, 3.3333, 3.3333, 3.3333, 0.0]
+
+    def test_apply_smoothing_median(self):
+        track = BigWigTrack(
+            aesthetics=BigwigAesthetics(
+                smoothing_window=3,
+                smoothing_method="median",
+                smoothing_center=True,
+            )
+        )
+        data = BedgraphDataFrame(
+            {
+                "chrom": ["chr1"] * 5,
+                "start": [0, 10, 20, 30, 40],
+                "end": [10, 20, 30, 40, 50],
+                "value": [0.0, 0.0, 10.0, 0.0, 0.0],
+            }
+        )
+
+        smoothed = track._apply_smoothing(data)
+        assert smoothed["value"].tolist() == [0.0, 0.0, 0.0, 0.0, 0.0]
+
     @patch.object(BigWigTrack, "fetch_data")
     @patch.object(BigWigTrack, "_plot_stairs")
     @patch.object(BigWigTrack, "_plot_scatter")
@@ -230,8 +270,8 @@ class TestBigWigTrack:
 
         # Validate
         mock_fetch_data.assert_called_once_with(genomic_region)
-        # 'std' style now uses _plot_fill, not _plot_stairs
-        mock_plot_stairs.assert_not_called()
+        # 'std' style uses stairs rendering
+        mock_plot_stairs.assert_called_once_with(mock_ax, genomic_region, mock_fetch_data.return_value)
         mock_plot_scatter.assert_not_called()
 
         # Check that limits were set correctly

@@ -29,7 +29,7 @@ class TestBigwigAesthetics:
         """Test default values."""
         aesthetics = BigwigAesthetics()
 
-        assert aesthetics.style == "fill"  # Changed for genome browser style
+        assert aesthetics.style == "std"
         assert aesthetics.color == "#2171b5"  # Genome browser blue
         assert aesthetics.fill is True
         assert aesthetics.alpha == 0.9
@@ -39,6 +39,9 @@ class TestBigwigAesthetics:
         assert aesthetics.baseline_color == "#b8bec8"
         assert aesthetics.baseline_alpha == 0.85
         assert aesthetics.baseline_linewidth == 0.6
+        assert aesthetics.smoothing_window == 1
+        assert aesthetics.smoothing_method == "mean"
+        assert aesthetics.smoothing_center is True
         assert aesthetics.min_value is None
         assert aesthetics.max_value is None
 
