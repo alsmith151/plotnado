@@ -1,3 +1,2 @@
-include plotnado/_version.py
+include plotnado/data/genes/*
 include plotnado/data/gene_bed_files/*
-include plotnado/py.typed
