@@ -238,6 +238,7 @@ class BedKwargs(TypedDict, total=False):
     label_field: str
     font_size: int
     rect_linewidth: float
+    draw_edges: bool
     plot_title: bool
     plot_scale: bool
     label_on_track: bool
@@ -431,6 +432,7 @@ class NarrowpeakKwargs(TypedDict, total=False):
     label_field: str
     font_size: int
     rect_linewidth: float
+    draw_edges: bool
     color_by: NarrowPeakColorBy | None
     cmap: str
     min_score: float | None

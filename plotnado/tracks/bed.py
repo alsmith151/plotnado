@@ -48,6 +48,7 @@ class BedAesthetics(BaseModel):
     )
     font_size: int = Field(default=8, description="Font size for interval labels.")
     rect_linewidth: float = Field(default=0.7, description="Border line width for interval rectangles.")
+    draw_edges: bool = Field(default=True, description="Draw rectangle borders for intervals.")
 
 
 class BedTrack(Track):
@@ -175,8 +176,8 @@ class BedTrack(Track):
                 (start, ypos - self.interval_height / 2),
                 end - start,
                 self.interval_height,
-                linewidth=self.rect_linewidth,
-                edgecolor=self.edge_color,
+                linewidth=self.rect_linewidth if self.draw_edges else 0,
+                edgecolor=self.edge_color if self.draw_edges else "none",
                 facecolor=self.color,
                 alpha=self.alpha,
             )

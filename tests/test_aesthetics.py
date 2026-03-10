@@ -255,6 +255,7 @@ class TestAdditionalAesthetics:
     def test_bed_defaults(self):
         aesthetics = BedAesthetics()
         assert aesthetics.rect_linewidth == 0.7
+        assert aesthetics.draw_edges is True
 
     def test_highlight_defaults(self):
         aesthetics = HighlightsAesthetics()
@@ -264,3 +265,9 @@ class TestAdditionalAesthetics:
         aesthetics = LinksAesthetics()
         assert aesthetics.y_baseline == 0.1
         assert aesthetics.linewidth == 0.8
+
+    def test_narrowpeak_edge_toggle_default(self):
+        from plotnado.tracks import NarrowPeakAesthetics
+
+        aesthetics = NarrowPeakAesthetics()
+        assert aesthetics.draw_edges is True
