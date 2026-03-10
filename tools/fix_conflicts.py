@@ -6,7 +6,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def fix_file(path: Path) -> bool:
     text = path.read_text(encoding="utf8")
-    if "" not in text:
+    if "<<<<<<< HEAD" not in text:
         return False
     changed = False
     out = []
@@ -18,14 +18,22 @@ def fix_file(path: Path) -> bool:
             out.append(text[i:])
             break
         out.append(text[i:idx])
-        j = text.find("", j)
+        j = text.find("=======", idx)
+        if j == -1:
+            out.append(text[idx:])
+            break
+        k = text.find(">>>>>>>", j)
         if k == -1:
             out.append(text[idx:])
             break
+        # find end of the line that contains the >>>>>>> marker to skip commit id
+        line_end = text.find("\n", k)
+        if line_end == -1:
+            line_end = k + len(">>>>>>>")
         # keep HEAD part between idx+len(marker) and j
         head_part = text[idx + len("<<<<<<< HEAD"):j]
         out.append(head_part)
-        i = k + len(">>>>>>>")
+        i = line_end + 1
         changed = True
     if changed:
         new_text = "".join(out)
@@ -39,7 +47,6 @@ if __name__ == "__main__":
         if ".git" in dirpath or "venv" in dirpath or ".venv" in dirpath:
             continue
         for fname in filenames:
-            # limit to text-like files
             p = Path(dirpath) / fname
             try:
                 if p.suffix in {".py", ".md", ".pyi", ".rst", ".txt", ".toml"}:

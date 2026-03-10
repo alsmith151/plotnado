@@ -613,7 +613,6 @@ class GenomicFigure:
             scale_weight: FontWeight = FontWeight.NORMAL,
         ) -> Self: ...
 
-
     def quantnado_coverage(self, sample: str, /, *,
             title: str | None = None,
             data: Any | None = None,
@@ -779,7 +778,6 @@ class GenomicFigure:
             scale_weight: FontWeight = FontWeight.NORMAL,
         ) -> Self: ...
 
- 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     @classmethod
     def available_track_aliases(cls) -> dict[str, str]: ...
 

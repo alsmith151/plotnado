@@ -22,7 +22,6 @@ from plotnado.tracks import (
     QuantNadoMethylationTrack,
     QuantNadoStrandedCoverageTrack,
     QuantNadoVariantTrack,
- 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     ScaleBar,
 )
 
@@ -125,8 +124,6 @@ class TestFigureRefactor:
         assert aliases["quantnado_stranded_coverage"] == "QuantNadoStrandedCoverageTrack"
         assert aliases["quantnado_methylation"] == "QuantNadoMethylationTrack"
         assert aliases["quantnado_variant"] == "QuantNadoVariantTrack"
-
- 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     def test_track_options_by_alias(self):
         options = GenomicFigure.track_options("bigwig")
         assert "aesthetics" in options
@@ -187,8 +184,6 @@ class TestFigureRefactor:
         assert isinstance(track, QuantNadoCoverageTrack)
         assert track.color == "#ff00ff"
         assert track.alpha == 0.4
-
- 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     def test_explicit_nested_model_and_shorthand_merge(self):
         df = pd.DataFrame(
             {
@@ -228,8 +223,6 @@ class TestFigureRefactor:
         assert isinstance(fig.tracks[1], QuantNadoStrandedCoverageTrack)
         assert isinstance(fig.tracks[2], QuantNadoMethylationTrack)
         assert isinstance(fig.tracks[3], QuantNadoVariantTrack)
-
- 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     def test_extend_parameter(self):
         fig = GenomicFigure().add_track(ScaleBar())
         out = fig.plot("chr1:100-200", show=False, extend=0.5)

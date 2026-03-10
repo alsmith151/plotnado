@@ -36,7 +36,6 @@ from plotnado.tracks import (
     QuantNadoMethylationTrack,
     QuantNadoStrandedCoverageTrack,
     QuantNadoVariantTrack,
- 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     ScaleBar,
     Spacer,
     VLineTrack,
@@ -201,7 +200,6 @@ def generate_blocks() -> dict[str, str]:
         ),
         ("quantnado_methylation", QuantNadoMethylationTrack, ["sample: str"], {"sample"}, True),
         ("quantnado_variant", QuantNadoVariantTrack, ["sample: str"], {"sample"}, True),
- 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     ]
 
     blocks: dict[str, str] = {}

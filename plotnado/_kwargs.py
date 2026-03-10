@@ -652,7 +652,6 @@ class CoolerAverageKwargs(TypedDict, total=False):
     scale_font: str
     scale_weight: FontWeight
 
-
 class QuantnadoCoverageKwargs(TypedDict, total=False):
     title: str | None
     data: Any | None
@@ -813,4 +812,3 @@ class QuantnadoVariantKwargs(TypedDict, total=False):
     scale_color: str
     scale_font: str
     scale_weight: FontWeight
- 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b

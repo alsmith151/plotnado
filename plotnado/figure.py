@@ -44,7 +44,6 @@ from .tracks import (
     QuantNadoStrandedCoverageTrack,
     QuantNadoMethylationTrack,
     QuantNadoVariantTrack,
- 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     list_options,
 )
 from .tracks.enums import (
@@ -80,7 +79,6 @@ from ._kwargs import (
     QuantnadoMethylationKwargs,
     QuantnadoStrandedCoverageKwargs,
     QuantnadoVariantKwargs,
- 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     ScalebarKwargs,
     SpacerKwargs,
     VlineKwargs,
@@ -1395,8 +1393,6 @@ class GenomicFigure:
             Self for method chaining.
         """
         return self.add_track("quantnado_variant", sample=sample, **kwargs)
-
- 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     def _apply_theme_to_track(self, track: Track) -> Track:
         if self.theme is None:
             return track
@@ -1633,7 +1629,6 @@ class GenomicFigure:
             "quantnado_stranded_coverage": QuantNadoStrandedCoverageTrack,
             "quantnado_methylation": QuantNadoMethylationTrack,
             "quantnado_variant": QuantNadoVariantTrack,
- 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
         }
 
     @staticmethod
@@ -1986,7 +1981,6 @@ class GenomicFigure:
                 QuantNadoStrandedCoverageTrack,
                 QuantNadoMethylationTrack,
                 QuantNadoVariantTrack,
- 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
             ]
         }
 
@@ -2183,7 +2177,6 @@ def _inject_figure_method_option_docs() -> None:
         "quantnado_stranded_coverage": "quantnado_stranded_coverage",
         "quantnado_methylation": "quantnado_methylation",
         "quantnado_variant": "quantnado_variant",
- 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     }
 
     marker = "Auto-generated options (authoritative):"
