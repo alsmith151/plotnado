@@ -1355,6 +1355,8 @@ class GenomicFigure:
         """
         gr = GenomicRegion.into(region)
         gr = self._apply_extend(gr, extend)
+        # Ensure every track receives the exact same plotting bounds.
+        gr = GenomicRegion(chromosome=gr.chromosome, start=int(gr.start), end=int(gr.end))
 
         if not self.tracks:
             logger.warning("No tracks to plot")
@@ -1405,6 +1407,7 @@ class GenomicFigure:
             ax.patch.set_alpha(0)
             try:
                 track.plot(ax, gr)
+                ax.set_xlim(gr.start, gr.end)
             except Exception as exc:
                 logger.error(f"Error plotting track {track.__class__.__name__}: {exc}")
                 ax.text(0.5, 0.5, f"Error: {exc}", ha="center", va="center", transform=ax.transAxes)
