@@ -30,10 +30,13 @@ from plotnado.tracks import (
     LinksTrack,
     NarrowPeakTrack,
     OverlayTrack,
+<<<<<<< HEAD
     QuantNadoCoverageTrack,
     QuantNadoMethylationTrack,
     QuantNadoStrandedCoverageTrack,
     QuantNadoVariantTrack,
+=======
+>>>>>>> 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     ScaleBar,
     Spacer,
     VLineTrack,
@@ -171,10 +174,13 @@ def generate() -> str:
         ("VlineKwargs", VLineTrack, {"x_position"}, True),
         ("CapcruncherKwargs", CapcruncherTrack, {"file"}, True),
         ("CoolerAverageKwargs", CoolerAverage, {"files"}, True),
+<<<<<<< HEAD
         ("QuantnadoCoverageKwargs", QuantNadoCoverageTrack, {"sample"}, True),
         ("QuantnadoStrandedCoverageKwargs", QuantNadoStrandedCoverageTrack, {"sample"}, True),
         ("QuantnadoMethylationKwargs", QuantNadoMethylationTrack, {"sample"}, True),
         ("QuantnadoVariantKwargs", QuantNadoVariantTrack, {"sample"}, True),
+=======
+>>>>>>> 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     ]
 
     imports = [

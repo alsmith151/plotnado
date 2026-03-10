@@ -17,10 +17,13 @@ from plotnado.tracks import (
     BigWigTrack,
     BigwigAesthetics,
     LabelConfig,
+<<<<<<< HEAD
     QuantNadoCoverageTrack,
     QuantNadoMethylationTrack,
     QuantNadoStrandedCoverageTrack,
     QuantNadoVariantTrack,
+=======
+>>>>>>> 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     ScaleBar,
 )
 
@@ -116,6 +119,7 @@ class TestFigureRefactor:
         assert "bigwig" in aliases
         assert aliases["bigwig"] == "BigWigTrack"
 
+<<<<<<< HEAD
     def test_available_track_aliases_contains_quantnado(self):
         aliases = GenomicFigure.available_track_aliases()
         assert aliases["quantnado_coverage"] == "QuantNadoCoverageTrack"
@@ -123,6 +127,8 @@ class TestFigureRefactor:
         assert aliases["quantnado_methylation"] == "QuantNadoMethylationTrack"
         assert aliases["quantnado_variant"] == "QuantNadoVariantTrack"
 
+=======
+>>>>>>> 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     def test_track_options_by_alias(self):
         options = GenomicFigure.track_options("bigwig")
         assert "aesthetics" in options
@@ -162,6 +168,7 @@ class TestFigureRefactor:
         assert track.label.plot_title is False
         assert track.label.scale_size == 11
 
+<<<<<<< HEAD
     def test_quantnado_alias_constructor_routes_aesthetic_shorthand_kwargs(self):
         xr = pytest.importorskip("xarray")
         coverage_data = xr.DataArray(
@@ -183,6 +190,8 @@ class TestFigureRefactor:
         assert track.color == "#ff00ff"
         assert track.alpha == 0.4
 
+=======
+>>>>>>> 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     def test_explicit_nested_model_and_shorthand_merge(self):
         df = pd.DataFrame(
             {
@@ -204,6 +213,7 @@ class TestFigureRefactor:
         assert track.aesthetics.color == "#00aa00"
         assert track.aesthetics.alpha == 0.2
 
+<<<<<<< HEAD
     def test_quantnado_helper_methods_append_expected_tracks(self):
         xr = pytest.importorskip("xarray")
         base = xr.DataArray(
@@ -222,6 +232,8 @@ class TestFigureRefactor:
         assert isinstance(fig.tracks[2], QuantNadoMethylationTrack)
         assert isinstance(fig.tracks[3], QuantNadoVariantTrack)
 
+=======
+>>>>>>> 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     def test_extend_parameter(self):
         fig = GenomicFigure().add_track(ScaleBar())
         out = fig.plot("chr1:100-200", show=False, extend=0.5)

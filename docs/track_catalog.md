@@ -49,6 +49,7 @@ Runnable scripts:
 
 These require cooler-compatible input files.
 
+<<<<<<< HEAD
 ## QuantNado tracks
 
 - `quantnado_coverage` (`QuantNadoCoverageTrack`): single-sample coverage track.
@@ -61,6 +62,8 @@ These tracks accept either:
 - a live `quantnado` object (or `dataset_path`) for region-time fetching, or
 - precomputed xarray-like arrays with dims `(sample, position)`.
 
+=======
+>>>>>>> 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
 ## Option reference
 
 For full per-field options and descriptions:

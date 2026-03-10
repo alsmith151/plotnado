@@ -42,10 +42,13 @@ fig.add_track("bigwig", data="signal.bw", color="#1f77b4", alpha=0.7)
 | `cooler` | `CoolerTrack` | `file="matrix.mcool"`, `resolution=10000` |
 | `capcruncher` | `CapcruncherTrack` | `file=...`, `viewpoint=...`, `normalisation=...` |
 | `cooler_average` | `CoolerAverage` | `files=[... ]`, `resolution=...` |
+<<<<<<< HEAD
 | `quantnado_coverage` | `QuantNadoCoverageTrack` | `sample="s1"`, `quantnado=qn` or `coverage_data=...` |
 | `quantnado_stranded_coverage` | `QuantNadoStrandedCoverageTrack` | `sample="s1"`, `quantnado=qn` or `coverage_fwd_data=...`, `coverage_rev_data=...` |
 | `quantnado_methylation` | `QuantNadoMethylationTrack` | `sample="s1"`, `quantnado=qn` or `methylation_data=...` |
 | `quantnado_variant` | `QuantNadoVariantTrack` | `sample="s1"`, `quantnado=qn` or `allele_depth_ref_data=...`, `allele_depth_alt_data=...` |
+=======
+>>>>>>> 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
 
 ## Example
 

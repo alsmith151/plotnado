@@ -44,6 +44,7 @@ Runnable example: `python examples/quickstart/02_aliases_and_options.py`
 Example output:
 
 ![Alias and options quickstart](images/examples/quickstart_aliases_and_options.png)
+<<<<<<< HEAD
 
 ## QuantNado-backed tracks
 
@@ -72,3 +73,5 @@ fig.quantnado_variant(
 )
 fig.plot("chr1:100000-110000")
 ```
+=======
+>>>>>>> 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b

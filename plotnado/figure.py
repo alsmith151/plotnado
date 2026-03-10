@@ -39,10 +39,13 @@ from .tracks import (
     VLineTrack,
     BigwigOverlay,
     LabelConfig,
+<<<<<<< HEAD
     QuantNadoCoverageTrack,
     QuantNadoStrandedCoverageTrack,
     QuantNadoMethylationTrack,
     QuantNadoVariantTrack,
+=======
+>>>>>>> 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     list_options,
 )
 from .tracks.enums import (
@@ -73,10 +76,13 @@ from ._kwargs import (
     LinksKwargs,
     NarrowpeakKwargs,
     OverlayKwargs,
+<<<<<<< HEAD
     QuantnadoCoverageKwargs,
     QuantnadoMethylationKwargs,
     QuantnadoStrandedCoverageKwargs,
     QuantnadoVariantKwargs,
+=======
+>>>>>>> 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     ScalebarKwargs,
     SpacerKwargs,
     VlineKwargs,
@@ -1146,6 +1152,7 @@ class GenomicFigure:
         """
         return self.add_track("vline", x_position=x_position, **kwargs)
 
+<<<<<<< HEAD
     # BEGIN AUTO-GENERATED OVERLOAD: quantnado_coverage
     @overload
     def quantnado_coverage(
@@ -1391,6 +1398,8 @@ class GenomicFigure:
         """
         return self.add_track("quantnado_variant", sample=sample, **kwargs)
 
+=======
+>>>>>>> 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     def _apply_theme_to_track(self, track: Track) -> Track:
         if self.theme is None:
             return track
@@ -1622,10 +1631,13 @@ class GenomicFigure:
             "cooler_average": CoolerAverage,
             "bigwig_collection": BigWigCollection,
             "bigwig_diff": BigWigDiff,
+<<<<<<< HEAD
             "quantnado_coverage": QuantNadoCoverageTrack,
             "quantnado_stranded_coverage": QuantNadoStrandedCoverageTrack,
             "quantnado_methylation": QuantNadoMethylationTrack,
             "quantnado_variant": QuantNadoVariantTrack,
+=======
+>>>>>>> 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
         }
 
     @staticmethod
@@ -1973,10 +1985,13 @@ class GenomicFigure:
                 CoolerTrack,
                 CapcruncherTrack,
                 CoolerAverage,
+<<<<<<< HEAD
                 QuantNadoCoverageTrack,
                 QuantNadoStrandedCoverageTrack,
                 QuantNadoMethylationTrack,
                 QuantNadoVariantTrack,
+=======
+>>>>>>> 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
             ]
         }
 
@@ -2168,10 +2183,13 @@ def _inject_figure_method_option_docs() -> None:
         "highlights": "highlight",
         "hline": "hline",
         "vline": "vline",
+<<<<<<< HEAD
         "quantnado_coverage": "quantnado_coverage",
         "quantnado_stranded_coverage": "quantnado_stranded_coverage",
         "quantnado_methylation": "quantnado_methylation",
         "quantnado_variant": "quantnado_variant",
+=======
+>>>>>>> 2273572867bad7bb6edf1bf8f5ecff6cd4752d5b
     }
 
     marker = "Auto-generated options (authoritative):"
