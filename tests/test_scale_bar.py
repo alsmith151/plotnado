@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from unittest.mock import patch, call, MagicMock
+from pydantic import ValidationError
 
 from plotnado.tracks import (
     ScaleBar,
@@ -45,10 +46,11 @@ class TestScaleBar:
         )
         
         # Test various lengths
-        assert scale_bar._get_appropriate_scale(100) == 10
+        assert scale_bar._get_appropriate_scale(100) == 20
         assert scale_bar._get_appropriate_scale(1000) == 200
         assert scale_bar._get_appropriate_scale(10000) == 2000
         assert scale_bar._get_appropriate_scale(100000) == 20000
+        assert scale_bar._get_appropriate_scale(515500) == 100000
         
         # Test edge cases
         with pytest.raises(ValueError):
@@ -82,6 +84,13 @@ class TestScaleBar:
         mock_ax.text.assert_called_once()  # Scale text
         mock_ax.set_xlim.assert_called_once_with(1000, 2000)
         mock_ax.set_ylim.assert_called_once_with(0, 1)
+
+        first_line_kwargs = mock_ax.plot.call_args_list[0].kwargs
+        left_tick_kwargs = mock_ax.plot.call_args_list[1].kwargs
+        right_tick_kwargs = mock_ax.plot.call_args_list[2].kwargs
+        assert first_line_kwargs["solid_capstyle"] == "butt"
+        assert left_tick_kwargs["solid_capstyle"] == "butt"
+        assert right_tick_kwargs["solid_capstyle"] == "butt"
 
     def test_plot_right_position(self, mock_ax, genomic_region):
         """Test plotting ScaleBar with right position."""
@@ -127,18 +136,8 @@ class TestScaleBar:
 
     def test_plot_invalid_position(self, mock_ax, genomic_region):
         """Test plotting ScaleBar with invalid position."""
-        # Setup
-        scale_bar = ScaleBar(
-            title="Test Scale",
-            aesthetics=ScaleBarAesthetics(
-                position="invalid",  # Invalid position
-                scale_distance=200
-            )
-        )
-        
-        # Test & Validate
-        with pytest.raises(ValueError, match="Position can only be"):
-            scale_bar.plot(mock_ax, genomic_region)
+        with pytest.raises(ValidationError):
+            ScaleBarAesthetics(position="invalid", scale_distance=200)
 
     def test_plot_auto_scale_distance(self, mock_ax, genomic_region):
         """Test plotting ScaleBar with automatic scale distance."""

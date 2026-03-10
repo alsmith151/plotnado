@@ -209,6 +209,57 @@ class TestTrackLabeller:
         assert kwargs['horizontalalignment'] == "right"
         assert kwargs['verticalalignment'] == "top"
 
+    def test_label_box_enabled_default(self, mock_ax):
+        gr = GenomicRegion(chromosome="chr1", start=1000, end=2000, strand="+")
+
+        labeller = TrackLabeller(
+            gr=gr,
+            y_min=0.0,
+            y_max=1.0,
+            title="Test Title",
+            plot_title=True,
+            plot_scale=False,
+        )
+
+        labeller.plot(mock_ax, gr)
+        _, kwargs = mock_ax.text.call_args
+        assert kwargs["bbox"]["facecolor"] == "white"
+        assert kwargs["bbox"]["alpha"] == 0.9
+
+    def test_label_box_disabled(self, mock_ax):
+        gr = GenomicRegion(chromosome="chr1", start=1000, end=2000, strand="+")
+
+        labeller = TrackLabeller(
+            gr=gr,
+            y_min=0.0,
+            y_max=1.0,
+            title="Test Title",
+            plot_title=True,
+            plot_scale=False,
+            label_box_enabled=False,
+        )
+
+        labeller.plot(mock_ax, gr)
+        _, kwargs = mock_ax.text.call_args
+        assert kwargs["bbox"] is None
+
+    def test_label_box_alpha_custom(self, mock_ax):
+        gr = GenomicRegion(chromosome="chr1", start=1000, end=2000, strand="+")
+
+        labeller = TrackLabeller(
+            gr=gr,
+            y_min=0.0,
+            y_max=1.0,
+            title="Test Title",
+            plot_title=True,
+            plot_scale=False,
+            label_box_alpha=0.5,
+        )
+
+        labeller.plot(mock_ax, gr)
+        _, kwargs = mock_ax.text.call_args
+        assert kwargs["bbox"]["alpha"] == 0.5
+
     @patch.object(TrackLabeller, '_plot_title')
     @patch.object(TrackLabeller, '_plot_scale')
     @patch('plotnado.tracks.clean_axis')
@@ -237,6 +288,74 @@ class TestTrackLabeller:
         # Validate
         mock_plot_title.assert_called_once_with(mock_ax, gr)
         mock_plot_scale.assert_called_once_with(mock_ax, gr)
+        mock_clean_axis.assert_called_once_with(mock_ax)
+
+    @patch('plotnado.tracks.clean_axis')
+    def test_plot_forces_scale_opposite_title_left(self, mock_clean_axis, mock_ax):
+        gr = GenomicRegion(chromosome="chr1", start=1000, end=2000, strand="+")
+
+        labeller = TrackLabeller(
+            gr=gr,
+            y_min=0.0,
+            y_max=1.0,
+            title="Test Title",
+            title_location="left",
+            scale_location="left",  # intentionally same as title
+            plot_title=True,
+            plot_scale=True,
+        )
+
+        labeller.plot(mock_ax, gr)
+
+        # 1st text call is title, 2nd is scale
+        scale_call = mock_ax.text.call_args_list[1]
+        args, kwargs = scale_call
+        assert args[0] == 1990
+        assert kwargs["horizontalalignment"] == "right"
+        mock_clean_axis.assert_called_once_with(mock_ax)
+
+    @patch('plotnado.tracks.clean_axis')
+    def test_plot_forces_scale_opposite_title_right(self, mock_clean_axis, mock_ax):
+        gr = GenomicRegion(chromosome="chr1", start=1000, end=2000, strand="+")
+
+        labeller = TrackLabeller(
+            gr=gr,
+            y_min=0.0,
+            y_max=1.0,
+            title="Test Title",
+            title_location="right",
+            scale_location="right",  # intentionally same as title
+            plot_title=True,
+            plot_scale=True,
+        )
+
+        labeller.plot(mock_ax, gr)
+
+        scale_call = mock_ax.text.call_args_list[1]
+        args, kwargs = scale_call
+        assert args[0] == 1010
+        assert kwargs["horizontalalignment"] == "left"
+        mock_clean_axis.assert_called_once_with(mock_ax)
+
+    @patch('plotnado.tracks.clean_axis')
+    def test_plot_keeps_scale_location_when_no_title(self, mock_clean_axis, mock_ax):
+        gr = GenomicRegion(chromosome="chr1", start=1000, end=2000, strand="+")
+
+        labeller = TrackLabeller(
+            gr=gr,
+            y_min=0.0,
+            y_max=1.0,
+            title="",
+            scale_location="left",
+            plot_title=True,
+            plot_scale=True,
+        )
+
+        labeller.plot(mock_ax, gr)
+
+        args, kwargs = mock_ax.text.call_args
+        assert args[0] == 1010
+        assert kwargs["horizontalalignment"] == "left"
         mock_clean_axis.assert_called_once_with(mock_ax)
 
     @patch.object(TrackLabeller, '_plot_title')
