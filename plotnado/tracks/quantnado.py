@@ -7,6 +7,7 @@ from typing import Any
 
 import matplotlib.axes
 import numpy as np
+import pandas as pd
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, model_validator
 
 from .base import Track, TrackLabeller
@@ -176,6 +177,22 @@ class _QuantNadoSourceMixin:
 
 class QuantNadoCoverageTrack(_QuantNadoSourceMixin, Track):
     sample: str = Field(description="Sample name to render from QuantNado data.")
+    scaling_factor: float = Field(
+        default=1.0,
+        description="User-defined multiplicative factor applied to the extracted coverage signal.",
+    )
+    normalise: str | None = Field(
+        default=None,
+        description="Optional normalization mode passed to QuantNado extract_region, e.g. 'cpm' or 'rpkm'.",
+    )
+    normalize: str | None = Field(
+        default=None,
+        description="American-English alias for `normalise`.",
+    )
+    library_sizes: pd.Series | dict | None = Field(
+        default=None,
+        description="Optional library sizes forwarded to QuantNado normalization.",
+    )
     coverage_data: Any | None = Field(
         default=None,
         description="Optional precomputed xarray-like coverage data with dims (sample, position).",
@@ -198,13 +215,26 @@ class QuantNadoCoverageTrack(_QuantNadoSourceMixin, Track):
     def fetch_data(self, gr: GenomicRegion) -> dict[str, np.ndarray]:
         if self.coverage_data is not None:
             positions, values = _extract_series(self.coverage_data, self.sample, gr)
+            values = values * float(self.scaling_factor)
             return {"position": positions, "value": values}
 
         qn = self._resolve_quantnado()
         if qn is None:
             raise RuntimeError("No QuantNado source available for coverage track")
-        data = qn.extract_region(region=_region_string(gr), samples=[self.sample])
+        coverage_store = getattr(qn, "coverage", None)
+        if coverage_store is None:
+            raise RuntimeError("QuantNado source has no coverage store for coverage track")
+
+        data = coverage_store.extract_region(
+            region=_region_string(gr),
+            samples=[self.sample],
+            as_xarray=False,
+            normalise=self.normalise,
+            normalize=self.normalize,
+            library_sizes=self.library_sizes,
+        )
         positions, values = _extract_series(data, self.sample, gr)
+        values = values * float(self.scaling_factor)
         return {"position": positions, "value": values}
 
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
@@ -259,6 +289,22 @@ class QuantNadoCoverageTrack(_QuantNadoSourceMixin, Track):
 
 class QuantNadoStrandedCoverageTrack(_QuantNadoSourceMixin, Track):
     sample: str = Field(description="Sample name to render from QuantNado data.")
+    scaling_factor: float = Field(
+        default=1.0,
+        description="User-defined multiplicative factor applied to forward and reverse coverage signals.",
+    )
+    normalise: str | None = Field(
+        default=None,
+        description="Optional normalization mode passed to QuantNado coverage store extraction.",
+    )
+    normalize: str | None = Field(
+        default=None,
+        description="American-English alias for `normalise`.",
+    )
+    library_sizes: pd.Series | dict | None = Field(
+        default=None,
+        description="Optional library sizes forwarded to QuantNado normalization.",
+    )
     coverage_fwd_data: Any | None = Field(
         default=None,
         description="Optional forward-strand xarray-like coverage data with dims (sample, position).",
@@ -289,6 +335,9 @@ class QuantNadoStrandedCoverageTrack(_QuantNadoSourceMixin, Track):
         if self.coverage_fwd_data is not None and self.coverage_rev_data is not None:
             pos_fwd, fwd = _extract_series(self.coverage_fwd_data, self.sample, gr)
             pos_rev, rev = _extract_series(self.coverage_rev_data, self.sample, gr)
+            factor = float(self.scaling_factor)
+            fwd = fwd * factor
+            rev = rev * factor
             if pos_fwd.size and pos_rev.size and np.array_equal(pos_fwd, pos_rev):
                 pos = pos_fwd
             elif pos_fwd.size:
@@ -305,10 +354,29 @@ class QuantNadoStrandedCoverageTrack(_QuantNadoSourceMixin, Track):
             raise RuntimeError("QuantNado source has no coverage store for stranded coverage track")
 
         region = _region_string(gr)
-        fwd_data = coverage_store.extract_region(region=region, samples=[self.sample], strand="+")
-        rev_data = coverage_store.extract_region(region=region, samples=[self.sample], strand="-")
+        fwd_data = coverage_store.extract_region(
+            region=region,
+            samples=[self.sample],
+            as_xarray=False,
+            strand="+",
+            normalise=self.normalise,
+            normalize=self.normalize,
+            library_sizes=self.library_sizes,
+        )
+        rev_data = coverage_store.extract_region(
+            region=region,
+            samples=[self.sample],
+            as_xarray=False,
+            strand="-",
+            normalise=self.normalise,
+            normalize=self.normalize,
+            library_sizes=self.library_sizes,
+        )
         pos_fwd, fwd = _extract_series(fwd_data, self.sample, gr)
         pos_rev, rev = _extract_series(rev_data, self.sample, gr)
+        factor = float(self.scaling_factor)
+        fwd = fwd * factor
+        rev = rev * factor
         if pos_fwd.size and pos_rev.size and np.array_equal(pos_fwd, pos_rev):
             pos = pos_fwd
         elif pos_fwd.size:

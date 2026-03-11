@@ -658,8 +658,12 @@ class QuantnadoCoverageKwargs(TypedDict, total=False):
     height: float
     autoscale_group: str | None
     color_group: str | None
+    scaling_factor: float
     quantnado: Any | None
     dataset_path: str | None
+    normalise: str | None
+    normalize: str | None
+    library_sizes: pd.Series | dict | None
     coverage_data: Any | None
     color: str
     alpha: float
@@ -697,8 +701,12 @@ class QuantnadoStrandedCoverageKwargs(TypedDict, total=False):
     height: float
     autoscale_group: str | None
     color_group: str | None
+    scaling_factor: float
     quantnado: Any | None
     dataset_path: str | None
+    normalise: str | None
+    normalize: str | None
+    library_sizes: pd.Series | dict | None
     coverage_fwd_data: Any | None
     coverage_rev_data: Any | None
     color: str
