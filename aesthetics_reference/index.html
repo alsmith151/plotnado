@@ -1,0 +1,7230 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Aesthetics Reference - PlotNado Documentation</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../css/brands.min.css" rel="stylesheet">
+        <link href="../css/solid.min.css" rel="stylesheet">
+        <link href="../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">PlotNado Documentation</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href=".." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../installation/" class="nav-link">Installation</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../quickstart/" class="nav-link">Quick Start</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../best_practices/" class="nav-link">Best Practices</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../quickstart_tracks/" class="nav-link">Track Construction</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../track_catalog/" class="nav-link">Track Catalog</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../example_coverage/" class="nav-link">Example Coverage</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../figure_workflows/" class="nav-link">Figure Workflows</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../recipes/" class="nav-link">Recipes</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../data_inputs/" class="nav-link">Data Inputs</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../cli/" class="nav-link">CLI</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../track_aliases/" class="nav-link">Track Aliases</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../api_reference/" class="nav-link">API Reference</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="./" class="nav-link active" aria-current="page">Aesthetics Reference</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../faq/" class="nav-link">FAQ</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../troubleshooting/" class="nav-link">Troubleshooting</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../changelog/" class="nav-link">Changelog</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../reference/SUMMARY/" class="nav-link">Reference Summary</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../api_reference/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../faq/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/alsmith151/plotnado" class="nav-link"><i class="fa-brands fa-github"></i> GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#aesthetics-reference" class="nav-link">Aesthetics Reference</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#bedtrack" class="nav-link">BedTrack</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#bigwigcollection" class="nav-link">BigWigCollection</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#bigwigdiff" class="nav-link">BigWigDiff</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#bigwigtrack" class="nav-link">BigWigTrack</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#capcrunchertrack" class="nav-link">CapcruncherTrack</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#cooleraverage" class="nav-link">CoolerAverage</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#coolertrack" class="nav-link">CoolerTrack</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#genes" class="nav-link">Genes</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#genomicaxis" class="nav-link">GenomicAxis</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#hlinetrack" class="nav-link">HLineTrack</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#highlightsfromfile" class="nav-link">HighlightsFromFile</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#linkstrack" class="nav-link">LinksTrack</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#narrowpeaktrack" class="nav-link">NarrowPeakTrack</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#overlaytrack" class="nav-link">OverlayTrack</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#quantnadocoveragetrack" class="nav-link">QuantNadoCoverageTrack</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#quantnadomethylationtrack" class="nav-link">QuantNadoMethylationTrack</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#quantnadostrandedcoveragetrack" class="nav-link">QuantNadoStrandedCoverageTrack</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#quantnadovarianttrack" class="nav-link">QuantNadoVariantTrack</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#scalebar" class="nav-link">ScaleBar</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#spacer" class="nav-link">Spacer</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#vlinetrack" class="nav-link">VLineTrack</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="aesthetics-reference">Aesthetics Reference<a class="headerlink" href="#aesthetics-reference" title="Permanent link">&para;</a></h1>
+<p>This page is auto-generated from runtime model metadata (<code>Track.options()</code>).</p>
+<p>Track styles are configured through nested <code>aesthetics=...</code> models.
+When using <code>GenomicFigure</code> helper methods (for example <code>gf.bigwig(...)</code>),
+aesthetics and label kwargs can also be passed directly and are routed automatically.</p>
+<p>Shorthand example:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><span class="n">gf</span><span class="o">.</span><span class="n">bigwig</span><span class="p">(</span>
+</span><span id="__span-0-2">    <span class="s2">&quot;signal.bw&quot;</span><span class="p">,</span>
+</span><span id="__span-0-3">    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Sample&quot;</span><span class="p">,</span>
+</span><span id="__span-0-4">    <span class="n">title_color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+</span><span id="__span-0-5">    <span class="n">style</span><span class="o">=</span><span class="s2">&quot;std&quot;</span><span class="p">,</span>
+</span><span id="__span-0-6">    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#1f77b4&quot;</span><span class="p">,</span>
+</span><span id="__span-0-7">    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+</span><span id="__span-0-8"><span class="p">)</span>
+</span></code></pre></div>
+<p>Equivalent explicit form:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><span class="n">gf</span><span class="o">.</span><span class="n">bigwig</span><span class="p">(</span>
+</span><span id="__span-1-2">    <span class="s2">&quot;signal.bw&quot;</span><span class="p">,</span>
+</span><span id="__span-1-3">    <span class="n">aesthetics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;style&quot;</span><span class="p">:</span> <span class="s2">&quot;std&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#1f77b4&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">},</span>
+</span><span id="__span-1-4">    <span class="n">label</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Sample&quot;</span><span class="p">,</span> <span class="s2">&quot;title_color&quot;</span><span class="p">:</span> <span class="s2">&quot;black&quot;</span><span class="p">},</span>
+</span><span id="__span-1-5"><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="bedtrack">BedTrack<a class="headerlink" href="#bedtrack" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>bed</code></p>
+<h3 id="track-fields">Track fields<a class="headerlink" href="#track-fields" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>pathlib.Path | pandas.DataFrame | str | Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>BED/BigBed path or in-memory interval table-like object.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>1.0</td>
+<td>—</td>
+<td>False</td>
+<td>Relative panel height for this track.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Display title for the track panel.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields">Aesthetics fields<a class="headerlink" href="#aesthetics-fields" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>alpha</td>
+<td>float</td>
+<td>0.78</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of interval rectangles (0-1).</td>
+</tr>
+<tr>
+<td>color</td>
+<td>str</td>
+<td>steelblue</td>
+<td>—</td>
+<td>False</td>
+<td>Fill color for interval rectangles.</td>
+</tr>
+<tr>
+<td>display</td>
+<td>DisplayMode</td>
+<td>collapsed</td>
+<td>collapsed, expanded</td>
+<td>False</td>
+<td>Collapsed draws all intervals on one row; expanded stacks overlaps.</td>
+</tr>
+<tr>
+<td>draw_edges</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw rectangle borders for intervals.</td>
+</tr>
+<tr>
+<td>edge_color</td>
+<td>str</td>
+<td>black</td>
+<td>—</td>
+<td>False</td>
+<td>Stroke color for interval borders.</td>
+</tr>
+<tr>
+<td>font_size</td>
+<td>int</td>
+<td>8</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for interval labels.</td>
+</tr>
+<tr>
+<td>interval_height</td>
+<td>float</td>
+<td>0.45</td>
+<td>—</td>
+<td>False</td>
+<td>Rectangle height in normalized track coordinates.</td>
+</tr>
+<tr>
+<td>label_field</td>
+<td>str</td>
+<td>name</td>
+<td>—</td>
+<td>False</td>
+<td>Column name used to populate interval labels.</td>
+</tr>
+<tr>
+<td>max_rows</td>
+<td>int</td>
+<td>5</td>
+<td>—</td>
+<td>False</td>
+<td>Maximum stacked rows when display is expanded.</td>
+</tr>
+<tr>
+<td>rect_linewidth</td>
+<td>float</td>
+<td>0.7</td>
+<td>—</td>
+<td>False</td>
+<td>Border line width for interval rectangles.</td>
+</tr>
+<tr>
+<td>show_labels</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Show text labels for intervals.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields">Label fields<a class="headerlink" href="#label-fields" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="bigwigcollection">BigWigCollection<a class="headerlink" href="#bigwigcollection" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>bigwig_collection</code></p>
+<h3 id="track-fields_1">Track fields<a class="headerlink" href="#track-fields_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Primary data source consumed by the track implementation.</td>
+</tr>
+<tr>
+<td>files</td>
+<td>list[str]</td>
+<td><em>(required)</em></td>
+<td>—</td>
+<td>True</td>
+<td>List of BigWig file paths for the collection.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>2.0</td>
+<td>—</td>
+<td>False</td>
+<td>Relative panel height for this track.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Display title for the track panel.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_1">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>alpha</td>
+<td>float</td>
+<td>0.6</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity applied to rendered collection traces.</td>
+</tr>
+<tr>
+<td>colors</td>
+<td>list[str] | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional per-file colors used when creating component tracks.</td>
+</tr>
+<tr>
+<td>labels</td>
+<td>list[str] | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional legend/title labels for each file in the collection.</td>
+</tr>
+<tr>
+<td>style</td>
+<td>CollectionStyle</td>
+<td>overlay</td>
+<td>overlay, stacked</td>
+<td>False</td>
+<td>Collection layout mode: overlay all traces or stack them.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_1">Label fields<a class="headerlink" href="#label-fields_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="bigwigdiff">BigWigDiff<a class="headerlink" href="#bigwigdiff" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>bigwig_diff</code></p>
+<h3 id="track-fields_2">Track fields<a class="headerlink" href="#track-fields_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Primary data source consumed by the track implementation.</td>
+</tr>
+<tr>
+<td>file_a</td>
+<td>str</td>
+<td><em>(required)</em></td>
+<td>—</td>
+<td>True</td>
+<td>Path to first BigWig input.</td>
+</tr>
+<tr>
+<td>file_b</td>
+<td>str</td>
+<td><em>(required)</em></td>
+<td>—</td>
+<td>True</td>
+<td>Path to second BigWig input.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>1.5</td>
+<td>—</td>
+<td>False</td>
+<td>Relative panel height for this track.</td>
+</tr>
+<tr>
+<td>method</td>
+<td>BigWigDiffMethod</td>
+<td>subtract</td>
+<td>subtract, ratio, log2ratio</td>
+<td>False</td>
+<td>Computation used to derive differential signal values.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Display title for the track panel.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_2">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bar_alpha</td>
+<td>float</td>
+<td>0.45</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of diff bars (0-1).</td>
+</tr>
+<tr>
+<td>linewidth</td>
+<td>float</td>
+<td>0.7</td>
+<td>—</td>
+<td>False</td>
+<td>Edge line width for diff bars.</td>
+</tr>
+<tr>
+<td>negative_color</td>
+<td>str</td>
+<td>#1f77b4</td>
+<td>—</td>
+<td>False</td>
+<td>Bar color for negative differences.</td>
+</tr>
+<tr>
+<td>positive_color</td>
+<td>str</td>
+<td>#d62728</td>
+<td>—</td>
+<td>False</td>
+<td>Bar color for positive differences.</td>
+</tr>
+<tr>
+<td>zero_line_alpha</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the zero baseline.</td>
+</tr>
+<tr>
+<td>zero_line_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Color of the horizontal zero baseline.</td>
+</tr>
+<tr>
+<td>zero_line_width</td>
+<td>float</td>
+<td>0.6</td>
+<td>—</td>
+<td>False</td>
+<td>Line width for the zero baseline.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_2">Label fields<a class="headerlink" href="#label-fields_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="bigwigtrack">BigWigTrack<a class="headerlink" href="#bigwigtrack" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>bigwig</code></p>
+<h3 id="track-fields_3">Track fields<a class="headerlink" href="#track-fields_3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>pathlib.Path | pandas.DataFrame | str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>BigWig file path or bedgraph-like DataFrame data source.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>1.0</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical height allocated to this track.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Display title for the track panel.</td>
+</tr>
+<tr>
+<td>y_max</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Computed upper y-limit for the last plotted region.</td>
+</tr>
+<tr>
+<td>y_min</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Computed lower y-limit for the last plotted region.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_3">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity for rendered signal glyphs (0-1).</td>
+</tr>
+<tr>
+<td>baseline_alpha</td>
+<td>float</td>
+<td>0.85</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the y=0 signal baseline.</td>
+</tr>
+<tr>
+<td>baseline_color</td>
+<td>str</td>
+<td>#b8bec8</td>
+<td>—</td>
+<td>False</td>
+<td>Color of the y=0 signal baseline.</td>
+</tr>
+<tr>
+<td>baseline_linewidth</td>
+<td>float</td>
+<td>0.6</td>
+<td>—</td>
+<td>False</td>
+<td>Line width of the y=0 signal baseline.</td>
+</tr>
+<tr>
+<td>color</td>
+<td>str</td>
+<td>#2171b5</td>
+<td>—</td>
+<td>False</td>
+<td>Primary color used to draw the signal.</td>
+</tr>
+<tr>
+<td>fill</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Fill the area under the signal curve when supported.</td>
+</tr>
+<tr>
+<td>linewidth</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Line width for line/fragment style rendering.</td>
+</tr>
+<tr>
+<td>max_value</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional fixed upper y-limit; auto-derived when omitted.</td>
+</tr>
+<tr>
+<td>min_value</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional fixed lower y-limit; auto-derived when omitted.</td>
+</tr>
+<tr>
+<td>scatter_point_size</td>
+<td>float</td>
+<td>1.0</td>
+<td>—</td>
+<td>False</td>
+<td>Marker area for scatter style rendering.</td>
+</tr>
+<tr>
+<td>show_baseline</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a subtle baseline at y=0.</td>
+</tr>
+<tr>
+<td>smoothing_center</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Center the smoothing window around each bin when enabled.</td>
+</tr>
+<tr>
+<td>smoothing_method</td>
+<td>Literal['mean', 'median']</td>
+<td>mean</td>
+<td>—</td>
+<td>False</td>
+<td>Aggregation used for smoothing when smoothing_window &gt; 1.</td>
+</tr>
+<tr>
+<td>smoothing_window</td>
+<td>int</td>
+<td>1</td>
+<td>—</td>
+<td>False</td>
+<td>Rolling window size in bins for optional signal smoothing.</td>
+</tr>
+<tr>
+<td>style</td>
+<td>PlotStyle</td>
+<td>std</td>
+<td>std, fill, line, scatter, heatmap, fragment</td>
+<td>False</td>
+<td>Style for rendering the signal track, for options see PlotStyle enum.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_3">Label fields<a class="headerlink" href="#label-fields_3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="capcrunchertrack">CapcruncherTrack<a class="headerlink" href="#capcrunchertrack" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>capcruncher</code></p>
+<h3 id="track-fields_4">Track fields<a class="headerlink" href="#track-fields_4" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>balance</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Use balanced matrix values when available.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Primary data source consumed by the track implementation.</td>
+</tr>
+<tr>
+<td>file</td>
+<td>str</td>
+<td><em>(required)</em></td>
+<td>—</td>
+<td>True</td>
+<td>Path to cooler/mcool matrix file.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>2.5</td>
+<td>—</td>
+<td>False</td>
+<td>Relative panel height for this track.</td>
+</tr>
+<tr>
+<td>normalisation</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional normalization mode label.</td>
+</tr>
+<tr>
+<td>resolution</td>
+<td>int | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Resolution bin size for .mcool files.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Display title for the track panel.</td>
+</tr>
+<tr>
+<td>transform</td>
+<td>CoolerTransform</td>
+<td>none</td>
+<td>log, log2, log10, none</td>
+<td>False</td>
+<td>Transform applied to matrix values before plotting.</td>
+</tr>
+<tr>
+<td>viewpoint</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional viewpoint identifier for capture-centric views.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_4">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_4" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cmap</td>
+<td>str</td>
+<td>RdBu_r</td>
+<td>—</td>
+<td>False</td>
+<td>Matplotlib colormap used to render matrix intensity.</td>
+</tr>
+<tr>
+<td>max_value</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional fixed upper bound for colormap normalization.</td>
+</tr>
+<tr>
+<td>min_value</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional fixed lower bound for colormap normalization.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_4">Label fields<a class="headerlink" href="#label-fields_4" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="cooleraverage">CoolerAverage<a class="headerlink" href="#cooleraverage" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>cooler_average</code></p>
+<h3 id="track-fields_5">Track fields<a class="headerlink" href="#track-fields_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>balance</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Use balanced matrices where available.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Primary data source consumed by the track implementation.</td>
+</tr>
+<tr>
+<td>files</td>
+<td>list[str]</td>
+<td><em>(required)</em></td>
+<td>—</td>
+<td>True</td>
+<td>List of cooler/mcool files to average.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>2.5</td>
+<td>—</td>
+<td>False</td>
+<td>Relative panel height for this track.</td>
+</tr>
+<tr>
+<td>resolution</td>
+<td>int | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Resolution bin size for .mcool input files.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Display title for the track panel.</td>
+</tr>
+<tr>
+<td>transform</td>
+<td>CoolerTransform</td>
+<td>none</td>
+<td>log, log2, log10, none</td>
+<td>False</td>
+<td>Transform applied before averaging and plotting.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_5">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cmap</td>
+<td>str</td>
+<td>RdBu_r</td>
+<td>—</td>
+<td>False</td>
+<td>Matplotlib colormap used to render matrix intensity.</td>
+</tr>
+<tr>
+<td>max_value</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional fixed upper bound for colormap normalization.</td>
+</tr>
+<tr>
+<td>min_value</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional fixed lower bound for colormap normalization.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_5">Label fields<a class="headerlink" href="#label-fields_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="coolertrack">CoolerTrack<a class="headerlink" href="#coolertrack" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>cooler</code></p>
+<h3 id="track-fields_6">Track fields<a class="headerlink" href="#track-fields_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>balance</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Use balanced matrix values when available.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Primary data source consumed by the track implementation.</td>
+</tr>
+<tr>
+<td>file</td>
+<td>str</td>
+<td><em>(required)</em></td>
+<td>—</td>
+<td>True</td>
+<td>Path to cooler/mcool matrix file.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>2.5</td>
+<td>—</td>
+<td>False</td>
+<td>Relative panel height for this track.</td>
+</tr>
+<tr>
+<td>resolution</td>
+<td>int | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Resolution bin size for .mcool files.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Display title for the track panel.</td>
+</tr>
+<tr>
+<td>transform</td>
+<td>CoolerTransform</td>
+<td>none</td>
+<td>log, log2, log10, none</td>
+<td>False</td>
+<td>Transform applied to matrix values before plotting.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_6">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cmap</td>
+<td>str</td>
+<td>RdBu_r</td>
+<td>—</td>
+<td>False</td>
+<td>Matplotlib colormap used to render matrix intensity.</td>
+</tr>
+<tr>
+<td>max_value</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional fixed upper bound for colormap normalization.</td>
+</tr>
+<tr>
+<td>min_value</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional fixed lower bound for colormap normalization.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_6">Label fields<a class="headerlink" href="#label-fields_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="genes">Genes<a class="headerlink" href="#genes" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>genes</code></p>
+<h3 id="track-fields_7">Track fields<a class="headerlink" href="#track-fields_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>pathlib.Path | str | pandas.DataFrame | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Gene annotation source (BED12/GTF file path or DataFrame).</td>
+</tr>
+<tr>
+<td>gene_count</td>
+<td>int</td>
+<td>0</td>
+<td>—</td>
+<td>False</td>
+<td>Number of genes drawn in the last plotting pass.</td>
+</tr>
+<tr>
+<td>genome</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Bundled genome key used when data is not provided (e.g., hg38).</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>1.5</td>
+<td>—</td>
+<td>False</td>
+<td>Relative panel height for this track.</td>
+</tr>
+<tr>
+<td>row_scale</td>
+<td>float</td>
+<td>1.0</td>
+<td>—</td>
+<td>False</td>
+<td>Internal row scaling factor used during layout.</td>
+</tr>
+<tr>
+<td>small_relative</td>
+<td>float</td>
+<td>0.01</td>
+<td>—</td>
+<td>False</td>
+<td>Internal small-offset ratio used for annotation geometry.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Display title for the track panel.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_7">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>alpha</td>
+<td>float</td>
+<td>1.0</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity for rendered gene bodies (0-1).</td>
+</tr>
+<tr>
+<td>arrow_size</td>
+<td>float</td>
+<td>0.12</td>
+<td>—</td>
+<td>False</td>
+<td>Arrow marker size for transcript direction cues.</td>
+</tr>
+<tr>
+<td>chevron_height_ratio</td>
+<td>float</td>
+<td>0.22</td>
+<td>—</td>
+<td>False</td>
+<td>Chevron height relative to track row height.</td>
+</tr>
+<tr>
+<td>chevron_margin_bp</td>
+<td>float</td>
+<td>20.0</td>
+<td>—</td>
+<td>False</td>
+<td>Margin near transcript edges where chevrons are omitted.</td>
+</tr>
+<tr>
+<td>chevron_max_count</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Maximum number of chevrons drawn per gene body.</td>
+</tr>
+<tr>
+<td>chevron_min_width_bp</td>
+<td>float</td>
+<td>40.0</td>
+<td>—</td>
+<td>False</td>
+<td>Minimum chevron width in base pairs.</td>
+</tr>
+<tr>
+<td>chevron_target_spacing_bp</td>
+<td>float</td>
+<td>9000.0</td>
+<td>—</td>
+<td>False</td>
+<td>Target spacing in bp between directional chevrons.</td>
+</tr>
+<tr>
+<td>chevron_vertical_offset_ratio</td>
+<td>float</td>
+<td>0.0</td>
+<td>—</td>
+<td>False</td>
+<td>Vertical offset ratio used when drawing directional chevrons.</td>
+</tr>
+<tr>
+<td>chevron_width_fraction</td>
+<td>float</td>
+<td>0.035</td>
+<td>—</td>
+<td>False</td>
+<td>Default chevron width as fraction of viewport width.</td>
+</tr>
+<tr>
+<td>color</td>
+<td>str</td>
+<td>black</td>
+<td>—</td>
+<td>False</td>
+<td>Primary color used for gene glyphs.</td>
+</tr>
+<tr>
+<td>display</td>
+<td>DisplayMode</td>
+<td>collapsed</td>
+<td>collapsed, expanded</td>
+<td>False</td>
+<td>Collapsed uses one row; expanded stacks overlapping genes.</td>
+</tr>
+<tr>
+<td>exon_color</td>
+<td>str</td>
+<td>black</td>
+<td>—</td>
+<td>False</td>
+<td>Fill color for exon rectangles.</td>
+</tr>
+<tr>
+<td>exon_edge_color</td>
+<td>str</td>
+<td>black</td>
+<td>—</td>
+<td>False</td>
+<td>Edge color for exon rectangles.</td>
+</tr>
+<tr>
+<td>exon_linewidth</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Line width for exon outlines.</td>
+</tr>
+<tr>
+<td>fill</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Fill exon bodies instead of outlines only.</td>
+</tr>
+<tr>
+<td>gene_label_font_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for gene name labels.</td>
+</tr>
+<tr>
+<td>gene_label_style</td>
+<td>GeneLabelStyle</td>
+<td>italic</td>
+<td>normal, italic, oblique</td>
+<td>False</td>
+<td>Font style for gene name labels.</td>
+</tr>
+<tr>
+<td>interval_height</td>
+<td>float</td>
+<td>0.1</td>
+<td>—</td>
+<td>False</td>
+<td>Vertical thickness of exon rectangles.</td>
+</tr>
+<tr>
+<td>intron_color</td>
+<td>str</td>
+<td>black</td>
+<td>—</td>
+<td>False</td>
+<td>Color for intron connector lines.</td>
+</tr>
+<tr>
+<td>intron_linewidth</td>
+<td>float</td>
+<td>0.5</td>
+<td>—</td>
+<td>False</td>
+<td>Line width for intron connector lines.</td>
+</tr>
+<tr>
+<td>label_connector_linewidth</td>
+<td>float</td>
+<td>0.7</td>
+<td>—</td>
+<td>False</td>
+<td>Line width for label connector lines.</td>
+</tr>
+<tr>
+<td>label_connectors</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw connector lines between displaced labels and their gene models.</td>
+</tr>
+<tr>
+<td>label_max_chars</td>
+<td>int</td>
+<td>20</td>
+<td>—</td>
+<td>False</td>
+<td>Maximum characters to show for each gene label before truncation.</td>
+</tr>
+<tr>
+<td>label_min_overlap_bp</td>
+<td>int</td>
+<td>200</td>
+<td>—</td>
+<td>False</td>
+<td>Do not draw labels for genes clipped at viewport edges when visible overlap is below this bp threshold.</td>
+</tr>
+<tr>
+<td>label_min_overlap_fraction</td>
+<td>float</td>
+<td>0.15</td>
+<td>—</td>
+<td>False</td>
+<td>Do not draw labels for clipped edge genes when overlap is below this fraction of total gene length.</td>
+</tr>
+<tr>
+<td>label_offset_fraction</td>
+<td>float</td>
+<td>0.005</td>
+<td>—</td>
+<td>False</td>
+<td>Horizontal gene label offset as a fraction of viewport width.</td>
+</tr>
+<tr>
+<td>label_overlap_strategy</td>
+<td>GeneLabelOverlapStrategy</td>
+<td>auto</td>
+<td>auto, smart, stagger, suppress, auto_expand</td>
+<td>False</td>
+<td>How to handle overlapping labels: auto resolves by display mode, smart uses lane stacking + horizontal nudging, stagger alternates vertical offsets, suppress hides collisions, auto_expand switches collapsed mode to expanded.</td>
+</tr>
+<tr>
+<td>label_stagger_offset</td>
+<td>float</td>
+<td>0.15</td>
+<td>—</td>
+<td>False</td>
+<td>Vertical offset (in row units) used by staggered label placement.</td>
+</tr>
+<tr>
+<td>label_vertical_offset</td>
+<td>float</td>
+<td>0.14</td>
+<td>—</td>
+<td>False</td>
+<td>Vertical offset (in row units) for non-stagger label placement.</td>
+</tr>
+<tr>
+<td>max_number_of_rows</td>
+<td>int</td>
+<td>4</td>
+<td>—</td>
+<td>False</td>
+<td>Maximum rows shown when display mode is expanded.</td>
+</tr>
+<tr>
+<td>minimum_gene_length</td>
+<td>int</td>
+<td>0</td>
+<td>—</td>
+<td>False</td>
+<td>Minimum feature length (bp) required to draw a gene.</td>
+</tr>
+<tr>
+<td>show_labels</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw gene name labels.</td>
+</tr>
+<tr>
+<td>style</td>
+<td>PlotStyle</td>
+<td>std</td>
+<td>std, fill, line, scatter, heatmap, fragment</td>
+<td>False</td>
+<td>Gene rendering style preset.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_7">Label fields<a class="headerlink" href="#label-fields_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="genomicaxis">GenomicAxis<a class="headerlink" href="#genomicaxis" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>axis</code></p>
+<h3 id="track-fields_8">Track fields<a class="headerlink" href="#track-fields_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Primary data source consumed by the track implementation.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>0.2</td>
+<td>—</td>
+<td>False</td>
+<td>Relative panel height for this compact track.</td>
+</tr>
+<tr>
+<td>show_chromosome</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Whether to draw the chromosome name on this axis track.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str</td>
+<td></td>
+<td>—</td>
+<td>False</td>
+<td>Optional title shown for the axis track.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_8">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>axis_linewidth</td>
+<td>float</td>
+<td>1.1</td>
+<td>—</td>
+<td>False</td>
+<td>Line width of the horizontal axis baseline.</td>
+</tr>
+<tr>
+<td>chromosome_fontweight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight of the chromosome text label.</td>
+</tr>
+<tr>
+<td>color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Color of axis baseline and chromosome label.</td>
+</tr>
+<tr>
+<td>font_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for tick and chromosome labels.</td>
+</tr>
+<tr>
+<td>num_ticks</td>
+<td>int</td>
+<td>5</td>
+<td>—</td>
+<td>False</td>
+<td>Target number of tick marks across the region.</td>
+</tr>
+<tr>
+<td>show_chromosome</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Render chromosome name label near the axis.</td>
+</tr>
+<tr>
+<td>tick_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Color for tick marks and tick labels.</td>
+</tr>
+<tr>
+<td>tick_height</td>
+<td>float</td>
+<td>0.15</td>
+<td>—</td>
+<td>False</td>
+<td>Tick length drawn downward from axis baseline.</td>
+</tr>
+<tr>
+<td>tick_linewidth</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Line width of tick marks.</td>
+</tr>
+<tr>
+<td>use_human_readable_labels</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Format genomic coordinates using k/M suffixes instead of raw integers.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_8">Label fields<a class="headerlink" href="#label-fields_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="hlinetrack">HLineTrack<a class="headerlink" href="#hlinetrack" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>hline</code></p>
+<h3 id="track-fields_9">Track fields<a class="headerlink" href="#track-fields_9" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Primary data source consumed by the track implementation.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>0.0</td>
+<td>—</td>
+<td>False</td>
+<td>Zero-height overlay track.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Display title for the track panel.</td>
+</tr>
+<tr>
+<td>y_value</td>
+<td>float</td>
+<td><em>(required)</em></td>
+<td>—</td>
+<td>True</td>
+<td>Y-axis value where the horizontal line is drawn.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_9">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_9" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>alpha</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the reference line (0-1).</td>
+</tr>
+<tr>
+<td>color</td>
+<td>str</td>
+<td>red</td>
+<td>—</td>
+<td>False</td>
+<td>Color used to draw reference lines.</td>
+</tr>
+<tr>
+<td>linestyle</td>
+<td>str</td>
+<td>--</td>
+<td>—</td>
+<td>False</td>
+<td>Matplotlib line style pattern for the line.</td>
+</tr>
+<tr>
+<td>linewidth</td>
+<td>float</td>
+<td>1.0</td>
+<td>—</td>
+<td>False</td>
+<td>Line width for the reference line.</td>
+</tr>
+<tr>
+<td>zorder</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Matplotlib z-order used when drawing the line.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_9">Label fields<a class="headerlink" href="#label-fields_9" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="highlightsfromfile">HighlightsFromFile<a class="headerlink" href="#highlightsfromfile" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>highlight</code></p>
+<h3 id="track-fields_10">Track fields<a class="headerlink" href="#track-fields_10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>pathlib.Path | pandas.DataFrame | str</td>
+<td><em>(required)</em></td>
+<td>—</td>
+<td>True</td>
+<td>BED/BigBed-like regions data source for highlight overlays.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>0.0</td>
+<td>—</td>
+<td>False</td>
+<td>Zero-height overlay track spanning plotted axes.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Display title for the track panel.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_10">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>alpha</td>
+<td>float</td>
+<td>0.3</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of highlighted regions (0-1).</td>
+</tr>
+<tr>
+<td>color</td>
+<td>str</td>
+<td>yellow</td>
+<td>—</td>
+<td>False</td>
+<td>Fill color for highlighted regions.</td>
+</tr>
+<tr>
+<td>edge_color</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional border color for highlighted regions.</td>
+</tr>
+<tr>
+<td>linewidth</td>
+<td>float</td>
+<td>1.0</td>
+<td>—</td>
+<td>False</td>
+<td>Border line width when edge_color is provided.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_10">Label fields<a class="headerlink" href="#label-fields_10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="linkstrack">LinksTrack<a class="headerlink" href="#linkstrack" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>links</code></p>
+<h3 id="track-fields_11">Track fields<a class="headerlink" href="#track-fields_11" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>pathlib.Path | pandas.DataFrame | str</td>
+<td><em>(required)</em></td>
+<td>—</td>
+<td>True</td>
+<td>BEDPE-like interactions data source (file path or DataFrame).</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>2.0</td>
+<td>—</td>
+<td>False</td>
+<td>Relative panel height for this track.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Display title for the track panel.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_11">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_11" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>alpha</td>
+<td>float</td>
+<td>0.55</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of interaction arcs (0-1).</td>
+</tr>
+<tr>
+<td>cmap</td>
+<td>str</td>
+<td>viridis</td>
+<td>—</td>
+<td>False</td>
+<td>Colormap used when coloring arcs by score.</td>
+</tr>
+<tr>
+<td>color</td>
+<td>str</td>
+<td>steelblue</td>
+<td>—</td>
+<td>False</td>
+<td>Default arc color when score coloring is disabled.</td>
+</tr>
+<tr>
+<td>color_by_score</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Use score column values to map each arc color via cmap.</td>
+</tr>
+<tr>
+<td>edge_color</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional stroke override for arc edges.</td>
+</tr>
+<tr>
+<td>linewidth</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Line width for interaction arcs.</td>
+</tr>
+<tr>
+<td>max_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Maximum normalized arc height relative to track bounds.</td>
+</tr>
+<tr>
+<td>max_score</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional maximum score bound for score-based color mapping.</td>
+</tr>
+<tr>
+<td>min_score</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional minimum score bound for score-based color mapping.</td>
+</tr>
+<tr>
+<td>y_baseline</td>
+<td>float</td>
+<td>0.1</td>
+<td>—</td>
+<td>False</td>
+<td>Baseline y position from which arcs originate.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_11">Label fields<a class="headerlink" href="#label-fields_11" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="narrowpeaktrack">NarrowPeakTrack<a class="headerlink" href="#narrowpeaktrack" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>narrowpeak</code></p>
+<h3 id="track-fields_12">Track fields<a class="headerlink" href="#track-fields_12" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>pathlib.Path | pandas.DataFrame | str | Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>BED/BigBed path or in-memory interval table-like object.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>1.0</td>
+<td>—</td>
+<td>False</td>
+<td>Relative panel height for this track.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Display title for the track panel.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_12">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_12" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>alpha</td>
+<td>float</td>
+<td>0.78</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of interval rectangles (0-1).</td>
+</tr>
+<tr>
+<td>cmap</td>
+<td>str</td>
+<td>Oranges</td>
+<td>—</td>
+<td>False</td>
+<td>Colormap used when color_by is enabled.</td>
+</tr>
+<tr>
+<td>color</td>
+<td>str</td>
+<td>#d95f02</td>
+<td>—</td>
+<td>False</td>
+<td>Fallback color for peaks.</td>
+</tr>
+<tr>
+<td>color_by</td>
+<td>plotnado.tracks.enums.NarrowPeakColorBy | None</td>
+<td>signalValue</td>
+<td>score, signalValue, pValue, qValue</td>
+<td>False</td>
+<td>Optional narrowPeak field used for colormap-based coloring.</td>
+</tr>
+<tr>
+<td>display</td>
+<td>DisplayMode</td>
+<td>collapsed</td>
+<td>collapsed, expanded</td>
+<td>False</td>
+<td>Collapsed draws all intervals on one row; expanded stacks overlaps.</td>
+</tr>
+<tr>
+<td>draw_edges</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw rectangle borders for intervals.</td>
+</tr>
+<tr>
+<td>edge_color</td>
+<td>str</td>
+<td>black</td>
+<td>—</td>
+<td>False</td>
+<td>Stroke color for interval borders.</td>
+</tr>
+<tr>
+<td>font_size</td>
+<td>int</td>
+<td>8</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for interval labels.</td>
+</tr>
+<tr>
+<td>interval_height</td>
+<td>float</td>
+<td>0.28</td>
+<td>—</td>
+<td>False</td>
+<td>Rectangle height in normalized track coordinates for peak intervals.</td>
+</tr>
+<tr>
+<td>label_field</td>
+<td>str</td>
+<td>name</td>
+<td>—</td>
+<td>False</td>
+<td>Column name used to populate interval labels.</td>
+</tr>
+<tr>
+<td>max_rows</td>
+<td>int</td>
+<td>5</td>
+<td>—</td>
+<td>False</td>
+<td>Maximum stacked rows when display is expanded.</td>
+</tr>
+<tr>
+<td>max_score</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional upper score bound for colormap normalization.</td>
+</tr>
+<tr>
+<td>min_score</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional lower score bound for colormap normalization.</td>
+</tr>
+<tr>
+<td>rect_linewidth</td>
+<td>float</td>
+<td>0.7</td>
+<td>—</td>
+<td>False</td>
+<td>Border line width for interval rectangles.</td>
+</tr>
+<tr>
+<td>show_labels</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Show text labels for intervals.</td>
+</tr>
+<tr>
+<td>show_summit</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw summit marker when peak offset is available.</td>
+</tr>
+<tr>
+<td>summit_color</td>
+<td>str</td>
+<td>black</td>
+<td>—</td>
+<td>False</td>
+<td>Color of summit marker lines.</td>
+</tr>
+<tr>
+<td>summit_width</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Line width of summit marker lines.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_12">Label fields<a class="headerlink" href="#label-fields_12" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="overlaytrack">OverlayTrack<a class="headerlink" href="#overlaytrack" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>bigwig_overlay</code>, <code>overlay</code></p>
+<h3 id="track-fields_13">Track fields<a class="headerlink" href="#track-fields_13" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Primary data source consumed by the track implementation.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>2.0</td>
+<td>—</td>
+<td>False</td>
+<td>Relative panel height for this track.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Display title for the track panel.</td>
+</tr>
+<tr>
+<td>tracks</td>
+<td>list[plotnado.tracks.base.Track | pandas.DataFrame | pathlib.Path | str]</td>
+<td><em>(required)</em></td>
+<td>—</td>
+<td>True</td>
+<td>List of Track instances, in-memory signal DataFrames, or BigWig-like file paths to overlay.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_13">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_13" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>alpha</td>
+<td>float</td>
+<td>0.5</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity applied to overlaid signal traces.</td>
+</tr>
+<tr>
+<td>colors</td>
+<td>list[str] | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional per-track color overrides for overlaid subtracks.</td>
+</tr>
+<tr>
+<td>max_value</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional shared maximum y-value for all overlaid tracks.</td>
+</tr>
+<tr>
+<td>min_value</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional shared minimum y-value for all overlaid tracks.</td>
+</tr>
+<tr>
+<td>show_labels</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Render labels for component tracks in overlay contexts.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_13">Label fields<a class="headerlink" href="#label-fields_13" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="quantnadocoveragetrack">QuantNadoCoverageTrack<a class="headerlink" href="#quantnadocoveragetrack" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>quantnado_coverage</code></p>
+<h3 id="track-fields_14">Track fields<a class="headerlink" href="#track-fields_14" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>coverage_data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional precomputed xarray-like coverage data with dims (sample, position).</td>
+</tr>
+<tr>
+<td>data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Primary data source consumed by the track implementation.</td>
+</tr>
+<tr>
+<td>dataset_path</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Path to a QuantNado dataset opened lazily when needed.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>1.0</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical height allocated to this track.</td>
+</tr>
+<tr>
+<td>quantnado</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Runtime QuantNado instance used to fetch track data.</td>
+</tr>
+<tr>
+<td>sample</td>
+<td>str</td>
+<td><em>(required)</em></td>
+<td>—</td>
+<td>True</td>
+<td>Sample name to render from QuantNado data.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Display title for the track panel.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_14">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_14" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>alpha</td>
+<td>float</td>
+<td>0.75</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity for coverage fill and line.</td>
+</tr>
+<tr>
+<td>baseline_alpha</td>
+<td>float</td>
+<td>0.85</td>
+<td>—</td>
+<td>False</td>
+<td>Baseline opacity.</td>
+</tr>
+<tr>
+<td>baseline_color</td>
+<td>str</td>
+<td>#b8bec8</td>
+<td>—</td>
+<td>False</td>
+<td>Baseline color.</td>
+</tr>
+<tr>
+<td>baseline_linewidth</td>
+<td>float</td>
+<td>0.6</td>
+<td>—</td>
+<td>False</td>
+<td>Baseline line width.</td>
+</tr>
+<tr>
+<td>color</td>
+<td>str</td>
+<td>#2171b5</td>
+<td>—</td>
+<td>False</td>
+<td>Primary color for coverage rendering.</td>
+</tr>
+<tr>
+<td>fill</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Fill area under the coverage profile.</td>
+</tr>
+<tr>
+<td>linewidth</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Line width for stepped coverage trace.</td>
+</tr>
+<tr>
+<td>max_value</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional fixed upper y-limit.</td>
+</tr>
+<tr>
+<td>min_value</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional fixed lower y-limit.</td>
+</tr>
+<tr>
+<td>show_baseline</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw baseline at y=0 when visible.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_14">Label fields<a class="headerlink" href="#label-fields_14" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="quantnadomethylationtrack">QuantNadoMethylationTrack<a class="headerlink" href="#quantnadomethylationtrack" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>quantnado_methylation</code></p>
+<h3 id="track-fields_15">Track fields<a class="headerlink" href="#track-fields_15" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Primary data source consumed by the track implementation.</td>
+</tr>
+<tr>
+<td>dataset_path</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Path to a QuantNado dataset opened lazily when needed.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>1.0</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical height allocated to this track.</td>
+</tr>
+<tr>
+<td>methylation_data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional precomputed methylation xarray-like data with dims (sample, position).</td>
+</tr>
+<tr>
+<td>methylation_variable</td>
+<td>str</td>
+<td>methylation_pct</td>
+<td>—</td>
+<td>False</td>
+<td>Variable fetched from QuantNado methylation store.</td>
+</tr>
+<tr>
+<td>quantnado</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Runtime QuantNado instance used to fetch track data.</td>
+</tr>
+<tr>
+<td>sample</td>
+<td>str</td>
+<td><em>(required)</em></td>
+<td>—</td>
+<td>True</td>
+<td>Sample name to render from QuantNado data.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Display title for the track panel.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_15">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_15" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>alpha</td>
+<td>float</td>
+<td>0.75</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity for methylation points.</td>
+</tr>
+<tr>
+<td>color</td>
+<td>str</td>
+<td>#2a9d8f</td>
+<td>—</td>
+<td>False</td>
+<td>Scatter color for methylation points.</td>
+</tr>
+<tr>
+<td>max_value</td>
+<td>float | None</td>
+<td>100.0</td>
+<td>—</td>
+<td>False</td>
+<td>Upper y-limit (default 100).</td>
+</tr>
+<tr>
+<td>min_value</td>
+<td>float | None</td>
+<td>0.0</td>
+<td>—</td>
+<td>False</td>
+<td>Lower y-limit (default 0).</td>
+</tr>
+<tr>
+<td>point_size</td>
+<td>float</td>
+<td>10.0</td>
+<td>—</td>
+<td>False</td>
+<td>Marker area for methylation points.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_15">Label fields<a class="headerlink" href="#label-fields_15" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="quantnadostrandedcoveragetrack">QuantNadoStrandedCoverageTrack<a class="headerlink" href="#quantnadostrandedcoveragetrack" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>quantnado_stranded_coverage</code></p>
+<h3 id="track-fields_16">Track fields<a class="headerlink" href="#track-fields_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>coverage_fwd_data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional forward-strand xarray-like coverage data with dims (sample, position).</td>
+</tr>
+<tr>
+<td>coverage_rev_data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional reverse-strand xarray-like coverage data with dims (sample, position).</td>
+</tr>
+<tr>
+<td>data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Primary data source consumed by the track implementation.</td>
+</tr>
+<tr>
+<td>dataset_path</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Path to a QuantNado dataset opened lazily when needed.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>1.0</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical height allocated to this track.</td>
+</tr>
+<tr>
+<td>quantnado</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Runtime QuantNado instance used to fetch track data.</td>
+</tr>
+<tr>
+<td>sample</td>
+<td>str</td>
+<td><em>(required)</em></td>
+<td>—</td>
+<td>True</td>
+<td>Sample name to render from QuantNado data.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Display title for the track panel.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_16">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>alpha</td>
+<td>float</td>
+<td>0.7</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity for stranded coverage traces.</td>
+</tr>
+<tr>
+<td>baseline_alpha</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Baseline opacity.</td>
+</tr>
+<tr>
+<td>baseline_color</td>
+<td>str</td>
+<td>#444444</td>
+<td>—</td>
+<td>False</td>
+<td>Baseline color.</td>
+</tr>
+<tr>
+<td>baseline_linewidth</td>
+<td>float</td>
+<td>0.6</td>
+<td>—</td>
+<td>False</td>
+<td>Baseline line width.</td>
+</tr>
+<tr>
+<td>color</td>
+<td>str</td>
+<td>#1f78b4</td>
+<td>—</td>
+<td>False</td>
+<td>Color for forward strand signal.</td>
+</tr>
+<tr>
+<td>fill</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Fill areas for forward and reverse signals.</td>
+</tr>
+<tr>
+<td>linewidth</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Line width for stepped traces.</td>
+</tr>
+<tr>
+<td>max_value</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional fixed upper y-limit.</td>
+</tr>
+<tr>
+<td>min_value</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional fixed lower y-limit.</td>
+</tr>
+<tr>
+<td>reverse_color</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional color override for reverse strand signal; defaults to <code>color</code>.</td>
+</tr>
+<tr>
+<td>show_baseline</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw baseline at y=0.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_16">Label fields<a class="headerlink" href="#label-fields_16" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="quantnadovarianttrack">QuantNadoVariantTrack<a class="headerlink" href="#quantnadovarianttrack" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>quantnado_variant</code></p>
+<h3 id="track-fields_17">Track fields<a class="headerlink" href="#track-fields_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>allele_depth_alt_data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional precomputed alt-depth xarray-like data with dims (sample, position).</td>
+</tr>
+<tr>
+<td>allele_depth_alt_variable</td>
+<td>str</td>
+<td>allele_depth_alt</td>
+<td>—</td>
+<td>False</td>
+<td>Alternate-allele depth variable name in QuantNado variants store.</td>
+</tr>
+<tr>
+<td>allele_depth_ref_data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional precomputed ref-depth xarray-like data with dims (sample, position).</td>
+</tr>
+<tr>
+<td>allele_depth_ref_variable</td>
+<td>str</td>
+<td>allele_depth_ref</td>
+<td>—</td>
+<td>False</td>
+<td>Reference-allele depth variable name in QuantNado variants store.</td>
+</tr>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Primary data source consumed by the track implementation.</td>
+</tr>
+<tr>
+<td>dataset_path</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Path to a QuantNado dataset opened lazily when needed.</td>
+</tr>
+<tr>
+<td>fetch_genotype</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Fetch genotype data from QuantNado variants store when available.</td>
+</tr>
+<tr>
+<td>genotype_data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Optional precomputed genotype xarray-like data with dims (sample, position).</td>
+</tr>
+<tr>
+<td>genotype_variable</td>
+<td>str</td>
+<td>genotype</td>
+<td>—</td>
+<td>False</td>
+<td>Genotype variable name in QuantNado variants store.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>1.0</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical height allocated to this track.</td>
+</tr>
+<tr>
+<td>quantnado</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Runtime QuantNado instance used to fetch track data.</td>
+</tr>
+<tr>
+<td>sample</td>
+<td>str</td>
+<td><em>(required)</em></td>
+<td>—</td>
+<td>True</td>
+<td>Sample name to render from QuantNado data.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Display title for the track panel.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_17">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>alpha</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity for lollipop stems/markers.</td>
+</tr>
+<tr>
+<td>baseline_alpha</td>
+<td>float</td>
+<td>0.75</td>
+<td>—</td>
+<td>False</td>
+<td>Baseline opacity.</td>
+</tr>
+<tr>
+<td>baseline_color</td>
+<td>str</td>
+<td>#444444</td>
+<td>—</td>
+<td>False</td>
+<td>Baseline color.</td>
+</tr>
+<tr>
+<td>baseline_linewidth</td>
+<td>float</td>
+<td>0.6</td>
+<td>—</td>
+<td>False</td>
+<td>Baseline line width.</td>
+</tr>
+<tr>
+<td>het_color</td>
+<td>str</td>
+<td>#1f77b4</td>
+<td>—</td>
+<td>False</td>
+<td>Color for heterozygous variants.</td>
+</tr>
+<tr>
+<td>hom_alt_color</td>
+<td>str</td>
+<td>#d62728</td>
+<td>—</td>
+<td>False</td>
+<td>Color for homozygous-alt variants.</td>
+</tr>
+<tr>
+<td>linewidth</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Lollipop stem line width.</td>
+</tr>
+<tr>
+<td>marker_size</td>
+<td>float</td>
+<td>24.0</td>
+<td>—</td>
+<td>False</td>
+<td>Lollipop marker area.</td>
+</tr>
+<tr>
+<td>max_value</td>
+<td>float | None</td>
+<td>1.08</td>
+<td>—</td>
+<td>False</td>
+<td>Upper y-limit (default 1.08).</td>
+</tr>
+<tr>
+<td>min_value</td>
+<td>float | None</td>
+<td>0.0</td>
+<td>—</td>
+<td>False</td>
+<td>Lower y-limit (default 0).</td>
+</tr>
+<tr>
+<td>show_baseline</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw baseline at y=0.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_17">Label fields<a class="headerlink" href="#label-fields_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="scalebar">ScaleBar<a class="headerlink" href="#scalebar" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>scale</code>, <code>scalebar</code></p>
+<h3 id="track-fields_18">Track fields<a class="headerlink" href="#track-fields_18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Primary data source consumed by the track implementation.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>0.3</td>
+<td>—</td>
+<td>False</td>
+<td>Relative panel height for this compact track.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str</td>
+<td>ScaleBar</td>
+<td>—</td>
+<td>False</td>
+<td>Optional title for the scale bar track.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_18">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bar_linewidth</td>
+<td>float</td>
+<td>1.8</td>
+<td>—</td>
+<td>False</td>
+<td>Line width of the main horizontal scale bar.</td>
+</tr>
+<tr>
+<td>color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Color of scale bar line, ticks, and label.</td>
+</tr>
+<tr>
+<td>font_size</td>
+<td>int</td>
+<td>8</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the scale label.</td>
+</tr>
+<tr>
+<td>label_offset</td>
+<td>float</td>
+<td>0.25</td>
+<td>—</td>
+<td>False</td>
+<td>Vertical distance between bar baseline and text label.</td>
+</tr>
+<tr>
+<td>position</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Horizontal anchor of the scale bar.</td>
+</tr>
+<tr>
+<td>scale_distance</td>
+<td>float | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Explicit scale bar length in base pairs; auto-selected if omitted.</td>
+</tr>
+<tr>
+<td>style</td>
+<td>PlotStyle</td>
+<td>std</td>
+<td>std, fill, line, scatter, heatmap, fragment</td>
+<td>False</td>
+<td>Scale bar style variant.</td>
+</tr>
+<tr>
+<td>tick_height</td>
+<td>float</td>
+<td>0.1</td>
+<td>—</td>
+<td>False</td>
+<td>Half-height of terminal ticks in axis units.</td>
+</tr>
+<tr>
+<td>tick_linewidth</td>
+<td>float</td>
+<td>1.4</td>
+<td>—</td>
+<td>False</td>
+<td>Line width of terminal scale ticks.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str</td>
+<td>Scale</td>
+<td>—</td>
+<td>False</td>
+<td>Human-readable name for this style preset.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_18">Label fields<a class="headerlink" href="#label-fields_18" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="spacer">Spacer<a class="headerlink" href="#spacer" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>spacer</code></p>
+<h3 id="track-fields_19">Track fields<a class="headerlink" href="#track-fields_19" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Primary data source consumed by the track implementation.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>0.5</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical spacing height.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str</td>
+<td></td>
+<td>—</td>
+<td>False</td>
+<td>Optional title for the spacer track.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_19">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_19" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_19">Label fields<a class="headerlink" href="#label-fields_19" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="vlinetrack">VLineTrack<a class="headerlink" href="#vlinetrack" title="Permanent link">&para;</a></h2>
+<p>Aliases: <code>vline</code></p>
+<h3 id="track-fields_20">Track fields<a class="headerlink" href="#track-fields_20" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>autoscale_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing the same group id are y-scaled together.</td>
+</tr>
+<tr>
+<td>color_group</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Tracks sharing this id use the same autocolor/theme-palette color.</td>
+</tr>
+<tr>
+<td>data</td>
+<td>Any | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Primary data source consumed by the track implementation.</td>
+</tr>
+<tr>
+<td>height</td>
+<td>float</td>
+<td>0.0</td>
+<td>—</td>
+<td>False</td>
+<td>Zero-height overlay track.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>str | None</td>
+<td>—</td>
+<td>—</td>
+<td>False</td>
+<td>Display title for the track panel.</td>
+</tr>
+<tr>
+<td>x_position</td>
+<td>int | str</td>
+<td><em>(required)</em></td>
+<td>—</td>
+<td>True</td>
+<td>Genomic position where the vertical line is drawn.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aesthetics-fields_20">Aesthetics fields<a class="headerlink" href="#aesthetics-fields_20" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>alpha</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the reference line (0-1).</td>
+</tr>
+<tr>
+<td>color</td>
+<td>str</td>
+<td>red</td>
+<td>—</td>
+<td>False</td>
+<td>Color used to draw reference lines.</td>
+</tr>
+<tr>
+<td>linestyle</td>
+<td>str</td>
+<td>--</td>
+<td>—</td>
+<td>False</td>
+<td>Matplotlib line style pattern for the line.</td>
+</tr>
+<tr>
+<td>linewidth</td>
+<td>float</td>
+<td>1.0</td>
+<td>—</td>
+<td>False</td>
+<td>Line width for the reference line.</td>
+</tr>
+<tr>
+<td>zorder</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Matplotlib z-order used when drawing the line.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="label-fields_20">Label fields<a class="headerlink" href="#label-fields_20" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Choices</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data_range_style</td>
+<td>DataRangeStyle</td>
+<td>text</td>
+<td>text, colorbar, none</td>
+<td>False</td>
+<td>How to render the data range annotation for the track.</td>
+</tr>
+<tr>
+<td>label_box_alpha</td>
+<td>float</td>
+<td>0.9</td>
+<td>—</td>
+<td>False</td>
+<td>Opacity of the label background box (0-1).</td>
+</tr>
+<tr>
+<td>label_box_enabled</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Draw a translucent white box behind label text for legibility.</td>
+</tr>
+<tr>
+<td>label_on_track</td>
+<td>bool</td>
+<td>False</td>
+<td>—</td>
+<td>False</td>
+<td>Draw labels inside the track plotting area instead of margins.</td>
+</tr>
+<tr>
+<td>plot_scale</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the y-scale range annotation.</td>
+</tr>
+<tr>
+<td>plot_title</td>
+<td>bool</td>
+<td>True</td>
+<td>—</td>
+<td>False</td>
+<td>Show the track title text.</td>
+</tr>
+<tr>
+<td>scale_color</td>
+<td>str</td>
+<td>#666666</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for scale text in data coordinates.</td>
+</tr>
+<tr>
+<td>scale_location</td>
+<td>Position</td>
+<td>right</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where scale text is anchored.</td>
+</tr>
+<tr>
+<td>scale_precision</td>
+<td>int</td>
+<td>2</td>
+<td>—</td>
+<td>False</td>
+<td>Decimal precision used when formatting scale values.</td>
+</tr>
+<tr>
+<td>scale_size</td>
+<td>int</td>
+<td>9</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for scale annotation.</td>
+</tr>
+<tr>
+<td>scale_weight</td>
+<td>FontWeight</td>
+<td>normal</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for scale annotation.</td>
+</tr>
+<tr>
+<td>title_color</td>
+<td>str</td>
+<td>#333333</td>
+<td>—</td>
+<td>False</td>
+<td>Text color for title label.</td>
+</tr>
+<tr>
+<td>title_font</td>
+<td>str</td>
+<td>DejaVu Sans</td>
+<td>—</td>
+<td>False</td>
+<td>Font family for title label.</td>
+</tr>
+<tr>
+<td>title_height</td>
+<td>float</td>
+<td>0.8</td>
+<td>—</td>
+<td>False</td>
+<td>Relative vertical position for title text in data coordinates.</td>
+</tr>
+<tr>
+<td>title_location</td>
+<td>Position</td>
+<td>left</td>
+<td>left, right, center</td>
+<td>False</td>
+<td>Side of the track where the title is anchored.</td>
+</tr>
+<tr>
+<td>title_size</td>
+<td>int</td>
+<td>10</td>
+<td>—</td>
+<td>False</td>
+<td>Font size for the title label.</td>
+</tr>
+<tr>
+<td>title_weight</td>
+<td>FontWeight</td>
+<td>bold</td>
+<td>normal, bold</td>
+<td>False</td>
+<td>Font weight for title label.</td>
+</tr>
+</tbody>
+</table></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js"></script>
+        <script src="../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
