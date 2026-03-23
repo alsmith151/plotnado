@@ -186,13 +186,16 @@ class BedTrack(Track):
             # Draw label if enabled
             if self.show_labels and hasattr(row, self.label_field):
                 label = getattr(row, self.label_field)
+                # Position label above the peak, within track bounds
+                label_ypos = ypos + self.interval_height / 2 + 0.05
                 ax.text(
                     (start + end) / 2,
-                    ypos,
+                    label_ypos,
                     str(label),
                     ha="center",
-                    va="center",
+                    va="bottom",
                     fontsize=self.font_size,
+                    clip_on=True,  # Clip text that extends outside axis
                 )
 
         ax.set_xlim(gr.start, gr.end)
