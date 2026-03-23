@@ -12,7 +12,7 @@ from typing_extensions import Annotated
 from rich.console import Console
 from rich.table import Table
 
-from plotnado.template import Template, TrackSpec, GuideSpec, GroupSpec, TrackType
+from plotnado.template import Template, TrackSpec, GuideSpec, GroupSpec, TemplateTrackType
 from plotnado.cli.inference import infer_track
 from plotnado.cli.grouping import (
     PredefinedGroupingStrategies,
@@ -26,15 +26,15 @@ console = Console()
 
 # Track type ordering for generated templates: signal first, then peaks, then annotations
 _TYPE_ORDER: dict[str, int] = {
-    TrackType.BIGWIG.value: 0,
-    TrackType.BEDGRAPH.value: 1,
-    TrackType.NARROWPEAK.value: 2,
-    TrackType.BED.value: 3,
-    TrackType.ANNOTATION.value: 4,
-    TrackType.LINKS.value: 5,
-    TrackType.GENE.value: 6,
-    TrackType.OVERLAY.value: 7,
-    TrackType.UNKNOWN.value: 8,
+    TemplateTrackType.BIGWIG.value: 0,
+    TemplateTrackType.BEDGRAPH.value: 1,
+    TemplateTrackType.NARROWPEAK.value: 2,
+    TemplateTrackType.BED.value: 3,
+    TemplateTrackType.ANNOTATION.value: 4,
+    TemplateTrackType.LINKS.value: 5,
+    TemplateTrackType.GENE.value: 6,
+    TemplateTrackType.OVERLAY.value: 7,
+    TemplateTrackType.UNKNOWN.value: 8,
 }
 
 
@@ -297,7 +297,7 @@ def init_command(
                         )
 
             # 4. BigWig style
-            bw_tracks = [t for t in template.tracks if str(t.type) in (TrackType.BIGWIG.value, TrackType.BEDGRAPH.value)]
+            bw_tracks = [t for t in template.tracks if str(t.type) in (TemplateTrackType.BIGWIG.value, TemplateTrackType.BEDGRAPH.value)]
             if bw_tracks:
                 style_input = typer.prompt(
                     "BigWig display style",

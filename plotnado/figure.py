@@ -131,6 +131,59 @@ class GenomicFigure:
             self.tracks = [self._apply_theme_to_track(track) for track in self.tracks]
             self._apply_theme_palette()
 
+    @classmethod
+    def from_template(
+        cls,
+        template: "Template | str | Path",
+        *,
+        width: float | None = None,
+        theme: "Theme | BuiltinTheme | str | None" = BuiltinTheme.PUBLICATION,
+    ) -> "GenomicFigure":
+        """Build a GenomicFigure from a template file or Template object.
+
+        Args:
+            template: A ``Template`` instance, or a path to a YAML template file.
+            width: Override figure width in inches. Defaults to the template's width.
+            theme: Theme to apply. Defaults to the publication theme.
+
+        Returns:
+            A fully configured GenomicFigure ready for ``.plot()`` or ``.save()``.
+
+        Example::
+
+            fig = GenomicFigure.from_template("template.yaml")
+            fig.save("out.png", region="chr1:1000000-2000000")
+        """
+        from .template import Template as _Template
+        from .render import TemplateCompiler
+
+        if not isinstance(template, _Template):
+            template = _Template.load(template)
+
+        plan = TemplateCompiler.compile(template)
+        fig = cls(
+            width=width if width is not None else plan.width,
+            track_height=plan.track_height,
+            theme=theme,
+        )
+
+        if plan.add_scalebar:
+            fig.scalebar()
+        if plan.add_axis:
+            fig.axis()
+        if plan.add_genes and plan.genome:
+            fig.genes(plan.genome)
+
+        for i, _ in enumerate(plan.tracks):
+            method_name, data, kwargs = plan.get_track_by_method(i)
+            track_method = getattr(fig, method_name)
+            if data:
+                track_method(data, **kwargs)
+            else:
+                track_method(**kwargs)
+
+        return fig
+
     @staticmethod
     def _resolve_theme(theme: Theme | BuiltinTheme | str | None) -> Theme | None:
         if theme is None:

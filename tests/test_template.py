@@ -4,16 +4,16 @@ import pytest
 import yaml
 from pathlib import Path
 
-from plotnado.template import Template, TrackSpec, GroupSpec, TrackType
+from plotnado.template import Template, TrackSpec, GroupSpec, TemplateTrackType
 
 
 def make_template() -> Template:
     t = Template()
     t.genome = "hg38"
     t.tracks = [
-        TrackSpec(path="sample1.bw", type=TrackType.BIGWIG, title="H3K27ac (Sample 1)", group="s1"),
-        TrackSpec(path="sample2.bw", type=TrackType.BIGWIG, title="H3K27ac (Sample 2)", group="s2"),
-        TrackSpec(path="peaks.narrowpeak", type=TrackType.NARROWPEAK, title="Peaks"),
+        TrackSpec(path="sample1.bw", type=TemplateTrackType.BIGWIG, title="H3K27ac (Sample 1)", group="s1"),
+        TrackSpec(path="sample2.bw", type=TemplateTrackType.BIGWIG, title="H3K27ac (Sample 2)", group="s2"),
+        TrackSpec(path="peaks.narrowpeak", type=TemplateTrackType.NARROWPEAK, title="Peaks"),
     ]
     return t
 
@@ -33,7 +33,7 @@ class TestRoundTrip:
     def test_name_field_preserved(self, tmp_path):
         t = Template()
         t.tracks = [
-            TrackSpec(path="a.bw", type=TrackType.BIGWIG, title="Track A", name="track-a"),
+            TrackSpec(path="a.bw", type=TemplateTrackType.BIGWIG, title="Track A", name="track-a"),
         ]
         yaml_path = tmp_path / "t.yaml"
         t.save(yaml_path)

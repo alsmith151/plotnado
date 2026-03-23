@@ -23,7 +23,7 @@ app = typer.Typer(
 )
 
 # Import commands - this registers them with the app
-from . import commands_init, commands_plot, commands_validate  # noqa: F401
+from . import init, plot, validate  # noqa: F401
 
 
 def main():

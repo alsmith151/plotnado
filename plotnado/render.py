@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Optional
 
-from plotnado.template import Template, TrackSpec, TrackType
+from plotnado.template import Template, TrackSpec, TemplateTrackType
 from plotnado.tracks import GenomicRegion
 
 
@@ -108,15 +108,15 @@ class RenderPlan:
 
         # Map track type to GenomicFigure method (keys are strings due to use_enum_values)
         method_map = {
-            TrackType.BIGWIG.value: 'bigwig',
-            TrackType.BED.value: 'bed',
-            TrackType.NARROWPEAK.value: 'narrowpeak',
-            TrackType.BEDGRAPH.value: 'bedgraph',
-            TrackType.GENE.value: 'genes',
-            TrackType.LINKS.value: 'links',
-            TrackType.ANNOTATION.value: 'bed',  # Treat as BED
-            TrackType.OVERLAY.value: 'overlay',
-            TrackType.UNKNOWN.value: 'bed',  # Default fallback
+            TemplateTrackType.BIGWIG.value: 'bigwig',
+            TemplateTrackType.BED.value: 'bed',
+            TemplateTrackType.NARROWPEAK.value: 'narrowpeak',
+            TemplateTrackType.BEDGRAPH.value: 'bigwig',  # bedgraph renders via BigWigTrack; no separate fig.bedgraph() method exists
+            TemplateTrackType.GENE.value: 'genes',
+            TemplateTrackType.LINKS.value: 'links',
+            TemplateTrackType.ANNOTATION.value: 'bed',  # annotation tracks are BED intervals; rendered via fig.bed()
+            TemplateTrackType.OVERLAY.value: 'overlay',
+            TemplateTrackType.UNKNOWN.value: 'bed',  # Default fallback
         }
 
         method = method_map.get(str(spec.type), 'bed')

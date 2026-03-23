@@ -12,7 +12,7 @@ from rich.console import Console
 from rich.table import Table
 
 from plotnado.template import Template
-from plotnado.cli.render import TemplateCompiler
+from plotnado.render import TemplateCompiler
 
 from . import cli
 

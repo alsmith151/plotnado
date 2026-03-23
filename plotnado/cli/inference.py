@@ -13,7 +13,7 @@ import re
 from pathlib import Path
 from typing import Optional
 
-from plotnado.template import TrackType
+from plotnado.template import TemplateTrackType
 
 
 class SeqnadoPattern:
@@ -66,29 +66,29 @@ class TrackClassifier:
     
     # File extension to track type mappings
     EXTENSION_MAP = {
-        '.bw': TrackType.BIGWIG,
-        '.bigwig': TrackType.BIGWIG,
-        '.bedgraph': TrackType.BEDGRAPH,
-        '.bed': TrackType.BED,
-        '.bigbed': TrackType.BED,  # BigBed is a BED format variant
-        '.narrowpeak': TrackType.NARROWPEAK,
-        '.broadpeak': TrackType.NARROWPEAK,  # Similar to narrowpeak
-        '.bedpe': TrackType.LINKS,
-        '.links': TrackType.LINKS,
+        '.bw': TemplateTrackType.BIGWIG,
+        '.bigwig': TemplateTrackType.BIGWIG,
+        '.bedgraph': TemplateTrackType.BEDGRAPH,
+        '.bed': TemplateTrackType.BED,
+        '.bigbed': TemplateTrackType.BED,  # BigBed is a BED format variant
+        '.narrowpeak': TemplateTrackType.NARROWPEAK,
+        '.broadpeak': TemplateTrackType.NARROWPEAK,  # Similar to narrowpeak
+        '.bedpe': TemplateTrackType.LINKS,
+        '.links': TemplateTrackType.LINKS,
     }
     
     # URL pattern mappings
     URL_PATTERNS = {
-        r'\.bw$': TrackType.BIGWIG,
-        r'\.bigwig$': TrackType.BIGWIG,
-        r'\.bigbed$': TrackType.BED,  # BigBed format
-        r'\.bed': TrackType.BED,
-        r'\.narrowpeak': TrackType.NARROWPEAK,
-        r'\.bedgraph': TrackType.BEDGRAPH,
+        r'\.bw$': TemplateTrackType.BIGWIG,
+        r'\.bigwig$': TemplateTrackType.BIGWIG,
+        r'\.bigbed$': TemplateTrackType.BED,  # BigBed format
+        r'\.bed': TemplateTrackType.BED,
+        r'\.narrowpeak': TemplateTrackType.NARROWPEAK,
+        r'\.bedgraph': TemplateTrackType.BEDGRAPH,
     }
     
     @staticmethod
-    def classify(path: str) -> tuple[TrackType, float]:
+    def classify(path: str) -> tuple[TemplateTrackType, float]:
         """
         Classify a data source into a track type.
         
@@ -100,7 +100,7 @@ class TrackClassifier:
             for pattern, track_type in TrackClassifier.URL_PATTERNS.items():
                 if re.search(pattern, path, re.IGNORECASE):
                     return track_type, 0.9  # High confidence for URL patterns
-            return TrackType.UNKNOWN, 0.1
+            return TemplateTrackType.UNKNOWN, 0.1
         
         # Check file extension
         path_lower = path.lower()
@@ -117,14 +117,14 @@ class TrackClassifier:
         except (TypeError, ValueError):
             pass
         
-        return TrackType.UNKNOWN, 0.0
+        return TemplateTrackType.UNKNOWN, 0.0
 
 
 class TitleInference:
     """Infers meaningful titles from file paths and filenames."""
     
     @staticmethod
-    def infer(path: str, track_type: Optional[TrackType] = None) -> tuple[str, bool]:
+    def infer(path: str, track_type: Optional[TemplateTrackType] = None) -> tuple[str, bool]:
         """
         Infer a title from a file path or URL.
         
@@ -154,7 +154,7 @@ class TitleInference:
             title = TitleInference._clean_filename(filename)
             
             # Add track type suffix for clarity
-            if title and track_type == TrackType.BED:
+            if title and track_type == TemplateTrackType.BED:
                 title = f"{title} peaks"
             
             if title:
@@ -360,7 +360,7 @@ class InferenceResult:
     """Result of inference operations with confidence and explanations."""
 
     def __init__(self):
-        self.track_type: TrackType = TrackType.UNKNOWN
+        self.track_type: TemplateTrackType = TemplateTrackType.UNKNOWN
         self.type_confidence: float = 0.0
         self.title: str = "Unknown"
         self.title_inferred: bool = False
@@ -430,11 +430,11 @@ def infer_track(path: str, known_group: Optional[str] = None) -> InferenceResult
         result.notes.append(f"Assigned to group: {known_group}")
 
     # Assign suggested color
-    if result.track_type in (TrackType.BIGWIG, TrackType.BEDGRAPH):
+    if result.track_type in (TemplateTrackType.BIGWIG, TemplateTrackType.BEDGRAPH):
         # Use antibody name for seqnado files (consistent color per antibody across samples)
         color_key = result.seqnado_antibody or result.group or path
         result.suggested_color = _palette_color_for_group(color_key)
-    elif result.track_type in (TrackType.NARROWPEAK, TrackType.BED, TrackType.ANNOTATION):
+    elif result.track_type in (TemplateTrackType.NARROWPEAK, TemplateTrackType.BED, TemplateTrackType.ANNOTATION):
         result.suggested_color = _ANNOTATION_COLOR
     # UNKNOWN, GENE, LINKS, OVERLAY: no color suggestion
 

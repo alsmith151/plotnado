@@ -16,7 +16,7 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class TrackType(str, Enum):
+class TemplateTrackType(str, Enum):
     """Inferred track type for a data source."""
     BIGWIG = "bigwig"
     BED = "bed"
@@ -35,7 +35,7 @@ class TrackSpec(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
 
     path: Optional[str] = Field(default=None, description="File path or URL")
-    type: TrackType = Field(default=TrackType.UNKNOWN, description="Inferred or specified track type")
+    type: TemplateTrackType = Field(default=TemplateTrackType.UNKNOWN, description="Inferred or specified track type")
     title: Optional[str] = Field(default=None, description="Display title")
     name: Optional[str] = Field(default=None, description="Unique identifier for group references (uses title if absent)")
     group: Optional[str] = Field(default=None, description="Group ID for shared scaling/coloring")
@@ -195,7 +195,7 @@ class Template(BaseModel):
         tracks = [
             TrackSpec(
                 path=track_data.get("path"),
-                type=TrackType(track_data.get("type", "unknown")),
+                type=TemplateTrackType(track_data.get("type", "unknown")),
                 title=track_data.get("title"),
                 name=track_data.get("name"),
                 group=track_data.get("group"),

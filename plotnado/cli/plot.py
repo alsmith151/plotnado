@@ -17,7 +17,7 @@ from rich.console import Console
 import plotnado as pn
 from plotnado.template import Template
 from plotnado.tracks import GenomicRegion
-from plotnado.cli.render import TemplateCompiler
+from plotnado.render import TemplateCompiler
 
 from . import cli
 
@@ -27,34 +27,34 @@ console = Console()
 def resolve_gene_region(gene_name: str, genome: Optional[str] = None) -> GenomicRegion:
     """
     Resolve a gene name to a genomic region.
-    
+
     Args:
         gene_name: Gene symbol to look up (e.g., 'GNAQ')
         genome: Optional genome assembly (e.g., 'hg38', 'mm10')
-    
+
     Returns:
         GenomicRegion corresponding to the gene
-    
+
     Raises:
         ValueError: If gene not found or genome not available
     """
     if not genome:
         raise ValueError("Cannot resolve gene name without genome specification. Ensure template has genome defined.")
-    
+
     # Load gene annotations from bundled data
     try:
         bed_prefix = importlib.resources.files("plotnado.data.gene_bed_files")
         with open(bed_prefix / "genes.json") as handle:
             mapping = json.load(handle)
-        
+
         if genome not in mapping:
             raise ValueError(f"Gene annotations not available for genome '{genome}'")
-        
+
         gene_file = bed_prefix / mapping[genome]
         genes_df = pd.read_csv(gene_file, sep="\t", header=None)
     except Exception as e:
         raise ValueError(f"Failed to load gene annotations: {e}")
-    
+
     # Parse BED format (chrom, start, end, name, ...)
     genes_df.columns = [
         "chrom",
@@ -63,13 +63,13 @@ def resolve_gene_region(gene_name: str, genome: Optional[str] = None) -> Genomic
         "name",
         *[f"field_{i}" for i in range(max(0, genes_df.shape[1] - 4))],
     ]
-    
+
     # Match gene name (case-insensitive)
     match = genes_df.loc[genes_df["name"].astype(str).str.upper() == gene_name.upper()]
-    
+
     if match.empty:
         raise ValueError(f"Gene '{gene_name}' not found in {genome} annotations")
-    
+
     row = match.iloc[0]
     return GenomicRegion(
         chromosome=row["chrom"],
@@ -109,13 +109,13 @@ def plot_command(
         ),
     ] = "png",
     width: Annotated[
-        float,
+        Optional[float],
         typer.Option(
             "--width",
             "-w",
-            help="Figure width in inches",
+            help="Figure width in inches (overrides template width)",
         ),
-    ] = 12.0,
+    ] = None,
     dpi: Annotated[
         int,
         typer.Option(
@@ -190,7 +190,7 @@ def plot_command(
 
         # Create figure from render plan
         try:
-            fig = pn.GenomicFigure(width=width or plan.width, track_height=plan.track_height)
+            fig = pn.GenomicFigure(width=width if width is not None else plan.width, track_height=plan.track_height)
 
             if plan.add_scalebar:
                 fig.scalebar()
@@ -199,8 +199,8 @@ def plot_command(
             if plan.add_genes and plan.genome:
                 fig.genes(plan.genome)
 
-            for resolved_track in plan.tracks:
-                method, data, kwargs = plan.get_track_by_method(resolved_track.index)
+            for i, resolved_track in enumerate(plan.tracks):
+                method, data, kwargs = plan.get_track_by_method(i)
                 track_method = getattr(fig, method)
                 if data:
                     track_method(data, **kwargs)
