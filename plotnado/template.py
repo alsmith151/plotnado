@@ -139,7 +139,17 @@ class Template(BaseModel):
         return result
 
     def to_yaml(self, header_args: Optional[str] = None) -> str:
-        """Serialize template to YAML string with optional comment header."""
+        """Serialize the template to a YAML string.
+
+        Args:
+            header_args: Optional CLI argument string included in a comment header.
+
+        Returns:
+            YAML text representing the current template.
+
+        Example:
+            >>> template.to_yaml(header_args="--group sample")
+        """
         body = yaml.dump(
             self.to_dict(),
             default_flow_style=False,
@@ -158,7 +168,18 @@ class Template(BaseModel):
         return body
 
     def save(self, path: str | Path, header_args: Optional[str] = None) -> None:
-        """Save template to a YAML file."""
+        """Write the template to disk as YAML.
+
+        Args:
+            path: Output file path.
+            header_args: Optional CLI argument string included in the header.
+
+        Returns:
+            None.
+
+        Example:
+            >>> template.save("example.yaml")
+        """
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w") as f:
@@ -166,7 +187,20 @@ class Template(BaseModel):
 
     @classmethod
     def load(cls, path: str | Path) -> "Template":
-        """Load template from a YAML file."""
+        """Load a template from a YAML file.
+
+        Args:
+            path: Path to the YAML template file.
+
+        Returns:
+            Parsed ``Template`` instance.
+
+        Raises:
+            ValueError: If the YAML content is not a mapping.
+
+        Example:
+            >>> template = Template.load("example.yaml")
+        """
         with open(path, "r") as f:
             data = yaml.safe_load(f)
 

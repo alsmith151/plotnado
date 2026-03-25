@@ -5,7 +5,7 @@ from plotnado.tracks.enums import TrackType
 
 
 def test_tracktype_covers_all_former_templatetracktype_values():
-    """All values that were in TemplateTrackType must exist in TrackType."""
+    """All values from the former template enum must exist in TrackType."""
     former_template_types = [
         "bigwig", "bed", "narrowpeak", "bedgraph",
         "gene", "links", "annotation", "overlay", "unknown",

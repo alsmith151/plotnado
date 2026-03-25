@@ -16,10 +16,20 @@ from plotnado.tracks.enums import TrackType
 
 @dataclass
 class ResolvedTrack:
-    """
-    A track specification resolved and ready for plotting.
+    """Resolved template track data ready for figure construction.
 
-    Contains all information needed to create a Track object in GenomicFigure.
+    Attributes:
+        track_spec: Original template-level track specification.
+        index: Zero-based track index in the source template.
+        actual_path: Resolved data path after any template compilation step.
+        actual_title: Title shown in the figure.
+        actual_group: Autoscale group name, if any.
+        color_group: Shared color group name, if any.
+
+    Example:
+        >>> resolved = ResolvedTrack(track_spec=spec, index=0, actual_title="RNA")
+        >>> resolved.to_figure_kwargs()["title"]
+        'RNA'
     """
 
     track_spec: TrackSpec
@@ -32,15 +42,24 @@ class ResolvedTrack:
     color_group: Optional[str] = None   # Group for color sharing (None if autocolor=False)
 
     def get_data(self) -> Optional[str]:
-        """Get the data source (file path, URL, or dataframe)."""
+        """Return the resolved data source for the track.
+
+        Returns:
+            The configured path or other external data locator, if present.
+        """
         return self.track_spec.path or self.actual_path
 
     def to_figure_kwargs(self) -> dict[str, Any]:
-        """
-        Convert to kwargs suitable for GenomicFigure track methods.
+        """Convert the resolved track into ``GenomicFigure`` keyword arguments.
 
-        Returns a dict with keys like 'title', 'style', 'color', etc.
-        (data is handled separately via get_data())
+        Returns:
+            A flat kwargs dict containing track, aesthetics, and label fields.
+            The actual data payload/path is excluded and should be retrieved with
+            :meth:`get_data`.
+
+        Example:
+            >>> resolved.to_figure_kwargs()["title"]
+            'RNA'
         """
         kwargs = {}
 
@@ -70,11 +89,18 @@ class ResolvedTrack:
 
 @dataclass
 class RenderPlan:
-    """
-    A compiled plan for rendering a figure.
+    """Compiled figure-construction plan derived from a template.
 
-    Contains all information needed to construct a GenomicFigure and render it
-    for a specific region.
+    Attributes:
+        template: Original template object.
+        tracks: Resolved tracks in plotting order.
+        resolved_group_indices: Track references expanded to concrete indices.
+        width: Figure width in inches.
+        track_height: Default per-track height multiplier.
+        genome: Optional genome identifier carried through from the template.
+        add_genes: Whether to inject a genes guide track.
+        add_axis: Whether to inject a genomic axis guide track.
+        add_scalebar: Whether to inject a scale bar guide track.
     """
 
     template: Template
@@ -101,18 +127,22 @@ class TemplateCompiler:
 
     @staticmethod
     def compile(template: Template, region: Optional[GenomicRegion] = None) -> RenderPlan:
-        """
-        Compile a template into a render plan.
+        """Compile a template into a region-independent render plan.
 
-        Does NOT mutate the template. Resolved group indices are stored in
-        RenderPlan.resolved_group_indices.
+        Does not mutate ``template``. Resolved group indices are stored in
+        :attr:`RenderPlan.resolved_group_indices`.
 
         Args:
-            template: The template to compile
-            region: Optional region for validation
+            template: Template specification to compile.
+            region: Optional genomic region reserved for future validation hooks.
 
         Returns:
-            A RenderPlan ready for rendering
+            A ``RenderPlan`` ready to instantiate a ``GenomicFigure``.
+
+        Example:
+            >>> plan = TemplateCompiler.compile(template)
+            >>> len(plan.tracks) == len(template.tracks)
+            True
         """
         plan = RenderPlan(
             template=template,

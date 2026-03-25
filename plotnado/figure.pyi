@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Self
+from typing import Any, Literal, Self
 
 import matplotlib.figure
 import pandas as pd
@@ -283,6 +283,74 @@ class GenomicFigure:
         ) -> Self: ...
 
     def cooler(self, file: str, /, *,
+            title: str | None = None,
+            data: Any | None = None,
+            height: float = 2.5,
+            autoscale_group: str | None = None,
+            color_group: str | None = None,
+            resolution: int | None = None,
+            balance: bool = True,
+            transform: CoolerTransform = CoolerTransform.NONE,
+            cmap: str = 'RdBu_r',
+            min_value: float | None = None,
+            max_value: float | None = None,
+            plot_title: bool = True,
+            plot_scale: bool = True,
+            label_on_track: bool = False,
+            data_range_style: DataRangeStyle = DataRangeStyle.TEXT,
+            label_box_enabled: bool = True,
+            label_box_alpha: float = 0.9,
+            title_location: Position = Position.LEFT,
+            title_height: float = 0.8,
+            title_size: int = 10,
+            title_color: str = '#333333',
+            title_font: str = 'DejaVu Sans',
+            title_weight: FontWeight = FontWeight.BOLD,
+            scale_location: Position = Position.RIGHT,
+            scale_height: float = 0.8,
+            scale_precision: int = 2,
+            scale_size: int = 9,
+            scale_color: str = '#666666',
+            scale_font: str = 'DejaVu Sans',
+            scale_weight: FontWeight = FontWeight.NORMAL,
+        ) -> Self: ...
+
+    def capcruncher(self, file: str, /, *,
+            title: str | None = None,
+            data: Any | None = None,
+            height: float = 2.5,
+            autoscale_group: str | None = None,
+            color_group: str | None = None,
+            resolution: int | None = None,
+            balance: bool = True,
+            transform: CoolerTransform = CoolerTransform.NONE,
+            viewpoint: str | None = None,
+            normalisation: str | None = None,
+            cmap: str = 'RdBu_r',
+            min_value: float | None = None,
+            max_value: float | None = None,
+            plot_title: bool = True,
+            plot_scale: bool = True,
+            label_on_track: bool = False,
+            data_range_style: DataRangeStyle = DataRangeStyle.TEXT,
+            label_box_enabled: bool = True,
+            label_box_alpha: float = 0.9,
+            title_location: Position = Position.LEFT,
+            title_height: float = 0.8,
+            title_size: int = 10,
+            title_color: str = '#333333',
+            title_font: str = 'DejaVu Sans',
+            title_weight: FontWeight = FontWeight.BOLD,
+            scale_location: Position = Position.RIGHT,
+            scale_height: float = 0.8,
+            scale_precision: int = 2,
+            scale_size: int = 9,
+            scale_color: str = '#666666',
+            scale_font: str = 'DejaVu Sans',
+            scale_weight: FontWeight = FontWeight.NORMAL,
+        ) -> Self: ...
+
+    def cooler_average(self, files: list[str], /, *,
             title: str | None = None,
             data: Any | None = None,
             height: float = 2.5,

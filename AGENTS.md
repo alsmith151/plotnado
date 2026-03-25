@@ -1,4 +1,4 @@
-# CLAUDE.md — AI Coding Guidelines for plotnado
+# AGENTS.md — AI Coding Guidelines for plotnado
 
 ## What is plotnado?
 
@@ -67,50 +67,58 @@ guides:
 
 `TemplateCompiler.compile(template)` → `RenderPlan` → `GenomicFigure` calls.
 
+## TrackType vs TemplateTrackType
+
+There are two separate enums. Do not confuse them:
+
+| Enum | Location | Purpose |
+|---|---|---|
+| `TrackType` | `plotnado/tracks/enums.py` | Internal figure enum; values match `GenomicFigure` method names |
+| `TemplateTrackType` | `plotnado/template.py` | User-facing YAML vocabulary; values appear in template files |
+
+`TemplateTrackType` has more values (for example `annotation` and `unknown`) that map to existing figure methods. The mapping is defined in `RenderPlan.get_track_by_method()` in `render.py`.
+
+`TrackType = TemplateTrackType` alias exists in `template.py` for backward compatibility.
+
 ## Adding a New Track Type
 
 1. Create `plotnado/tracks/mytrack.py` with a class extending `Track`
-2. If it has a single primary color: `class MyAesthetics(BaseAesthetics)` (from `tracks/aesthetics.py`)
-   If it renders multiple series: `class MyAesthetics(BaseMultiColorAesthetics)`
-3. Register the track using the decorator:
-   ```python
-   from .registry import registry
-   from .enums import TrackType
-
-   @registry.register(TrackType.MYTRACK, aliases=["my_alias"])
-   class MyTrack(Track): ...
-   ```
-4. Add `MYTRACK = "mytrack"` to `TrackType` in `tracks/enums.py`
-5. Add a builder method to `GenomicFigure` in `figure_methods.py`:
-   ```python
-   def mytrack(self, data: Any, /, **kwargs) -> Self:
-       return self.add_track(TrackType.MYTRACK, data=data, **kwargs)
-   ```
-6. Add a `MytrackKwargs` TypedDict entry and regenerate `_kwargs.py`:
-   ```bash
-   python scripts/generate_kwargs.py
-   ```
+2. Add aesthetics class if needed and register field names
+3. Add a method to `GenomicFigure` in `figure.py` (for example `.mytrack(data, **kwargs)`)
+4. Add the alias in `GenomicFigure._alias_map()`
+5. Add a `TemplateTrackType.MYTRACK = "mytrack"` value in `template.py`
+6. Add the mapping in `RenderPlan.get_track_by_method()` in `render.py`
 7. Export from `plotnado/tracks/__init__.py` and `plotnado/__init__.py`
 8. Write tests
 
-## Method Map (render.py)
+## Method Map
 
-`TemplateCompiler` and `GenomicFigure` no longer maintain a separate method map.
-Track lookup is centralized in `plotnado/tracks/registry.py`, and aliases such as
-`bedgraph`, `annotation`, `unknown`, `bigwig_overlay`, and `scale` resolve there.
+`RenderPlan.get_track_by_method()` maps `TemplateTrackType` values to `GenomicFigure` method names:
+
+| TemplateTrackType | GenomicFigure method | Notes |
+|---|---|---|
+| `bigwig` | `bigwig` | |
+| `bedgraph` | `bigwig` | BigWigTrack handles bedgraph natively |
+| `bed` | `bed` | |
+| `narrowpeak` | `narrowpeak` | |
+| `gene` | `genes` | |
+| `links` | `links` | |
+| `annotation` | `bed` | BED interval track with annotation semantics |
+| `overlay` | `overlay` | |
+| `unknown` | `bed` | Fallback |
 
 ## Template Compilation Rules
 
-- `TemplateCompiler.compile()` must **never mutate** the `Template` argument
+- `TemplateCompiler.compile()` must never mutate the `Template` argument
 - Resolved group indices go into `RenderPlan.resolved_group_indices`, not back into the template
 - Group references are resolved case-insensitively against track `name` or `title` fields
 
 ## Common Pitfalls
 
-- **Width override**: always use `width if width is not None else plan.width`, never `width or plan.width` (breaks when width=0.0)
-- **TrackType source of truth**: use `plotnado.tracks.enums.TrackType` for both Python and template codepaths
-- **Registry lookup**: if you need alias → class resolution, use `plotnado.tracks.registry.registry`, not a hard-coded method map
-- **CLI shim**: `plotnado/cli/render.py` re-exports from `plotnado.render` — always import from `plotnado.render` in new code
+- Width override: always use `width if width is not None else plan.width`, never `width or plan.width`
+- Bedgraph method: there is no `GenomicFigure.bedgraph()`; bedgraph files use `.bigwig()`
+- `TemplateTrackType` vs `TrackType`: import the right enum for the layer you are working in
+- CLI shim: `plotnado/cli/render.py` re-exports from `plotnado.render`; import from `plotnado.render` in new code
 
 ## Testing
 
@@ -138,4 +146,4 @@ uv pip install -e ".[dev]"
 uv run pytest tests/
 ```
 
-Entry point: `plotnado = "plotnado.cli.cli:main"` (defined in pyproject.toml)
+Entry point: `plotnado = "plotnado.cli.cli:main"` (defined in `pyproject.toml`)

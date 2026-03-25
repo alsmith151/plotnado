@@ -12,6 +12,11 @@ from .utils import clean_axis
 
 
 class CoolerAesthetics(BaseModel):
+    """Visual options for cooler-derived matrix tracks.
+
+    Example:
+        >>> CoolerAesthetics(cmap="magma", min_value=0.0, max_value=5.0)
+    """
     cmap: str = Field(default="RdBu_r", description="Matplotlib colormap used to render matrix intensity.")
     min_value: float | None = Field(
         default=None,
@@ -43,6 +48,11 @@ class CoolerAesthetics(BaseModel):
 
 @registry.register(TrackType.COOLER)
 class CoolerTrack(Track):
+    """Track for rendering a cooler or mcool contact matrix.
+
+    Example:
+        >>> CoolerTrack(file="contacts.mcool", resolution=10000)
+    """
     file: str = Field(description="Path to cooler/mcool matrix file.")
     resolution: int | None = Field(
         default=None,
@@ -106,12 +116,22 @@ class CoolerTrack(Track):
 
 @registry.register(TrackType.CAPCRUNCHER)
 class CapcruncherTrack(CoolerTrack):
+    """Capture-centric cooler track with viewpoint metadata.
+
+    Example:
+        >>> CapcruncherTrack(file="capture.mcool", viewpoint="MYC")
+    """
     viewpoint: str | None = Field(default=None, description="Optional viewpoint identifier for capture-centric views.")
     normalisation: str | None = Field(default=None, description="Optional normalization mode label.")
 
 
 @registry.register(TrackType.COOLER_AVERAGE)
 class CoolerAverage(Track):
+    """Track for averaging multiple cooler matrices before plotting.
+
+    Example:
+        >>> CoolerAverage(files=["a.cool", "b.cool"], resolution=10000)
+    """
     files: list[str] = Field(description="List of cooler/mcool files to average.")
     resolution: int | None = Field(
         default=None,

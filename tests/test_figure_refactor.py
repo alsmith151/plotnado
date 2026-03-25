@@ -16,6 +16,8 @@ from plotnado.tracks import (
     BedTrack,
     BigWigTrack,
     BigwigAesthetics,
+    CapcruncherTrack,
+    CoolerAverage,
     LabelConfig,
 
     QuantNadoCoverageTrack,
@@ -223,6 +225,17 @@ class TestFigureRefactor:
         assert isinstance(fig.tracks[1], QuantNadoStrandedCoverageTrack)
         assert isinstance(fig.tracks[2], QuantNadoMethylationTrack)
         assert isinstance(fig.tracks[3], QuantNadoVariantTrack)
+
+    def test_matrix_helper_methods_append_expected_tracks(self):
+        fig = GenomicFigure(theme=None)
+        fig.cooler("example.cool")
+        fig.capcruncher("example.cool", viewpoint="VP1")
+        fig.cooler_average(["a.cool", "b.cool"])
+
+        assert fig.tracks[0].__class__.__name__ == "CoolerTrack"
+        assert isinstance(fig.tracks[1], CapcruncherTrack)
+        assert isinstance(fig.tracks[2], CoolerAverage)
+
     def test_extend_parameter(self):
         fig = GenomicFigure().add_track(ScaleBar())
         out = fig.plot("chr1:100-200", show=False, extend=0.5)

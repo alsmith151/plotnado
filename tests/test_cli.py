@@ -1,12 +1,16 @@
 """CLI integration tests via typer.testing.CliRunner."""
 
+import inspect
 import pytest
 from pathlib import Path
 from typer.testing import CliRunner
 
 from plotnado.cli.cli import app
 
-runner = CliRunner(mix_stderr=False)
+_cli_runner_kwargs = {}
+if "mix_stderr" in inspect.signature(CliRunner).parameters:
+    _cli_runner_kwargs["mix_stderr"] = False
+runner = CliRunner(**_cli_runner_kwargs)
 
 
 # ---------------------------------------------------------------------------

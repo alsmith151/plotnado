@@ -70,10 +70,20 @@ class Theme(BaseModel):
 
     @classmethod
     def default(cls) -> "Theme":
+        """Return the neutral builtin theme.
+
+        Returns:
+            A ``Theme`` instance with field defaults unchanged.
+        """
         return cls()
 
     @classmethod
     def minimal(cls) -> "Theme":
+        """Return a sparse high-contrast theme.
+
+        Returns:
+            A ``Theme`` tuned for simple grayscale-style figures.
+        """
         return cls(
             color="#333333",
             alpha=0.8,
@@ -86,6 +96,12 @@ class Theme(BaseModel):
 
     @classmethod
     def publication(cls) -> "Theme":
+        """Return the default publication-oriented theme.
+
+        Returns:
+            A ``Theme`` with palette, label, and layout defaults suitable for
+            manuscript-style figures.
+        """
         return cls(
             color=None,
             alpha=None,
@@ -127,7 +143,17 @@ class Theme(BaseModel):
 
     @classmethod
     def from_builtin(cls, value: BuiltinTheme | str) -> "Theme":
-        """Create a `Theme` from a builtin theme name."""
+        """Create a ``Theme`` from a builtin theme name.
+
+        Args:
+            value: Builtin theme enum or string name.
+
+        Returns:
+            The requested builtin ``Theme``.
+
+        Raises:
+            ValueError: If ``value`` does not match a supported builtin theme.
+        """
         builtin = value if isinstance(value, BuiltinTheme) else BuiltinTheme(str(value).lower())
 
         if builtin == BuiltinTheme.DEFAULT:
@@ -150,6 +176,9 @@ class Theme(BaseModel):
             palette_color: Optional color from the figure's palette cycle. Applied
                 to ``track.aesthetics.color`` only if ``color`` was not explicitly
                 set on the track.
+
+        Returns:
+            None. The track is updated in place.
 
         Example:
             >>> theme = Theme.publication()
@@ -193,6 +222,10 @@ class Theme(BaseModel):
 
         Returns:
             Dict of field_name → value for fields that are not ``None``.
+
+        Example:
+            >>> Theme(color="#333333", alpha=0.8)._aesthetic_defaults()
+            {'color': '#333333', 'alpha': 0.8}
         """
         return {
             k: v for k, v in {

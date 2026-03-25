@@ -1,4 +1,4 @@
-"""Generate overload blocks in `plotnado/figure.py` for IDE hover signatures.
+"""Generate overload blocks in `plotnado/figure_methods.py` for IDE hover signatures.
 
 This script injects auto-generated `@overload` blocks above fluent Figure methods.
 The overloads are generated from track + aesthetics + label model fields so keyword
@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import types
 from pathlib import Path
-from typing import Any, Union, get_args, get_origin
+from typing import Any, Literal, Union, get_args, get_origin
 
 from pydantic import BaseModel
 
@@ -22,7 +22,9 @@ from plotnado.tracks import (
     BigWigDiff,
     BigWigTrack,
     BedTrack,
+    CapcruncherTrack,
     CoolerTrack,
+    CoolerAverage,
     Genes,
     GenomicAxis,
     HLineTrack,
@@ -42,7 +44,7 @@ from plotnado.tracks import (
 )
 
 
-FIGURE_PATH = Path(__file__).resolve().parents[1] / "plotnado" / "figure.py"
+FIGURE_PATH = Path(__file__).resolve().parents[1] / "plotnado" / "figure_methods.py"
 
 
 def _annotation_to_str(annotation: Any) -> str:
@@ -56,7 +58,7 @@ def _annotation_to_str(annotation: Any) -> str:
                 return "None"
             module = annotation.__module__
             name = annotation.__name__
-            if module == "pandas.core.frame" and name == "DataFrame":
+            if module in {"pandas", "pandas.core.frame"} and name == "DataFrame":
                 return "pd.DataFrame"
             if module in {"builtins", "typing"}:
                 return name
@@ -66,6 +68,8 @@ def _annotation_to_str(annotation: Any) -> str:
         rendered = rendered.replace("typing.", "")
         rendered = rendered.replace("types.", "")
         rendered = rendered.replace("pathlib.Path", "Path")
+        rendered = rendered.replace("DataFrame", "pd.DataFrame")
+        rendered = rendered.replace("pandas.DataFrame", "pd.DataFrame")
         rendered = rendered.replace("pandas.core.frame.DataFrame", "pd.DataFrame")
         return rendered
 
@@ -100,6 +104,8 @@ def _annotation_to_str(annotation: Any) -> str:
     rendered = rendered.replace("typing.", "")
     rendered = rendered.replace("types.", "")
     rendered = rendered.replace("pathlib.Path", "Path")
+    rendered = rendered.replace("DataFrame", "pd.DataFrame")
+    rendered = rendered.replace("pandas.DataFrame", "pd.DataFrame")
     rendered = rendered.replace("pandas.core.frame.DataFrame", "pd.DataFrame")
     return rendered
 
@@ -180,6 +186,8 @@ def generate_blocks() -> dict[str, str]:
         ("spacer", Spacer, ["height: float = 0.5"], {"height"}, False),
         ("bed", BedTrack, ["data: Any"], {"data"}, True),
         ("cooler", CoolerTrack, ["file: str"], {"file"}, True),
+        ("capcruncher", CapcruncherTrack, ["file: str"], {"file"}, True),
+        ("cooler_average", CoolerAverage, ["files: list[str]"], {"files"}, True),
         ("bigwig_collection", BigWigCollection, ["files: list[str]"], {"files"}, True),
         ("bigwig_diff", BigWigDiff, ["file_a: str", "file_b: str"], {"file_a", "file_b"}, True),
         ("bigwig_overlay", OverlayTrack, ["tracks: list[Any]"], {"tracks"}, True),

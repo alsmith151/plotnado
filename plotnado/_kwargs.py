@@ -1,7 +1,12 @@
+# AUTO-GENERATED - do not edit manually.
+# Re-generate with: python scripts/generate_kwargs.py
+#
+# This file provides TypedDict definitions for GenomicFigure builder
+# methods, enabling IDE autocompletion and type checking.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, TypedDict
+from typing import Any, Literal, TypedDict
 
 import pandas as pd
 
@@ -18,9 +23,6 @@ from .tracks.enums import (
     PlotStyle,
     Position,
 )
-from .tracks.region import GenomicRegion
-from .tracks.base import Track
-
 
 
 class BigwigKwargs(TypedDict, total=False):
@@ -266,6 +268,72 @@ class BedKwargs(TypedDict, total=False):
     scale_weight: FontWeight
 
 class CoolerKwargs(TypedDict, total=False):
+    title: str | None
+    data: Any | None
+    height: float
+    autoscale_group: str | None
+    color_group: str | None
+    resolution: int | None
+    balance: bool
+    transform: CoolerTransform
+    cmap: str
+    min_value: float | None
+    max_value: float | None
+    plot_title: bool
+    plot_scale: bool
+    label_on_track: bool
+    data_range_style: DataRangeStyle
+    label_box_enabled: bool
+    label_box_alpha: float
+    title_location: Position
+    title_height: float
+    title_size: int
+    title_color: str
+    title_font: str
+    title_weight: FontWeight
+    scale_location: Position
+    scale_height: float
+    scale_precision: int
+    scale_size: int
+    scale_color: str
+    scale_font: str
+    scale_weight: FontWeight
+
+class CapcruncherKwargs(TypedDict, total=False):
+    title: str | None
+    data: Any | None
+    height: float
+    autoscale_group: str | None
+    color_group: str | None
+    resolution: int | None
+    balance: bool
+    transform: CoolerTransform
+    viewpoint: str | None
+    normalisation: str | None
+    cmap: str
+    min_value: float | None
+    max_value: float | None
+    plot_title: bool
+    plot_scale: bool
+    label_on_track: bool
+    data_range_style: DataRangeStyle
+    label_box_enabled: bool
+    label_box_alpha: float
+    title_location: Position
+    title_height: float
+    title_size: int
+    title_color: str
+    title_font: str
+    title_weight: FontWeight
+    scale_location: Position
+    scale_height: float
+    scale_precision: int
+    scale_size: int
+    scale_color: str
+    scale_font: str
+    scale_weight: FontWeight
+
+class CoolerAverageKwargs(TypedDict, total=False):
     title: str | None
     data: Any | None
     height: float
@@ -578,72 +646,6 @@ class VlineKwargs(TypedDict, total=False):
     linewidth: float
     linestyle: str
     zorder: int
-    plot_title: bool
-    plot_scale: bool
-    label_on_track: bool
-    data_range_style: DataRangeStyle
-    label_box_enabled: bool
-    label_box_alpha: float
-    title_location: Position
-    title_height: float
-    title_size: int
-    title_color: str
-    title_font: str
-    title_weight: FontWeight
-    scale_location: Position
-    scale_height: float
-    scale_precision: int
-    scale_size: int
-    scale_color: str
-    scale_font: str
-    scale_weight: FontWeight
-
-class CapcruncherKwargs(TypedDict, total=False):
-    title: str | None
-    data: Any | None
-    height: float
-    autoscale_group: str | None
-    color_group: str | None
-    resolution: int | None
-    balance: bool
-    transform: CoolerTransform
-    viewpoint: str | None
-    normalisation: str | None
-    cmap: str
-    min_value: float | None
-    max_value: float | None
-    plot_title: bool
-    plot_scale: bool
-    label_on_track: bool
-    data_range_style: DataRangeStyle
-    label_box_enabled: bool
-    label_box_alpha: float
-    title_location: Position
-    title_height: float
-    title_size: int
-    title_color: str
-    title_font: str
-    title_weight: FontWeight
-    scale_location: Position
-    scale_height: float
-    scale_precision: int
-    scale_size: int
-    scale_color: str
-    scale_font: str
-    scale_weight: FontWeight
-
-class CoolerAverageKwargs(TypedDict, total=False):
-    title: str | None
-    data: Any | None
-    height: float
-    autoscale_group: str | None
-    color_group: str | None
-    resolution: int | None
-    balance: bool
-    transform: CoolerTransform
-    cmap: str
-    min_value: float | None
-    max_value: float | None
     plot_title: bool
     plot_scale: bool
     label_on_track: bool

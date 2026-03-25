@@ -199,13 +199,14 @@ def plot_command(
             if plan.add_genes and plan.genome:
                 fig.genes(plan.genome)
 
-            for i, resolved_track in enumerate(plan.tracks):
-                method, data, kwargs = plan.get_track_by_method(i)
-                track_method = getattr(fig, method)
+            for resolved_track in plan.tracks:
+                kwargs = resolved_track.to_figure_kwargs()
+                data = resolved_track.get_data()
+                track_type = str(resolved_track.track_spec.type)
                 if data:
-                    track_method(data, **kwargs)
+                    fig.add_track(track_type, data=data, **kwargs)
                 else:
-                    track_method(**kwargs)
+                    fig.add_track(track_type, **kwargs)
         except Exception as e:
             console.print(f"[red]Error creating figure for {gr}:[/red] {e}")
             raise typer.Exit(code=1)
