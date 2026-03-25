@@ -60,8 +60,8 @@ GenomicFigure.track_options_markdown("genes")
 - Run tests and docs build before release:
 
 ```bash
-pytest tests/ -v
-mkdocs build --strict
+uv run pytest tests/ -v
+uv run mkdocs build --strict
 ```
 
 - Prefer example scripts in `examples/` as regression fixtures for plotting behavior.

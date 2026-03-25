@@ -41,6 +41,11 @@ class ResolvedTrack:
     actual_group: Optional[str] = None  # Final group assignment (for autoscale)
     color_group: Optional[str] = None   # Group for color sharing (None if autocolor=False)
 
+    _SOURCE_KWARG_MAP = {
+        TrackType.COOLER: "file",
+        TrackType.CAPCRUNCHER: "file",
+    }
+
     def get_data(self) -> Optional[str]:
         """Return the resolved data source for the track.
 
@@ -48,6 +53,10 @@ class ResolvedTrack:
             The configured path or other external data locator, if present.
         """
         return self.track_spec.path or self.actual_path
+
+    def source_kwarg_name(self) -> str:
+        """Return the figure-constructor keyword for this track's external data."""
+        return self._SOURCE_KWARG_MAP.get(self.track_spec.type, "data")
 
     def to_figure_kwargs(self) -> dict[str, Any]:
         """Convert the resolved track into ``GenomicFigure`` keyword arguments.

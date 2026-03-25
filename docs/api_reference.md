@@ -58,7 +58,9 @@ gf.bigwig("sampleA.bw", title="A signal", color_group="sampleA")
 
 ## Common entry points
 
-- `plotnado.GenomicFigure`: high-level composition (`add_track`, `plot`, `plot_regions`, `plot_gene`, `to_toml`, `from_toml`).
+- `plotnado.GenomicFigure`: high-level composition (`add_track`, `plot`, `plot_regions`, `plot_gene`, `from_template`, `to_toml`, `from_toml`).
+- `plotnado.Template`: YAML model used by the CLI and `GenomicFigure.from_template()`.
+- `plotnado.TemplateCompiler`: converts a `Template` into a reusable render plan.
 - `plotnado.Theme`: built-in or custom visual defaults.
 - `plotnado.tracks.*`: concrete track classes when you want explicit model construction.
 

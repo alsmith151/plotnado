@@ -1,8 +1,10 @@
 """CLI integration tests via typer.testing.CliRunner."""
 
 import inspect
-import pytest
 from pathlib import Path
+
+import matplotlib.pyplot as plt
+import pytest
 from typer.testing import CliRunner
 
 from plotnado.cli.cli import app
@@ -50,6 +52,55 @@ def bad_group_yaml(tmp_path) -> Path:
     p = tmp_path / "bad.yaml"
     p.write_text(YAML_WITH_BAD_GROUP_REF)
     return p
+
+
+@pytest.fixture
+def plot_template(tmp_path, test_bed12_file) -> tuple[Path, Path]:
+    p = tmp_path / "plot.yaml"
+    p.write_text(
+        f"""\
+genome: hg38
+width: 14
+track_height: 1.5
+guides:
+  genes: true
+tracks:
+  - path: {test_bed12_file}
+    type: bed
+    title: Signal
+    group: sample1
+    color: tomato
+    height: 2.0
+    options:
+      data_range_style: text
+groups:
+  - name: sample1
+    tracks: ["Signal"]
+    autocolor: false
+"""
+    )
+    return p, test_bed12_file
+
+
+@pytest.fixture
+def cooler_plot_template(tmp_path, test_cooler_file) -> tuple[Path, Path]:
+    p = tmp_path / "cooler.yaml"
+    p.write_text(
+        f"""\
+genome: hg38
+width: 10
+guides:
+  genes: false
+tracks:
+  - path: {test_cooler_file}
+    type: cooler
+    title: Contacts
+    height: 2.5
+    options:
+      cmap: magma
+"""
+    )
+    return p, test_cooler_file
 
 
 # ---------------------------------------------------------------------------
@@ -124,3 +175,115 @@ class TestValidate:
         """The --explain flag should no longer exist."""
         result = runner.invoke(app, ["validate", "--help"])
         assert "--explain" not in result.output
+
+
+# ---------------------------------------------------------------------------
+# plot
+# ---------------------------------------------------------------------------
+
+class TestPlot:
+    def test_plot_builds_figure_from_template_and_saves(self, plot_template, monkeypatch, tmp_path):
+        plot_yaml, test_bed12_file = plot_template
+        monkeypatch.setenv("MPLCONFIGDIR", str(tmp_path / "mplconfig"))
+
+        out = tmp_path / "custom.png"
+        result = runner.invoke(
+            app,
+            [
+                "plot",
+                str(plot_yaml),
+                "--region",
+                "chr1:1-10",
+                "--output",
+                str(out),
+                "--width",
+                "18",
+                "--dpi",
+                "300",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        assert out.exists()
+        assert out.stat().st_size > 0
+        assert "Compiled render plan" in result.output
+        assert "Saved plot" in result.output
+
+        image = plt.imread(out)
+        assert image.size > 0
+        assert image.shape[1] > image.shape[0]
+
+    def test_plot_generates_one_output_per_region(self, plot_template, monkeypatch):
+        plot_yaml, _ = plot_template
+        monkeypatch.setenv("MPLCONFIGDIR", str(plot_yaml.parent / "mplconfig"))
+        monkeypatch.chdir(plot_yaml.parent)
+
+        result = runner.invoke(
+            app,
+            [
+                "plot",
+                str(plot_yaml),
+                "--region",
+                "chr21:5022531-5046683",
+                "--region",
+                "chr21:5030000-5040000",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        out1 = plot_yaml.parent / "plot_chr21_5022531_5046683_+_.png"
+        out2 = plot_yaml.parent / "plot_chr21_5030000_5040000_+_.png"
+        assert out1.exists()
+        assert out2.exists()
+        assert out1.stat().st_size > 0
+        assert out2.stat().st_size > 0
+
+    def test_plot_renders_cooler_template(self, cooler_plot_template, monkeypatch, tmp_path):
+        plot_yaml, _ = cooler_plot_template
+        monkeypatch.setenv("MPLCONFIGDIR", str(tmp_path / "mplconfig"))
+
+        out = tmp_path / "cooler.png"
+        result = runner.invoke(
+            app,
+            [
+                "plot",
+                str(plot_yaml),
+                "--region",
+                "chr1:2000000-10000000",
+                "--output",
+                str(out),
+                "--dpi",
+                "150",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        assert out.exists()
+        assert out.stat().st_size > 0
+
+        image = plt.imread(out)
+        assert image.size > 0
+        assert image.ndim == 3
+
+    def test_plot_resolves_gene_names_from_template_genome(self, plot_template, monkeypatch, tmp_path):
+        plot_yaml, _ = plot_template
+        monkeypatch.setenv("MPLCONFIGDIR", str(tmp_path / "mplconfig"))
+
+        out = tmp_path / "gnaq.png"
+        result = runner.invoke(
+            app,
+            [
+                "plot",
+                str(plot_yaml),
+                "--region",
+                "GNAQ",
+                "--output",
+                str(out),
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        assert "Resolved gene:" in result.output
+        assert "chr9:77716097-78031811(+)" in result.output
+        assert out.exists()
+        assert out.stat().st_size > 0

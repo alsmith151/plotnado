@@ -32,6 +32,11 @@ def test_gtf_file():
 def test_bed12_file():
     """Return the path to a test BED12 file."""
     return TEST_DATA_DIR / "test_chr21_bed12.bed"
+
+@pytest.fixture(scope="session")
+def test_cooler_file():
+    """Return the path to a test cooler file."""
+    return TEST_DATA_DIR / "hg19.GM12878-MboI.matrix.2000kb.cool"
     
 
 

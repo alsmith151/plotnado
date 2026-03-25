@@ -204,7 +204,11 @@ def plot_command(
                 data = resolved_track.get_data()
                 track_type = str(resolved_track.track_spec.type)
                 if data:
-                    fig.add_track(track_type, data=data, **kwargs)
+                    fig.add_track(
+                        track_type,
+                        **{resolved_track.source_kwarg_name(): data},
+                        **kwargs,
+                    )
                 else:
                     fig.add_track(track_type, **kwargs)
         except Exception as e:

@@ -149,7 +149,7 @@ class GenomicFigure(GenomicFigureMethods):
             data = resolved.get_data()
             track_type_str = str(resolved.track_spec.type)
             if data is not None:
-                fig.add_track(track_type_str, data=data, **kwargs)
+                fig.add_track(track_type_str, **{resolved.source_kwarg_name(): data}, **kwargs)
             else:
                 fig.add_track(track_type_str, **kwargs)
 
