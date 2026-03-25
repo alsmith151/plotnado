@@ -31,9 +31,6 @@ class BigwigAesthetics(BaseAesthetics):
         style: Plot style ('std', 'line', 'scatter', 'heatmap')
     """
 
-    color: str = Field(default="#2171b5", description="Primary color used to draw the signal.")
-    alpha: float = Field(default=0.9, description="Opacity for rendered signal glyphs (0-1).")
-    linewidth: float = Field(default=0.8, description="Line width for line/fragment style rendering.")
     style: PlotStyle = Field(
         default=PlotStyle.STD,
         description="Style for rendering the signal track, for options see PlotStyle enum.",

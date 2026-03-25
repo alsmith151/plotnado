@@ -33,12 +33,8 @@ from . import (
     highlight,
     annotations,
     cooler_track,
+    quantnado,
 )
-
-try:
-    from . import quantnado
-except ImportError:
-    pass  # quantnado is an optional dependency
 from .region import GenomicRegion, GenomicRange
 from .utils import (
     clean_axis,
@@ -69,7 +65,6 @@ from .cooler_track import CoolerTrack, CapcruncherTrack, CoolerAverage
 from .peaks import NarrowPeakTrack, NarrowPeakAesthetics
 from .links import LinksTrack, LinksAesthetics
 from .annotations import HLineTrack, VLineTrack, AnnotationAesthetics
-
 from .quantnado import (
     QuantNadoCoverageTrack,
     QuantNadoCoverageAesthetics,
