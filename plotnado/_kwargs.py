@@ -674,6 +674,10 @@ class QuantnadoCoverageKwargs(TypedDict, total=False):
     color_group: str | None
     quantnado: Any | None
     dataset_path: str | None
+    scaling_factor: float
+    normalise: str | None
+    normalize: str | None
+    library_sizes: Series | dict | None
     coverage_data: Any | None
     color: str
     alpha: float
@@ -713,6 +717,10 @@ class QuantnadoStrandedCoverageKwargs(TypedDict, total=False):
     color_group: str | None
     quantnado: Any | None
     dataset_path: str | None
+    scaling_factor: float
+    normalise: str | None
+    normalize: str | None
+    library_sizes: Series | dict | None
     coverage_fwd_data: Any | None
     coverage_rev_data: Any | None
     color: str

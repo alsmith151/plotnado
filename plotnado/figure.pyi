@@ -699,8 +699,12 @@ class GenomicFigure:
             height: float = 1.0,
             autoscale_group: str | None = None,
             color_group: str | None = None,
+            scaling_factor: float = 1.0,
             quantnado: Any | None = None,
             dataset_path: str | None = None,
+            normalise: str | None = None,
+            normalize: str | None = None,
+            library_sizes: pd.Series | dict | None = None,
             coverage_data: Any | None = None,
             color: str = '#2171b5',
             alpha: float = 0.75,
@@ -739,8 +743,12 @@ class GenomicFigure:
             height: float = 1.0,
             autoscale_group: str | None = None,
             color_group: str | None = None,
+            scaling_factor: float = 1.0,
             quantnado: Any | None = None,
             dataset_path: str | None = None,
+            normalise: str | None = None,
+            normalize: str | None = None,
+            library_sizes: pd.Series | dict | None = None,
             coverage_fwd_data: Any | None = None,
             coverage_rev_data: Any | None = None,
             color: str = '#1f78b4',
@@ -869,6 +877,7 @@ class GenomicFigure:
 
     def autoscale(self, enable: bool = ...) -> Self: ...
     def autocolor(self, palette: str = ...) -> Self: ...
+    def defaults(self, genome: str = ..., palette: str | list[str] | None = ...) -> Self: ...
     def highlight(self, region: str | GenomicRegion) -> Self: ...
     def highlight_style(self, color: str | None = ..., alpha: float | None = ...) -> Self: ...
 

@@ -8,12 +8,8 @@ authors = [{ name = "Alastair Smith", email = "alastair.smith@ndcls.ox.ac.uk" }]
 description = "A simple plotting library for making genomic tracks"
 readme = "README.md"
 requires-python = ">=3.12"
-license = "GPL-3.0-or-later"
+license = { text = "GPL-3.0-or-later" }
 dynamic = ["version", "dependencies"]
-scripts = { "plotnado" =  "plotnado.cli.cli:main" }
-
-[tool.setuptools.dynamic]
-dependencies = { file = ["requirements.txt"] }
 keywords = ["genomics", "bioinformatics", "plotting", "genome-browser", "tracks"]
 classifiers = [
 	"Development Status :: 3 - Alpha",
@@ -24,6 +20,10 @@ classifiers = [
 	"Topic :: Scientific/Engineering :: Bio-Informatics",
 	"Topic :: Scientific/Engineering :: Visualization",
 ]
+scripts = { "plotnado" =  "plotnado.cli.cli:main" }
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
 
 [project.optional-dependencies]
 cooler = ["cooler", "capcruncher"]
