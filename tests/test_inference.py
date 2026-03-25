@@ -10,48 +10,48 @@ from plotnado.cli.inference import (
     _ANNOTATION_COLOR,
     _BIGWIG_PALETTE,
 )
-from plotnado.template import TemplateTrackType
+from plotnado.tracks.enums import TrackType
 
 
 class TestTrackClassifier:
     def test_bigwig_by_extension(self):
         track_type, conf = TrackClassifier.classify("sample.bw")
-        assert track_type == TemplateTrackType.BIGWIG
+        assert track_type == TrackType.BIGWIG
         assert conf >= 0.9
 
     def test_bigwig_full_extension(self):
         track_type, _ = TrackClassifier.classify("sample.bigwig")
-        assert track_type == TemplateTrackType.BIGWIG
+        assert track_type == TrackType.BIGWIG
 
     def test_narrowpeak(self):
         track_type, _ = TrackClassifier.classify("peaks.narrowpeak")
-        assert track_type == TemplateTrackType.NARROWPEAK
+        assert track_type == TrackType.NARROWPEAK
 
     def test_bed(self):
         track_type, _ = TrackClassifier.classify("regions.bed")
-        assert track_type == TemplateTrackType.BED
+        assert track_type == TrackType.BED
 
     def test_bedgraph(self):
         track_type, _ = TrackClassifier.classify("coverage.bedgraph")
-        assert track_type == TemplateTrackType.BEDGRAPH
+        assert track_type == TrackType.BEDGRAPH
 
     def test_links(self):
         track_type, _ = TrackClassifier.classify("interactions.bedpe")
-        assert track_type == TemplateTrackType.LINKS
+        assert track_type == TrackType.LINKS
 
     def test_unknown(self):
         track_type, conf = TrackClassifier.classify("data.csv")
-        assert track_type == TemplateTrackType.UNKNOWN
+        assert track_type == TrackType.UNKNOWN
         assert conf == 0.0
 
     def test_url_bigwig(self):
         track_type, conf = TrackClassifier.classify("https://example.com/track.bw")
-        assert track_type == TemplateTrackType.BIGWIG
+        assert track_type == TrackType.BIGWIG
         assert conf >= 0.8
 
     def test_case_insensitive(self):
         track_type, _ = TrackClassifier.classify("sample.BW")
-        assert track_type == TemplateTrackType.BIGWIG
+        assert track_type == TrackType.BIGWIG
 
 
 class TestSeqnadoPattern:
@@ -88,7 +88,7 @@ class TestTitleInference:
         assert "bigWig" not in title
 
     def test_adds_peaks_suffix_for_bed(self):
-        title, _ = TitleInference.infer("sample1_regions.bed", TemplateTrackType.BED)
+        title, _ = TitleInference.infer("sample1_regions.bed", TrackType.BED)
         assert "peaks" in title.lower()
 
     def test_camel_case_separation(self):

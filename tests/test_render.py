@@ -1,16 +1,17 @@
 """Tests for TemplateCompiler: no-mutation regression, autocolor, group defaults."""
 
 import pytest
-from plotnado.template import Template, TrackSpec, GroupSpec, TemplateTrackType
+from plotnado.template import Template, TrackSpec, GroupSpec
+from plotnado.tracks.enums import TrackType
 from plotnado.render import TemplateCompiler
 
 
 def make_template_with_groups(autocolor: bool = True) -> Template:
     t = Template()
     t.tracks = [
-        TrackSpec(path="s1.bw", type=TemplateTrackType.BIGWIG, title="H3K27ac (Sample 1)", group="s1"),
-        TrackSpec(path="s2.bw", type=TemplateTrackType.BIGWIG, title="H3K27ac (Sample 2)", group="s2"),
-        TrackSpec(path="peaks.narrowpeak", type=TemplateTrackType.NARROWPEAK, title="Peaks (Sample 1)", group="s1"),
+        TrackSpec(path="s1.bw", type=TrackType.BIGWIG, title="H3K27ac (Sample 1)", group="s1"),
+        TrackSpec(path="s2.bw", type=TrackType.BIGWIG, title="H3K27ac (Sample 2)", group="s2"),
+        TrackSpec(path="peaks.narrowpeak", type=TrackType.NARROWPEAK, title="Peaks (Sample 1)", group="s1"),
     ]
     t.groups = [
         GroupSpec(name="s1", tracks=["H3K27ac (Sample 1)", "Peaks (Sample 1)"], autoscale=True, autocolor=autocolor),
@@ -69,7 +70,7 @@ class TestGroupDefaults:
         """Track.group with no matching GroupSpec should still set autoscale_group."""
         t = Template()
         t.tracks = [
-            TrackSpec(path="a.bw", type=TemplateTrackType.BIGWIG, title="Track A", group="my_group"),
+            TrackSpec(path="a.bw", type=TrackType.BIGWIG, title="Track A", group="my_group"),
         ]
         # No groups section
         plan = TemplateCompiler.compile(t)
@@ -84,7 +85,7 @@ class TestCaseInsensitiveLookup:
         """Group track references with wrong case should still resolve."""
         t = Template()
         t.tracks = [
-            TrackSpec(path="s1.bw", type=TemplateTrackType.BIGWIG, title="H3K27ac (Sample 1)", group="s1"),
+            TrackSpec(path="s1.bw", type=TrackType.BIGWIG, title="H3K27ac (Sample 1)", group="s1"),
         ]
         t.groups = [
             GroupSpec(name="s1", tracks=["H3K27ac (sample 1)"], autoscale=True, autocolor=False),
