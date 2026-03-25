@@ -6,7 +6,7 @@ import importlib.resources
 import json
 import math
 from pathlib import Path
-from typing import Any, Self
+from typing import TYPE_CHECKING, Any, Self
 
 import matplotlib.axes
 import matplotlib.figure
@@ -49,6 +49,9 @@ from .tracks import (
 from .theme import BuiltinTheme, Theme
 from .tracks.registry import registry
 from .figure_methods import GenomicFigureMethods
+
+if TYPE_CHECKING:
+    from .template import Template
 
 
 class GenomicFigure(GenomicFigureMethods):
@@ -101,11 +104,11 @@ class GenomicFigure(GenomicFigureMethods):
     @classmethod
     def from_template(
         cls,
-        template: "Template | str | Path",
+        template: Template | str | Path,
         *,
         width: float | None = None,
-        theme: "Theme | BuiltinTheme | str | None" = BuiltinTheme.PUBLICATION,
-    ) -> "GenomicFigure":
+        theme: Theme | BuiltinTheme | str | None = BuiltinTheme.PUBLICATION,
+    ) -> GenomicFigure:
         """Build a GenomicFigure from a template file or Template object.
 
         Args:
@@ -145,7 +148,7 @@ class GenomicFigure(GenomicFigureMethods):
             kwargs = resolved.to_figure_kwargs()
             data = resolved.get_data()
             track_type_str = str(resolved.track_spec.type)
-            if data:
+            if data is not None:
                 fig.add_track(track_type_str, data=data, **kwargs)
             else:
                 fig.add_track(track_type_str, **kwargs)
@@ -742,7 +745,7 @@ class GenomicFigure(GenomicFigureMethods):
         region_strings: list[str]
         path_candidate = Path(regions) if isinstance(regions, str) else None
 
-        if isinstance(regions, str) and path_candidate.exists():
+        if isinstance(regions, str) and path_candidate is not None and path_candidate.exists():
             bed_df = pd.read_csv(path_candidate, sep="\t", header=None, comment="#")
             region_strings = [
                 f"{row[0]}:{int(row[1])}-{int(row[2])}" for _, row in bed_df.iterrows()
@@ -871,26 +874,26 @@ class GenomicFigure(GenomicFigureMethods):
             track_height=figure_data.get("track_height", 2.0),
         )
 
-        registry = cls._track_registry()
+        track_registry = cls._track_registry()
         tracks_payload = payload.get("tracks", [])
 
         if isinstance(tracks_payload, list):
             for track_spec in tracks_payload:
                 type_name = track_spec["type"]
                 params = track_spec.get("params", {})
-                if type_name not in registry:
+                if type_name not in track_registry:
                     raise ValueError(f"Unknown track type in TOML: {type_name}")
-                fig.add_track(registry[type_name](**params))
+                fig.add_track(track_registry[type_name](**params))
             return fig
 
         if isinstance(tracks_payload, dict):
             for type_name, raw_params in tracks_payload.items():
-                if type_name not in registry:
+                if type_name not in track_registry:
                     raise ValueError(f"Unknown track type in TOML: {type_name}")
 
                 params_list = raw_params if isinstance(raw_params, list) else [raw_params]
                 for params in params_list:
-                    fig.add_track(registry[type_name](**(params or {})))
+                    fig.add_track(track_registry[type_name](**(params or {})))
             return fig
 
         raise ValueError("Invalid TOML format: 'tracks' must be a list or table")
@@ -904,7 +907,7 @@ class GenomicFigure(GenomicFigureMethods):
     ) -> None:
         """Render one region and write it to disk."""
         fig = self.plot(region, show=False)
-        if fig:
+        if fig is not None:
             fig.savefig(path, dpi=dpi, bbox_inches="tight", **kwargs)
             logger.info(f"Saved figure to {path}")
             plt.close(fig)
@@ -957,35 +960,3 @@ class GenomicFigure(GenomicFigureMethods):
             "</table>"
         )
         return table
-
-
-def _format_method_option_docs(alias: str) -> str:
-    options = GenomicFigure.track_options(alias)
-    lines = [
-        "Auto-generated options (authoritative):",
-        "",
-        "Shorthand composition:",
-        "- Pass track fields directly in kwargs.",
-        "- Pass aesthetics fields directly in kwargs (auto-packed into `aesthetics`).",
-        "- Pass label fields directly in kwargs (auto-packed into `label`).",
-        "",
-    ]
-
-    for section in ("track", "aesthetics", "label"):
-        section_data = options.get(section, {})
-        lines.append(f"{section.title()} fields:")
-        if not section_data:
-            lines.append("- (none)")
-            lines.append("")
-            continue
-
-        for field_name, meta in sorted(section_data.items()):
-            description = meta.get("description") or "No description provided."
-            choices = meta.get("choices") or []
-            choices_text = f", choices={choices}" if choices else ""
-            lines.append(
-                f"- {field_name} ({meta['type']}, default={meta['default']}{choices_text}): {description}"
-            )
-        lines.append("")
-
-    return "\n".join(lines).rstrip()
