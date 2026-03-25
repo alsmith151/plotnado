@@ -42,3 +42,37 @@ def test_base_aesthetics_exists():
     assert "linewidth" in BaseAesthetics.model_fields
     assert "colors" in BaseMultiColorAesthetics.model_fields
     assert "color" not in BaseMultiColorAesthetics.model_fields  # no single color
+
+
+def test_registry_module_imports():
+    """Registry module must be importable and expose the singleton."""
+    from plotnado.tracks.registry import TrackRegistry, TrackEntry, registry
+    assert isinstance(registry, TrackRegistry)
+
+
+def test_registry_register_decorator():
+    """@registry.register must store the class under the given TrackType."""
+    from plotnado.tracks.registry import TrackRegistry
+    from plotnado.tracks.enums import TrackType
+    from plotnado.tracks.base import Track
+
+    local_registry = TrackRegistry()
+
+    @local_registry.register(TrackType.BIGWIG, aliases=["bw"])
+    class FakeTrack(Track):
+        def fetch_data(self, gr): ...
+        def plot(self, ax, gr): ...
+
+    entry = local_registry.get("bigwig")
+    assert entry.cls is FakeTrack
+    assert entry.track_type is TrackType.BIGWIG
+
+    alias_entry = local_registry.get("bw")
+    assert alias_entry.cls is FakeTrack
+
+
+def test_registry_unknown_key_raises():
+    from plotnado.tracks.registry import TrackRegistry
+    r = TrackRegistry()
+    with pytest.raises(KeyError, match="Unknown track type"):
+        r.get("nonexistent_type")
