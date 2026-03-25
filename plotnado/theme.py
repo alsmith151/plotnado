@@ -160,11 +160,18 @@ class Theme(BaseModel):
         if aes is None:
             return
 
+        palette_color_applied = False
         if palette_color is not None and "color" not in aes.model_fields_set:
             if hasattr(aes, "color"):
                 aes.color = palette_color
+                palette_color_applied = True
 
-        for field_name, default_val in self._aesthetic_defaults().items():
+        defaults = self._aesthetic_defaults()
+        # Skip theme color if palette_color was already applied
+        if palette_color_applied:
+            defaults.pop("color", None)
+
+        for field_name, default_val in defaults.items():
             if (
                 default_val is not None
                 and field_name not in aes.model_fields_set
@@ -189,6 +196,7 @@ class Theme(BaseModel):
         """
         return {
             k: v for k, v in {
+                "color": self.color,
                 "alpha": self.alpha,
                 "linewidth": self.linewidth,
                 "font_size": self.font_size,

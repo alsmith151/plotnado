@@ -60,6 +60,7 @@ from .tracks.enums import (
     Position,
 )
 from .theme import BuiltinTheme, Theme
+from .tracks.registry import registry
 from ._kwargs import (
     AxisKwargs,
     BedKwargs,
@@ -128,7 +129,8 @@ class GenomicFigure:
         self._autoscale: bool = False
 
         if self.theme is not None:
-            self.tracks = [self._apply_theme_to_track(track) for track in self.tracks]
+            for track in self.tracks:
+                self.theme.apply(track)
             self._apply_theme_palette()
 
     @classmethod
@@ -174,13 +176,14 @@ class GenomicFigure:
         if plan.add_genes and plan.genome:
             fig.genes(plan.genome)
 
-        for i, _ in enumerate(plan.tracks):
-            method_name, data, kwargs = plan.get_track_by_method(i)
-            track_method = getattr(fig, method_name)
+        for resolved in plan.tracks:
+            kwargs = resolved.to_figure_kwargs()
+            data = resolved.get_data()
+            track_type_str = str(resolved.track_spec.type)
             if data:
-                track_method(data, **kwargs)
+                fig.add_track(track_type_str, data=data, **kwargs)
             else:
-                track_method(**kwargs)
+                fig.add_track(track_type_str, **kwargs)
 
         return fig
 
@@ -209,7 +212,11 @@ class GenomicFigure:
         """
         if isinstance(track, str):
             track = self._create_track_from_alias(track, **kwargs)
-        track = self._apply_theme_to_track(track)
+
+        # Apply theme defaults to the track
+        if self.theme is not None:
+            self.theme.apply(track)
+
         self.tracks.append(track)
         if self._autocolor_palette is not None:
             self._apply_autocolor()
@@ -1458,47 +1465,13 @@ class GenomicFigure:
             Self for method chaining.
         """
         return self.add_track("quantnado_variant", sample=sample, **kwargs)
-    def _apply_theme_to_track(self, track: Track) -> Track:
-        if self.theme is None:
-            return track
-
-        theme = self.theme
-        for field_name in ("color", "alpha", "linewidth", "font_size", "cmap"):
-            if not track.has_aesthetic(field_name):
-                continue
-            theme_value = getattr(theme, field_name)
-            if theme_value is None:
-                continue
-            aesthetics_model = track.aesthetics_model()
-            if aesthetics_model is None:
-                continue
-            model_field = aesthetics_model.model_fields.get(field_name)
-            if model_field is None:
-                continue
-            if self._aesthetic_explicitly_set(track, field_name):
-                continue
-            if getattr(track, field_name) == model_field.default:
-                setattr(track, field_name, theme_value)
-
-        if hasattr(track, "label") and track.label is not None:
-            default_label = track.label.__class__()
-            for field_name, model_field in track.label.__class__.model_fields.items():
-                current_value = getattr(track.label, field_name)
-                theme_value = getattr(theme.label, field_name)
-                default_value = getattr(default_label, field_name)
-                if self._label_field_explicitly_set(track, field_name):
-                    continue
-                if current_value == default_value and theme_value != default_value:
-                    setattr(track.label, field_name, theme_value)
-
-        return track
 
     @classmethod
     def available_track_aliases(cls) -> dict[str, str]:
         """Return available alias -> TrackClass mappings."""
         return {
-            alias: track_cls.__name__
-            for alias, track_cls in cls._alias_map().items()
+            alias: entry.cls.__name__
+            for alias, entry in registry.all_entries().items()
         }
 
     @classmethod
@@ -1511,12 +1484,14 @@ class GenomicFigure:
         """
         if isinstance(track, str):
             key = track.lower()
-            alias_map = cls._alias_map()
-            if key not in alias_map:
+            try:
+                entry = registry.get(key)
+                track_cls = entry.cls
+            except KeyError:
+                available = sorted(registry.all_entries().keys())
                 raise ValueError(
-                    f"Unknown track alias: {track}. Available: {list(alias_map.keys())}"
-                )
-            track_cls = alias_map[key]
+                    f"Unknown track alias: {track}. Available: {available}"
+                ) from None
         else:
             track_cls = track
         return list_options(track_cls)
@@ -1526,12 +1501,14 @@ class GenomicFigure:
         """Return markdown-formatted option tables for a track alias or class."""
         if isinstance(track, str):
             key = track.lower()
-            alias_map = cls._alias_map()
-            if key not in alias_map:
+            try:
+                entry = registry.get(key)
+                track_cls = entry.cls
+            except KeyError:
+                available = sorted(registry.all_entries().keys())
                 raise ValueError(
-                    f"Unknown track alias: {track}. Available: {list(alias_map.keys())}"
-                )
-            track_cls = alias_map[key]
+                    f"Unknown track alias: {track}. Available: {available}"
+                ) from None
         else:
             track_cls = track
         return track_cls.options_markdown()
@@ -1610,13 +1587,15 @@ class GenomicFigure:
         return self
 
     def _create_track_from_alias(self, alias: str, **kwargs: Any) -> Track:
-        alias_map = self._alias_map()
         key = alias.lower()
-        if key not in alias_map:
+        try:
+            entry = registry.get(key)
+        except KeyError:
+            available = sorted([e.track_type.value for e in registry.all_entries().values()])
             raise ValueError(
-                f"Unknown track alias: {alias}. Available: {list(alias_map.keys())}"
-            )
-        track_cls = alias_map[key]
+                f"Unknown track type: {alias!r}. Available: {available}"
+            ) from None
+        track_cls = entry.cls
 
         track_fields = set(track_cls.model_fields.keys())
         aesthetics_model = track_cls.aesthetics_model()
@@ -1666,35 +1645,6 @@ class GenomicFigure:
             track_kwargs["label"] = LabelConfig(**label_payload)
 
         return track_cls(**track_kwargs)
-
-    @staticmethod
-    def _alias_map() -> dict[str, type[Track]]:
-        return {
-            "scalebar": ScaleBar,
-            "scale": ScaleBar,
-            "genes": Genes,
-            "spacer": Spacer,
-            "bigwig": BigWigTrack,
-            "bed": BedTrack,
-            "axis": GenomicAxis,
-            "highlight": HighlightsFromFile,
-            "bigwig_overlay": OverlayTrack,
-            "overlay": OverlayTrack,
-            "narrowpeak": NarrowPeakTrack,
-            "links": LinksTrack,
-            "hline": HLineTrack,
-            "vline": VLineTrack,
-            "cooler": CoolerTrack,
-            "capcruncher": CapcruncherTrack,
-            "cooler_average": CoolerAverage,
-            "bigwig_collection": BigWigCollection,
-            "bigwig_diff": BigWigDiff,
-
-            "quantnado_coverage": QuantNadoCoverageTrack,
-            "quantnado_stranded_coverage": QuantNadoStrandedCoverageTrack,
-            "quantnado_methylation": QuantNadoMethylationTrack,
-            "quantnado_variant": QuantNadoVariantTrack,
-        }
 
     @staticmethod
     def _apply_extend(gr: GenomicRegion, extend: float | int | None) -> GenomicRegion:
@@ -2217,45 +2167,3 @@ def _format_method_option_docs(alias: str) -> str:
         lines.append("")
 
     return "\n".join(lines).rstrip()
-
-
-def _inject_figure_method_option_docs() -> None:
-    method_alias_map = {
-        "bigwig": "bigwig",
-        "genes": "genes",
-        "axis": "axis",
-        "scalebar": "scalebar",
-        "spacer": "spacer",
-        "bed": "bed",
-        "cooler": "cooler",
-        "bigwig_collection": "bigwig_collection",
-        "bigwig_diff": "bigwig_diff",
-        "bigwig_overlay": "bigwig_overlay",
-        "overlay": "overlay",
-        "narrowpeak": "narrowpeak",
-        "links": "links",
-        "highlights": "highlight",
-        "hline": "hline",
-        "vline": "vline",
-
-        "quantnado_coverage": "quantnado_coverage",
-        "quantnado_stranded_coverage": "quantnado_stranded_coverage",
-        "quantnado_methylation": "quantnado_methylation",
-        "quantnado_variant": "quantnado_variant",
-    }
-
-    marker = "Auto-generated options (authoritative):"
-    for method_name, alias in method_alias_map.items():
-        method = getattr(GenomicFigure, method_name, None)
-        if method is None:
-            continue
-
-        base_doc = (method.__doc__ or "").rstrip()
-        if marker in base_doc:
-            base_doc = base_doc.split(marker, 1)[0].rstrip()
-
-        generated = _format_method_option_docs(alias)
-        method.__doc__ = f"{base_doc}\n\n{generated}".strip()
-
-
-_inject_figure_method_option_docs()

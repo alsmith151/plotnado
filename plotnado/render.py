@@ -9,8 +9,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Optional
 
-from plotnado.template import Template, TrackSpec, TemplateTrackType
+from plotnado.template import Template, TrackSpec
 from plotnado.tracks import GenomicRegion
+from plotnado.tracks.enums import TrackType
 
 
 @dataclass
@@ -93,37 +94,6 @@ class RenderPlan:
     add_axis: bool = True
     add_scalebar: bool = True
 
-    def get_track_by_method(self, index: int) -> tuple[str, Any, dict[str, Any]]:
-        """
-        Get the figure method name, data, and kwargs for a resolved track.
-
-        Returns:
-            Tuple of (method_name, data, kwargs) suitable for GenomicFigure
-        """
-        if index >= len(self.tracks):
-            raise IndexError(f"Track index {index} out of range")
-
-        resolved = self.tracks[index]
-        spec = resolved.track_spec
-
-        # Map track type to GenomicFigure method (keys are strings due to use_enum_values)
-        method_map = {
-            TemplateTrackType.BIGWIG.value: 'bigwig',
-            TemplateTrackType.BED.value: 'bed',
-            TemplateTrackType.NARROWPEAK.value: 'narrowpeak',
-            TemplateTrackType.BEDGRAPH.value: 'bigwig',  # bedgraph renders via BigWigTrack; no separate fig.bedgraph() method exists
-            TemplateTrackType.GENE.value: 'genes',
-            TemplateTrackType.LINKS.value: 'links',
-            TemplateTrackType.ANNOTATION.value: 'bed',  # annotation tracks are BED intervals; rendered via fig.bed()
-            TemplateTrackType.OVERLAY.value: 'overlay',
-            TemplateTrackType.UNKNOWN.value: 'bed',  # Default fallback
-        }
-
-        method = method_map.get(str(spec.type), 'bed')
-        data = resolved.get_data()
-        kwargs = resolved.to_figure_kwargs()
-
-        return method, data, kwargs
 
 
 class TemplateCompiler:
