@@ -181,3 +181,20 @@ def test_cooler_aesthetics_stays_base_model():
     from pydantic import BaseModel
     assert issubclass(CoolerAesthetics, BaseModel)
     assert not issubclass(CoolerAesthetics, BaseAesthetics)
+
+
+def test_registry_fully_populated_after_tracks_import():
+    """Importing plotnado.tracks must populate the registry with all canonical types."""
+    import plotnado.tracks  # noqa: F401 — side-effect import
+    from plotnado.tracks.registry import registry
+
+    # All canonical (non-alias) types must be registered
+    canonical_types = [
+        "bigwig", "bigwig_diff", "bigwig_collection", "overlay",
+        "bed", "narrowpeak", "gene", "links",
+        "scalebar", "axis", "spacer", "highlight", "hline", "vline",
+        "cooler",
+    ]
+    for t in canonical_types:
+        entry = registry.get(t)
+        assert entry is not None, f"Not registered: {t}"
