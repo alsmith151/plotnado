@@ -13,7 +13,7 @@ from __future__ import annotations
 import types
 from enum import Enum
 from pathlib import Path
-from typing import Any, Union, get_args, get_origin
+from typing import Any, Literal, Union, get_args, get_origin
 
 from pydantic import BaseModel
 from pydantic_core import PydanticUndefined
@@ -23,7 +23,9 @@ from plotnado.tracks import (
     BigWigDiff,
     BigWigTrack,
     BedTrack,
+    CapcruncherTrack,
     CoolerTrack,
+    CoolerAverage,
     Genes,
     GenomicAxis,
     HLineTrack,
@@ -68,7 +70,7 @@ def _compose_fields(
                     return "None"
                 module = annotation.__module__
                 name = annotation.__name__
-                if module == "pandas.core.frame" and name == "DataFrame":
+                if module in {"pandas", "pandas.core.frame"} and name == "DataFrame":
                     return "pd.DataFrame"
                 if module in {"builtins", "typing"}:
                     return name
@@ -78,6 +80,8 @@ def _compose_fields(
             rendered = rendered.replace("typing.", "")
             rendered = rendered.replace("types.", "")
             rendered = rendered.replace("pathlib.Path", "Path")
+            rendered = rendered.replace("DataFrame", "pd.DataFrame")
+            rendered = rendered.replace("pandas.DataFrame", "pd.DataFrame")
             rendered = rendered.replace("pandas.core.frame.DataFrame", "pd.DataFrame")
             return rendered
 
@@ -112,6 +116,8 @@ def _compose_fields(
         rendered = rendered.replace("typing.", "")
         rendered = rendered.replace("types.", "")
         rendered = rendered.replace("pathlib.Path", "Path")
+        rendered = rendered.replace("DataFrame", "pd.DataFrame")
+        rendered = rendered.replace("pandas.DataFrame", "pd.DataFrame")
         rendered = rendered.replace("pandas.core.frame.DataFrame", "pd.DataFrame")
         return rendered
 
@@ -211,6 +217,8 @@ def generate() -> str:
         ("spacer", Spacer, ["height: float = ..."], {"height"}, False),
         ("bed", BedTrack, ["data: Any"], {"data"}, True),
         ("cooler", CoolerTrack, ["file: str"], {"file"}, True),
+        ("capcruncher", CapcruncherTrack, ["file: str"], {"file"}, True),
+        ("cooler_average", CoolerAverage, ["files: list[str]"], {"files"}, True),
         ("bigwig_collection", BigWigCollection, ["files: list[str]"], {"files"}, True),
         ("bigwig_diff", BigWigDiff, ["file_a: str", "file_b: str"], {"file_a", "file_b"}, True),
         ("bigwig_overlay", OverlayTrack, ["tracks: list[Any]"], {"tracks"}, True),
@@ -237,7 +245,7 @@ def generate() -> str:
         "from __future__ import annotations",
         "",
         "from pathlib import Path",
-        "from typing import Any, Self",
+        "from typing import Any, Literal, Self",
         "",
         "import matplotlib.figure",
         "import pandas as pd",

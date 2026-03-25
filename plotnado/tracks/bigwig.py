@@ -10,19 +10,22 @@ import matplotlib.patches
 import numpy as np
 import pandas as pd
 import pybigtools
-from pydantic import BaseModel, Field
-from pydantic import ConfigDict
+from pydantic import Field
 
 from .region import GenomicRegion
 from .base import Track, TrackLabeller
 from .utils import clean_axis
 from .schemas import BedgraphDataFrame
-from .enums import PlotStyle
+from .enums import PlotStyle, TrackType
+from .aesthetics import BaseAesthetics
+from .registry import registry
 
 
-class BigwigAesthetics(BaseModel):
+class BigwigAesthetics(BaseAesthetics):
     """
     Aesthetics configuration for BigWig tracks.
+
+    Inherits color, alpha, and linewidth from BaseAesthetics.
 
     Attributes:
         style: Plot style ('std', 'line', 'scatter', 'heatmap')
@@ -32,10 +35,7 @@ class BigwigAesthetics(BaseModel):
         default=PlotStyle.STD,
         description="Style for rendering the signal track, for options see PlotStyle enum.",
     )
-    color: str = Field(default="#2171b5", description="Primary color used to draw the signal.")
     fill: bool = Field(default=True, description="Fill the area under the signal curve when supported.")
-    alpha: float = Field(default=0.9, description="Opacity for rendered signal glyphs (0-1).")
-    linewidth: float = Field(default=0.8, description="Line width for line/fragment style rendering.")
     scatter_point_size: float = Field(
         default=1.0,
         description="Marker area for scatter style rendering.",
@@ -67,9 +67,8 @@ class BigwigAesthetics(BaseModel):
         description="Optional fixed upper y-limit; auto-derived when omitted.",
     )
 
-    model_config = ConfigDict(use_enum_values=True)
 
-
+@registry.register(TrackType.BIGWIG, aliases=["bw", "signal", "bedgraph"])
 class BigWigTrack(Track):
     """
     Track for displaying BigWig signal data.

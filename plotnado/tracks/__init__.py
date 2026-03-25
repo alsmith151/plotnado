@@ -14,6 +14,27 @@ from .enums import (
     Strand,
     TrackType,
 )
+from .registry import registry, TrackRegistry, TrackEntry
+
+# Import all track modules so @registry.register decorators fire.
+# Do NOT remove these imports — they are not unused.
+from . import (
+    bigwig,
+    bed,
+    genes,
+    peaks,
+    links,
+    axis,
+    scalebar,
+    spacer,
+    overlay,
+    bigwig_collection,
+    bigwig_diff,
+    highlight,
+    annotations,
+    cooler_track,
+    quantnado,
+)
 from .region import GenomicRegion, GenomicRange
 from .utils import (
     clean_axis,
@@ -44,7 +65,6 @@ from .cooler_track import CoolerTrack, CapcruncherTrack, CoolerAverage
 from .peaks import NarrowPeakTrack, NarrowPeakAesthetics
 from .links import LinksTrack, LinksAesthetics
 from .annotations import HLineTrack, VLineTrack, AnnotationAesthetics
-
 from .quantnado import (
     QuantNadoCoverageTrack,
     QuantNadoCoverageAesthetics,
@@ -71,6 +91,10 @@ __all__ = [
     "Position",
     "Strand",
     "TrackType",
+    # Registry
+    "TrackRegistry",
+    "TrackEntry",
+    "registry",
     # Base classes
     "list_options",
     "GenomicRegion",

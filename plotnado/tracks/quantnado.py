@@ -11,7 +11,9 @@ import pandas as pd
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, model_validator
 
 from .base import Track, TrackLabeller
+from .enums import TrackType
 from .region import GenomicRegion
+from .registry import registry
 from .utils import clean_axis
 
 
@@ -62,6 +64,11 @@ def _extract_series(data: Any, sample: str, gr: GenomicRegion) -> tuple[np.ndarr
 
 
 class QuantNadoCoverageAesthetics(BaseModel):
+    """Aesthetics for QuantNado coverage tracks.
+
+    Example:
+        >>> QuantNadoCoverageAesthetics(color="#2171b5", fill=True)
+    """
     color: str = Field(default="#2171b5", description="Primary color for coverage rendering.")
     alpha: float = Field(default=0.75, description="Opacity for coverage fill and line.")
     fill: bool = Field(default=True, description="Fill area under the coverage profile.")
@@ -75,6 +82,11 @@ class QuantNadoCoverageAesthetics(BaseModel):
 
 
 class QuantNadoStrandedCoverageAesthetics(BaseModel):
+    """Aesthetics for QuantNado stranded coverage tracks.
+
+    Example:
+        >>> QuantNadoStrandedCoverageAesthetics(color="#1f78b4", reverse_color="#d62728")
+    """
     color: str = Field(default="#1f78b4", description="Color for forward strand signal.")
     reverse_color: str | None = Field(
         default=None,
@@ -92,6 +104,11 @@ class QuantNadoStrandedCoverageAesthetics(BaseModel):
 
 
 class QuantNadoMethylationAesthetics(BaseModel):
+    """Aesthetics for QuantNado methylation tracks.
+
+    Example:
+        >>> QuantNadoMethylationAesthetics(color="#2a9d8f", point_size=12.0)
+    """
     color: str = Field(default="#2a9d8f", description="Scatter color for methylation points.")
     alpha: float = Field(default=0.75, description="Opacity for methylation points.")
     point_size: float = Field(default=10.0, description="Marker area for methylation points.")
@@ -100,6 +117,11 @@ class QuantNadoMethylationAesthetics(BaseModel):
 
 
 class QuantNadoVariantAesthetics(BaseModel):
+    """Aesthetics for QuantNado variant tracks.
+
+    Example:
+        >>> QuantNadoVariantAesthetics(het_color="#1f77b4", hom_alt_color="#d62728")
+    """
     het_color: str = Field(default="#1f77b4", description="Color for heterozygous variants.")
     hom_alt_color: str = Field(default="#d62728", description="Color for homozygous-alt variants.")
     alpha: float = Field(default=0.8, description="Opacity for lollipop stems/markers.")
@@ -175,7 +197,13 @@ class _QuantNadoSourceMixin:
             clean_axis(ax)
 
 
+@registry.register(TrackType.QUANTNADO_COVERAGE)
 class QuantNadoCoverageTrack(_QuantNadoSourceMixin, Track):
+    """Track for plotting QuantNado per-base or binned coverage.
+
+    Example:
+        >>> QuantNadoCoverageTrack(sample="tumor", dataset_path="study.qn")
+    """
     sample: str = Field(description="Sample name to render from QuantNado data.")
     scaling_factor: float = Field(
         default=1.0,
@@ -224,7 +252,6 @@ class QuantNadoCoverageTrack(_QuantNadoSourceMixin, Track):
         coverage_store = getattr(qn, "coverage", None)
         if coverage_store is None:
             raise RuntimeError("QuantNado source has no coverage store for coverage track")
-
         data = coverage_store.extract_region(
             region=_region_string(gr),
             samples=[self.sample],
@@ -287,7 +314,13 @@ class QuantNadoCoverageTrack(_QuantNadoSourceMixin, Track):
         self._label_or_clean(ax, self, gr, y_min, y_max, title_color=self.color)
 
 
+@registry.register(TrackType.QUANTNADO_STRANDED_COVERAGE)
 class QuantNadoStrandedCoverageTrack(_QuantNadoSourceMixin, Track):
+    """Track for plotting forward and reverse QuantNado coverage together.
+
+    Example:
+        >>> QuantNadoStrandedCoverageTrack(sample="tumor", dataset_path="study.qn")
+    """
     sample: str = Field(description="Sample name to render from QuantNado data.")
     scaling_factor: float = Field(
         default=1.0,
@@ -440,7 +473,13 @@ class QuantNadoStrandedCoverageTrack(_QuantNadoSourceMixin, Track):
         self._label_or_clean(ax, self, gr, y_min, y_max, title_color=self.color)
 
 
+@registry.register(TrackType.QUANTNADO_METHYLATION)
 class QuantNadoMethylationTrack(_QuantNadoSourceMixin, Track):
+    """Track for plotting QuantNado methylation measurements.
+
+    Example:
+        >>> QuantNadoMethylationTrack(sample="tumor", dataset_path="study.qn")
+    """
     sample: str = Field(description="Sample name to render from QuantNado data.")
     methylation_variable: str = Field(
         default="methylation_pct",
@@ -510,7 +549,13 @@ class QuantNadoMethylationTrack(_QuantNadoSourceMixin, Track):
         self._label_or_clean(ax, self, gr, y_min, y_max, title_color=self.color)
 
 
+@registry.register(TrackType.QUANTNADO_VARIANT)
 class QuantNadoVariantTrack(_QuantNadoSourceMixin, Track):
+    """Track for plotting QuantNado variant allele fractions.
+
+    Example:
+        >>> QuantNadoVariantTrack(sample="tumor", dataset_path="study.qn")
+    """
     sample: str = Field(description="Sample name to render from QuantNado data.")
     allele_depth_ref_variable: str = Field(
         default="allele_depth_ref",

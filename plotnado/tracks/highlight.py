@@ -7,35 +7,33 @@ from pathlib import Path
 import matplotlib.axes
 import matplotlib.patches
 import pandas as pd
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import ConfigDict, Field
 
 from .region import GenomicRegion
 from .base import Track
 from .utils import read_bed_regions
+from .enums import TrackType
+from .aesthetics import BaseAesthetics
+from .registry import registry
 
 
-class HighlightsAesthetics(BaseModel):
+class HighlightsAesthetics(BaseAesthetics):
     """
     Aesthetics configuration for highlight regions.
 
+    Inherits color, alpha, and linewidth from BaseAesthetics.
+
     Attributes:
-        color: Fill color for highlighted regions
-        alpha: Transparency (0-1)
         edge_color: Edge color (None for no edge)
     """
 
-    color: str = Field(default="yellow", description="Fill color for highlighted regions.")
-    alpha: float = Field(default=0.3, description="Opacity of highlighted regions (0-1).")
     edge_color: str | None = Field(
         default=None,
         description="Optional border color for highlighted regions.",
     )
-    linewidth: float = Field(
-        default=1.0,
-        description="Border line width when edge_color is provided.",
-    )
 
 
+@registry.register(TrackType.HIGHLIGHT)
 class HighlightsFromFile(Track):
     """
     Track for highlighting genomic regions from a BED file.

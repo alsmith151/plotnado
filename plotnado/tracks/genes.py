@@ -14,12 +14,14 @@ import matplotlib.markers
 import matplotlib.patches
 import matplotlib.textpath
 import pandas as pd
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import ConfigDict, Field, BaseModel
 
 from .base import Track
-from .enums import DisplayMode, GeneLabelOverlapStrategy, GeneLabelStyle, PlotStyle
+from .enums import DisplayMode, GeneLabelOverlapStrategy, GeneLabelStyle, PlotStyle, TrackType
 from .region import GenomicRegion
 from .utils import clean_axis, read_bed_regions, read_gtf_regions
+from .aesthetics import BaseAesthetics
+from .registry import registry
 
 
 @dataclass
@@ -35,13 +37,14 @@ class LabelPlacement:
     draw_connector: bool
 
 
-class GenesAesthetics(BaseModel):
-    """Aesthetics configuration for gene tracks."""
+class GenesAesthetics(BaseAesthetics):
+    """Aesthetics configuration for gene tracks.
+
+    Inherits color, alpha, and linewidth from BaseAesthetics.
+    """
 
     style: PlotStyle = Field(default=PlotStyle.STD, description="Gene rendering style preset.")
-    color: str = Field(default="black", description="Primary color used for gene glyphs.")
     fill: bool = Field(default=True, description="Fill exon bodies instead of outlines only.")
-    alpha: float = Field(default=1.0, description="Opacity for rendered gene bodies (0-1).")
     display: DisplayMode = Field(
         default=DisplayMode.COLLAPSED,
         description="Collapsed uses one row; expanded stacks overlapping genes.",
@@ -140,6 +143,7 @@ class GenesAesthetics(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
 
 
+@registry.register(TrackType.GENE, aliases=["genes"])
 class Genes(Track):
     """Track for displaying gene annotations from BED12 or GTF files."""
 

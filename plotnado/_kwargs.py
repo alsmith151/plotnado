@@ -1,7 +1,12 @@
+# AUTO-GENERATED - do not edit manually.
+# Re-generate with: python scripts/generate_kwargs.py
+#
+# This file provides TypedDict definitions for GenomicFigure builder
+# methods, enabling IDE autocompletion and type checking.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, TypedDict
+from typing import Any, Literal, TypedDict
 
 import pandas as pd
 
@@ -18,9 +23,6 @@ from .tracks.enums import (
     PlotStyle,
     Position,
 )
-from .tracks.region import GenomicRegion
-from .tracks.base import Track
-
 
 
 class BigwigKwargs(TypedDict, total=False):
@@ -30,11 +32,11 @@ class BigwigKwargs(TypedDict, total=False):
     color_group: str | None
     y_min: float | None
     y_max: float | None
-    style: PlotStyle
     color: str
-    fill: bool
     alpha: float
     linewidth: float
+    style: PlotStyle
+    fill: bool
     scatter_point_size: float
     show_baseline: bool
     baseline_color: str
@@ -67,17 +69,18 @@ class BigwigKwargs(TypedDict, total=False):
 
 class GenesKwargs(TypedDict, total=False):
     title: str | None
-    data: Path | str | DataFrame | None
+    data: Path | str | pd.DataFrame | None
     height: float
     autoscale_group: str | None
     color_group: str | None
     row_scale: float
     small_relative: float
     gene_count: int
-    style: PlotStyle
     color: str
-    fill: bool
     alpha: float
+    linewidth: float
+    style: PlotStyle
+    fill: bool
     display: DisplayMode
     minimum_gene_length: int
     max_number_of_rows: int
@@ -135,6 +138,8 @@ class AxisKwargs(TypedDict, total=False):
     color_group: str | None
     show_chromosome: bool
     color: str
+    alpha: float
+    linewidth: float
     font_size: int
     num_ticks: int
     use_human_readable_labels: bool
@@ -169,8 +174,10 @@ class ScalebarKwargs(TypedDict, total=False):
     height: float
     autoscale_group: str | None
     color_group: str | None
-    style: PlotStyle
     color: str
+    alpha: float
+    linewidth: float
+    style: PlotStyle
     position: Position
     scale_distance: float | None
     font_size: int
@@ -229,8 +236,9 @@ class BedKwargs(TypedDict, total=False):
     autoscale_group: str | None
     color_group: str | None
     color: str
-    edge_color: str
     alpha: float
+    linewidth: float
+    edge_color: str
     interval_height: float
     display: DisplayMode
     max_rows: int
@@ -271,301 +279,6 @@ class CoolerKwargs(TypedDict, total=False):
     cmap: str
     min_value: float | None
     max_value: float | None
-    plot_title: bool
-    plot_scale: bool
-    label_on_track: bool
-    data_range_style: DataRangeStyle
-    label_box_enabled: bool
-    label_box_alpha: float
-    title_location: Position
-    title_height: float
-    title_size: int
-    title_color: str
-    title_font: str
-    title_weight: FontWeight
-    scale_location: Position
-    scale_height: float
-    scale_precision: int
-    scale_size: int
-    scale_color: str
-    scale_font: str
-    scale_weight: FontWeight
-
-class BigwigCollectionKwargs(TypedDict, total=False):
-    title: str | None
-    data: Any | None
-    height: float
-    autoscale_group: str | None
-    color_group: str | None
-    colors: list[str] | None
-    labels: list[str] | None
-    alpha: float
-    style: CollectionStyle
-    plot_title: bool
-    plot_scale: bool
-    label_on_track: bool
-    data_range_style: DataRangeStyle
-    label_box_enabled: bool
-    label_box_alpha: float
-    title_location: Position
-    title_height: float
-    title_size: int
-    title_color: str
-    title_font: str
-    title_weight: FontWeight
-    scale_location: Position
-    scale_height: float
-    scale_precision: int
-    scale_size: int
-    scale_color: str
-    scale_font: str
-    scale_weight: FontWeight
-
-class BigwigDiffKwargs(TypedDict, total=False):
-    title: str | None
-    data: Any | None
-    height: float
-    autoscale_group: str | None
-    color_group: str | None
-    method: BigWigDiffMethod
-    positive_color: str
-    negative_color: str
-    linewidth: float
-    bar_alpha: float
-    zero_line_color: str
-    zero_line_width: float
-    zero_line_alpha: float
-    plot_title: bool
-    plot_scale: bool
-    label_on_track: bool
-    data_range_style: DataRangeStyle
-    label_box_enabled: bool
-    label_box_alpha: float
-    title_location: Position
-    title_height: float
-    title_size: int
-    title_color: str
-    title_font: str
-    title_weight: FontWeight
-    scale_location: Position
-    scale_height: float
-    scale_precision: int
-    scale_size: int
-    scale_color: str
-    scale_font: str
-    scale_weight: FontWeight
-
-class BigwigOverlayKwargs(TypedDict, total=False):
-    title: str | None
-    data: Any | None
-    height: float
-    autoscale_group: str | None
-    color_group: str | None
-    colors: list[str] | None
-    alpha: float
-    show_labels: bool
-    min_value: float | None
-    max_value: float | None
-    plot_title: bool
-    plot_scale: bool
-    label_on_track: bool
-    data_range_style: DataRangeStyle
-    label_box_enabled: bool
-    label_box_alpha: float
-    title_location: Position
-    title_height: float
-    title_size: int
-    title_color: str
-    title_font: str
-    title_weight: FontWeight
-    scale_location: Position
-    scale_height: float
-    scale_precision: int
-    scale_size: int
-    scale_color: str
-    scale_font: str
-    scale_weight: FontWeight
-
-class OverlayKwargs(TypedDict, total=False):
-    title: str | None
-    data: Any | None
-    height: float
-    autoscale_group: str | None
-    color_group: str | None
-    colors: list[str] | None
-    alpha: float
-    show_labels: bool
-    min_value: float | None
-    max_value: float | None
-    plot_title: bool
-    plot_scale: bool
-    label_on_track: bool
-    data_range_style: DataRangeStyle
-    label_box_enabled: bool
-    label_box_alpha: float
-    title_location: Position
-    title_height: float
-    title_size: int
-    title_color: str
-    title_font: str
-    title_weight: FontWeight
-    scale_location: Position
-    scale_height: float
-    scale_precision: int
-    scale_size: int
-    scale_color: str
-    scale_font: str
-    scale_weight: FontWeight
-
-class NarrowpeakKwargs(TypedDict, total=False):
-    title: str | None
-    height: float
-    autoscale_group: str | None
-    color_group: str | None
-    color: str
-    edge_color: str
-    alpha: float
-    interval_height: float
-    display: DisplayMode
-    max_rows: int
-    show_labels: bool
-    label_field: str
-    font_size: int
-    rect_linewidth: float
-    draw_edges: bool
-    color_by: NarrowPeakColorBy | None
-    cmap: str
-    min_score: float | None
-    max_score: float | None
-    show_summit: bool
-    summit_color: str
-    summit_width: float
-    plot_title: bool
-    plot_scale: bool
-    label_on_track: bool
-    data_range_style: DataRangeStyle
-    label_box_enabled: bool
-    label_box_alpha: float
-    title_location: Position
-    title_height: float
-    title_size: int
-    title_color: str
-    title_font: str
-    title_weight: FontWeight
-    scale_location: Position
-    scale_height: float
-    scale_precision: int
-    scale_size: int
-    scale_color: str
-    scale_font: str
-    scale_weight: FontWeight
-
-class LinksKwargs(TypedDict, total=False):
-    title: str | None
-    height: float
-    autoscale_group: str | None
-    color_group: str | None
-    color: str
-    edge_color: str | None
-    alpha: float
-    linewidth: float
-    cmap: str
-    max_height: float
-    color_by_score: bool
-    min_score: float | None
-    max_score: float | None
-    y_baseline: float
-    plot_title: bool
-    plot_scale: bool
-    label_on_track: bool
-    data_range_style: DataRangeStyle
-    label_box_enabled: bool
-    label_box_alpha: float
-    title_location: Position
-    title_height: float
-    title_size: int
-    title_color: str
-    title_font: str
-    title_weight: FontWeight
-    scale_location: Position
-    scale_height: float
-    scale_precision: int
-    scale_size: int
-    scale_color: str
-    scale_font: str
-    scale_weight: FontWeight
-
-class HighlightsKwargs(TypedDict, total=False):
-    title: str | None
-    height: float
-    autoscale_group: str | None
-    color_group: str | None
-    color: str
-    alpha: float
-    edge_color: str | None
-    linewidth: float
-    plot_title: bool
-    plot_scale: bool
-    label_on_track: bool
-    data_range_style: DataRangeStyle
-    label_box_enabled: bool
-    label_box_alpha: float
-    title_location: Position
-    title_height: float
-    title_size: int
-    title_color: str
-    title_font: str
-    title_weight: FontWeight
-    scale_location: Position
-    scale_height: float
-    scale_precision: int
-    scale_size: int
-    scale_color: str
-    scale_font: str
-    scale_weight: FontWeight
-
-class HlineKwargs(TypedDict, total=False):
-    title: str | None
-    data: Any | None
-    height: float
-    autoscale_group: str | None
-    color_group: str | None
-    color: str
-    linestyle: str
-    linewidth: float
-    alpha: float
-    zorder: int
-    plot_title: bool
-    plot_scale: bool
-    label_on_track: bool
-    data_range_style: DataRangeStyle
-    label_box_enabled: bool
-    label_box_alpha: float
-    title_location: Position
-    title_height: float
-    title_size: int
-    title_color: str
-    title_font: str
-    title_weight: FontWeight
-    scale_location: Position
-    scale_height: float
-    scale_precision: int
-    scale_size: int
-    scale_color: str
-    scale_font: str
-    scale_weight: FontWeight
-
-class VlineKwargs(TypedDict, total=False):
-    title: str | None
-    data: Any | None
-    height: float
-    autoscale_group: str | None
-    color_group: str | None
-    color: str
-    linestyle: str
-    linewidth: float
-    alpha: float
-    zorder: int
     plot_title: bool
     plot_scale: bool
     label_on_track: bool
@@ -652,18 +365,319 @@ class CoolerAverageKwargs(TypedDict, total=False):
     scale_font: str
     scale_weight: FontWeight
 
+class BigwigCollectionKwargs(TypedDict, total=False):
+    title: str | None
+    data: Any | None
+    height: float
+    autoscale_group: str | None
+    color_group: str | None
+    colors: list[str] | None
+    alpha: float
+    linewidth: float
+    labels: list[str] | None
+    style: CollectionStyle
+    plot_title: bool
+    plot_scale: bool
+    label_on_track: bool
+    data_range_style: DataRangeStyle
+    label_box_enabled: bool
+    label_box_alpha: float
+    title_location: Position
+    title_height: float
+    title_size: int
+    title_color: str
+    title_font: str
+    title_weight: FontWeight
+    scale_location: Position
+    scale_height: float
+    scale_precision: int
+    scale_size: int
+    scale_color: str
+    scale_font: str
+    scale_weight: FontWeight
+
+class BigwigDiffKwargs(TypedDict, total=False):
+    title: str | None
+    data: Any | None
+    height: float
+    autoscale_group: str | None
+    color_group: str | None
+    method: BigWigDiffMethod
+    color: str
+    alpha: float
+    linewidth: float
+    positive_color: str
+    negative_color: str
+    bar_alpha: float
+    zero_line_color: str
+    zero_line_width: float
+    zero_line_alpha: float
+    plot_title: bool
+    plot_scale: bool
+    label_on_track: bool
+    data_range_style: DataRangeStyle
+    label_box_enabled: bool
+    label_box_alpha: float
+    title_location: Position
+    title_height: float
+    title_size: int
+    title_color: str
+    title_font: str
+    title_weight: FontWeight
+    scale_location: Position
+    scale_height: float
+    scale_precision: int
+    scale_size: int
+    scale_color: str
+    scale_font: str
+    scale_weight: FontWeight
+
+class BigwigOverlayKwargs(TypedDict, total=False):
+    title: str | None
+    data: Any | None
+    height: float
+    autoscale_group: str | None
+    color_group: str | None
+    colors: list[str] | None
+    alpha: float
+    linewidth: float
+    show_labels: bool
+    min_value: float | None
+    max_value: float | None
+    plot_title: bool
+    plot_scale: bool
+    label_on_track: bool
+    data_range_style: DataRangeStyle
+    label_box_enabled: bool
+    label_box_alpha: float
+    title_location: Position
+    title_height: float
+    title_size: int
+    title_color: str
+    title_font: str
+    title_weight: FontWeight
+    scale_location: Position
+    scale_height: float
+    scale_precision: int
+    scale_size: int
+    scale_color: str
+    scale_font: str
+    scale_weight: FontWeight
+
+class OverlayKwargs(TypedDict, total=False):
+    title: str | None
+    data: Any | None
+    height: float
+    autoscale_group: str | None
+    color_group: str | None
+    colors: list[str] | None
+    alpha: float
+    linewidth: float
+    show_labels: bool
+    min_value: float | None
+    max_value: float | None
+    plot_title: bool
+    plot_scale: bool
+    label_on_track: bool
+    data_range_style: DataRangeStyle
+    label_box_enabled: bool
+    label_box_alpha: float
+    title_location: Position
+    title_height: float
+    title_size: int
+    title_color: str
+    title_font: str
+    title_weight: FontWeight
+    scale_location: Position
+    scale_height: float
+    scale_precision: int
+    scale_size: int
+    scale_color: str
+    scale_font: str
+    scale_weight: FontWeight
+
+class NarrowpeakKwargs(TypedDict, total=False):
+    title: str | None
+    height: float
+    autoscale_group: str | None
+    color_group: str | None
+    color: str
+    alpha: float
+    linewidth: float
+    edge_color: str
+    interval_height: float
+    display: DisplayMode
+    max_rows: int
+    show_labels: bool
+    label_field: str
+    font_size: int
+    rect_linewidth: float
+    draw_edges: bool
+    color_by: NarrowPeakColorBy | None
+    cmap: str
+    min_score: float | None
+    max_score: float | None
+    show_summit: bool
+    summit_color: str
+    summit_width: float
+    plot_title: bool
+    plot_scale: bool
+    label_on_track: bool
+    data_range_style: DataRangeStyle
+    label_box_enabled: bool
+    label_box_alpha: float
+    title_location: Position
+    title_height: float
+    title_size: int
+    title_color: str
+    title_font: str
+    title_weight: FontWeight
+    scale_location: Position
+    scale_height: float
+    scale_precision: int
+    scale_size: int
+    scale_color: str
+    scale_font: str
+    scale_weight: FontWeight
+
+class LinksKwargs(TypedDict, total=False):
+    title: str | None
+    height: float
+    autoscale_group: str | None
+    color_group: str | None
+    color: str
+    alpha: float
+    linewidth: float
+    edge_color: str | None
+    cmap: str
+    max_height: float
+    color_by_score: bool
+    min_score: float | None
+    max_score: float | None
+    y_baseline: float
+    plot_title: bool
+    plot_scale: bool
+    label_on_track: bool
+    data_range_style: DataRangeStyle
+    label_box_enabled: bool
+    label_box_alpha: float
+    title_location: Position
+    title_height: float
+    title_size: int
+    title_color: str
+    title_font: str
+    title_weight: FontWeight
+    scale_location: Position
+    scale_height: float
+    scale_precision: int
+    scale_size: int
+    scale_color: str
+    scale_font: str
+    scale_weight: FontWeight
+
+class HighlightsKwargs(TypedDict, total=False):
+    title: str | None
+    height: float
+    autoscale_group: str | None
+    color_group: str | None
+    color: str
+    alpha: float
+    linewidth: float
+    edge_color: str | None
+    plot_title: bool
+    plot_scale: bool
+    label_on_track: bool
+    data_range_style: DataRangeStyle
+    label_box_enabled: bool
+    label_box_alpha: float
+    title_location: Position
+    title_height: float
+    title_size: int
+    title_color: str
+    title_font: str
+    title_weight: FontWeight
+    scale_location: Position
+    scale_height: float
+    scale_precision: int
+    scale_size: int
+    scale_color: str
+    scale_font: str
+    scale_weight: FontWeight
+
+class HlineKwargs(TypedDict, total=False):
+    title: str | None
+    data: Any | None
+    height: float
+    autoscale_group: str | None
+    color_group: str | None
+    color: str
+    alpha: float
+    linewidth: float
+    linestyle: str
+    zorder: int
+    plot_title: bool
+    plot_scale: bool
+    label_on_track: bool
+    data_range_style: DataRangeStyle
+    label_box_enabled: bool
+    label_box_alpha: float
+    title_location: Position
+    title_height: float
+    title_size: int
+    title_color: str
+    title_font: str
+    title_weight: FontWeight
+    scale_location: Position
+    scale_height: float
+    scale_precision: int
+    scale_size: int
+    scale_color: str
+    scale_font: str
+    scale_weight: FontWeight
+
+class VlineKwargs(TypedDict, total=False):
+    title: str | None
+    data: Any | None
+    height: float
+    autoscale_group: str | None
+    color_group: str | None
+    color: str
+    alpha: float
+    linewidth: float
+    linestyle: str
+    zorder: int
+    plot_title: bool
+    plot_scale: bool
+    label_on_track: bool
+    data_range_style: DataRangeStyle
+    label_box_enabled: bool
+    label_box_alpha: float
+    title_location: Position
+    title_height: float
+    title_size: int
+    title_color: str
+    title_font: str
+    title_weight: FontWeight
+    scale_location: Position
+    scale_height: float
+    scale_precision: int
+    scale_size: int
+    scale_color: str
+    scale_font: str
+    scale_weight: FontWeight
+
 class QuantnadoCoverageKwargs(TypedDict, total=False):
     title: str | None
     data: Any | None
     height: float
     autoscale_group: str | None
     color_group: str | None
-    scaling_factor: float
     quantnado: Any | None
     dataset_path: str | None
+    scaling_factor: float
     normalise: str | None
     normalize: str | None
-    library_sizes: pd.Series | dict | None
+    library_sizes: Series | dict | None
     coverage_data: Any | None
     color: str
     alpha: float
@@ -701,12 +715,12 @@ class QuantnadoStrandedCoverageKwargs(TypedDict, total=False):
     height: float
     autoscale_group: str | None
     color_group: str | None
-    scaling_factor: float
     quantnado: Any | None
     dataset_path: str | None
+    scaling_factor: float
     normalise: str | None
     normalize: str | None
-    library_sizes: pd.Series | dict | None
+    library_sizes: Series | dict | None
     coverage_fwd_data: Any | None
     coverage_rev_data: Any | None
     color: str

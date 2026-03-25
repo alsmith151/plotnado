@@ -1,6 +1,9 @@
-"""Generate TypedDict kwargs types for Figure fluent methods.
+"""Generate TypedDict kwargs types for GenomicFigure builder methods.
 
-This script introspects Plotnado track models and writes `plotnado/_kwargs.py`.
+This script introspects the track registry and the same flattened kwarg routing
+used by ``GenomicFigure._create_track_from_alias()`` to write
+``plotnado/_kwargs.py``.
+
 Run from repository root:
 
     python scripts/generate_kwargs.py
@@ -10,35 +13,14 @@ from __future__ import annotations
 
 import types
 from pathlib import Path
-from typing import Any, Union, get_args, get_origin
+from typing import Any, Literal, Union, get_args, get_origin
 
 from pydantic import BaseModel
 
-from plotnado.tracks import (
-    BigWigCollection,
-    BigWigDiff,
-    BigWigTrack,
-    BedTrack,
-    CapcruncherTrack,
-    CoolerAverage,
-    CoolerTrack,
-    Genes,
-    GenomicAxis,
-    HLineTrack,
-    HighlightsFromFile,
-    LabelConfig,
-    LinksTrack,
-    NarrowPeakTrack,
-    OverlayTrack,
-
-    QuantNadoCoverageTrack,
-    QuantNadoMethylationTrack,
-    QuantNadoStrandedCoverageTrack,
-    QuantNadoVariantTrack,
-    ScaleBar,
-    Spacer,
-    VLineTrack,
-)
+import plotnado.tracks  # noqa: F401
+from plotnado.tracks import LabelConfig
+from plotnado.tracks.enums import TrackType
+from plotnado.tracks.registry import registry
 
 
 MODULE_PATH = Path(__file__).resolve().parents[1] / "plotnado" / "_kwargs.py"
@@ -55,7 +37,7 @@ def _annotation_to_str(annotation: Any) -> str:
                 return "None"
             module = annotation.__module__
             name = annotation.__name__
-            if module == "pandas.core.frame" and name == "DataFrame":
+            if module in {"pandas", "pandas.core.frame"} and name == "DataFrame":
                 return "pd.DataFrame"
             if module in {"builtins", "typing"}:
                 return name
@@ -65,6 +47,8 @@ def _annotation_to_str(annotation: Any) -> str:
         rendered = rendered.replace("typing.", "")
         rendered = rendered.replace("types.", "")
         rendered = rendered.replace("pathlib.Path", "Path")
+        rendered = rendered.replace("DataFrame", "pd.DataFrame")
+        rendered = rendered.replace("pandas.DataFrame", "pd.DataFrame")
         rendered = rendered.replace("pandas.core.frame.DataFrame", "pd.DataFrame")
         return rendered
 
@@ -99,6 +83,8 @@ def _annotation_to_str(annotation: Any) -> str:
     rendered = rendered.replace("typing.", "")
     rendered = rendered.replace("types.", "")
     rendered = rendered.replace("pathlib.Path", "Path")
+    rendered = rendered.replace("DataFrame", "pd.DataFrame")
+    rendered = rendered.replace("pandas.DataFrame", "pd.DataFrame")
     rendered = rendered.replace("pandas.core.frame.DataFrame", "pd.DataFrame")
     return rendered
 
@@ -119,9 +105,7 @@ def _compose_fields(
     fields: dict[str, str] = {}
 
     for name, field_info in track_cls.model_fields.items():
-        if name in {"aesthetics", "label"}:
-            continue
-        if name in positional_args:
+        if name in {"aesthetics", "label"} or name in positional_args:
             continue
         fields[name] = _annotation_to_str(field_info.annotation)
 
@@ -129,14 +113,10 @@ def _compose_fields(
         aesthetics_model = getattr(track_cls, "aesthetics_model")()
         if aesthetics_model is not None:
             for name, field_type in _collect_fields(aesthetics_model).items():
-                if name in fields:
-                    continue
-                fields[name] = field_type
+                fields.setdefault(name, field_type)
 
     for name, field_type in _collect_fields(LabelConfig).items():
-        if name in fields:
-            continue
-        fields[name] = field_type
+        fields.setdefault(name, field_type)
 
     return fields
 
@@ -153,37 +133,46 @@ def _typed_dict_block(name: str, fields: dict[str, str]) -> str:
 
 
 def generate() -> str:
-    specs: list[tuple[str, type[BaseModel], set[str], bool]] = [
-        ("BigwigKwargs", BigWigTrack, {"data"}, True),
-        ("GenesKwargs", Genes, {"genome"}, True),
-        ("AxisKwargs", GenomicAxis, set(), True),
-        ("ScalebarKwargs", ScaleBar, set(), True),
-        ("SpacerKwargs", Spacer, {"height"}, False),
-        ("BedKwargs", BedTrack, {"data"}, True),
-        ("CoolerKwargs", CoolerTrack, {"file"}, True),
-        ("BigwigCollectionKwargs", BigWigCollection, {"files"}, True),
-        ("BigwigDiffKwargs", BigWigDiff, {"file_a", "file_b"}, True),
-        ("BigwigOverlayKwargs", OverlayTrack, {"tracks"}, True),
-        ("OverlayKwargs", OverlayTrack, {"tracks"}, True),
-        ("NarrowpeakKwargs", NarrowPeakTrack, {"data"}, True),
-        ("LinksKwargs", LinksTrack, {"data"}, True),
-        ("HighlightsKwargs", HighlightsFromFile, {"data"}, True),
-        ("HlineKwargs", HLineTrack, {"y_value"}, True),
-        ("VlineKwargs", VLineTrack, {"x_position"}, True),
-        ("CapcruncherKwargs", CapcruncherTrack, {"file"}, True),
-        ("CoolerAverageKwargs", CoolerAverage, {"files"}, True),
-
-        ("QuantnadoCoverageKwargs", QuantNadoCoverageTrack, {"sample"}, True),
-        ("QuantnadoStrandedCoverageKwargs", QuantNadoStrandedCoverageTrack, {"sample"}, True),
-        ("QuantnadoMethylationKwargs", QuantNadoMethylationTrack, {"sample"}, True),
-        ("QuantnadoVariantKwargs", QuantNadoVariantTrack, {"sample"}, True),
+    method_specs: list[tuple[str, TrackType | str, set[str], bool]] = [
+        ("BigwigKwargs", TrackType.BIGWIG, {"data"}, True),
+        ("GenesKwargs", TrackType.GENE, {"genome"}, True),
+        ("AxisKwargs", TrackType.AXIS, set(), True),
+        ("ScalebarKwargs", TrackType.SCALEBAR, set(), True),
+        ("SpacerKwargs", TrackType.SPACER, {"height"}, False),
+        ("BedKwargs", TrackType.BED, {"data"}, True),
+        ("CoolerKwargs", TrackType.COOLER, {"file"}, True),
+        ("CapcruncherKwargs", TrackType.CAPCRUNCHER, {"file"}, True),
+        ("CoolerAverageKwargs", TrackType.COOLER_AVERAGE, {"files"}, True),
+        ("BigwigCollectionKwargs", TrackType.BIGWIG_COLLECTION, {"files"}, True),
+        ("BigwigDiffKwargs", TrackType.BIGWIG_DIFF, {"file_a", "file_b"}, True),
+        ("BigwigOverlayKwargs", "bigwig_overlay", {"tracks"}, True),
+        ("OverlayKwargs", TrackType.OVERLAY, {"tracks"}, True),
+        ("NarrowpeakKwargs", TrackType.NARROWPEAK, {"data"}, True),
+        ("LinksKwargs", TrackType.LINKS, {"data"}, True),
+        ("HighlightsKwargs", TrackType.HIGHLIGHT, {"data"}, True),
+        ("HlineKwargs", TrackType.HLINE, {"y_value"}, True),
+        ("VlineKwargs", TrackType.VLINE, {"x_position"}, True),
+        ("QuantnadoCoverageKwargs", TrackType.QUANTNADO_COVERAGE, {"sample"}, True),
+        (
+            "QuantnadoStrandedCoverageKwargs",
+            TrackType.QUANTNADO_STRANDED_COVERAGE,
+            {"sample"},
+            True,
+        ),
+        ("QuantnadoMethylationKwargs", TrackType.QUANTNADO_METHYLATION, {"sample"}, True),
+        ("QuantnadoVariantKwargs", TrackType.QUANTNADO_VARIANT, {"sample"}, True),
     ]
 
     imports = [
+        "# AUTO-GENERATED - do not edit manually.",
+        "# Re-generate with: python scripts/generate_kwargs.py",
+        "#",
+        "# This file provides TypedDict definitions for GenomicFigure builder",
+        "# methods, enabling IDE autocompletion and type checking.",
         "from __future__ import annotations",
         "",
         "from pathlib import Path",
-        "from typing import Any, TypedDict",
+        "from typing import Any, Literal, TypedDict",
         "",
         "import pandas as pd",
         "",
@@ -200,28 +189,24 @@ def generate() -> str:
         "    PlotStyle,",
         "    Position,",
         ")",
-        "from .tracks.region import GenomicRegion",
-        "from .tracks.base import Track",
-        "",
         "",
     ]
 
     blocks: list[str] = []
-    for td_name, track_cls, positional_args, include_aesthetics in specs:
+    for td_name, key, positional_args, include_aesthetics in method_specs:
+        entry = registry.get(key.value if isinstance(key, TrackType) else key)
         fields = _compose_fields(
-            track_cls,
+            entry.cls,
             positional_args=positional_args,
             include_aesthetics=include_aesthetics,
         )
         blocks.append(_typed_dict_block(td_name, fields))
 
-    content = "\n".join(imports) + "\n\n" + "\n\n".join(blocks) + "\n"
-    return content
+    return "\n".join(imports) + "\n\n" + "\n\n".join(blocks) + "\n"
 
 
 def main() -> None:
-    content = generate()
-    MODULE_PATH.write_text(content)
+    MODULE_PATH.write_text(generate())
     print(f"Wrote {MODULE_PATH}")
 
 
