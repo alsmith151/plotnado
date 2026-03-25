@@ -14,6 +14,7 @@ from .enums import (
     Strand,
     TrackType,
 )
+from .registry import registry, TrackRegistry
 from .region import GenomicRegion, GenomicRange
 from .utils import (
     clean_axis,
@@ -71,6 +72,9 @@ __all__ = [
     "Position",
     "Strand",
     "TrackType",
+    # Registry
+    "TrackRegistry",
+    "registry",
     # Base classes
     "list_options",
     "GenomicRegion",

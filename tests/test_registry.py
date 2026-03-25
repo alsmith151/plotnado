@@ -76,3 +76,39 @@ def test_registry_unknown_key_raises():
     r = TrackRegistry()
     with pytest.raises(KeyError, match="Unknown track type"):
         r.get("nonexistent_type")
+
+
+def test_signal_tracks_registered():
+    """Signal track classes are registered after tracks/__init__.py is imported."""
+    import plotnado.tracks  # triggers all @registry.register decorators
+    from plotnado.tracks.registry import registry
+    from plotnado.tracks.bigwig import BigWigTrack
+    from plotnado.tracks.bigwig_diff import BigWigDiff
+    from plotnado.tracks.bigwig_collection import BigWigCollection
+    from plotnado.tracks.overlay import OverlayTrack
+
+    assert registry.get("bigwig").cls is BigWigTrack
+    assert registry.get("bedgraph").cls is BigWigTrack   # alias
+    assert registry.get("bigwig_diff").cls is BigWigDiff
+    assert registry.get("bigwig_collection").cls is BigWigCollection
+    assert registry.get("overlay").cls is OverlayTrack
+    assert registry.get("bigwig_overlay").cls is OverlayTrack  # alias
+
+
+def test_bigwig_aesthetics_inherits_base():
+    from plotnado.tracks.bigwig import BigwigAesthetics
+    from plotnado.tracks.aesthetics import BaseAesthetics
+    assert issubclass(BigwigAesthetics, BaseAesthetics)
+    # Base fields are present
+    assert "color" in BigwigAesthetics.model_fields
+    assert "alpha" in BigwigAesthetics.model_fields
+    # Track-specific field still present
+    assert "style" in BigwigAesthetics.model_fields
+
+
+def test_overlay_aesthetics_inherits_multi_color():
+    from plotnado.tracks.overlay import OverlayTrackAesthetics
+    from plotnado.tracks.aesthetics import BaseMultiColorAesthetics
+    assert issubclass(OverlayTrackAesthetics, BaseMultiColorAesthetics)
+    assert "colors" in OverlayTrackAesthetics.model_fields
+    assert "color" not in OverlayTrackAesthetics.model_fields

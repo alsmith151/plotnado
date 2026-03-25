@@ -5,24 +5,24 @@ from pathlib import Path
 import matplotlib.axes
 import numpy as np
 import pandas as pd
-from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
+from pydantic import ConfigDict, Field, PrivateAttr
 
 from .region import GenomicRegion
 from .base import LabelConfig, Track, TrackLabeller
 from .utils import clean_axis
 from .bigwig import BigWigTrack, BigwigAesthetics
+from .enums import TrackType
+from .aesthetics import BaseMultiColorAesthetics
+from .registry import registry
 
 
-class OverlayTrackAesthetics(BaseModel):
+class OverlayTrackAesthetics(BaseMultiColorAesthetics):
     """
     Aesthetics for overlay tracks.
+
+    Inherits colors and alpha from BaseMultiColorAesthetics.
     """
 
-    colors: list[str] | None = Field(
-        default=None,
-        description="Optional per-track color overrides for overlaid subtracks.",
-    )
-    alpha: float = Field(default=0.5, description="Opacity applied to overlaid signal traces.")
     show_labels: bool = Field(default=True, description="Render labels for component tracks in overlay contexts.")
     min_value: float | None = Field(
         default=None,
@@ -34,6 +34,7 @@ class OverlayTrackAesthetics(BaseModel):
     )
 
 
+@registry.register(TrackType.OVERLAY, aliases=["bigwig_overlay"])
 class OverlayTrack(Track):
     """
     Track for overlaying multiple tracks on the same axis.

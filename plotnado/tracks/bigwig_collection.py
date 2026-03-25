@@ -4,35 +4,38 @@ from pathlib import Path
 
 import matplotlib.axes
 import pandas as pd
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import Field
 
 from .base import LabelConfig, Track, TrackLabeller
 from .bigwig import BigWigTrack, BigwigAesthetics
 from .region import GenomicRegion
 from .scaling import Autoscaler
 from .utils import clean_axis
-from .enums import CollectionStyle
+from .enums import CollectionStyle, TrackType
+from .aesthetics import BaseMultiColorAesthetics
+from .registry import registry
 
 
-class BigWigCollectionAesthetics(BaseModel):
-    colors: list[str] | None = Field(
-        default=None,
-        description="Optional per-file colors used when creating component tracks.",
-    )
+class BigWigCollectionAesthetics(BaseMultiColorAesthetics):
+    """Aesthetics for BigWig collection tracks.
+
+    Inherits colors and alpha from BaseMultiColorAesthetics.
+    """
+
     labels: list[str] | None = Field(
         default=None,
         description="Optional legend/title labels for each file in the collection.",
     )
-    alpha: float = Field(default=0.6, description="Opacity applied to rendered collection traces.")
     style: CollectionStyle = Field(
         default=CollectionStyle.OVERLAY,
         description="Collection layout mode: overlay all traces or stack them.",
     )
 
-    model_config = ConfigDict(use_enum_values=True)
 
-
+@registry.register(TrackType.BIGWIG_COLLECTION)
 class BigWigCollection(Track):
+    """Collection track for rendering multiple BigWig files."""
+
     files: list[str] = Field(description="List of BigWig file paths for the collection.")
     aesthetics: BigWigCollectionAesthetics = Field(
         default_factory=BigWigCollectionAesthetics,
