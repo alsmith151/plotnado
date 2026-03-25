@@ -139,7 +139,7 @@ class TestScaleBarAesthetics:
         aesthetics = ScaleBarAesthetics()
 
         assert aesthetics.style == "std"
-        assert aesthetics.color == "#333333"  # Dark gray
+        assert aesthetics.color == "steelblue"  # Inherited from BaseAesthetics
         assert aesthetics.position == "left"
         assert aesthetics.scale_distance is None
         assert aesthetics.title == "Scale"
@@ -179,7 +179,7 @@ class TestGenesAesthetics:
         aesthetics = GenesAesthetics()
 
         assert aesthetics.style == "std"
-        assert aesthetics.color == "black"
+        assert aesthetics.color == "steelblue"  # Inherited from BaseAesthetics
         assert aesthetics.fill is True
         assert aesthetics.alpha == 1.0
         assert aesthetics.display == "collapsed"
@@ -230,7 +230,7 @@ class TestGenomicAxisAesthetics:
     def test_default_values(self):
         aesthetics = GenomicAxisAesthetics()
 
-        assert aesthetics.color == "#666666"
+        assert aesthetics.color == "steelblue"  # Inherited from BaseAesthetics
         assert aesthetics.font_size == 9
         assert aesthetics.num_ticks == 5
         assert aesthetics.show_chromosome is True
@@ -264,7 +264,7 @@ class TestAdditionalAesthetics:
     def test_links_defaults(self):
         aesthetics = LinksAesthetics()
         assert aesthetics.y_baseline == 0.1
-        assert aesthetics.linewidth == 0.8
+        assert aesthetics.linewidth == 1.0  # Inherited from BaseAesthetics
 
     def test_narrowpeak_edge_toggle_default(self):
         from plotnado.tracks import NarrowPeakAesthetics

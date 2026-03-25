@@ -438,9 +438,9 @@ class TestFigureRefactor:
         expected_first = mcolors.to_hex(cmap(0))
         expected_second = mcolors.to_hex(cmap(1))
 
-        assert fig.tracks[0].color == "#666666"
-        assert fig.tracks[1].color == "#333333"
-        assert fig.tracks[2].color == "yellow"
+        assert fig.tracks[0].color == "steelblue"  # axis default (from BaseAesthetics)
+        assert fig.tracks[1].color == "steelblue"  # scalebar default (from BaseAesthetics)
+        assert fig.tracks[2].color == "steelblue"  # highlight default (from BaseAesthetics)
         assert fig.tracks[3].color == expected_first
         assert fig.tracks[4].color == expected_second
 

@@ -148,3 +148,36 @@ def test_bed_aesthetics_inherits_base():
     from plotnado.tracks.bed import BedAesthetics
     from plotnado.tracks.aesthetics import BaseAesthetics
     assert issubclass(BedAesthetics, BaseAesthetics)
+
+
+def test_cooler_and_quantnado_tracks_registered():
+    import plotnado.tracks
+    from plotnado.tracks.registry import registry
+
+    # Hi-C tracks
+    from plotnado.tracks.cooler_track import CoolerTrack, CapcruncherTrack, CoolerAverage
+    assert registry.get("cooler").cls is CoolerTrack
+    assert registry.get("capcruncher").cls is CapcruncherTrack
+    assert registry.get("cooler_average").cls is CoolerAverage
+
+    # QuantNado tracks (optional dependency — skip if not installed)
+    try:
+        from plotnado.tracks.quantnado import (
+            QuantNadoCoverageTrack, QuantNadoStrandedCoverageTrack,
+            QuantNadoMethylationTrack, QuantNadoVariantTrack,
+        )
+        assert registry.get("quantnado_coverage").cls is QuantNadoCoverageTrack
+        assert registry.get("quantnado_stranded_coverage").cls is QuantNadoStrandedCoverageTrack
+        assert registry.get("quantnado_methylation").cls is QuantNadoMethylationTrack
+        assert registry.get("quantnado_variant").cls is QuantNadoVariantTrack
+    except ImportError:
+        pytest.skip("quantnado not installed")
+
+
+def test_cooler_aesthetics_stays_base_model():
+    """CoolerAesthetics must NOT inherit BaseAesthetics (no single color field)."""
+    from plotnado.tracks.cooler_track import CoolerAesthetics
+    from plotnado.tracks.aesthetics import BaseAesthetics
+    from pydantic import BaseModel
+    assert issubclass(CoolerAesthetics, BaseModel)
+    assert not issubclass(CoolerAesthetics, BaseAesthetics)

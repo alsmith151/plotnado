@@ -10,7 +10,9 @@ import numpy as np
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, model_validator
 
 from .base import Track, TrackLabeller
+from .enums import TrackType
 from .region import GenomicRegion
+from .registry import registry
 from .utils import clean_axis
 
 
@@ -174,6 +176,7 @@ class _QuantNadoSourceMixin:
             clean_axis(ax)
 
 
+@registry.register(TrackType.QUANTNADO_COVERAGE)
 class QuantNadoCoverageTrack(_QuantNadoSourceMixin, Track):
     sample: str = Field(description="Sample name to render from QuantNado data.")
     coverage_data: Any | None = Field(
@@ -257,6 +260,7 @@ class QuantNadoCoverageTrack(_QuantNadoSourceMixin, Track):
         self._label_or_clean(ax, self, gr, y_min, y_max, title_color=self.color)
 
 
+@registry.register(TrackType.QUANTNADO_STRANDED_COVERAGE)
 class QuantNadoStrandedCoverageTrack(_QuantNadoSourceMixin, Track):
     sample: str = Field(description="Sample name to render from QuantNado data.")
     coverage_fwd_data: Any | None = Field(
@@ -372,6 +376,7 @@ class QuantNadoStrandedCoverageTrack(_QuantNadoSourceMixin, Track):
         self._label_or_clean(ax, self, gr, y_min, y_max, title_color=self.color)
 
 
+@registry.register(TrackType.QUANTNADO_METHYLATION)
 class QuantNadoMethylationTrack(_QuantNadoSourceMixin, Track):
     sample: str = Field(description="Sample name to render from QuantNado data.")
     methylation_variable: str = Field(
@@ -442,6 +447,7 @@ class QuantNadoMethylationTrack(_QuantNadoSourceMixin, Track):
         self._label_or_clean(ax, self, gr, y_min, y_max, title_color=self.color)
 
 
+@registry.register(TrackType.QUANTNADO_VARIANT)
 class QuantNadoVariantTrack(_QuantNadoSourceMixin, Track):
     sample: str = Field(description="Sample name to render from QuantNado data.")
     allele_depth_ref_variable: str = Field(

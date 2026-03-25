@@ -30,11 +30,11 @@ class BigwigKwargs(TypedDict, total=False):
     color_group: str | None
     y_min: float | None
     y_max: float | None
-    style: PlotStyle
     color: str
-    fill: bool
     alpha: float
     linewidth: float
+    style: PlotStyle
+    fill: bool
     scatter_point_size: float
     show_baseline: bool
     baseline_color: str
@@ -67,17 +67,18 @@ class BigwigKwargs(TypedDict, total=False):
 
 class GenesKwargs(TypedDict, total=False):
     title: str | None
-    data: Path | str | DataFrame | None
+    data: Path | str | pd.DataFrame | None
     height: float
     autoscale_group: str | None
     color_group: str | None
     row_scale: float
     small_relative: float
     gene_count: int
-    style: PlotStyle
     color: str
-    fill: bool
     alpha: float
+    linewidth: float
+    style: PlotStyle
+    fill: bool
     display: DisplayMode
     minimum_gene_length: int
     max_number_of_rows: int
@@ -135,6 +136,8 @@ class AxisKwargs(TypedDict, total=False):
     color_group: str | None
     show_chromosome: bool
     color: str
+    alpha: float
+    linewidth: float
     font_size: int
     num_ticks: int
     use_human_readable_labels: bool
@@ -169,8 +172,10 @@ class ScalebarKwargs(TypedDict, total=False):
     height: float
     autoscale_group: str | None
     color_group: str | None
-    style: PlotStyle
     color: str
+    alpha: float
+    linewidth: float
+    style: PlotStyle
     position: Position
     scale_distance: float | None
     font_size: int
@@ -229,8 +234,9 @@ class BedKwargs(TypedDict, total=False):
     autoscale_group: str | None
     color_group: str | None
     color: str
-    edge_color: str
     alpha: float
+    linewidth: float
+    edge_color: str
     interval_height: float
     display: DisplayMode
     max_rows: int
@@ -298,8 +304,9 @@ class BigwigCollectionKwargs(TypedDict, total=False):
     autoscale_group: str | None
     color_group: str | None
     colors: list[str] | None
-    labels: list[str] | None
     alpha: float
+    linewidth: float
+    labels: list[str] | None
     style: CollectionStyle
     plot_title: bool
     plot_scale: bool
@@ -328,9 +335,11 @@ class BigwigDiffKwargs(TypedDict, total=False):
     autoscale_group: str | None
     color_group: str | None
     method: BigWigDiffMethod
+    color: str
+    alpha: float
+    linewidth: float
     positive_color: str
     negative_color: str
-    linewidth: float
     bar_alpha: float
     zero_line_color: str
     zero_line_width: float
@@ -363,6 +372,7 @@ class BigwigOverlayKwargs(TypedDict, total=False):
     color_group: str | None
     colors: list[str] | None
     alpha: float
+    linewidth: float
     show_labels: bool
     min_value: float | None
     max_value: float | None
@@ -394,6 +404,7 @@ class OverlayKwargs(TypedDict, total=False):
     color_group: str | None
     colors: list[str] | None
     alpha: float
+    linewidth: float
     show_labels: bool
     min_value: float | None
     max_value: float | None
@@ -423,8 +434,9 @@ class NarrowpeakKwargs(TypedDict, total=False):
     autoscale_group: str | None
     color_group: str | None
     color: str
-    edge_color: str
     alpha: float
+    linewidth: float
+    edge_color: str
     interval_height: float
     display: DisplayMode
     max_rows: int
@@ -466,9 +478,9 @@ class LinksKwargs(TypedDict, total=False):
     autoscale_group: str | None
     color_group: str | None
     color: str
-    edge_color: str | None
     alpha: float
     linewidth: float
+    edge_color: str | None
     cmap: str
     max_height: float
     color_by_score: bool
@@ -502,8 +514,8 @@ class HighlightsKwargs(TypedDict, total=False):
     color_group: str | None
     color: str
     alpha: float
-    edge_color: str | None
     linewidth: float
+    edge_color: str | None
     plot_title: bool
     plot_scale: bool
     label_on_track: bool
@@ -531,9 +543,9 @@ class HlineKwargs(TypedDict, total=False):
     autoscale_group: str | None
     color_group: str | None
     color: str
-    linestyle: str
-    linewidth: float
     alpha: float
+    linewidth: float
+    linestyle: str
     zorder: int
     plot_title: bool
     plot_scale: bool
@@ -562,9 +574,9 @@ class VlineKwargs(TypedDict, total=False):
     autoscale_group: str | None
     color_group: str | None
     color: str
-    linestyle: str
-    linewidth: float
     alpha: float
+    linewidth: float
+    linestyle: str
     zorder: int
     plot_title: bool
     plot_scale: bool

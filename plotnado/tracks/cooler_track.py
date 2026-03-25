@@ -5,8 +5,9 @@ import numpy as np
 from pydantic import BaseModel, ConfigDict, Field
 
 from .base import Track
-from .enums import CoolerTransform
+from .enums import CoolerTransform, TrackType
 from .region import GenomicRegion
+from .registry import registry
 from .utils import clean_axis
 
 
@@ -40,6 +41,7 @@ class CoolerAesthetics(BaseModel):
         self.max_value = value
 
 
+@registry.register(TrackType.COOLER)
 class CoolerTrack(Track):
     file: str = Field(description="Path to cooler/mcool matrix file.")
     resolution: int | None = Field(
@@ -102,11 +104,13 @@ class CoolerTrack(Track):
         clean_axis(ax)
 
 
+@registry.register(TrackType.CAPCRUNCHER)
 class CapcruncherTrack(CoolerTrack):
     viewpoint: str | None = Field(default=None, description="Optional viewpoint identifier for capture-centric views.")
     normalisation: str | None = Field(default=None, description="Optional normalization mode label.")
 
 
+@registry.register(TrackType.COOLER_AVERAGE)
 class CoolerAverage(Track):
     files: list[str] = Field(description="List of cooler/mcool files to average.")
     resolution: int | None = Field(
