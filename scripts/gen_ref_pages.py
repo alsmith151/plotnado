@@ -5,6 +5,7 @@ from pathlib import Path
 import mkdocs_gen_files
 
 from plotnado.figure import GenomicFigure
+from plotnado.tracks.registry import registry
 
 nav = mkdocs_gen_files.Nav()
 
@@ -69,7 +70,7 @@ def _generate_aesthetics_reference() -> None:
     class_by_name: dict[str, type] = {}
     for alias, class_name in alias_map.items():
         class_by_aliases.setdefault(class_name, []).append(alias)
-        track_cls = GenomicFigure._alias_map()[alias]
+        track_cls = registry.get(alias).cls
         class_by_name[class_name] = track_cls
 
     lines = [

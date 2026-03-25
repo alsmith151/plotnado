@@ -1,4 +1,4 @@
-"""Tests for generated Figure overload blocks in figure.py."""
+"""Tests for generated Figure overload blocks in figure_methods.py."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 GENERATOR_PATH = REPO_ROOT / "scripts" / "generate_figure_overloads.py"
-FIGURE_PATH = REPO_ROOT / "plotnado" / "figure.py"
+FIGURE_PATH = REPO_ROOT / "plotnado" / "figure_methods.py"
 
 
 def _load_generator_module():
@@ -27,7 +27,7 @@ def test_generated_figure_overloads_are_up_to_date() -> None:
     actual_content = FIGURE_PATH.read_text()
 
     assert actual_content == expected_content, (
-        "plotnado/figure.py auto-generated overload blocks are out of date. "
+        "plotnado/figure_methods.py auto-generated overload blocks are out of date. "
         "Run `python scripts/generate_figure_overloads.py` from the repository root "
         "and commit the updated file."
     )

@@ -19,8 +19,8 @@ GenomicFigure.available_track_aliases()
 PlotNado requires Python 3.12+.
 
 ```bash
-python --version
-mkdocs build --strict
+uv run python --version
+uv run mkdocs build --strict
 ```
 
 ## TOML export/import errors
@@ -28,5 +28,5 @@ mkdocs build --strict
 Install optional dependencies:
 
 ```bash
-pip install -e .[docs]
+uv sync --extra docs
 ```

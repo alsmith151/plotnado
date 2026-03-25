@@ -68,7 +68,9 @@ class GenomicRegion(BaseModel):
         )
 
     def __str__(self) -> str:
-        return f"{self.chromosome}:{self.start}-{self.end}({self.strand})"
+        # Convert strand to string value in case it's an enum
+        strand_str = self.strand.value if isinstance(self.strand, Strand) else self.strand
+        return f"{self.chromosome}:{self.start}-{self.end}({strand_str})"
 
     @classmethod
     def from_str(cls, region_str: str) -> "GenomicRegion":

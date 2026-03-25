@@ -6,8 +6,11 @@ import matplotlib.axes
 from pydantic import Field
 from .base import GenomicRegion, Track
 from .utils import clean_axis
+from .enums import TrackType
+from .registry import registry
 
 
+@registry.register(TrackType.SPACER)
 class Spacer(Track):
     """
     Empty spacer track for adding vertical space.

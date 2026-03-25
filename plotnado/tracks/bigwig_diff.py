@@ -3,30 +3,35 @@
 import matplotlib.axes
 import numpy as np
 import pandas as pd
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import Field
 
 from .base import Track, TrackLabeller
 from .bigwig import BigWigTrack
-from .enums import BigWigDiffMethod
+from .enums import BigWigDiffMethod, TrackType
 from .region import GenomicRegion
 from .utils import clean_axis
+from .aesthetics import BaseAesthetics
+from .registry import registry
 
 
-class BigWigDiffAesthetics(BaseModel):
-    """Visual configuration for BigWigDiff tracks."""
+class BigWigDiffAesthetics(BaseAesthetics):
+    """Visual configuration for BigWigDiff tracks.
+
+    Inherits color, alpha, and linewidth from BaseAesthetics.
+    """
 
     positive_color: str = Field(default="#d62728", description="Bar color for positive differences.")
     negative_color: str = Field(default="#1f77b4", description="Bar color for negative differences.")
-    linewidth: float = Field(default=0.7, description="Edge line width for diff bars.")
     bar_alpha: float = Field(default=0.45, description="Opacity of diff bars (0-1).")
     zero_line_color: str = Field(default="#333333", description="Color of the horizontal zero baseline.")
     zero_line_width: float = Field(default=0.6, description="Line width for the zero baseline.")
     zero_line_alpha: float = Field(default=0.8, description="Opacity of the zero baseline.")
 
-    model_config = ConfigDict(use_enum_values=True)
 
-
+@registry.register(TrackType.BIGWIG_DIFF)
 class BigWigDiff(Track):
+    """Difference track for two BigWig signals."""
+
     file_a: str = Field(description="Path to first BigWig input.")
     file_b: str = Field(description="Path to second BigWig input.")
     method: BigWigDiffMethod = Field(

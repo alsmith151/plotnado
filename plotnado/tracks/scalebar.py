@@ -4,19 +4,23 @@ Scale bar track for showing genomic distances.
 
 import matplotlib.axes
 import matplotlib.patches
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import Field
 
 from .region import GenomicRegion
 from .base import Track
 from .utils import clean_axis, format_distance
-from .enums import PlotStyle, Position
+from .enums import PlotStyle, Position, TrackType
+from .aesthetics import BaseAesthetics
+from .registry import registry
 
 
-class ScaleBarAesthetics(BaseModel):
-    """Visual configuration for scale bars."""
+class ScaleBarAesthetics(BaseAesthetics):
+    """Visual configuration for scale bars.
+
+    Inherits color, alpha, and linewidth from BaseAesthetics.
+    """
 
     style: PlotStyle = Field(default=PlotStyle.STD, description="Scale bar style variant.")
-    color: str = Field(default="#333333", description="Color of scale bar line, ticks, and label.")
     position: Position = Field(default=Position.LEFT, description="Horizontal anchor of the scale bar.")
     scale_distance: float | None = Field(
         default=None,
@@ -32,9 +36,8 @@ class ScaleBarAesthetics(BaseModel):
         description="Vertical distance between bar baseline and text label.",
     )
 
-    model_config = ConfigDict(use_enum_values=True)
 
-
+@registry.register(TrackType.SCALEBAR, aliases=["scale"])
 class ScaleBar(Track):
     """
     Track showing a scale bar with distance annotation.

@@ -10,34 +10,33 @@ import matplotlib.colors
 import matplotlib.patches
 import matplotlib.path
 import pandas as pd
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import ConfigDict, Field
 
 from .region import GenomicRegion
 from .base import Track, TrackLabeller
 from .utils import clean_axis
+from .enums import TrackType
+from .aesthetics import BaseAesthetics
+from .registry import registry
 
 
-class LinksAesthetics(BaseModel):
+class LinksAesthetics(BaseAesthetics):
     """
     Aesthetics configuration for Links tracks.
 
+    Inherits color, alpha, and linewidth from BaseAesthetics.
+
     Attributes:
-        color: Default color for arcs
         edge_color: Edge color for arcs (usually same as color)
-        alpha: Transparency (0-1)
-        linewidth: Width of arc lines
         cmap: Colormap to use for score-based coloring
         max_height: Maximum height of arcs relative to track height (0-1)
         color_by_score: Whether to use the score column for coloring
     """
 
-    color: str = Field(default="steelblue", description="Default arc color when score coloring is disabled.")
     edge_color: str | None = Field(
         default=None,
         description="Optional stroke override for arc edges.",
     )
-    alpha: float = Field(default=0.55, description="Opacity of interaction arcs (0-1).")
-    linewidth: float = Field(default=0.8, description="Line width for interaction arcs.")
     cmap: str = Field(default="viridis", description="Colormap used when coloring arcs by score.")
     max_height: float = Field(
         default=0.8,
@@ -61,6 +60,7 @@ class LinksAesthetics(BaseModel):
     )
 
 
+@registry.register(TrackType.LINKS)
 class LinksTrack(Track):
     """
     Track for displaying genomic links/arcs (e.g., Hi-C loops, ChIA-PET).

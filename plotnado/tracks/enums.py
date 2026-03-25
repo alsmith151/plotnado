@@ -115,13 +115,60 @@ class ScalingMethod(str, Enum):
 
 
 class TrackType(str, Enum):
-    """Available track types for Figure.add_track()."""
+    """All available track types, used in both the Python API and YAML templates.
 
+    Values match the string aliases accepted by ``GenomicFigure.add_track()``
+    and the ``type`` field in YAML template files.
+
+    Example:
+        >>> from plotnado.tracks.enums import TrackType
+        >>> TrackType.BIGWIG
+        <TrackType.BIGWIG: 'bigwig'>
+        >>> TrackType("bigwig")
+        <TrackType.BIGWIG: 'bigwig'>
+    """
+
+    # Signal tracks
     BIGWIG = "bigwig"
-    GENES = "genes"
-    SCALEBAR = "scalebar"
-    SCALE = "scale"  # Alias for scalebar
-    SPACER = "spacer"
+    BEDGRAPH = "bedgraph"          # Rendered by BigWigTrack
+    BIGWIG_DIFF = "bigwig_diff"
+    BIGWIG_COLLECTION = "bigwig_collection"
+    BIGWIG_OVERLAY = "bigwig_overlay"
+
+    # Interval tracks
     BED = "bed"
-    GENOMIC_AXIS = "axis"
+    ANNOTATION = "annotation"      # Semantic alias for BED
+    NARROWPEAK = "narrowpeak"
+    LINKS = "links"
+
+    # Gene annotation
+    GENE = "gene"
+    GENES = "genes"                # Alias accepted by add_track()
+
+    # Guide tracks
+    SCALEBAR = "scalebar"
+    SCALE = "scale"                # Alias for scalebar
+    AXIS = "axis"
+    SPACER = "spacer"
+
+    # Overlay
+    OVERLAY = "overlay"
+
+    # Highlight / annotation lines
     HIGHLIGHT = "highlight"
+    HLINE = "hline"
+    VLINE = "vline"
+
+    # Hi-C / contact matrices
+    COOLER = "cooler"
+    CAPCRUNCHER = "capcruncher"
+    COOLER_AVERAGE = "cooler_average"
+
+    # QuantNado multi-omics
+    QUANTNADO_COVERAGE = "quantnado_coverage"
+    QUANTNADO_STRANDED_COVERAGE = "quantnado_stranded_coverage"
+    QUANTNADO_METHYLATION = "quantnado_methylation"
+    QUANTNADO_VARIANT = "quantnado_variant"
+
+    # Fallback
+    UNKNOWN = "unknown"            # Falls back to BED rendering

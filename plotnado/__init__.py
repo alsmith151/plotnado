@@ -7,6 +7,8 @@ without heavy dependencies like CoolBox.
 
 from .figure import GenomicFigure
 from .theme import Theme
+from .template import Template, TrackSpec, GuideSpec, GroupSpec
+from .render import TemplateCompiler, RenderPlan, ResolvedTrack
 from .tracks import (
     # Enums
     CollectionStyle,
@@ -77,6 +79,15 @@ except ImportError:
 __all__ = [
     "GenomicFigure",
     "Theme",
+    # Template system
+    "Template",
+    "TrackSpec",
+    "GuideSpec",
+    "GroupSpec",
+    # Render pipeline
+    "TemplateCompiler",
+    "RenderPlan",
+    "ResolvedTrack",
     # Enums
     "DisplayMode",
     "CollectionStyle",

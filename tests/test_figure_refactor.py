@@ -16,6 +16,8 @@ from plotnado.tracks import (
     BedTrack,
     BigWigTrack,
     BigwigAesthetics,
+    CapcruncherTrack,
+    CoolerAverage,
     LabelConfig,
 
     QuantNadoCoverageTrack,
@@ -223,6 +225,17 @@ class TestFigureRefactor:
         assert isinstance(fig.tracks[1], QuantNadoStrandedCoverageTrack)
         assert isinstance(fig.tracks[2], QuantNadoMethylationTrack)
         assert isinstance(fig.tracks[3], QuantNadoVariantTrack)
+
+    def test_matrix_helper_methods_append_expected_tracks(self):
+        fig = GenomicFigure(theme=None)
+        fig.cooler("example.cool")
+        fig.capcruncher("example.cool", viewpoint="VP1")
+        fig.cooler_average(["a.cool", "b.cool"])
+
+        assert fig.tracks[0].__class__.__name__ == "CoolerTrack"
+        assert isinstance(fig.tracks[1], CapcruncherTrack)
+        assert isinstance(fig.tracks[2], CoolerAverage)
+
     def test_extend_parameter(self):
         fig = GenomicFigure().add_track(ScaleBar())
         out = fig.plot("chr1:100-200", show=False, extend=0.5)
@@ -438,9 +451,9 @@ class TestFigureRefactor:
         expected_first = mcolors.to_hex(cmap(0))
         expected_second = mcolors.to_hex(cmap(1))
 
-        assert fig.tracks[0].color == "#666666"
-        assert fig.tracks[1].color == "#333333"
-        assert fig.tracks[2].color == "yellow"
+        assert fig.tracks[0].color == "steelblue"  # axis default (from BaseAesthetics)
+        assert fig.tracks[1].color == "steelblue"  # scalebar default (from BaseAesthetics)
+        assert fig.tracks[2].color == "steelblue"  # highlight default (from BaseAesthetics)
         assert fig.tracks[3].color == expected_first
         assert fig.tracks[4].color == expected_second
 

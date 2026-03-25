@@ -12,7 +12,8 @@ from .bed import BedTrack, BedAesthetics
 from .base import TrackLabeller
 from .region import GenomicRegion
 from .utils import clean_axis
-from .enums import DisplayMode, NarrowPeakColorBy
+from .enums import DisplayMode, NarrowPeakColorBy, TrackType
+from .registry import registry
 
 
 class NarrowPeakAesthetics(BedAesthetics):
@@ -50,6 +51,7 @@ class NarrowPeakAesthetics(BedAesthetics):
     summit_width: float = Field(default=0.8, description="Line width of summit marker lines.")
 
 
+@registry.register(TrackType.NARROWPEAK)
 class NarrowPeakTrack(BedTrack):
     """
     Track for displaying NarrowPeak intervals.

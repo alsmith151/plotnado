@@ -2,12 +2,19 @@
 
 ![PlotNado logo](assets/plotnado-logo.svg)
 
-PlotNado is a Python library for clean, publication-ready genome browser figures with a fast, chainable API.
+PlotNado is a Python library for clean, publication-ready genome browser figures.
+
+It exposes two parallel interfaces:
+
+- A fluent Python API for programmatic figure construction
+- A CLI that turns genomic files into editable YAML templates and rendered plots
 
 ## Install
 
 ```bash
-pip install plotnado
+uv venv
+source .venv/bin/activate
+uv pip install plotnado
 ```
 
 ## Preferred workflow style
@@ -27,6 +34,16 @@ gf.axis()
 gf.plot_gene("GNAQ")
 ```
 
+## Template-driven workflow
+
+```bash
+plotnado init *.bw peaks/*.narrowpeak --auto --output template.yaml
+plotnado validate template.yaml
+plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output region.png
+```
+
+Templates can also be consumed from Python with `GenomicFigure.from_template("template.yaml")`.
+
 ## Read by task
 
 - New environment setup: [Installation](installation.md)
@@ -34,4 +51,5 @@ gf.plot_gene("GNAQ")
 - Ways to add tracks: [Track Construction](quickstart_tracks.md)
 - Production guidance: [Best Practices](best_practices.md)
 - Track families and support matrix: [Track Catalog](track_catalog.md)
-- CLI and runtime option discovery: [CLI](cli.md) and [API Reference](api_reference.md)
+- Template workflow and command reference: [CLI](cli.md)
+- API details and runtime option discovery: [API Reference](api_reference.md)
