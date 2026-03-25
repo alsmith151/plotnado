@@ -1,10 +1,14 @@
 """Theme primitives for figure-level default styling."""
 
 from enum import Enum
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, Field, model_validator
 
 from .tracks.base import LabelConfig
+
+if TYPE_CHECKING:
+    from .tracks.base import Track
 
 
 class BuiltinTheme(str, Enum):
@@ -133,3 +137,61 @@ class Theme(BaseModel):
         if builtin == BuiltinTheme.PUBLICATION:
             return cls.publication()
         raise ValueError(f"Unknown builtin theme: {value}")
+
+    def apply(self, track: "Track", palette_color: str | None = None) -> None:
+        """Apply theme defaults to a track's aesthetics and label config.
+
+        Only modifies fields that were not explicitly provided by the caller.
+        Explicit values are detected via ``model_fields_set`` on the aesthetics
+        Pydantic model.
+
+        Args:
+            track: A ``Track`` instance to update in place.
+            palette_color: Optional color from the figure's palette cycle. Applied
+                to ``track.aesthetics.color`` only if ``color`` was not explicitly
+                set on the track.
+
+        Example:
+            >>> theme = Theme.publication()
+            >>> track = BigWigTrack(data="signal.bw")
+            >>> theme.apply(track, palette_color="#FF9D1B")
+        """
+        aes = track.aesthetics
+        if aes is None:
+            return
+
+        if palette_color is not None and "color" not in aes.model_fields_set:
+            if hasattr(aes, "color"):
+                aes.color = palette_color
+
+        for field_name, default_val in self._aesthetic_defaults().items():
+            if (
+                default_val is not None
+                and field_name not in aes.model_fields_set
+                and hasattr(aes, field_name)
+            ):
+                setattr(aes, field_name, default_val)
+
+        # Merge label config: theme values are defaults; track-explicit overrides win
+        merged = self.label.model_dump()
+        merged.update({
+            k: v
+            for k, v in track.label.model_dump().items()
+            if k in track.label.model_fields_set
+        })
+        track.label = LabelConfig(**merged)
+
+    def _aesthetic_defaults(self) -> dict[str, Any]:
+        """Return theme fields that map directly to aesthetics field names.
+
+        Returns:
+            Dict of field_name → value for fields that are not ``None``.
+        """
+        return {
+            k: v for k, v in {
+                "alpha": self.alpha,
+                "linewidth": self.linewidth,
+                "font_size": self.font_size,
+                "cmap": self.cmap,
+            }.items() if v is not None
+        }
