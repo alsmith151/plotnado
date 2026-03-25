@@ -5,25 +5,31 @@ Annotation tracks for horizontal and vertical reference lines.
 from typing import Any
 
 import matplotlib.axes
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from .region import GenomicRegion
 from .base import Track
+from .enums import TrackType
+from .aesthetics import BaseAesthetics
+from .registry import registry
 
 
-class AnnotationAesthetics(BaseModel):
+class AnnotationAesthetics(BaseAesthetics):
     """
-    Defines visual properties for annotation reference lines, including
-    color, linestyle, linewidth, alpha (opacity), and zorder for rendering
-    order in Matplotlib plots.
+    Defines visual properties for annotation reference lines.
+
+    Inherits color, alpha, and linewidth from BaseAesthetics.
+
+    Attributes:
+        linestyle: Matplotlib line style pattern for the line
+        zorder: Matplotlib z-order for rendering order
     """
-    color: str = Field(default="red", description="Color used to draw reference lines.")
+
     linestyle: str = Field(default="--", description="Matplotlib line style pattern for the line.")
-    linewidth: float = Field(default=1.0, description="Line width for the reference line.")
-    alpha: float = Field(default=0.8, description="Opacity of the reference line (0-1).")
     zorder: int = Field(default=10, description="Matplotlib z-order used when drawing the line.")
 
 
+@registry.register(TrackType.HLINE)
 class HLineTrack(Track):
     """
     Track for drawing a horizontal reference line.
@@ -52,6 +58,7 @@ class HLineTrack(Track):
         )
 
 
+@registry.register(TrackType.VLINE)
 class VLineTrack(Track):
     """
     Track for drawing a vertical reference line at a genomic position.

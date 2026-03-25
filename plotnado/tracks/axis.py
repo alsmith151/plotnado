@@ -5,25 +5,26 @@ Genomic axis track for showing coordinate scale.
 import matplotlib.axes
 import matplotlib.ticker
 import numpy as np
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import Field
 
 from .region import GenomicRegion
 from .base import Track
-from .enums import FontWeight
+from .enums import FontWeight, TrackType
+from .aesthetics import BaseAesthetics
+from .registry import registry
 
 
-class GenomicAxisAesthetics(BaseModel):
+class GenomicAxisAesthetics(BaseAesthetics):
     """
     Aesthetics configuration for genomic axis.
 
+    Inherits color, alpha, and linewidth from BaseAesthetics.
+
     Attributes:
-        color: Color for axis line and labels
         font_size: Font size for tick labels
         num_ticks: Approximate number of ticks to display
         show_chromosome: Whether to show chromosome name
     """
-
-    color: str = Field(default="#666666", description="Color of axis baseline and chromosome label.")
     font_size: int = Field(default=9, description="Font size for tick and chromosome labels.")
     num_ticks: int = Field(default=5, description="Target number of tick marks across the region.")
     show_chromosome: bool = Field(default=True, description="Render chromosome name label near the axis.")
@@ -40,9 +41,8 @@ class GenomicAxisAesthetics(BaseModel):
         description="Font weight of the chromosome text label.",
     )
 
-    model_config = ConfigDict(use_enum_values=True)
 
-
+@registry.register(TrackType.AXIS)
 class GenomicAxis(Track):
     """
     Track showing genomic coordinates as an axis.

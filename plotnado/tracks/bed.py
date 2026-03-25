@@ -8,30 +8,30 @@ from typing import Any
 import matplotlib.axes
 import matplotlib.patches
 import pandas as pd
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import ConfigDict, Field, BaseModel
 
 from .region import GenomicRegion
 from .base import Track, TrackLabeller
 from .utils import clean_axis, read_bed_regions
-from .enums import DisplayMode
+from .enums import DisplayMode, TrackType
+from .aesthetics import BaseAesthetics
+from .registry import registry
 
 
-class BedAesthetics(BaseModel):
+class BedAesthetics(BaseAesthetics):
     """
     Aesthetics configuration for BED tracks.
 
+    Inherits color, alpha, and linewidth from BaseAesthetics.
+
     Attributes:
-        color: Fill color for intervals
         edge_color: Edge color for intervals
-        alpha: Transparency (0-1)
         interval_height: Height of each interval (0-1)
         display: Display mode (collapsed or expanded)
         max_rows: Maximum number of rows for expanded display
     """
 
-    color: str = Field(default="steelblue", description="Fill color for interval rectangles.")
     edge_color: str = Field(default="black", description="Stroke color for interval borders.")
-    alpha: float = Field(default=0.78, description="Opacity of interval rectangles (0-1).")
     interval_height: float = Field(
         default=0.45,
         description="Rectangle height in normalized track coordinates.",
@@ -51,6 +51,7 @@ class BedAesthetics(BaseModel):
     draw_edges: bool = Field(default=True, description="Draw rectangle borders for intervals.")
 
 
+@registry.register(TrackType.BED, aliases=["annotation", "unknown"])
 class BedTrack(Track):
     """
     Track for displaying BED intervals.
