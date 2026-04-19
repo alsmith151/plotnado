@@ -436,8 +436,9 @@ class TrackLabeller(BaseModel):
                 if self.title_location == "left"
                 else gr.end - (0.01 * gr.length)
             )
-            y_pos = self.y_delta * self.title_height
+            y_pos = self.y_min + (self.y_delta * self.title_height)
             h_align = "left" if self.title_location == "left" else "right"
+        title_bbox = self._text_bbox() or self._default_text_bbox(0.6)
 
         ax.text(
             x_pos,
@@ -445,7 +446,7 @@ class TrackLabeller(BaseModel):
             self.title,
             horizontalalignment=h_align,
             verticalalignment="top",
-            bbox=self._text_bbox(),
+            bbox=title_bbox,
             fontdict={
                 "size": self.title_size,
                 "color": self.title_color,
@@ -478,14 +479,15 @@ class TrackLabeller(BaseModel):
             else gr.start + (0.01 * gr.length)
         )
         h_align = "right" if location == "right" else "left"
+        scale_bbox = self._text_bbox() or self._default_text_bbox(0.6)
 
         ax.text(
             x_pos,
-            self.y_delta * self.scale_height,
+            self.y_min + (self.y_delta * self.scale_height),
             f"[ {y_min} - {y_max} ]",
             horizontalalignment=h_align,
             verticalalignment="top",
-            bbox=self._text_bbox(),
+            bbox=scale_bbox,
             fontdict={
                 "size": self.scale_size,
                 "color": self.scale_color,

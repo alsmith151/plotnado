@@ -61,7 +61,8 @@ class _RecordingQuantNado:
         self.coverage_calls: list[dict] = []
         self._coverage = coverage
         coverage_responses = {"+": coverage_fwd, "-": coverage_rev}
-        self.coverage = _RecordingStore({k: v for k, v in coverage_responses.items() if v is not None})
+        stranded_coverage = {k: v for k, v in coverage_responses.items() if v is not None}
+        self.coverage = _RecordingStore(stranded_coverage or coverage)
         self.methylation = _RecordingStore(
             {"methylation_pct": methylation} if methylation is not None else {}
         )
@@ -164,11 +165,26 @@ class TestQuantNadoObjectMode:
         gr = GenomicRegion(chromosome="chr1", start=100, end=105)
         da = _make_dataarray([1, 2, 3, 4, 5])
         qn = _RecordingQuantNado(coverage=da)
-        track = QuantNadoCoverageTrack(sample="s1", quantnado=qn)
+        track = QuantNadoCoverageTrack(
+            sample="s1",
+            quantnado=qn,
+            scaling_factor=2.0,
+            normalize="rpkm",
+        )
         fetched = track.fetch_data(gr)
 
         assert fetched["position"].tolist() == [100, 101, 102, 103, 104]
-        assert qn.coverage_calls == [{"region": "chr1:100-105", "samples": ["s1"]}]
+        assert fetched["value"].tolist() == [2.0, 4.0, 6.0, 8.0, 10.0]
+        assert qn.coverage.calls == [
+            {
+                "region": "chr1:100-105",
+                "samples": ["s1"],
+                "as_xarray": False,
+                "normalise": None,
+                "normalize": "rpkm",
+                "library_sizes": None,
+            }
+        ]
 
     def test_stranded_calls_coverage_store_with_strands(self):
         gr = GenomicRegion(chromosome="chr1", start=100, end=103)
@@ -177,14 +193,35 @@ class TestQuantNadoObjectMode:
             coverage_fwd=_make_dataarray([1, 2, 3]),
             coverage_rev=_make_dataarray([3, 2, 1]),
         )
-        track = QuantNadoStrandedCoverageTrack(sample="s1", quantnado=qn)
+        track = QuantNadoStrandedCoverageTrack(
+            sample="s1",
+            quantnado=qn,
+            scaling_factor=0.5,
+            normalise="cpm",
+        )
         fetched = track.fetch_data(gr)
 
-        assert fetched["forward"].tolist() == [1.0, 2.0, 3.0]
-        assert fetched["reverse"].tolist() == [3.0, 2.0, 1.0]
+        assert fetched["forward"].tolist() == [0.5, 1.0, 1.5]
+        assert fetched["reverse"].tolist() == [1.5, 1.0, 0.5]
         assert qn.coverage.calls == [
-            {"region": "chr1:100-103", "samples": ["s1"], "strand": "+"},
-            {"region": "chr1:100-103", "samples": ["s1"], "strand": "-"},
+            {
+                "region": "chr1:100-103",
+                "samples": ["s1"],
+                "as_xarray": False,
+                "strand": "+",
+                "normalise": "cpm",
+                "normalize": None,
+                "library_sizes": None,
+            },
+            {
+                "region": "chr1:100-103",
+                "samples": ["s1"],
+                "as_xarray": False,
+                "strand": "-",
+                "normalise": "cpm",
+                "normalize": None,
+                "library_sizes": None,
+            },
         ]
 
     def test_methylation_calls_store_with_variable(self):

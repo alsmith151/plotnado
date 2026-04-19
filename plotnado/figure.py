@@ -355,6 +355,10 @@ class GenomicFigure(GenomicFigureMethods):
         self._apply_autocolor()
         return self
 
+    def defaults(self, genome: str = "hg38", palette: str | list[str] | None = None) -> Self:
+        """Apply the standard scaffold: autocolor, scalebar, and genes."""
+        return self.autocolor(palette=palette).scalebar().genes(genome)
+
     def _apply_autocolor(self) -> None:
         if self._autocolor_palette is None:
             return
@@ -555,7 +559,13 @@ class GenomicFigure(GenomicFigureMethods):
 
         hspace = self.theme.subplot_hspace if self.theme is not None else 0.08
         gs = GridSpec(len(main_tracks), 1, height_ratios=heights, hspace=hspace)
-        axes = [fig.add_subplot(gs[index]) for index in range(len(main_tracks))]
+        axes: list[matplotlib.axes.Axes] = []
+        for index in range(len(main_tracks)):
+            if index == 0:
+                ax = fig.add_subplot(gs[index])
+            else:
+                ax = fig.add_subplot(gs[index], sharex=axes[0])
+            axes.append(ax)
 
         def create_overlay_ax(zorder: int, label: str):
             ax = fig.add_axes(axes[0].get_position(), label=label, zorder=zorder)
