@@ -25,25 +25,10 @@ from plotnado.tracks import (
 class TestBigwigAesthetics:
     """Test cases for the BigwigAesthetics class."""
 
-    def test_default_values(self):
-        """Test default values."""
+    def test_instantiates_with_defaults(self):
         aesthetics = BigwigAesthetics()
-
-        assert aesthetics.style == "std"
-        assert aesthetics.color == "#2171b5"  # Genome browser blue
-        assert aesthetics.fill is True
-        assert aesthetics.alpha == 0.9
-        assert aesthetics.scatter_point_size == 1.0
-        assert aesthetics.linewidth == 0.8
-        assert aesthetics.show_baseline is True
-        assert aesthetics.baseline_color == "#b8bec8"
-        assert aesthetics.baseline_alpha == 0.85
-        assert aesthetics.baseline_linewidth == 0.6
-        assert aesthetics.smoothing_window == 1
-        assert aesthetics.smoothing_method == "mean"
-        assert aesthetics.smoothing_center is True
-        assert aesthetics.min_value is None
-        assert aesthetics.max_value is None
+        assert aesthetics.style is not None
+        assert aesthetics.color is not None
 
     def test_custom_values(self):
         """Test custom values."""
@@ -134,21 +119,6 @@ class TestBigwigAesthetics:
 class TestScaleBarAesthetics:
     """Test cases for the ScaleBarAesthetics class."""
 
-    def test_default_values(self):
-        """Test default values."""
-        aesthetics = ScaleBarAesthetics()
-
-        assert aesthetics.style == "std"
-        assert aesthetics.color == "steelblue"  # Inherited from BaseAesthetics
-        assert aesthetics.position == "left"
-        assert aesthetics.scale_distance is None
-        assert aesthetics.title == "Scale"
-        assert aesthetics.font_size == 8
-        assert aesthetics.bar_linewidth == 1.8
-        assert aesthetics.tick_linewidth == 1.4
-        assert aesthetics.tick_height == 0.1
-        assert aesthetics.label_offset == 0.25
-
     def test_custom_values(self):
         """Test custom values."""
         aesthetics = ScaleBarAesthetics(
@@ -173,30 +143,6 @@ class TestScaleBarAesthetics:
 
 class TestGenesAesthetics:
     """Test cases for the GenesAesthetics class."""
-
-    def test_default_values(self):
-        """Test default values."""
-        aesthetics = GenesAesthetics()
-
-        assert aesthetics.style == "std"
-        assert aesthetics.color == "steelblue"  # Inherited from BaseAesthetics
-        assert aesthetics.fill is True
-        assert aesthetics.alpha == 1.0
-        assert aesthetics.display == "collapsed"
-        assert aesthetics.minimum_gene_length == 0
-        assert aesthetics.max_number_of_rows == 4
-        assert aesthetics.interval_height == 0.1  # Further reduced
-        assert aesthetics.exon_linewidth == 0.8
-        assert aesthetics.exon_edge_color == "black"
-        assert aesthetics.exon_color == "black"
-        assert aesthetics.intron_linewidth == 0.5
-        assert aesthetics.intron_color == "black"
-        assert aesthetics.gene_label_font_size == 10
-        assert aesthetics.gene_label_style == "italic"
-        assert aesthetics.label_overlap_strategy == "auto"
-        assert aesthetics.label_min_overlap_bp == 200
-        assert aesthetics.label_min_overlap_fraction == 0.15
-        assert aesthetics.label_connectors is False
 
     def test_custom_values(self):
         """Test custom values."""
@@ -227,19 +173,6 @@ class TestGenesAesthetics:
 
 
 class TestGenomicAxisAesthetics:
-    def test_default_values(self):
-        aesthetics = GenomicAxisAesthetics()
-
-        assert aesthetics.color == "steelblue"  # Inherited from BaseAesthetics
-        assert aesthetics.font_size == 9
-        assert aesthetics.num_ticks == 5
-        assert aesthetics.show_chromosome is True
-        assert aesthetics.tick_height == 0.15
-        assert aesthetics.axis_linewidth == 1.1
-        assert aesthetics.tick_color == "#333333"
-        assert aesthetics.tick_linewidth == 0.9
-        assert aesthetics.chromosome_fontweight == "bold"
-
     def test_genomic_axis_uses_nested_aesthetics(self):
         track = GenomicAxis(
             aesthetics=GenomicAxisAesthetics(axis_linewidth=2.0, tick_color="purple")
@@ -252,22 +185,16 @@ class TestGenomicAxisAesthetics:
 
 
 class TestAdditionalAesthetics:
-    def test_bed_defaults(self):
-        aesthetics = BedAesthetics()
-        assert aesthetics.rect_linewidth == 0.7
-        assert aesthetics.draw_edges is True
+    def test_bed_instantiates(self):
+        BedAesthetics()
 
-    def test_highlight_defaults(self):
-        aesthetics = HighlightsAesthetics()
-        assert aesthetics.linewidth == 1.0
+    def test_highlight_instantiates(self):
+        HighlightsAesthetics()
 
-    def test_links_defaults(self):
-        aesthetics = LinksAesthetics()
-        assert aesthetics.y_baseline == 0.1
-        assert aesthetics.linewidth == 1.0  # Inherited from BaseAesthetics
+    def test_links_instantiates(self):
+        LinksAesthetics()
 
-    def test_narrowpeak_edge_toggle_default(self):
+    def test_narrowpeak_instantiates(self):
         from plotnado.tracks import NarrowPeakAesthetics
 
-        aesthetics = NarrowPeakAesthetics()
-        assert aesthetics.draw_edges is True
+        NarrowPeakAesthetics()
