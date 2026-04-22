@@ -6,6 +6,7 @@ without heavy dependencies like CoolBox.
 """
 
 from .figure import GenomicFigure
+from .igv import parse_igv_session, IgvSession
 from .theme import Theme
 from .template import Template, TrackSpec, GuideSpec, GroupSpec
 from .render import TemplateCompiler, RenderPlan, ResolvedTrack
@@ -78,6 +79,8 @@ except ImportError:
 
 __all__ = [
     "GenomicFigure",
+    "parse_igv_session",
+    "IgvSession",
     "Theme",
     # Template system
     "Template",

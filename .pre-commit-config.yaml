@@ -18,7 +18,7 @@ repos:
         pass_filenames: false
       - id: check-generated-figure-stub-clean
         name: Ensure plotnado figure.pyi is committed
-        entry: python -c "import pathlib, subprocess, sys; p=pathlib.Path('plotnado/figure.pyi'); r=subprocess.run(['git','diff','--',str(p)], capture_output=True, text=True); sys.exit(0 if r.returncode==0 and not r.stdout else (print('plotnado/figure.pyi changed. Re-run generator and commit the file.'),1)[1])"
+        entry: env PYTHONPATH=. python -c "import importlib.util, pathlib, sys; gp=pathlib.Path('scripts/generate_figure_stub.py'); spec=importlib.util.spec_from_file_location('generate_figure_stub', gp); mod=importlib.util.module_from_spec(spec); spec.loader.exec_module(mod); fp=pathlib.Path('plotnado/figure.pyi'); sys.exit(0 if fp.read_text()==mod.generate() else (print('plotnado/figure.pyi is out of date. Run python scripts/generate_figure_stub.py and commit the result.'), 1)[1])"
         language: system
         pass_filenames: false
       - id: generate-figure-overloads
@@ -28,6 +28,6 @@ repos:
         pass_filenames: false
       - id: check-generated-figure-overloads-clean
         name: Ensure Figure overload blocks are committed
-        entry: env PYTHONPATH=. python -c "import importlib.util, pathlib, sys; gp=pathlib.Path('scripts/generate_figure_overloads.py'); spec=importlib.util.spec_from_file_location('generate_figure_overloads', gp); mod=importlib.util.module_from_spec(spec); spec.loader.exec_module(mod); fp=pathlib.Path('plotnado/figure.py'); sys.exit(0 if fp.read_text()==mod.generate() else (print('plotnado/figure.py auto-generated overload blocks are out of date. Run python scripts/generate_figure_overloads.py and commit the result.'), 1)[1])"
+        entry: env PYTHONPATH=. python -c "import importlib.util, pathlib, sys; gp=pathlib.Path('scripts/generate_figure_overloads.py'); spec=importlib.util.spec_from_file_location('generate_figure_overloads', gp); mod=importlib.util.module_from_spec(spec); spec.loader.exec_module(mod); fp=pathlib.Path('plotnado/figure_methods.py'); sys.exit(0 if fp.read_text()==mod.generate() else (print('plotnado/figure_methods.py auto-generated overload blocks are out of date. Run python scripts/generate_figure_overloads.py and commit the result.'), 1)[1])"
         language: system
         pass_filenames: false

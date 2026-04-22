@@ -155,6 +155,37 @@ class GenomicFigure(GenomicFigureMethods):
 
         return fig
 
+    @classmethod
+    def from_igv_session(
+        cls,
+        path: str | Path,
+        *,
+        width: float | None = None,
+        theme: Theme | BuiltinTheme | str | None = BuiltinTheme.PUBLICATION,
+    ) -> tuple[GenomicFigure, str | None]:
+        """Build a GenomicFigure from a saved IGV session XML file.
+
+        Args:
+            path: Path to the IGV session ``.xml`` file.
+            width: Override figure width in inches.
+            theme: Theme to apply. Defaults to the publication theme.
+
+        Returns:
+            A tuple of ``(GenomicFigure, locus)`` where ``locus`` is the
+            session's saved view region (e.g. ``"chr11:6211915-6260069"``),
+            or ``None`` if absent.
+
+        Example::
+
+            fig, locus = GenomicFigure.from_igv_session("session.xml")
+            fig.plot(locus)
+        """
+        from .igv import parse_igv_session
+
+        session = parse_igv_session(path)
+        fig = cls.from_template(session.template, width=width, theme=theme)
+        return fig, session.locus
+
     @staticmethod
     def _resolve_theme(theme: Theme | BuiltinTheme | str | None) -> Theme | None:
         if theme is None:
@@ -168,12 +199,119 @@ class GenomicFigure(GenomicFigureMethods):
                 f"Unknown builtin theme: {theme}. Available: {[item.value for item in BuiltinTheme]}"
             ) from exc
 
-    def add_track(self, track: str | Track, **kwargs: Any) -> Self:
+    def __getitem__(self, key: int | str) -> Track:
+        """Return a track by index or title for direct mutation.
+
+        Args:
+            key: Integer index into ``self.tracks``, or a title string (case-insensitive,
+                matched against ``track.title``).
+
+        Raises:
+            KeyError: If no track with the given title is found.
+            IndexError: If the integer index is out of range.
+
+        Example::
+
+            fig["25_NK"].color = "steelblue"
+            fig[0].height = 2.0
+        """
+        if isinstance(key, int):
+            return self.tracks[key]
+        key_lower = key.lower()
+        for track in self.tracks:
+            if track.title is not None and track.title.lower() == key_lower:
+                return track
+        raise KeyError(f"No track with title {key!r}")
+
+    def update_track(
+        self,
+        key: int | str | None = None,
+        *,
+        track_type: str | type[Track] | None = None,
+        group: str | None = None,
+        where: Any = None,
+        **kwargs: Any,
+    ) -> Self:
+        """Update fields on one or more tracks in-place and return self for chaining.
+
+        Pass ``key`` to update a single track by title or index. Omit ``key``
+        to update all tracks, optionally filtered by ``track_type``, ``group``,
+        or a ``where`` predicate. Filters are ANDed together.
+
+        Args:
+            key: Title string or integer index of a single track to update.
+                Omit (or pass ``None``) to update multiple tracks.
+            track_type: Restrict bulk updates to tracks of this type — a class
+                (e.g. ``BigWigTrack``) or alias string (e.g. ``"bigwig"``).
+            group: Restrict bulk updates to tracks whose ``autoscale_group`` matches.
+            where: ``Callable[[Track], bool]`` for arbitrary bulk filtering.
+            **kwargs: Fields to set (title, height, color, min_value, …).
+
+        Example::
+
+            fig.update_track("CAT-MV411_H3K27ac", color="purple", max_value=500)
+            fig.update_track(height=0.2)
+            fig.update_track(track_type="bigwig", color="steelblue")
+            fig.update_track(group="igv_group_3", max_value=1000.0)
+            fig.update_track(where=lambda t: t.title and t.title.startswith("CD"), height=0.5)
+        """
+        if key is not None:
+            track = self[key]
+            for field, value in kwargs.items():
+                setattr(track, field, value)
+            return self
+
+        from .tracks.registry import registry as _registry
+
+        resolved_cls: type[Track] | None = None
+        if isinstance(track_type, str):
+            resolved_cls = _registry.get(track_type).cls
+        elif track_type is not None:
+            resolved_cls = track_type
+
+        for track in self.tracks:
+            if resolved_cls is not None and not isinstance(track, resolved_cls):
+                continue
+            if group is not None and track.autoscale_group != group:
+                continue
+            if where is not None and not where(track):
+                continue
+            for field, value in kwargs.items():
+                setattr(track, field, value)
+        return self
+
+    def update_tracks(self, *, track_type: str | type[Track] | None = None, group: str | None = None, where: Any = None, **kwargs: Any) -> Self:
+        """Alias for ``update_track()`` with no key. Prefer ``update_track``."""
+        return self.update_track(track_type=track_type, group=group, where=where, **kwargs)
+
+    def remove_track(self, key: int | str) -> Self:
+        """Remove a track by index or title and return self for chaining.
+
+        Args:
+            key: Integer index into ``self.tracks``, or a title string
+                (case-insensitive).
+
+        Raises:
+            KeyError: If no track with the given title is found.
+            IndexError: If the integer index is out of range.
+
+        Example::
+
+            fig.remove_track("25_NK")
+            fig.remove_track(0)
+        """
+        track = self[key]
+        self.tracks.remove(track)
+        return self
+
+    def add_track(self, track: str | Track, *, position: str = "bottom", **kwargs: Any) -> Self:
         """Add a track instance or track alias to the figure.
 
         Args:
             track: Track instance or alias (for example `"bigwig"`, `"genes"`).
-            **kwargs: Parameters used when `track` is provided as an alias.
+            position: Where to insert the track — ``"bottom"`` (default, appends
+                after existing tracks) or ``"top"`` (prepends before all tracks).
+            **kwargs: Parameters used when ``track`` is provided as an alias.
 
         Returns:
             Self, enabling method chaining.
@@ -185,7 +323,11 @@ class GenomicFigure(GenomicFigureMethods):
         if self.theme is not None:
             self.theme.apply(track)
 
-        self.tracks.append(track)
+        if position == "top":
+            self.tracks.insert(0, track)
+        else:
+            self.tracks.append(track)
+
         if self._autocolor_palette is not None:
             self._apply_autocolor()
         else:

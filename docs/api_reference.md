@@ -58,10 +58,28 @@ gf.bigwig("sampleA.bw", title="A signal", color_group="sampleA")
 
 ## Common entry points
 
-- `plotnado.GenomicFigure`: high-level composition (`add_track`, `plot`, `plot_regions`, `plot_gene`, `from_template`, `to_toml`, `from_toml`).
+- `plotnado.GenomicFigure`: high-level composition (`add_track`, `plot`, `plot_regions`, `plot_gene`, `from_template`, `from_igv_session`, `to_toml`, `from_toml`).
 - `plotnado.Template`: YAML model used by the CLI and `GenomicFigure.from_template()`.
 - `plotnado.TemplateCompiler`: converts a `Template` into a reusable render plan.
 - `plotnado.Theme`: built-in or custom visual defaults.
 - `plotnado.tracks.*`: concrete track classes when you want explicit model construction.
+- `plotnado.parse_igv_session`: parse an IGV session XML into an `IgvSession` (`.template`, `.locus`, `.genome`).
+
+## Track editing
+
+After a figure is built, tracks can be edited in-place.
+
+| Method | Description |
+| --- | --- |
+| `fig["title"]` / `fig[i]` | Access a track by title (case-insensitive) or index |
+| `fig.update_track(key, **kw)` | Update fields on one track |
+| `fig.update_track(**kw)` | Update all tracks (no key) |
+| `fig.update_track(track_type=…, **kw)` | Bulk update filtered by type |
+| `fig.update_track(group=…, **kw)` | Bulk update filtered by autoscale group |
+| `fig.update_track(where=fn, **kw)` | Bulk update with a predicate |
+| `fig.remove_track(key)` | Remove a track by title or index |
+| `fig.add_track(…, position="top")` | Prepend instead of append |
+
+All editing methods return `self` for chaining.
 
 For practical usage, prefer [Quick Start](quickstart.md), [Track Catalog](track_catalog.md), and [Recipes](recipes.md).
