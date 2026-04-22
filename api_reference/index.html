@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>API Reference - PlotNado Documentation</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../css/brands.min.css" rel="stylesheet">
+        <link href="../css/solid.min.css" rel="stylesheet">
+        <link href="../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">PlotNado Documentation</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href=".." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../reference/" class="nav-link">Reference</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../aesthetics/" class="nav-link">Aesthetics</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../cli/" class="nav-link">CLI</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../changelog/" class="nav-link">Changelog</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/alsmith151/plotnado/edit/master/docs/api_reference.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#api-reference" class="nav-link">API Reference</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#discover-options-at-runtime" class="nav-link">Discover options at runtime</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#genomicfigure-helper-methods-automatic-kwargs" class="nav-link">GenomicFigure helper methods: automatic kwargs</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#common-entry-points" class="nav-link">Common entry points</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#track-editing" class="nav-link">Track editing</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h1>
+<p>Use this section when you need API-level details beyond the task-oriented guides.</p>
+<ul>
+<li>Generated module/class reference: <a href="reference/SUMMARY.md">Reference Summary</a></li>
+<li>Auto-generated options reference for every track: <a href="aesthetics_reference.md">Aesthetics Reference</a></li>
+</ul>
+<h2 id="discover-options-at-runtime">Discover options at runtime<a class="headerlink" href="#discover-options-at-runtime" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><span class="kn">from</span><span class="w"> </span><span class="nn">plotnado</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenomicFigure</span><span class="p">,</span> <span class="n">BigWigTrack</span><span class="p">,</span> <span class="n">list_options</span>
+</span><span id="__span-0-2">
+</span><span id="__span-0-3"><span class="n">GenomicFigure</span><span class="o">.</span><span class="n">available_track_aliases</span><span class="p">()</span>
+</span><span id="__span-0-4"><span class="n">GenomicFigure</span><span class="o">.</span><span class="n">track_options</span><span class="p">(</span><span class="s2">&quot;bigwig&quot;</span><span class="p">)</span>
+</span><span id="__span-0-5"><span class="n">GenomicFigure</span><span class="o">.</span><span class="n">track_options_markdown</span><span class="p">(</span><span class="s2">&quot;bigwig&quot;</span><span class="p">)</span>
+</span><span id="__span-0-6">
+</span><span id="__span-0-7"><span class="n">BigWigTrack</span><span class="o">.</span><span class="n">options</span><span class="p">()</span>
+</span><span id="__span-0-8"><span class="n">BigWigTrack</span><span class="o">.</span><span class="n">options_markdown</span><span class="p">()</span>
+</span><span id="__span-0-9"><span class="n">list_options</span><span class="p">(</span><span class="n">BigWigTrack</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Each option payload is split into:</p>
+<ul>
+<li><code>track</code>: top-level constructor fields.</li>
+<li><code>aesthetics</code>: style model fields (<code>aesthetics={...}</code> or shorthand kwargs).</li>
+<li><code>label</code>: label controls (<code>label={...}</code> or shorthand kwargs).</li>
+</ul>
+<h2 id="genomicfigure-helper-methods-automatic-kwargs"><code>GenomicFigure</code> helper methods: automatic kwargs<a class="headerlink" href="#genomicfigure-helper-methods-automatic-kwargs" title="Permanent link">&para;</a></h2>
+<p>For helper methods like <code>gf.bigwig(...)</code>, kwargs can be provided in shorthand form and PlotNado routes them automatically:</p>
+<ul>
+<li>Track fields: passed directly.</li>
+<li>Aesthetics fields: routed into <code>aesthetics</code>.</li>
+<li>Label fields: routed into <code>label</code>.</li>
+</ul>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><span class="kn">from</span><span class="w"> </span><span class="nn">plotnado</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenomicFigure</span>
+</span><span id="__span-1-2">
+</span><span id="__span-1-3"><span class="n">gf</span> <span class="o">=</span> <span class="n">GenomicFigure</span><span class="p">()</span>
+</span><span id="__span-1-4"><span class="n">gf</span><span class="o">.</span><span class="n">bigwig</span><span class="p">(</span>
+</span><span id="__span-1-5">    <span class="s2">&quot;signal.bw&quot;</span><span class="p">,</span>
+</span><span id="__span-1-6">    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Sample A&quot;</span><span class="p">,</span>      <span class="c1"># label</span>
+</span><span id="__span-1-7">    <span class="n">title_color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>   <span class="c1"># label</span>
+</span><span id="__span-1-8">    <span class="n">style</span><span class="o">=</span><span class="s2">&quot;std&quot;</span><span class="p">,</span>           <span class="c1"># aesthetics</span>
+</span><span id="__span-1-9">    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#1f77b4&quot;</span><span class="p">,</span>       <span class="c1"># aesthetics</span>
+</span><span id="__span-1-10">    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>             <span class="c1"># aesthetics</span>
+</span><span id="__span-1-11"><span class="p">)</span>
+</span></code></pre></div>
+<p><code>color_group</code> is a track-level kwarg and works well with <code>gf.autocolor()</code> for consistent sample coloring:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><span class="n">gf</span> <span class="o">=</span> <span class="n">GenomicFigure</span><span class="p">(</span><span class="n">theme</span><span class="o">=</span><span class="s2">&quot;publication&quot;</span><span class="p">)</span>
+</span><span id="__span-2-2"><span class="n">gf</span><span class="o">.</span><span class="n">autocolor</span><span class="p">()</span>
+</span><span id="__span-2-3"><span class="n">gf</span><span class="o">.</span><span class="n">bed</span><span class="p">(</span><span class="s2">&quot;sampleA.bigBed&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;A peaks&quot;</span><span class="p">,</span> <span class="n">color_group</span><span class="o">=</span><span class="s2">&quot;sampleA&quot;</span><span class="p">)</span>
+</span><span id="__span-2-4"><span class="n">gf</span><span class="o">.</span><span class="n">bigwig</span><span class="p">(</span><span class="s2">&quot;sampleA.bw&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;A signal&quot;</span><span class="p">,</span> <span class="n">color_group</span><span class="o">=</span><span class="s2">&quot;sampleA&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="common-entry-points">Common entry points<a class="headerlink" href="#common-entry-points" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>plotnado.GenomicFigure</code>: high-level composition (<code>add_track</code>, <code>plot</code>, <code>plot_regions</code>, <code>plot_gene</code>, <code>from_template</code>, <code>from_igv_session</code>, <code>to_toml</code>, <code>from_toml</code>).</li>
+<li><code>plotnado.Template</code>: YAML model used by the CLI and <code>GenomicFigure.from_template()</code>.</li>
+<li><code>plotnado.TemplateCompiler</code>: converts a <code>Template</code> into a reusable render plan.</li>
+<li><code>plotnado.Theme</code>: built-in or custom visual defaults.</li>
+<li><code>plotnado.tracks.*</code>: concrete track classes when you want explicit model construction.</li>
+<li><code>plotnado.parse_igv_session</code>: parse an IGV session XML into an <code>IgvSession</code> (<code>.template</code>, <code>.locus</code>, <code>.genome</code>).</li>
+</ul>
+<h2 id="track-editing">Track editing<a class="headerlink" href="#track-editing" title="Permanent link">&para;</a></h2>
+<p>After a figure is built, tracks can be edited in-place.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fig["title"]</code> / <code>fig[i]</code></td>
+<td>Access a track by title (case-insensitive) or index</td>
+</tr>
+<tr>
+<td><code>fig.update_track(key, **kw)</code></td>
+<td>Update fields on one track</td>
+</tr>
+<tr>
+<td><code>fig.update_track(**kw)</code></td>
+<td>Update all tracks (no key)</td>
+</tr>
+<tr>
+<td><code>fig.update_track(track_type=…, **kw)</code></td>
+<td>Bulk update filtered by type</td>
+</tr>
+<tr>
+<td><code>fig.update_track(group=…, **kw)</code></td>
+<td>Bulk update filtered by autoscale group</td>
+</tr>
+<tr>
+<td><code>fig.update_track(where=fn, **kw)</code></td>
+<td>Bulk update with a predicate</td>
+</tr>
+<tr>
+<td><code>fig.remove_track(key)</code></td>
+<td>Remove a track by title or index</td>
+</tr>
+<tr>
+<td><code>fig.add_track(…, position="top")</code></td>
+<td>Prepend instead of append</td>
+</tr>
+</tbody>
+</table>
+<p>All editing methods return <code>self</code> for chaining.</p>
+<p>For practical usage, prefer <a href="../quickstart/">Quick Start</a>, <a href="../track_catalog/">Track Catalog</a>, and <a href="../recipes/">Recipes</a>.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js"></script>
+        <script src="../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

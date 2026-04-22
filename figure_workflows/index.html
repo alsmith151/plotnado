@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Figure Workflows - PlotNado Documentation</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../css/brands.min.css" rel="stylesheet">
+        <link href="../css/solid.min.css" rel="stylesheet">
+        <link href="../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">PlotNado Documentation</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href=".." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../reference/" class="nav-link">Reference</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../aesthetics/" class="nav-link">Aesthetics</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../cli/" class="nav-link">CLI</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../changelog/" class="nav-link">Changelog</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/alsmith151/plotnado/edit/master/docs/figure_workflows.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#figure-workflows" class="nav-link">Figure Workflows</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#single-region-plot" class="nav-link">Single region plot</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#extend-around-region" class="nav-link">Extend around region</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#plot-many-regions" class="nav-link">Plot many regions</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#plot-by-gene-symbol" class="nav-link">Plot by gene symbol</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#load-from-an-igv-session" class="nav-link">Load from an IGV session</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#edit-tracks-after-building-a-figure" class="nav-link">Edit tracks after building a figure</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#save-and-load-figure-configs" class="nav-link">Save and load figure configs</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="figure-workflows">Figure Workflows<a class="headerlink" href="#figure-workflows" title="Permanent link">&para;</a></h1>
+<h2 id="single-region-plot">Single region plot<a class="headerlink" href="#single-region-plot" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><span class="n">gf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;chr1:1,000,000-1,100,000&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="extend-around-region">Extend around region<a class="headerlink" href="#extend-around-region" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><span class="n">gf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;chr1:1,000,000-1,050,000&quot;</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="plot-many-regions">Plot many regions<a class="headerlink" href="#plot-many-regions" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><span class="n">gf</span><span class="o">.</span><span class="n">plot_regions</span><span class="p">([</span><span class="s2">&quot;chr1:1,000,000-1,050,000&quot;</span><span class="p">,</span> <span class="s2">&quot;chr1:1,060,000-1,110,000&quot;</span><span class="p">],</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</span></code></pre></div>
+<p><code>plot_regions</code> also accepts a BED path.</p>
+<h2 id="plot-by-gene-symbol">Plot by gene symbol<a class="headerlink" href="#plot-by-gene-symbol" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><span class="n">gf</span><span class="o">.</span><span class="n">plot_gene</span><span class="p">(</span><span class="s2">&quot;GNAQ&quot;</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="load-from-an-igv-session">Load from an IGV session<a class="headerlink" href="#load-from-an-igv-session" title="Permanent link">&para;</a></h2>
+<p>Convert a saved IGV <code>.xml</code> session directly into a <code>GenomicFigure</code>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><span class="kn">from</span><span class="w"> </span><span class="nn">plotnado</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenomicFigure</span>
+</span><span id="__span-4-2">
+</span><span id="__span-4-3"><span class="n">fig</span><span class="p">,</span> <span class="n">locus</span> <span class="o">=</span> <span class="n">GenomicFigure</span><span class="o">.</span><span class="n">from_igv_session</span><span class="p">(</span><span class="s2">&quot;session.xml&quot;</span><span class="p">)</span>
+</span><span id="__span-4-4"><span class="n">fig</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">locus</span><span class="p">)</span>  <span class="c1"># locus is the session&#39;s saved view region</span>
+</span></code></pre></div>
+<p>Track colors, fixed scales (<code>min</code>/<code>max</code>), autoscale groups, and gene annotations are
+all preserved. The session locus is returned alongside the figure so you can use it
+directly or override it.</p>
+<p>For lower-level access, <code>parse_igv_session</code> returns the intermediate <code>IgvSession</code>
+object (<code>.template</code>, <code>.locus</code>, <code>.genome</code>):</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><span class="kn">from</span><span class="w"> </span><span class="nn">plotnado</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_igv_session</span><span class="p">,</span> <span class="n">GenomicFigure</span>
+</span><span id="__span-5-2">
+</span><span id="__span-5-3"><span class="n">session</span> <span class="o">=</span> <span class="n">parse_igv_session</span><span class="p">(</span><span class="s2">&quot;session.xml&quot;</span><span class="p">)</span>
+</span><span id="__span-5-4"><span class="n">fig</span> <span class="o">=</span> <span class="n">GenomicFigure</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">template</span><span class="p">)</span>
+</span><span id="__span-5-5"><span class="n">fig</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">locus</span><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="edit-tracks-after-building-a-figure">Edit tracks after building a figure<a class="headerlink" href="#edit-tracks-after-building-a-figure" title="Permanent link">&para;</a></h2>
+<p>Access and mutate individual tracks by title (case-insensitive) or index:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><span class="n">fig</span><span class="p">[</span><span class="s2">&quot;25_NK&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;steelblue&quot;</span>
+</span><span id="__span-6-2"><span class="n">fig</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mf">2.0</span>
+</span></code></pre></div>
+<p>Update a single track by key:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><span class="n">fig</span><span class="o">.</span><span class="n">update_track</span><span class="p">(</span><span class="s2">&quot;CAT-MV411_H3K27ac&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;purple&quot;</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Update multiple tracks at once — omit <code>key</code> and optionally filter:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><span class="n">fig</span><span class="o">.</span><span class="n">update_track</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>                                    <span class="c1"># all tracks</span>
+</span><span id="__span-8-2"><span class="n">fig</span><span class="o">.</span><span class="n">update_track</span><span class="p">(</span><span class="n">track_type</span><span class="o">=</span><span class="s2">&quot;bigwig&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>               <span class="c1"># by type</span>
+</span><span id="__span-8-3"><span class="n">fig</span><span class="o">.</span><span class="n">update_track</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="s2">&quot;igv_group_3&quot;</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mf">1000.0</span><span class="p">)</span>         <span class="c1"># by autoscale group</span>
+</span><span id="__span-8-4"><span class="n">fig</span><span class="o">.</span><span class="n">update_track</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">title</span> <span class="ow">and</span> <span class="s2">&quot;CD&quot;</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;coral&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Remove a track:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><span class="n">fig</span><span class="o">.</span><span class="n">remove_track</span><span class="p">(</span><span class="s2">&quot;25_NK&quot;</span><span class="p">)</span>
+</span><span id="__span-9-2"><span class="n">fig</span><span class="o">.</span><span class="n">remove_track</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Add a track at the top or bottom (default):</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><span class="n">fig</span><span class="o">.</span><span class="n">bigwig</span><span class="p">(</span><span class="s2">&quot;new.bw&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;extra&quot;</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">)</span>
+</span><span id="__span-10-2"><span class="n">fig</span><span class="o">.</span><span class="n">genes</span><span class="p">(</span><span class="s2">&quot;hg38&quot;</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>All editing methods return <code>self</code> for chaining:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><span class="p">(</span><span class="n">fig</span>
+</span><span id="__span-11-2">    <span class="o">.</span><span class="n">remove_track</span><span class="p">(</span><span class="s2">&quot;01_HSC&quot;</span><span class="p">)</span>
+</span><span id="__span-11-3">    <span class="o">.</span><span class="n">update_track</span><span class="p">(</span><span class="n">track_type</span><span class="o">=</span><span class="s2">&quot;bigwig&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+</span><span id="__span-11-4">    <span class="o">.</span><span class="n">bigwig</span><span class="p">(</span><span class="s2">&quot;new.bw&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;extra&quot;</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">)</span>
+</span><span id="__span-11-5"><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="save-and-load-figure-configs">Save and load figure configs<a class="headerlink" href="#save-and-load-figure-configs" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><span class="n">gf</span><span class="o">.</span><span class="n">to_toml</span><span class="p">(</span><span class="s2">&quot;figure.toml&quot;</span><span class="p">)</span>
+</span><span id="__span-12-2"><span class="n">loaded</span> <span class="o">=</span> <span class="n">GenomicFigure</span><span class="o">.</span><span class="n">from_toml</span><span class="p">(</span><span class="s2">&quot;figure.toml&quot;</span><span class="p">)</span>
+</span><span id="__span-12-3"><span class="n">loaded</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;figure.png&quot;</span><span class="p">,</span> <span class="s2">&quot;chr1:1,000,000-1,100,000&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>See <code>examples/recipes/02_theme_labels_toml.py</code> for a full round-trip script.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js"></script>
+        <script src="../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

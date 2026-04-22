@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Reference - PlotNado Documentation</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../css/brands.min.css" rel="stylesheet">
+        <link href="../css/solid.min.css" rel="stylesheet">
+        <link href="../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">PlotNado Documentation</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href=".." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="./" class="nav-link active" aria-current="page">Reference</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../aesthetics/" class="nav-link">Aesthetics</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../cli/" class="nav-link">CLI</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../changelog/" class="nav-link">Changelog</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href=".." class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../aesthetics/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/alsmith151/plotnado/edit/master/docs/reference.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#reference" class="nav-link">Reference</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#genomicfigure" class="nav-link">GenomicFigure</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#track-methods" class="nav-link">Track methods</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#figure-level-controls" class="nav-link">Figure-level controls</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#plotting-and-saving" class="nav-link">Plotting and saving</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#editing-after-build" class="nav-link">Editing after build</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#load-and-save-figure-configs" class="nav-link">Load and save figure configs</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#runtime-option-discovery" class="nav-link">Runtime option discovery</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h1>
+<h2 id="genomicfigure">GenomicFigure<a class="headerlink" href="#genomicfigure" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><span class="kn">from</span><span class="w"> </span><span class="nn">plotnado</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenomicFigure</span>
+</span><span id="__span-0-2">
+</span><span id="__span-0-3"><span class="n">fig</span> <span class="o">=</span> <span class="n">GenomicFigure</span><span class="p">(</span>
+</span><span id="__span-0-4">    <span class="n">width</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>           <span class="c1"># figure width in inches</span>
+</span><span id="__span-0-5">    <span class="n">track_height</span><span class="o">=</span><span class="mf">1.25</span><span class="p">,</span>  <span class="c1"># height multiplier per track</span>
+</span><span id="__span-0-6">    <span class="n">theme</span><span class="o">=</span><span class="s2">&quot;publication&quot;</span> <span class="c1"># &quot;default&quot; | &quot;minimal&quot; | &quot;publication&quot; | None</span>
+</span><span id="__span-0-7"><span class="p">)</span>
+</span></code></pre></div>
+<p>Every track method returns <code>self</code>, so calls can be chained or written sequentially.</p>
+<hr />
+<h2 id="track-methods">Track methods<a class="headerlink" href="#track-methods" title="Permanent link">&para;</a></h2>
+<h3 id="signal">Signal<a class="headerlink" href="#signal" title="Permanent link">&para;</a></h3>
+<h4 id="bigwigdata-kwargs"><code>bigwig(data, /, **kwargs)</code><a class="headerlink" href="#bigwigdata-kwargs" title="Permanent link">&para;</a></h4>
+<p>Continuous signal. <code>data</code> is a BigWig file path or a bedgraph-like DataFrame with columns <code>chrom</code>, <code>start</code>, <code>end</code>, <code>value</code>.</p>
+<p>Key kwargs:</p>
+<table>
+<thead>
+<tr>
+<th>Kwarg</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>style</code></td>
+<td><code>"std"</code></td>
+<td><code>"fill"</code> · <code>"fragment"</code> · <code>"scatter"</code> · <code>"std"</code></td>
+</tr>
+<tr>
+<td><code>color</code></td>
+<td><code>"steelblue"</code></td>
+<td>Fill/line color</td>
+</tr>
+<tr>
+<td><code>alpha</code></td>
+<td><code>1.0</code></td>
+<td>Opacity 0–1</td>
+</tr>
+<tr>
+<td><code>linewidth</code></td>
+<td><code>1.0</code></td>
+<td>Stroke width</td>
+</tr>
+<tr>
+<td><code>scatter_point_size</code></td>
+<td><code>1.0</code></td>
+<td>Marker size (scatter only)</td>
+</tr>
+<tr>
+<td><code>smoothing_window</code></td>
+<td>—</td>
+<td>Bin width for rolling average</td>
+</tr>
+<tr>
+<td><code>smoothing_method</code></td>
+<td><code>"mean"</code></td>
+<td><code>"mean"</code> or <code>"median"</code></td>
+</tr>
+<tr>
+<td><code>min_value</code> / <code>max_value</code></td>
+<td>—</td>
+<td>Fixed y-axis limits</td>
+</tr>
+</tbody>
+</table>
+<h4 id="overlaytracks-kwargs"><code>overlay(tracks, /, **kwargs)</code><a class="headerlink" href="#overlaytracks-kwargs" title="Permanent link">&para;</a></h4>
+<p>Multiple signals in one panel. <code>tracks</code> is a list of data sources (same formats as <code>bigwig</code>).</p>
+<p>Key kwargs: <code>colors</code> (list), <code>alpha</code>, <code>linewidth</code>.</p>
+<h4 id="bigwig_diffdata_a-data_b-kwargs"><code>bigwig_diff(data_a, data_b, /, **kwargs)</code><a class="headerlink" href="#bigwig_diffdata_a-data_b-kwargs" title="Permanent link">&para;</a></h4>
+<p>Difference track between two BigWig sources. <code>method</code> selects <code>"subtraction"</code>, <code>"ratio"</code>, or <code>"log2ratio"</code>.</p>
+<h4 id="bigwig_collectionfiles-kwargs"><code>bigwig_collection(files, /, **kwargs)</code><a class="headerlink" href="#bigwig_collectionfiles-kwargs" title="Permanent link">&para;</a></h4>
+<p>Multi-BigWig panel rendered as a heatmap or stacked lines. Pass a list of file paths.</p>
+<hr />
+<h3 id="intervals">Intervals<a class="headerlink" href="#intervals" title="Permanent link">&para;</a></h3>
+<h4 id="beddata-kwargs"><code>bed(data, /, **kwargs)</code><a class="headerlink" href="#beddata-kwargs" title="Permanent link">&para;</a></h4>
+<p>Rectangle intervals. <code>data</code> is a BED/BigBed file path or DataFrame with <code>chrom</code>, <code>start</code>, <code>end</code>, optional <code>name</code>.</p>
+<p>Key kwargs:</p>
+<table>
+<thead>
+<tr>
+<th>Kwarg</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>display</code></td>
+<td><code>"collapsed"</code></td>
+<td><code>"collapsed"</code> stacks on one row; <code>"expanded"</code> stacks overlaps</td>
+</tr>
+<tr>
+<td><code>color</code></td>
+<td><code>"steelblue"</code></td>
+<td>Fill color</td>
+</tr>
+<tr>
+<td><code>alpha</code></td>
+<td><code>1.0</code></td>
+<td>Opacity</td>
+</tr>
+<tr>
+<td><code>show_labels</code></td>
+<td><code>False</code></td>
+<td>Show interval name labels</td>
+</tr>
+<tr>
+<td><code>label_field</code></td>
+<td><code>"name"</code></td>
+<td>Column used for labels</td>
+</tr>
+<tr>
+<td><code>draw_edges</code></td>
+<td><code>True</code></td>
+<td>Outline rectangles</td>
+</tr>
+<tr>
+<td><code>interval_height</code></td>
+<td><code>0.45</code></td>
+<td>Rectangle height (normalized)</td>
+</tr>
+<tr>
+<td><code>max_rows</code></td>
+<td><code>5</code></td>
+<td>Maximum stacked rows</td>
+</tr>
+</tbody>
+</table>
+<h4 id="narrowpeakdata-kwargs"><code>narrowpeak(data, /, **kwargs)</code><a class="headerlink" href="#narrowpeakdata-kwargs" title="Permanent link">&para;</a></h4>
+<p>ENCODE narrowPeak format with summit markers and score-based coloring.</p>
+<p>Key kwargs (in addition to <code>bed</code> kwargs):</p>
+<table>
+<thead>
+<tr>
+<th>Kwarg</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>color_by</code></td>
+<td>—</td>
+<td>Column name to map color from (e.g. <code>"signalValue"</code>)</td>
+</tr>
+<tr>
+<td><code>cmap</code></td>
+<td><code>"Oranges"</code></td>
+<td>Colormap name when <code>color_by</code> is set</td>
+</tr>
+<tr>
+<td><code>show_summit</code></td>
+<td><code>False</code></td>
+<td>Draw a vertical summit line</td>
+</tr>
+</tbody>
+</table>
+<h4 id="linksdata-kwargs"><code>links(data, /, **kwargs)</code><a class="headerlink" href="#linksdata-kwargs" title="Permanent link">&para;</a></h4>
+<p>Interaction arcs (BEDPE format). <code>data</code> has columns <code>chrom1</code>, <code>start1</code>, <code>end1</code>, <code>chrom2</code>, <code>start2</code>, <code>end2</code>, optional <code>score</code>.</p>
+<p>Key kwargs: <code>color_by_score</code> (bool), <code>cmap</code>, <code>alpha</code>, <code>linewidth</code>.</p>
+<h4 id="highlightsdata-kwargs"><code>highlights(data, /, **kwargs)</code><a class="headerlink" href="#highlightsdata-kwargs" title="Permanent link">&para;</a></h4>
+<p>Shaded region overlays from a BED file. Use <code>highlight(region_str)</code> for inline string regions:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><span class="n">fig</span><span class="o">.</span><span class="n">highlight</span><span class="p">(</span><span class="s2">&quot;chr1:1,032,000-1,046,000&quot;</span><span class="p">)</span>
+</span><span id="__span-1-2"><span class="n">fig</span><span class="o">.</span><span class="n">highlight_style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;#ffdd57&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.22</span><span class="p">)</span>
+</span></code></pre></div>
+<h4 id="hliney_value-kwargs-vlinex_position-kwargs"><code>hline(y_value, /, **kwargs)</code> · <code>vline(x_position, /, **kwargs)</code><a class="headerlink" href="#hliney_value-kwargs-vlinex_position-kwargs" title="Permanent link">&para;</a></h4>
+<p>Horizontal or vertical reference lines. <code>color</code> and <code>linewidth</code> are the main kwargs.</p>
+<hr />
+<h3 id="annotation">Annotation<a class="headerlink" href="#annotation" title="Permanent link">&para;</a></h3>
+<h4 id="genesgenomehg38-kwargs"><code>genes(genome="hg38", /, **kwargs)</code><a class="headerlink" href="#genesgenomehg38-kwargs" title="Permanent link">&para;</a></h4>
+<p>Gene models from bundled annotations (<code>"hg38"</code>, <code>"mm10"</code>) or a custom BED12/GTF file path via <code>data=</code>.</p>
+<p>Key kwargs:</p>
+<table>
+<thead>
+<tr>
+<th>Kwarg</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>display</code></td>
+<td><code>"collapsed"</code></td>
+<td><code>"collapsed"</code> · <code>"expanded"</code></td>
+</tr>
+<tr>
+<td><code>minimum_gene_length</code></td>
+<td><code>0</code></td>
+<td>Hide genes shorter than this (bp)</td>
+</tr>
+<tr>
+<td><code>max_number_of_rows</code></td>
+<td><code>4</code></td>
+<td>Row limit in expanded mode</td>
+</tr>
+<tr>
+<td><code>show_labels</code></td>
+<td><code>True</code></td>
+<td>Gene name text</td>
+</tr>
+<tr>
+<td><code>gene_label_font_size</code></td>
+<td><code>10</code></td>
+<td>Label font size</td>
+</tr>
+<tr>
+<td><code>color</code></td>
+<td><code>"steelblue"</code></td>
+<td>Exon fill color</td>
+</tr>
+</tbody>
+</table>
+<h4 id="scalebarkwargs"><code>scalebar(**kwargs)</code><a class="headerlink" href="#scalebarkwargs" title="Permanent link">&para;</a></h4>
+<p>Genomic distance bar. Set <code>plot_scale=True</code> to show the numeric distance. Use <code>scale_location</code> (<code>"left"</code> · <code>"right"</code>) to position the text.</p>
+<h4 id="axiskwargs"><code>axis(**kwargs)</code><a class="headerlink" href="#axiskwargs" title="Permanent link">&para;</a></h4>
+<p>Coordinate tick labels. <code>num_ticks</code> controls tick density.</p>
+<h4 id="spacerheight05-kwargs"><code>spacer(height=0.5, **kwargs)</code><a class="headerlink" href="#spacerheight05-kwargs" title="Permanent link">&para;</a></h4>
+<p>Blank vertical gap between tracks.</p>
+<hr />
+<h2 id="figure-level-controls">Figure-level controls<a class="headerlink" href="#figure-level-controls" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><span class="n">fig</span><span class="o">.</span><span class="n">autoscale</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>                <span class="c1"># link y-axes of tracks that share autoscale_group</span>
+</span><span id="__span-2-2"><span class="n">fig</span><span class="o">.</span><span class="n">autocolor</span><span class="p">()</span>                    <span class="c1"># assign palette colors to tracks automatically</span>
+</span><span id="__span-2-3"><span class="n">fig</span><span class="o">.</span><span class="n">autocolor</span><span class="p">(</span><span class="s2">&quot;tab10&quot;</span><span class="p">)</span>             <span class="c1"># use a specific matplotlib palette</span>
+</span><span id="__span-2-4"><span class="n">fig</span><span class="o">.</span><span class="n">highlight</span><span class="p">(</span><span class="s2">&quot;chr1:1000000-1100000&quot;</span><span class="p">)</span>     <span class="c1"># shade a region on all tracks</span>
+</span><span id="__span-2-5"><span class="n">fig</span><span class="o">.</span><span class="n">highlight_style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;#ffdd57&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.22</span><span class="p">)</span>
+</span><span id="__span-2-6"><span class="n">fig</span><span class="o">.</span><span class="n">defaults</span><span class="p">(</span><span class="n">genome</span><span class="o">=</span><span class="s2">&quot;hg38&quot;</span><span class="p">)</span>        <span class="c1"># shortcut for autocolor + genes defaults</span>
+</span></code></pre></div>
+<h3 id="autoscale-groups">Autoscale groups<a class="headerlink" href="#autoscale-groups" title="Permanent link">&para;</a></h3>
+<p>Tracks sharing the same <code>autoscale_group</code> string are scaled to the same y-axis range after all data is loaded:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><span class="n">fig</span><span class="o">.</span><span class="n">autoscale</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-3-2"><span class="n">fig</span><span class="o">.</span><span class="n">bigwig</span><span class="p">(</span><span class="s2">&quot;a.bw&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">autoscale_group</span><span class="o">=</span><span class="s2">&quot;chip&quot;</span><span class="p">)</span>
+</span><span id="__span-3-3"><span class="n">fig</span><span class="o">.</span><span class="n">bigwig</span><span class="p">(</span><span class="s2">&quot;b.bw&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="n">autoscale_group</span><span class="o">=</span><span class="s2">&quot;chip&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="color-groups">Color groups<a class="headerlink" href="#color-groups" title="Permanent link">&para;</a></h3>
+<p>When using <code>autocolor()</code>, tracks with the same <code>color_group</code> string share one palette slot:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><span class="n">fig</span><span class="o">.</span><span class="n">autocolor</span><span class="p">()</span>
+</span><span id="__span-4-2"><span class="n">fig</span><span class="o">.</span><span class="n">bigwig</span><span class="p">(</span><span class="s2">&quot;a.bw&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;A signal&quot;</span><span class="p">,</span> <span class="n">color_group</span><span class="o">=</span><span class="s2">&quot;sample_a&quot;</span><span class="p">)</span>
+</span><span id="__span-4-3"><span class="n">fig</span><span class="o">.</span><span class="n">bed</span><span class="p">(</span><span class="s2">&quot;a.bed&quot;</span><span class="p">,</span>   <span class="n">title</span><span class="o">=</span><span class="s2">&quot;A peaks&quot;</span><span class="p">,</span>  <span class="n">color_group</span><span class="o">=</span><span class="s2">&quot;sample_a&quot;</span><span class="p">)</span>
+</span><span id="__span-4-4"><span class="n">fig</span><span class="o">.</span><span class="n">bigwig</span><span class="p">(</span><span class="s2">&quot;b.bw&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;B signal&quot;</span><span class="p">,</span> <span class="n">color_group</span><span class="o">=</span><span class="s2">&quot;sample_b&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<hr />
+<h2 id="plotting-and-saving">Plotting and saving<a class="headerlink" href="#plotting-and-saving" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><span class="n">fig</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;chr1:1,000,000-2,000,000&quot;</span><span class="p">)</span>                                         <span class="c1"># returns matplotlib Figure</span>
+</span><span id="__span-5-2"><span class="n">fig</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;chr1:1,000,000-2,000,000&quot;</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>                            <span class="c1"># extend viewport 25% each side</span>
+</span><span id="__span-5-3"><span class="n">fig</span><span class="o">.</span><span class="n">plot_gene</span><span class="p">(</span><span class="s2">&quot;GNAQ&quot;</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>                                            <span class="c1"># center on a gene</span>
+</span><span id="__span-5-4"><span class="n">fig</span><span class="o">.</span><span class="n">plot_regions</span><span class="p">([</span><span class="s2">&quot;chr1:1,000,000-2,000,000&quot;</span><span class="p">,</span> <span class="s2">&quot;chr2:5,000,000-6,000,000&quot;</span><span class="p">],</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="__span-5-5"><span class="n">fig</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;out.png&quot;</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="s2">&quot;chr1:1,000,000-2,000,000&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</span><span id="__span-5-6"><span class="n">fig</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;out.pdf&quot;</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="s2">&quot;GNAQ&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<hr />
+<h2 id="editing-after-build">Editing after build<a class="headerlink" href="#editing-after-build" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><span class="n">fig</span><span class="p">[</span><span class="s2">&quot;track title&quot;</span><span class="p">]</span>          <span class="c1"># access track by title (case-insensitive)</span>
+</span><span id="__span-6-2"><span class="n">fig</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>                      <span class="c1"># access by index</span>
+</span><span id="__span-6-3"><span class="n">fig</span><span class="p">[</span><span class="s2">&quot;track title&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;coral&quot;</span>  <span class="c1"># mutate in place</span>
+</span><span id="__span-6-4">
+</span><span id="__span-6-5"><span class="n">fig</span><span class="o">.</span><span class="n">update_track</span><span class="p">(</span><span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;purple&quot;</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>   <span class="c1"># one track</span>
+</span><span id="__span-6-6"><span class="n">fig</span><span class="o">.</span><span class="n">update_track</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>                               <span class="c1"># all tracks</span>
+</span><span id="__span-6-7"><span class="n">fig</span><span class="o">.</span><span class="n">update_track</span><span class="p">(</span><span class="n">track_type</span><span class="o">=</span><span class="s2">&quot;bigwig&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>          <span class="c1"># by type</span>
+</span><span id="__span-6-8"><span class="n">fig</span><span class="o">.</span><span class="n">update_track</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="s2">&quot;group_1&quot;</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>          <span class="c1"># by autoscale group</span>
+</span><span id="__span-6-9"><span class="n">fig</span><span class="o">.</span><span class="n">update_track</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="s2">&quot;CD&quot;</span> <span class="ow">in</span> <span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">title</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;coral&quot;</span><span class="p">)</span>
+</span><span id="__span-6-10">
+</span><span id="__span-6-11"><span class="n">fig</span><span class="o">.</span><span class="n">remove_track</span><span class="p">(</span><span class="s2">&quot;title&quot;</span><span class="p">)</span>
+</span><span id="__span-6-12"><span class="n">fig</span><span class="o">.</span><span class="n">remove_track</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-6-13">
+</span><span id="__span-6-14"><span class="n">fig</span><span class="o">.</span><span class="n">bigwig</span><span class="p">(</span><span class="s2">&quot;extra.bw&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;extra&quot;</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">)</span>     <span class="c1"># prepend</span>
+</span></code></pre></div>
+<p>All editing methods return <code>self</code>.</p>
+<hr />
+<h2 id="load-and-save-figure-configs">Load and save figure configs<a class="headerlink" href="#load-and-save-figure-configs" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><span class="c1"># From a YAML template (CLI or hand-written)</span>
+</span><span id="__span-7-2"><span class="n">fig</span> <span class="o">=</span> <span class="n">GenomicFigure</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span><span class="s2">&quot;template.yaml&quot;</span><span class="p">)</span>
+</span><span id="__span-7-3">
+</span><span id="__span-7-4"><span class="c1"># From an IGV session XML</span>
+</span><span id="__span-7-5"><span class="n">fig</span><span class="p">,</span> <span class="n">locus</span> <span class="o">=</span> <span class="n">GenomicFigure</span><span class="o">.</span><span class="n">from_igv_session</span><span class="p">(</span><span class="s2">&quot;session.xml&quot;</span><span class="p">)</span>
+</span><span id="__span-7-6"><span class="n">fig</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">locus</span><span class="p">)</span>
+</span><span id="__span-7-7">
+</span><span id="__span-7-8"><span class="c1"># TOML round-trip</span>
+</span><span id="__span-7-9"><span class="n">fig</span><span class="o">.</span><span class="n">to_toml</span><span class="p">(</span><span class="s2">&quot;figure.toml&quot;</span><span class="p">)</span>
+</span><span id="__span-7-10"><span class="n">fig2</span> <span class="o">=</span> <span class="n">GenomicFigure</span><span class="o">.</span><span class="n">from_toml</span><span class="p">(</span><span class="s2">&quot;figure.toml&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<hr />
+<h2 id="runtime-option-discovery">Runtime option discovery<a class="headerlink" href="#runtime-option-discovery" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><span class="n">GenomicFigure</span><span class="o">.</span><span class="n">available_track_aliases</span><span class="p">()</span>           <span class="c1"># all registered aliases</span>
+</span><span id="__span-8-2"><span class="n">GenomicFigure</span><span class="o">.</span><span class="n">track_options</span><span class="p">(</span><span class="s2">&quot;bigwig&quot;</span><span class="p">)</span>             <span class="c1"># dict of all kwargs + defaults</span>
+</span><span id="__span-8-3"><span class="n">GenomicFigure</span><span class="o">.</span><span class="n">track_options_markdown</span><span class="p">(</span><span class="s2">&quot;bigwig&quot;</span><span class="p">)</span>    <span class="c1"># print-friendly table</span>
+</span></code></pre></div></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js"></script>
+        <script src="../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
