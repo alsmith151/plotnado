@@ -32,7 +32,48 @@ class GenomicFigure:
         theme: Theme | BuiltinTheme | str | None = ...,
     ) -> None: ...
 
-    def add_track(self, track: str | Track, **kwargs: Any) -> Self: ...
+    @classmethod
+    def from_template(
+        cls,
+        path: str | Path,
+        *,
+        width: float | None = ...,
+        theme: Theme | BuiltinTheme | str | None = ...,
+    ) -> GenomicFigure: ...
+
+    @classmethod
+    def from_igv_session(
+        cls,
+        path: str | Path,
+        *,
+        width: float | None = ...,
+        theme: Theme | BuiltinTheme | str | None = ...,
+    ) -> tuple[GenomicFigure, str | None]: ...
+
+    def __getitem__(self, key: int | str) -> Track: ...
+
+    def update_track(
+        self,
+        key: int | str | None = ...,
+        *,
+        track_type: str | type[Track] | None = ...,
+        group: str | None = ...,
+        where: Any = ...,
+        **kwargs: Any,
+    ) -> Self: ...
+
+    def update_tracks(
+        self,
+        *,
+        track_type: str | type[Track] | None = ...,
+        group: str | None = ...,
+        where: Any = ...,
+        **kwargs: Any,
+    ) -> Self: ...
+
+    def remove_track(self, key: int | str) -> Self: ...
+
+    def add_track(self, track: str | Track, *, position: str = ..., **kwargs: Any) -> Self: ...
 
     def bigwig(self, data: Any, /, *,
             title: str | None = None,
@@ -41,9 +82,9 @@ class GenomicFigure:
             color_group: str | None = None,
             y_min: float | None = None,
             y_max: float | None = None,
-            color: str = '#2171b5',
-            alpha: float = 0.9,
-            linewidth: float = 0.8,
+            color: str = 'steelblue',
+            alpha: float = 1.0,
+            linewidth: float = 1.0,
             style: PlotStyle = PlotStyle.STD,
             fill: bool = True,
             scatter_point_size: float = 1.0,
@@ -699,9 +740,9 @@ class GenomicFigure:
             height: float = 1.0,
             autoscale_group: str | None = None,
             color_group: str | None = None,
-            scaling_factor: float = 1.0,
             quantnado: Any | None = None,
             dataset_path: str | None = None,
+            scaling_factor: float = 1.0,
             normalise: str | None = None,
             normalize: str | None = None,
             library_sizes: pd.Series | dict | None = None,
@@ -743,9 +784,9 @@ class GenomicFigure:
             height: float = 1.0,
             autoscale_group: str | None = None,
             color_group: str | None = None,
-            scaling_factor: float = 1.0,
             quantnado: Any | None = None,
             dataset_path: str | None = None,
+            scaling_factor: float = 1.0,
             normalise: str | None = None,
             normalize: str | None = None,
             library_sizes: pd.Series | dict | None = None,
@@ -866,8 +907,57 @@ class GenomicFigure:
             scale_weight: FontWeight = FontWeight.NORMAL,
         ) -> Self: ...
 
+    def __repr__(self) -> str: ...
+
+    def _repr_html_(self) -> str: ...
+
+    def autocolor(self, palette: str | list[str] | None = None) -> Self: ...
+
+    def autoscale(self, enable: bool = True) -> Self: ...
+
     @classmethod
     def available_track_aliases(cls) -> dict[str, str]: ...
+
+    def defaults(self, genome: str = 'hg38', palette: str | list[str] | None = None) -> Self: ...
+
+    @classmethod
+    def from_toml(cls, path: str) -> GenomicFigure: ...
+
+    def highlight(self, region: str | GenomicRegion) -> Self: ...
+
+    def highlight_style(self, color: str | None = None, alpha: float | None = None) -> Self: ...
+
+    def plot(
+        self,
+        region: str | GenomicRegion,
+        show: bool = False,
+        extend: float | int | None = None,
+        **kwargs: Any,
+    ) -> matplotlib.figure.Figure | None: ...
+
+    def plot_gene(
+        self,
+        gene: str,
+        extend: float = 0.5,
+        **kwargs: Any,
+    ) -> matplotlib.figure.Figure | None: ...
+
+    def plot_regions(
+        self,
+        regions: list[str] | str,
+        ncols: int = 1,
+        **kwargs: Any,
+    ) -> list[matplotlib.figure.Figure]: ...
+
+    def save(
+        self,
+        path: str | Path,
+        region: str | GenomicRegion,
+        dpi: int = 600,
+        **kwargs: Any,
+    ) -> None: ...
+
+    def to_toml(self, path: str) -> None: ...
 
     @classmethod
     def track_options(cls, track: str | type[Track]) -> dict[str, dict]: ...
@@ -875,41 +965,3 @@ class GenomicFigure:
     @classmethod
     def track_options_markdown(cls, track: str | type[Track]) -> str: ...
 
-    def autoscale(self, enable: bool = ...) -> Self: ...
-    def autocolor(self, palette: str = ...) -> Self: ...
-    def defaults(self, genome: str = ..., palette: str | list[str] | None = ...) -> Self: ...
-    def highlight(self, region: str | GenomicRegion) -> Self: ...
-    def highlight_style(self, color: str | None = ..., alpha: float | None = ...) -> Self: ...
-
-    def plot(
-        self,
-        region: str | GenomicRegion,
-        show: bool = ...,
-        extend: float | int | None = ...,
-        **kwargs: Any,
-    ) -> matplotlib.figure.Figure | None: ...
-
-    def plot_gene(self, gene: str, extend: float = ..., **kwargs: Any) -> matplotlib.figure.Figure | None: ...
-
-    def plot_regions(
-        self,
-        regions: list[str] | str,
-        ncols: int = ...,
-        **kwargs: Any,
-    ) -> list[matplotlib.figure.Figure]: ...
-
-    def to_toml(self, path: str) -> None: ...
-
-    @classmethod
-    def from_toml(cls, path: str) -> GenomicFigure: ...
-
-    def save(
-        self,
-        path: str | Path,
-        region: str | GenomicRegion,
-        dpi: int = ...,
-        **kwargs: Any,
-    ) -> None: ...
-
-    def __repr__(self) -> str: ...
-    def _repr_html_(self) -> str: ...

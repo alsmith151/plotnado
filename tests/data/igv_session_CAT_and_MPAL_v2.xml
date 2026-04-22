@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Session genome="hg38" locus="chr11:6211915-6260069" nextAutoscaleGroup="4" version="8">
+    <Resources>
+        <Resource path="/Users/asmith/Downloads/MPAL/24_CD8_CM.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/04_Early_Baso.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/02_Early_Eryth.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/CAT-MV411_H3K27ac.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/22_CD4_M.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/08_GMP_Neut.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/12_CD14_Mono_2.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/09_pDC.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/21_CD4_N2.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/23_CD8_EM.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/11_CD14_Mono_1.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/10_cDC.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/07_GMP.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/03_Late_Eryth.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/15_CLP_2.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/06_CLP_1.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/16_Pre_B.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/18_Plasma.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/20_CD4_N1.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/25_NK.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/01_HSC.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/17_B.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/19_CD8_N.bw" type="bw"/>
+        <Resource path="/Users/asmith/Downloads/MPAL/05_CMP_LMPP.bw" type="bw"/>
+    </Resources>
+    <Panel height="683" name="DataPanel" width="1495">
+        <Track attributeKey="Refseq Genes" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;1037.0;255,255,255;0,0,178" fontSize="10" groupByStrand="false" height="26" id="https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/ncbiRefSeq.txt.gz" name="Refseq Genes" visible="true"/>
+        <Track attributeKey="CAT-MV411_H3K27ac.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="255,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/CAT-MV411_H3K27ac.bw" name="CAT-MV411_H3K27ac.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="1769.38" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="25_NK.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/25_NK.bw" name="25_NK.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="24_CD8_CM.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="27" id="/Users/asmith/Downloads/MPAL/24_CD8_CM.bw" name="24_CD8_CM.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="23_CD8_EM.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/23_CD8_EM.bw" name="23_CD8_EM.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="22_CD4_M.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/22_CD4_M.bw" name="22_CD4_M.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="21_CD4_N2.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/21_CD4_N2.bw" name="21_CD4_N2.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="20_CD4_N1.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/20_CD4_N1.bw" name="20_CD4_N1.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="19_CD8_N.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/19_CD8_N.bw" name="19_CD8_N.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="18_Plasma.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="27" id="/Users/asmith/Downloads/MPAL/18_Plasma.bw" name="18_Plasma.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="17_B.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/17_B.bw" name="17_B.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="16_Pre_B.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/16_Pre_B.bw" name="16_Pre_B.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="15_CLP_2.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/15_CLP_2.bw" name="15_CLP_2.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="12_CD14_Mono_2.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/12_CD14_Mono_2.bw" name="12_CD14_Mono_2.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="11_CD14_Mono_1.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="27" id="/Users/asmith/Downloads/MPAL/11_CD14_Mono_1.bw" name="11_CD14_Mono_1.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="10_cDC.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/10_cDC.bw" name="10_cDC.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="09_pDC.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/09_pDC.bw" name="09_pDC.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="07_GMP.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/07_GMP.bw" name="07_GMP.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="08_GMP_Neut.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/08_GMP_Neut.bw" name="08_GMP_Neut.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="06_CLP_1.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="27" id="/Users/asmith/Downloads/MPAL/06_CLP_1.bw" name="06_CLP_1.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="05_CMP_LMPP.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/05_CMP_LMPP.bw" name="05_CMP_LMPP.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="04_Early_Baso.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/04_Early_Baso.bw" name="04_Early_Baso.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="03_Late_Eryth.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/03_Late_Eryth.bw" name="03_Late_Eryth.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="02_Early_Eryth.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/02_Early_Eryth.bw" name="02_Early_Eryth.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="01_HSC.bw" autoScale="false" autoscaleGroup="3" clazz="org.broad.igv.track.DataSourceTrack" color="0,0,0" fontSize="10" height="26" id="/Users/asmith/Downloads/MPAL/01_HSC.bw" name="01_HSC.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="52477.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+    </Panel>
+    <Panel height="41" name="FeaturePanel" width="1495">
+        <Track attributeKey="Reference sequence" clazz="org.broad.igv.track.SequenceTrack" fontSize="10" id="Reference sequence" name="Reference sequence" sequenceTranslationStrandValue="+" shouldShowTranslation="false" visible="true"/>
+    </Panel>
+    <PanelLayout dividerFractions="0.9370725034199726"/>
+    <Regions>
+        <Region chromosome="chr5" end="174903859" start="174897486"/>
+        <Region chromosome="chr5" end="2014052" start="2013399"/>
+        <Region chromosome="chr15" end="50109814" start="50107502"/>
+        <Region chromosome="chr9" end="27590247" start="27589254"/>
+        <Region chromosome="chr2" end="142695997" start="142695004"/>
+        <Region chromosome="chr10" end="7413247" start="7412253"/>
+        <Region chromosome="chr6" end="158087244" start="158086251"/>
+        <Region chromosome="chr6" end="90021233" start="90020042"/>
+        <Region chromosome="chr8" end="37822894" start="37820262"/>
+        <Region chromosome="chr18" end="76567246" start="76566254"/>
+        <Region chromosome="chr3" end="157931939" start="157931192"/>
+        <Region chromosome="chr7" end="81142528" start="81141111"/>
+    </Regions>
+    <HiddenAttributes>
+        <Attribute name="DATA FILE"/>
+        <Attribute name="DATA TYPE"/>
+        <Attribute name="NAME"/>
+    </HiddenAttributes>
+</Session>
