@@ -44,10 +44,19 @@ class TestTrackClassifier:
         assert track_type == TrackType.UNKNOWN
         assert conf == 0.0
 
+    def test_no_extension_returns_unknown(self):
+        track_type, _ = TrackClassifier.classify("datafile")
+        assert track_type == TrackType.UNKNOWN
+
     def test_url_bigwig(self):
         track_type, conf = TrackClassifier.classify("https://example.com/track.bw")
         assert track_type == TrackType.BIGWIG
         assert conf >= 0.8
+
+    def test_url_with_query_params(self):
+        """URL patterns use regex search so query strings shouldn't block detection."""
+        track_type, _ = TrackClassifier.classify("https://example.com/data.bw?token=abc")
+        assert track_type == TrackType.BIGWIG
 
     def test_case_insensitive(self):
         track_type, _ = TrackClassifier.classify("sample.BW")
@@ -68,11 +77,19 @@ class TestSeqnadoPattern:
         result = SeqnadoPattern.parse("sample1_H3K27ac.bw")
         assert result == ("sample1", "H3K27ac")
 
-    def test_parse_non_seqnado_returns_none(self):
-        result = SeqnadoPattern.parse("random_file.bw")
-        # A file with only one underscore-separated token before extension may or may not match
-        # depending on the pattern — just check it doesn't crash
-        assert result is None or isinstance(result, tuple)
+    def test_parse_excluded_antibody_returns_none(self):
+        """Files whose 'antibody' is a file-type suffix should not parse as seqnado."""
+        assert SeqnadoPattern.parse("sample_bw.bw") is None
+        assert SeqnadoPattern.parse("sample_bigwig.bigwig") is None
+        assert SeqnadoPattern.parse("sample_sorted.bw") is None
+
+    def test_parse_multi_underscore_sample(self):
+        result = SeqnadoPattern.parse("THP1-ctrl_rep1_H3K27ac.bw")
+        # The greedy sample group absorbs 'THP1-ctrl_rep1', antibody is 'H3K27ac'
+        assert result is not None
+        sample, antibody = result
+        assert antibody == "H3K27ac"
+        assert "THP1" in sample
 
 
 class TestTitleInference:
@@ -94,6 +111,28 @@ class TestTitleInference:
     def test_camel_case_separation(self):
         title, _ = TitleInference.infer("THP1H3K4me3_bigBed.bigBed")
         assert " " in title  # Should have been split
+
+
+class TestInferTrack:
+    def test_seqnado_fields_populated(self):
+        result = infer_track("sample1_H3K27ac.bw")
+        assert result.is_seqnado is True
+        assert result.seqnado_sample == "sample1"
+        assert result.seqnado_antibody == "H3K27ac"
+
+    def test_non_seqnado_fields_empty(self):
+        result = infer_track("coverage.bw")
+        assert result.is_seqnado is False
+        assert result.seqnado_sample is None
+        assert result.seqnado_antibody is None
+
+    def test_known_group_overrides_heuristic(self):
+        result = infer_track("coverage.bw", known_group="mygroup")
+        assert result.group == "mygroup"
+
+    def test_overall_confidence_non_negative(self):
+        result = infer_track("data.csv")
+        assert result.overall_confidence() >= 0.0
 
 
 class TestColorAssignment:

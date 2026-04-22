@@ -174,7 +174,8 @@ class TestTrackLabeller:
         mock_ax.text.assert_called_once()
         args, kwargs = mock_ax.text.call_args
         assert args[0] == 1010  # gr.start + (0.01 * gr.length)
-        assert args[1] == 0.8  # labeller.y_delta * labeller.scale_height
+        # y = y_min + y_delta * scale_height = 0.5 + 1.0 * 0.8 = 1.3
+        assert args[1] == pytest.approx(1.3)
         assert args[2] == "[ 0.50 - 1.50 ]"
         assert kwargs['horizontalalignment'] == "left"
         assert kwargs['verticalalignment'] == "top"
@@ -187,7 +188,7 @@ class TestTrackLabeller:
             end=2000,
             strand="+"
         )
-        
+
         labeller = TrackLabeller(
             gr=gr,
             y_min=0.5,
@@ -197,14 +198,15 @@ class TestTrackLabeller:
             scale_max=1.5,
             scale_location="right"
         )
-        
+
         labeller._plot_scale(mock_ax, gr)
-        
+
         # Validate
         mock_ax.text.assert_called_once()
         args, kwargs = mock_ax.text.call_args
         assert args[0] == 1990  # gr.end - (0.01 * gr.length)
-        assert args[1] == 0.8  # labeller.y_delta * labeller.scale_height
+        # y = y_min + y_delta * scale_height = 0.5 + 1.0 * 0.8 = 1.3
+        assert args[1] == pytest.approx(1.3)
         assert args[2] == "[ 0.50 - 1.50 ]"
         assert kwargs['horizontalalignment'] == "right"
         assert kwargs['verticalalignment'] == "top"

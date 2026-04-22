@@ -438,7 +438,7 @@ class TrackLabeller(BaseModel):
             )
             y_pos = self.y_min + (self.y_delta * self.title_height)
             h_align = "left" if self.title_location == "left" else "right"
-        title_bbox = self._text_bbox() or self._default_text_bbox(0.6)
+        title_bbox = self._text_bbox()
 
         ax.text(
             x_pos,
@@ -479,7 +479,7 @@ class TrackLabeller(BaseModel):
             else gr.start + (0.01 * gr.length)
         )
         h_align = "right" if location == "right" else "left"
-        scale_bbox = self._text_bbox() or self._default_text_bbox(0.6)
+        scale_bbox = self._text_bbox()
 
         ax.text(
             x_pos,

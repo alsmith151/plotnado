@@ -90,6 +90,31 @@ tracks:
         assert t.groups == []
 
 
+class TestLoadEdgeCases:
+    def test_invalid_yaml_raises(self, tmp_path):
+        bad_yaml = tmp_path / "bad.yaml"
+        bad_yaml.write_text("}{not: valid: yaml: }{")
+        with pytest.raises(Exception):
+            Template.load(bad_yaml)
+
+    def test_empty_tracks_list_loads(self, tmp_path):
+        yaml_content = "genome: hg38\ntracks: []\n"
+        p = tmp_path / "empty.yaml"
+        p.write_text(yaml_content)
+        t = Template.load(p)
+        assert t.tracks == []
+
+    def test_track_options_preserved_round_trip(self, tmp_path):
+        t = Template()
+        t.tracks = [
+            TrackSpec(path="a.bw", type=TrackType.BIGWIG, title="T", options={"alpha": 0.3}),
+        ]
+        p = tmp_path / "t.yaml"
+        t.save(p)
+        loaded = Template.load(p)
+        assert loaded.tracks[0].options.get("alpha") == 0.3
+
+
 class TestAnnotatedYAML:
     def test_header_added_when_header_args_given(self):
         t = make_template()
