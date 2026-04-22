@@ -80,6 +80,91 @@ class TestGroupDefaults:
         assert kwargs.get("color_group") == "my_group"
 
 
+class TestCompilerEdgeCases:
+    def test_empty_template_compiles(self):
+        t = Template()
+        plan = TemplateCompiler.compile(t)
+        assert plan.tracks == []
+        assert plan.resolved_group_indices == {}
+
+    def test_unresolvable_group_track_reference_raises(self):
+        t = Template()
+        t.tracks = [
+            TrackSpec(path="a.bw", type=TrackType.BIGWIG, title="Track A"),
+        ]
+        t.groups = [
+            GroupSpec(name="g1", tracks=["Does Not Exist"], autoscale=True),
+        ]
+        with pytest.raises(ValueError, match="not found"):
+            TemplateCompiler.compile(t)
+
+    def test_numeric_track_reference_resolves(self):
+        """Group tracks list supports bare integer index strings."""
+        t = Template()
+        t.tracks = [
+            TrackSpec(path="a.bw", type=TrackType.BIGWIG, title="Track A"),
+            TrackSpec(path="b.bw", type=TrackType.BIGWIG, title="Track B"),
+        ]
+        t.groups = [
+            GroupSpec(name="g1", tracks=["0", "1"], autoscale=True),
+        ]
+        plan = TemplateCompiler.compile(t)
+        assert plan.resolved_group_indices["g1"] == [0, 1]
+
+    def test_compile_carries_through_genome_and_guides(self):
+        t = Template()
+        t.genome = "mm10"
+        t.guides.genes = True
+        t.guides.axis = False
+        t.tracks = []
+        plan = TemplateCompiler.compile(t)
+        assert plan.genome == "mm10"
+        assert plan.add_genes is True
+        assert plan.add_axis is False
+
+
+class TestResolvedTrackToFigureKwargs:
+    def test_autoscale_group_in_kwargs(self):
+        t = Template()
+        t.tracks = [
+            TrackSpec(path="a.bw", type=TrackType.BIGWIG, title="T", group="g1"),
+        ]
+        plan = TemplateCompiler.compile(t)
+        kwargs = plan.tracks[0].to_figure_kwargs()
+        assert kwargs["autoscale_group"] == "g1"
+
+    def test_height_omitted_at_default(self):
+        """height=1.0 should not appear in kwargs (default is implicit)."""
+        t = Template()
+        t.tracks = [TrackSpec(path="a.bw", type=TrackType.BIGWIG, title="T")]
+        plan = TemplateCompiler.compile(t)
+        kwargs = plan.tracks[0].to_figure_kwargs()
+        assert "height" not in kwargs
+
+    def test_nondefault_height_in_kwargs(self):
+        t = Template()
+        t.tracks = [TrackSpec(path="a.bw", type=TrackType.BIGWIG, title="T", height=2.5)]
+        plan = TemplateCompiler.compile(t)
+        kwargs = plan.tracks[0].to_figure_kwargs()
+        assert kwargs["height"] == 2.5
+
+    def test_color_in_kwargs_when_set(self):
+        t = Template()
+        t.tracks = [TrackSpec(path="a.bw", type=TrackType.BIGWIG, title="T", color="red")]
+        plan = TemplateCompiler.compile(t)
+        kwargs = plan.tracks[0].to_figure_kwargs()
+        assert kwargs["color"] == "red"
+
+    def test_options_merged_into_kwargs(self):
+        t = Template()
+        t.tracks = [
+            TrackSpec(path="a.bw", type=TrackType.BIGWIG, title="T", options={"alpha": 0.3}),
+        ]
+        plan = TemplateCompiler.compile(t)
+        kwargs = plan.tracks[0].to_figure_kwargs()
+        assert kwargs["alpha"] == 0.3
+
+
 class TestCaseInsensitiveLookup:
     def test_case_mismatch_in_group_tracks_resolves(self):
         """Group track references with wrong case should still resolve."""

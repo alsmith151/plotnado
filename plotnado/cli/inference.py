@@ -97,8 +97,9 @@ class TrackClassifier:
         """
         # Check for URLs
         if path.startswith(('http://', 'https://', 's3://', 'ftp://')):
+            url_path = path.split('?')[0]  # strip query string before extension matching
             for pattern, track_type in TrackClassifier.URL_PATTERNS.items():
-                if re.search(pattern, path, re.IGNORECASE):
+                if re.search(pattern, url_path, re.IGNORECASE):
                     return track_type, 0.9  # High confidence for URL patterns
             return TrackType.UNKNOWN, 0.1
         
