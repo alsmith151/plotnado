@@ -1,5 +1,7 @@
 # PlotNado
 
+![PlotNado logo](docs/images/Logo.jpeg)
+
 [![Tests](https://github.com/alsmith151/plotnado/actions/workflows/run_tests.yml/badge.svg)](https://github.com/alsmith151/plotnado/actions/workflows/run_tests.yml)
 
 PlotNado is a lightweight Python package for building genome browser-style figures.
@@ -142,10 +144,9 @@ tracks:
 ## Learn More
 
 - Docs home: `docs/index.md`
-- Quick start: `docs/quickstart.md`
+- Method reference: `docs/reference.md`
+- Aesthetics and styling: `docs/aesthetics.md`
 - CLI guide: `docs/cli.md`
-- Track catalog + options: `docs/track_catalog.md`
-- API and generated references: `docs/api_reference.md`
 
 ## Examples
 

@@ -1,6 +1,6 @@
 # PlotNado
 
-![PlotNado logo](assets/plotnado-logo.svg)
+![PlotNado logo](images/Logo.jpeg)
 
 **Publication-ready genome browser figures in Python.**
 
