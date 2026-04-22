@@ -1,55 +1,54 @@
 # PlotNado
 
-![PlotNado logo](assets/plotnado-logo.svg)
+![PlotNado logo](images/Logo.jpeg)
 
-PlotNado is a Python library for clean, publication-ready genome browser figures.
+**Publication-ready genome browser figures in Python.**
 
-It exposes two parallel interfaces:
-
-- A fluent Python API for programmatic figure construction
-- A CLI that turns genomic files into editable YAML templates and rendered plots
-
-## Install
+PlotNado composes tracks — BigWig signals, gene annotations, peak intervals, interaction arcs — into a single figure with one fluent API call per track.
 
 ```bash
-uv venv
-source .venv/bin/activate
-uv pip install plotnado
+pip install plotnado
 ```
 
-## Preferred workflow style
+## First figure
 
 ```python
+import numpy as np
+import pandas as pd
 from plotnado import GenomicFigure
 
-gf = GenomicFigure(theme="publication")
-gf.autocolor()
-gf.scalebar()
-gf.genes("hg38", display="expanded", minimum_gene_length=1e5)
+bins = np.arange(1_000_000, 1_100_000, 1_000)
+signal = pd.DataFrame({
+    "chrom": "chr1", "start": bins,
+    "end": bins + 1_000,
+    "value": 5 + 2 * np.sin(np.linspace(0, 6, len(bins))),
+})
 
-gf.bigwig("signal_1.bw", title="H3K4me1", color_group="H3K4me1", style="std")
-gf.bigwig("signal_2.bw", title="H3K4me3", color_group="H3K4me3", style="std")
-
-gf.axis()
-gf.plot_gene("GNAQ")
+fig = GenomicFigure()
+fig.scalebar()
+fig.axis()
+fig.genes("hg38", title="Genes")
+fig.bigwig(signal, title="ChIP signal", style="fill", color="#1f77b4")
+fig.save("output.png", region="chr1:1,010,000-1,080,000")
 ```
 
-## Template-driven workflow
+![Quickstart figure](images/quickstart.png)
+
+## Two workflows
+
+**Python API** — build figures in code, ideal for notebooks and pipelines.
+
+**CLI** — turn genomic files into an editable YAML template, then render it.
 
 ```bash
-plotnado init *.bw peaks/*.narrowpeak --auto --output template.yaml
-plotnado validate template.yaml
-plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output region.png
+plotnado init *.bw peaks.narrowpeak --auto --output template.yaml
+plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output out.png
 ```
 
-Templates can also be consumed from Python with `GenomicFigure.from_template("template.yaml")`.
+## Where to go next
 
-## Read by task
-
-- New environment setup: [Installation](installation.md)
-- First successful figure: [Quick Start](quickstart.md)
-- Ways to add tracks: [Track Construction](quickstart_tracks.md)
-- Production guidance: [Best Practices](best_practices.md)
-- Track families and support matrix: [Track Catalog](track_catalog.md)
-- Template workflow and command reference: [CLI](cli.md)
-- API details and runtime option discovery: [API Reference](api_reference.md)
+| Goal | Page |
+| --- | --- |
+| All methods and their parameters | [Reference](reference.md) |
+| Styling — colors, labels, scales, themes | [Aesthetics](aesthetics.md) |
+| CLI commands and YAML template format | [CLI](cli.md) |

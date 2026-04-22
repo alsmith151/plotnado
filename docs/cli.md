@@ -82,9 +82,9 @@ Useful options:
 Examples:
 
 ```bash
-plotnado plot template.yaml --region chr1:1M-2M
+plotnado plot template.yaml --region chr1:1,000,000-2,000,000
 plotnado plot template.yaml --region GNAQ
-plotnado plot template.yaml --region chr1:1M-2M --region chr2:5M-6M
+plotnado plot template.yaml --region chr1:1,000,000-2,000,000 --region chr2:5,000,000-6,000,000
 plotnado plot template.yaml --region chr1:1,000,000-2,000,000 --output plot.pdf --dpi 300
 ```
 
