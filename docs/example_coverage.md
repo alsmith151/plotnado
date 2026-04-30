@@ -2,7 +2,9 @@
 
 This page maps track types to runnable examples and rendered outputs.
 
-All runnable scripts in [examples/run_examples.py](https://github.com/alsmith151/plotnado/blob/main/examples/run_examples.py) were re-run against the current codebase. Their PNG outputs are written into `examples/output/` and synced into `docs/images/examples/`, so the gallery below shows the same rendered results produced by the current code.
+The default run of [examples/run_examples.py](https://github.com/alsmith151/plotnado/blob/main/examples/run_examples.py) replays the local example set. Remote Blueprint `bigwig_collection` / `bigwig_diff` coverage is opt-in with `python examples/run_examples.py --include-remote` because those scripts stream public BigWig files instead of checking large fixtures into the repo.
+
+Rendered PNG outputs are written into `examples/output/` and synced into `docs/images/examples/`, so the gallery below shows the same results produced by the current code.
 
 ## Runnable script coverage
 
@@ -17,6 +19,15 @@ All runnable scripts in [examples/run_examples.py](https://github.com/alsmith151
 | `links` | Full runnable | [examples/tracks/03_links_annotations.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/03_links_annotations.py) |
 | `hline` | Full runnable | [examples/tracks/03_links_annotations.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/03_links_annotations.py) |
 | `vline` | Full runnable | [examples/tracks/03_links_annotations.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/03_links_annotations.py) |
+| `bigwig_collection` | Runnable from remote Blueprint data | [examples/tracks/04_bigwig_collection_and_diff.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/04_bigwig_collection_and_diff.py) |
+| `bigwig_diff` | Runnable from remote Blueprint data | [examples/tracks/04_bigwig_collection_and_diff.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/04_bigwig_collection_and_diff.py) |
+| `cooler` | Full runnable | [examples/tracks/05_matrix_tracks.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/05_matrix_tracks.py) |
+| `capcruncher` | Full runnable | [examples/tracks/05_matrix_tracks.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/05_matrix_tracks.py) |
+| `cooler_average` | Full runnable | [examples/tracks/05_matrix_tracks.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/05_matrix_tracks.py) |
+| `quantnado_coverage` | Full runnable | [examples/tracks/06_quantnado_tracks.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/06_quantnado_tracks.py) |
+| `quantnado_stranded_coverage` | Full runnable | [examples/tracks/06_quantnado_tracks.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/06_quantnado_tracks.py) |
+| `quantnado_methylation` | Full runnable | [examples/tracks/06_quantnado_tracks.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/06_quantnado_tracks.py) |
+| `quantnado_variant` | Full runnable | [examples/tracks/06_quantnado_tracks.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/06_quantnado_tracks.py) |
 | `highlight` | Full runnable | [examples/recipes/01_autoscale_overlay_highlight.py](https://github.com/alsmith151/plotnado/blob/main/examples/recipes/01_autoscale_overlay_highlight.py) |
 | `overlay` | Full runnable | [examples/recipes/01_autoscale_overlay_highlight.py](https://github.com/alsmith151/plotnado/blob/main/examples/recipes/01_autoscale_overlay_highlight.py) |
 
@@ -78,6 +89,48 @@ Source: [examples/tracks/03_links_annotations.py](https://github.com/alsmith151/
 
 ![Links, hline, and vline](images/examples/track_links_annotations.png)
 
+### BigWig collection and diff
+
+Fetches two public Blueprint plasma-cell RNA BigWigs once, stages tiny local crops for the target window in a temporary directory, then renders a `bigwig_collection` panel and a matching `bigwig_diff` panel from those local files.
+
+Source: [examples/tracks/04_bigwig_collection_and_diff.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/04_bigwig_collection_and_diff.py)
+
+![BigWig collection and diff](images/examples/track_bigwig_collection_diff.png)
+
+### Cooler and cooler_average
+
+Uses the checked-in GM12878 cooler fixture for a direct matrix view plus a simple averaged view built from the same file twice.
+
+Source: [examples/tracks/05_matrix_tracks.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/05_matrix_tracks.py)
+
+![Cooler and cooler_average](images/examples/track_matrix_cooler_average.png)
+
+### CapCruncher viewpoint matrix
+
+Uses the checked-in reporters-store fixture and resolves the `Slc25A37` viewpoint to the cooler group inside the HDF5 container.
+
+Source: [examples/tracks/05_matrix_tracks.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/05_matrix_tracks.py)
+
+![CapCruncher viewpoint matrix](images/examples/track_capcruncher.png)
+
+### QuantNado coverage and stranded coverage
+
+Uses local on-disk QuantNado fixtures to render real ATAC coverage and stranded RNA signal.
+
+Source: [examples/tracks/06_quantnado_tracks.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/06_quantnado_tracks.py)
+
+![QuantNado coverage and stranded coverage](images/examples/track_quantnado_signal.png)
+
+### QuantNado methylation and variant tracks
+
+The same script also renders file-backed methylation and variant panels from the compact test fixtures.
+
+Source: [examples/tracks/06_quantnado_tracks.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/06_quantnado_tracks.py)
+
+![QuantNado methylation](images/examples/track_quantnado_methylation.png)
+
+![QuantNado variant](images/examples/track_quantnado_variant.png)
+
 ### Overlay, autoscale, and highlight
 
 Demonstrates a shared overlay panel, grouped autoscaling, and region highlighting.
@@ -105,32 +158,6 @@ Compares staggered, suppressed, and auto-expanded gene label placement strategie
 Source: [examples/recipes/03_gene_label_strategies.py](https://github.com/alsmith151/plotnado/blob/main/examples/recipes/03_gene_label_strategies.py)
 
 ![Gene label strategies](images/examples/recipe_gene_label_strategies.png)
-
-## Additional documented snippets
-
-These tracks are documented with snippets and option discovery, but do not yet have dedicated runnable scripts in `examples/tracks/`.
-
-### `bigwig_collection` / `bigwig_diff`
-
-```python
-gf.bigwig_collection(files=["a.bw", "b.bw"], title="Replicates")
-gf.bigwig_diff(file_a="treated.bw", file_b="control.bw", title="Treated - Control")
-```
-
-### Matrix tracks
-
-```python
-gf.cooler(file="sample.mcool", resolution=10_000)
-# gf.capcruncher(...)
-# gf.cooler_average(...)
-```
-
-### QuantNado tracks
-
-```python
-gf.quantnado_coverage("sample1", quantnado=qn, title="Coverage")
-gf.quantnado_methylation("sample1", quantnado=qn, title="Methylation")
-```
 
 ## Validate option coverage quickly
 
