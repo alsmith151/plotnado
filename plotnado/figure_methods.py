@@ -708,6 +708,7 @@ class GenomicFigureMethods:
         max_value: float | None = ...,
         min_value: float | None = ...,
         show_labels: bool = ...,
+        style: PlotStyle | None = ...,
         data_range_style: DataRangeStyle = ...,
         label_box_alpha: float = ...,
         label_box_enabled: bool = ...,
@@ -732,12 +733,22 @@ class GenomicFigureMethods:
     def bigwig_overlay(
         self, tracks: list[Any], /, **kwargs: Unpack[BigwigOverlayKwargs]
     ) -> Self:
-        """Add an overlay track containing multiple BigWig signals.
+        """Add an overlay track containing multiple BigWig signals on one shared axis.
 
         Args:
             tracks: Track inputs for overlay, usually paths or `BigWigTrack` objects.
             **kwargs: `BigwigOverlay` constructor kwargs; shorthand composition
                 routes aesthetics and label fields automatically.
+
+        Notes:
+            - Overlay tracks compute one shared y-range from all component
+              tracks by default.
+            - `autoscale(True)` includes overlay component values in the global
+              scale calculation.
+            - Use `autoscale_group` on the overlay itself to sync it with
+              sibling signal panels.
+            - Explicit overlay `min_value` / `max_value` override autoscaled
+              bounds on those edges.
 
         Returns:
             Self for method chaining.
@@ -762,6 +773,7 @@ class GenomicFigureMethods:
         max_value: float | None = ...,
         min_value: float | None = ...,
         show_labels: bool = ...,
+        style: PlotStyle | None = ...,
         data_range_style: DataRangeStyle = ...,
         label_box_alpha: float = ...,
         label_box_enabled: bool = ...,
@@ -784,12 +796,22 @@ class GenomicFigureMethods:
     ) -> Self: ...
     # END AUTO-GENERATED OVERLOAD: overlay
     def overlay(self, tracks: list[Any], /, **kwargs: Unpack[OverlayKwargs]) -> Self:
-        """Add a generic overlay track for multiple tracks on one axis.
+        """Add a generic overlay track for multiple tracks on one shared y-axis.
 
         Args:
             tracks: Track inputs for overlay, usually track instances or BigWig paths.
             **kwargs: `OverlayTrack` constructor kwargs; shorthand composition
                 routes aesthetics and label fields automatically.
+
+        Notes:
+            - Overlay tracks derive a shared y-range from the union of all
+              component values unless `min_value` / `max_value` is set.
+            - `autoscale(True)` and `autoscale_group` treat the overlay as a
+              first-class signal panel, not as an isolated special case.
+            - Apply `autoscale_group` to the overlay track itself rather than
+              only to the nested component tracks.
+            - Explicit overlay `min_value` / `max_value` overrides grouped or
+              global autoscale on that edge.
 
         Returns:
             Self for method chaining.

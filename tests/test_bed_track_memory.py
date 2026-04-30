@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pandas as pd
 
 from plotnado.tracks import BedTrack, GenomicRegion
@@ -36,4 +38,26 @@ class TestBedTrackMemory:
 
         out = track.fetch_data(gr)
         assert set(out.columns) >= {"chrom", "start", "end"}
+        assert out.shape[0] == 2
+
+    @patch("plotnado.tracks.bed.read_bed_regions")
+    def test_bigbed_path_reads_directly(self, mock_read_bed_regions):
+        mock_read_bed_regions.return_value = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [100, 300],
+                "end": [200, 400],
+                "name": ["peak1", "peak2"],
+            }
+        )
+
+        track = BedTrack(data="https://example.org/mock.bigBed")
+        gr = GenomicRegion(chromosome="chr1", start=50, end=350)
+
+        out = track.fetch_data(gr)
+
+        mock_read_bed_regions.assert_called_once_with(
+            "https://example.org/mock.bigBed", "chr1", 50, 350
+        )
+        assert set(out.columns) >= {"chrom", "start", "end", "name"}
         assert out.shape[0] == 2

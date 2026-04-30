@@ -9,9 +9,10 @@ from pydantic import ConfigDict, Field, PrivateAttr
 
 from .region import GenomicRegion
 from .base import LabelConfig, Track, TrackLabeller
+from .scaling import calculate_data_limits
 from .utils import clean_axis
 from .bigwig import BigWigTrack, BigwigAesthetics
-from .enums import TrackType
+from .enums import PlotStyle, TrackType
 from .aesthetics import BaseMultiColorAesthetics
 from .registry import registry
 
@@ -24,6 +25,10 @@ class OverlayTrackAesthetics(BaseMultiColorAesthetics):
     """
 
     show_labels: bool = Field(default=True, description="Render labels for component tracks in overlay contexts.")
+    style: PlotStyle | None = Field(
+        default=None,
+        description="Optional BigWig render style applied to component tracks that support it.",
+    )
     min_value: float | None = Field(
         default=None,
         description="Optional shared minimum y-value for all overlaid tracks.",
@@ -71,13 +76,16 @@ class OverlayTrack(Track):
                     if self.colors and i < len(self.colors)
                     else default_colors[i % len(default_colors)]
                 )
+                aesthetics_kwargs = {
+                    "color": color,
+                    "alpha": self.alpha,
+                }
+                if self.style is not None:
+                    aesthetics_kwargs["style"] = self.style
                 inst = BigWigTrack(
                     data=t,
                     title=Path(t).stem if isinstance(t, (Path, str)) else f"Track {i}",
-                    aesthetics=BigwigAesthetics(
-                        color=color,
-                        alpha=self.alpha,
-                    ),
+                    aesthetics=BigwigAesthetics(**aesthetics_kwargs),
                     label=LabelConfig(plot_title=False, plot_scale=False),
                 )
 
@@ -85,6 +93,8 @@ class OverlayTrack(Track):
                 inst.color = self.colors[i]
             if inst.has_aesthetic("alpha"):
                 inst.alpha = self.alpha
+            if self.style is not None and inst.has_aesthetic("style"):
+                inst.style = self.style
 
             self._track_instances.append(inst)
 
@@ -93,32 +103,11 @@ class OverlayTrack(Track):
         return [t.fetch_data(gr) for t in self._track_instances]
 
     def _shared_limits(self, gr: GenomicRegion) -> tuple[float, float]:
-        values: list[np.ndarray] = []
-
-        for track in self._track_instances:
-            data = track.fetch_data(gr)
-            if isinstance(data, pd.DataFrame):
-                if "value" in data.columns:
-                    values.append(data["value"].to_numpy(dtype=float))
-                elif not data.empty:
-                    candidate = pd.to_numeric(data.iloc[:, -1], errors="coerce").to_numpy(dtype=float)
-                    values.append(candidate)
-            elif isinstance(data, np.ndarray):
-                values.append(data.astype(float).ravel())
-
-        if not values:
-            return 0.0, 1.0
-
-        merged = np.concatenate(values)
-        merged = merged[~np.isnan(merged)]
-        if merged.size == 0:
-            return 0.0, 1.0
-
-        y_min = self.min_value if self.min_value is not None else float(min(0.0, np.min(merged)))
-        y_max = self.max_value if self.max_value is not None else float(np.max(merged))
-        if y_min == y_max:
-            y_max = y_min + 1.0
-        return y_min, y_max
+        return calculate_data_limits(
+            self.fetch_data(gr),
+            min_value=self.min_value,
+            max_value=self.max_value,
+        )
 
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
         """Plot overlaid tracks."""

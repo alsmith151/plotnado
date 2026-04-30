@@ -172,6 +172,7 @@ def gen_overlay() -> None:
     fig.overlay(
         [_signal(0.9, scale=4.2), _signal(1.5, scale=3.5)],
         title="Overlay",
+        autoscale_group="g1",
         colors=["#2ca02c", "#9467bd"],
         alpha=0.55,
     )

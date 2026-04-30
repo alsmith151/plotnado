@@ -19,11 +19,20 @@ BigWigTrack.options_markdown()
 list_options(BigWigTrack)
 ```
 
+For overlay-specific discovery, ask for the overlay track directly:
+
+```python
+GenomicFigure.track_options("overlay")
+GenomicFigure.track_options_markdown("overlay")
+```
+
 Each option payload is split into:
 
 - `track`: top-level constructor fields.
 - `aesthetics`: style model fields (`aesthetics={...}` or shorthand kwargs).
 - `label`: label controls (`label={...}` or shorthand kwargs).
+
+If you want a browsable summary rather than runtime output, start with [Aesthetics Reference](aesthetics_reference.md).
 
 ## `GenomicFigure` helper methods: automatic kwargs
 

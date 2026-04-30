@@ -21,6 +21,7 @@ from .tracks.enums import (
 )
 from .theme import BuiltinTheme, Theme
 from .tracks import GenomicRegion, Track
+from .widgets import TrackVisibilityWidget
 
 
 class GenomicFigure:
@@ -49,6 +50,22 @@ class GenomicFigure:
         width: float | None = ...,
         theme: Theme | BuiltinTheme | str | None = ...,
     ) -> tuple[GenomicFigure, str | None]: ...
+
+    @classmethod
+    def from_ucsc_hub(
+        cls,
+        source: str | Path,
+        *,
+        genome: str | None = ...,
+        include_hidden: bool = ...,
+        width: float | None = ...,
+        theme: Theme | BuiltinTheme | str | None = ...,
+    ) -> GenomicFigure: ...
+
+    def track_visibility_widget(
+        self,
+        region: str | GenomicRegion,
+    ) -> TrackVisibilityWidget: ...
 
     def __getitem__(self, key: int | str) -> Track: ...
 
@@ -227,7 +244,7 @@ class GenomicFigure:
             height: float = 0.3,
             autoscale_group: str | None = None,
             color_group: str | None = None,
-            color: str = 'steelblue',
+            color: str = 'black',
             alpha: float = 1.0,
             linewidth: float = 1.0,
             style: PlotStyle = PlotStyle.STD,
@@ -503,6 +520,7 @@ class GenomicFigure:
             alpha: float = 1.0,
             linewidth: float = 1.0,
             show_labels: bool = True,
+            style: PlotStyle | None = None,
             min_value: float | None = None,
             max_value: float | None = None,
             plot_title: bool = True,
@@ -536,6 +554,7 @@ class GenomicFigure:
             alpha: float = 1.0,
             linewidth: float = 1.0,
             show_labels: bool = True,
+            style: PlotStyle | None = None,
             min_value: float | None = None,
             max_value: float | None = None,
             plot_title: bool = True,

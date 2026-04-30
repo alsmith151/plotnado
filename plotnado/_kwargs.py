@@ -442,6 +442,7 @@ class BigwigOverlayKwargs(TypedDict, total=False):
     alpha: float
     linewidth: float
     show_labels: bool
+    style: PlotStyle | None
     min_value: float | None
     max_value: float | None
     plot_title: bool
@@ -474,6 +475,7 @@ class OverlayKwargs(TypedDict, total=False):
     alpha: float
     linewidth: float
     show_labels: bool
+    style: PlotStyle | None
     min_value: float | None
     max_value: float | None
     plot_title: bool

@@ -29,9 +29,11 @@ dependencies = { file = ["requirements.txt"] }
 cooler = ["cooler", "capcruncher"]
 quantnado = ["quantnado"]
 toml = ["tomli; python_version < '3.11'", "tomli-w"]
-dev = ["pytest", "pytest-mock", "pytest-assume", "pre-commit"]
+notebook = ["ipywidgets>=8"]
+dev = ["pytest", "pytest-mock", "pytest-assume", "pre-commit", "ipywidgets>=8"]
 docs = [
-	"mkdocs>=1.6.1",
+	"mkdocs==1.6.1",
+	"mkdocs-material>=9.5.18",
 	"mkdocstrings>=1.0.3",
 	"mkdocs-literate-nav>=0.6.2",
 	"mkdocs-gen-files>=0.6.0",
@@ -47,11 +49,13 @@ all = [
 	"quantnado",
 	"tomli; python_version < '3.11'",
 	"tomli-w",
+	"ipywidgets>=8",
 	"pytest",
 	"pytest-mock",
 	"pytest-assume",
 	"pre-commit",
-	"mkdocs>=1.6.1",
+	"mkdocs==1.6.1",
+	"mkdocs-material>=9.5.18",
 	"mkdocstrings>=1.0.3",
 	"mkdocs-literate-nav>=0.6.2",
 	"mkdocs-gen-files>=0.6.0",

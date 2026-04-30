@@ -7,6 +7,8 @@ without heavy dependencies like CoolBox.
 
 from .figure import GenomicFigure
 from .igv import parse_igv_session, IgvSession
+from .hub import parse_ucsc_hub, UcscHubSession
+from .widgets import TrackVisibilityWidget
 from .theme import Theme
 from .template import Template, TrackSpec, GuideSpec, GroupSpec
 from .render import TemplateCompiler, RenderPlan, ResolvedTrack
@@ -81,6 +83,9 @@ __all__ = [
     "GenomicFigure",
     "parse_igv_session",
     "IgvSession",
+    "parse_ucsc_hub",
+    "UcscHubSession",
+    "TrackVisibilityWidget",
     "Theme",
     # Template system
     "Template",

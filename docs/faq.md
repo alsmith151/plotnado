@@ -23,6 +23,14 @@ or CLI:
 plotnado track-options bigwig
 ```
 
+## How should I scale overlays?
+
+Treat the overlay as the unit of scaling:
+
+- Use `autoscale_group` on the overlay track when it should match neighboring signal panels.
+- Use overlay `min_value` / `max_value` only when you want to pin that edge deliberately.
+- Use separate panels instead of an overlay when the signals need independent ranges.
+
 ## What is the recommended coding style?
 
 Use a single `GenomicFigure` instance (`gf`) and chain helper methods. See [Track Construction](quickstart_tracks.md).

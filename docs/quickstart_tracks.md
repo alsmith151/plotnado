@@ -66,6 +66,26 @@ gf.add_track(
 - Use explicit classes only for custom/advanced tracks.
 - Keep structural tracks first (`scalebar`, `axis`, `genes`) for readability.
 
+## Overlay tracks with shared scaling
+
+Use `overlay()` when several signals should occupy one panel. Treat the overlay as a real track: give the overlay its own `title`, `autoscale_group`, and optional `min_value` / `max_value`.
+
+```python
+gf.overlay(
+    [sample_a, sample_b],
+    title="Replicate overlay",
+    autoscale_group="signal-panels",
+    colors=["#2ca02c", "#9467bd"],
+    alpha=0.6,
+)
+```
+
+Practical rule:
+
+- Use `autoscale_group` on the overlay itself when the whole panel should sync with neighboring signal tracks.
+- Use overlay `min_value` / `max_value` only when you intentionally want to pin one edge.
+- Use separate panels instead of an overlay when the series need independent y-ranges for interpretation.
+
 ## Automatic kwarg routing in `GenomicFigure` methods
 
 When you use helper methods like `gf.bigwig(...)`, PlotNado can automatically route kwargs into nested models:
@@ -133,6 +153,7 @@ from plotnado import GenomicFigure
 
 GenomicFigure.available_track_aliases()
 GenomicFigure.track_options("bigwig")
+GenomicFigure.track_options("overlay")
 GenomicFigure.track_options_markdown("genes")
 ```
 
