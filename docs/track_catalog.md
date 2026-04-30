@@ -1,6 +1,6 @@
 # Track Catalog
 
-This page summarizes major track families and points to runnable scripts.
+This page summarizes the major track families, when to reach for them, and where to find runnable examples.
 
 ## Structural tracks
 
@@ -11,10 +11,12 @@ This page summarizes major track families and points to runnable scripts.
 ## Signal tracks
 
 - `bigwig` (`BigWigTrack`): continuous/interval signal (`style`: `fill`, `fragment`, `scatter`, `std`).
-- `overlay` (`OverlayTrack`): multi-signal overlay panel.
+- `overlay` (`OverlayTrack`): multi-signal overlay panel with one shared y-axis derived from all component values.
 - `bigwig_overlay` (`BigwigOverlay`): compatibility alias for `overlay`.
 - `bigwig_collection` (`BigWigCollection`): multi-BigWig collection workflows.
 - `bigwig_diff` (`BigWigDiff`): subtraction/ratio/log2ratio between two tracks.
+
+Use `overlay` when the signals should be compared directly on one axis. Put `autoscale_group` on the overlay itself when it should match neighboring signal tracks, and use explicit `min_value` / `max_value` only when you want to pin that bound.
 
 Scripts:
 

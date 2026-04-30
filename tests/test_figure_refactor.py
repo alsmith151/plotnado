@@ -24,6 +24,7 @@ from plotnado.tracks import (
     QuantNadoMethylationTrack,
     QuantNadoStrandedCoverageTrack,
     QuantNadoVariantTrack,
+    OverlayTrack,
     ScaleBar,
 )
 
@@ -295,6 +296,77 @@ class TestFigureRefactor:
         ylim1 = out.axes[0].get_ylim()
         ylim2 = out.axes[1].get_ylim()
         assert ylim1 == ylim2
+
+    def test_autoscale_group_overlay_matches_peer_track(self):
+        df1 = pd.DataFrame(
+            {"chrom": ["chr1", "chr1"], "start": [100, 150], "end": [150, 200], "value": [1.0, 2.0]}
+        )
+        df2 = pd.DataFrame(
+            {"chrom": ["chr1", "chr1"], "start": [100, 150], "end": [150, 200], "value": [10.0, 20.0]}
+        )
+
+        fig = GenomicFigure()
+        fig.add_track(
+            OverlayTrack(
+                tracks=[BigWigTrack(data=df1, title="overlay-a"), BigWigTrack(data=df2, title="overlay-b")],
+                autoscale_group="g1",
+                title="Overlay",
+            )
+        )
+        fig.add_track(BigWigTrack(data=df2, autoscale_group="g1", title="Peer"))
+
+        out = fig.plot("chr1:90-210", show=False)
+
+        assert out.axes[0].get_ylim() == out.axes[1].get_ylim() == (0.0, 20.0)
+
+    def test_autoscale_group_overlay_preserves_explicit_limit_and_label(self):
+        df1 = pd.DataFrame(
+            {"chrom": ["chr1", "chr1"], "start": [100, 150], "end": [150, 200], "value": [1.0, 2.0]}
+        )
+        df2 = pd.DataFrame(
+            {"chrom": ["chr1", "chr1"], "start": [100, 150], "end": [150, 200], "value": [10.0, 20.0]}
+        )
+
+        fig = GenomicFigure()
+        fig.add_track(
+            OverlayTrack(
+                tracks=[BigWigTrack(data=df1, title="overlay-a"), BigWigTrack(data=df2, title="overlay-b")],
+                autoscale_group="g1",
+                title="Overlay",
+                aesthetics={"max_value": 7.0},
+                label=LabelConfig(plot_title=True, plot_scale=True),
+            )
+        )
+        fig.add_track(BigWigTrack(data=df2, autoscale_group="g1", title="Peer"))
+
+        out = fig.plot("chr1:90-210", show=False)
+
+        assert out.axes[0].get_ylim() == (0.0, 7.0)
+        assert out.axes[1].get_ylim() == (0.0, 20.0)
+        assert "[ 0 - 7 ]" in [text.get_text() for text in out.axes[0].texts]
+
+    def test_global_autoscale_includes_overlay_values(self):
+        df1 = pd.DataFrame(
+            {"chrom": ["chr1", "chr1"], "start": [100, 150], "end": [150, 200], "value": [1.0, 2.0]}
+        )
+        df2 = pd.DataFrame(
+            {"chrom": ["chr1", "chr1"], "start": [100, 150], "end": [150, 200], "value": [10.0, 20.0]}
+        )
+
+        fig = GenomicFigure()
+        fig.autoscale(True)
+        fig.add_track(BigWigTrack(data=df1, title="Base"))
+        fig.add_track(
+            OverlayTrack(
+                tracks=[BigWigTrack(data=df1, title="overlay-a"), BigWigTrack(data=df2, title="overlay-b")],
+                title="Overlay",
+            )
+        )
+
+        out = fig.plot("chr1:90-210", show=False)
+
+        assert out.axes[0].get_ylim() == (0.0, 20.0)
+        assert out.axes[1].get_ylim() == (0.0, 20.0)
 
     def test_publication_theme_auto_palette_applies_to_multiple_signal_tracks(self):
         df = pd.DataFrame(

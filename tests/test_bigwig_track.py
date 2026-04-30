@@ -197,6 +197,8 @@ class TestBigWigTrack:
         assert kwargs["align"] == "edge"
         assert kwargs["color"] == "red"
         assert kwargs["alpha"] == 0.7
+        assert kwargs["edgecolor"] == "none"
+        assert kwargs["linewidth"] == 0.0
         assert list(kwargs["width"]) == [100.0, 40.0]
 
     def test_apply_smoothing_mean(self):

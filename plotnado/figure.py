@@ -52,6 +52,7 @@ from .figure_methods import GenomicFigureMethods
 
 if TYPE_CHECKING:
     from .template import Template
+    from .widgets import TrackVisibilityWidget
 
 
 class GenomicFigure(GenomicFigureMethods):
@@ -185,6 +186,39 @@ class GenomicFigure(GenomicFigureMethods):
         session = parse_igv_session(path)
         fig = cls.from_template(session.template, width=width, theme=theme)
         return fig, session.locus
+
+    @classmethod
+    def from_ucsc_hub(
+        cls,
+        source: str | Path,
+        *,
+        genome: str | None = None,
+        include_hidden: bool = True,
+        width: float | None = None,
+        theme: Theme | BuiltinTheme | str | None = BuiltinTheme.PUBLICATION,
+    ) -> GenomicFigure:
+        """Build a GenomicFigure from a UCSC-style track hub.
+
+        Args:
+            source: Path or URL to the hub ``hub.txt`` entrypoint.
+            genome: Optional genome id to select when the hub serves multiple genomes.
+            include_hidden: Preserve hidden hub tracks as zero-height figure tracks.
+            width: Override figure width in inches.
+            theme: Theme to apply. Defaults to the publication theme.
+
+        Returns:
+            A fully configured figure built through the standard template pipeline.
+
+        Example::
+
+            fig = GenomicFigure.from_ucsc_hub(
+                "https://ftp.ebi.ac.uk/pub/databases/blueprint/releases/current_release/homo_sapiens/hub/hub.txt"
+            )
+        """
+        from .hub import parse_ucsc_hub
+
+        session = parse_ucsc_hub(source, genome=genome, include_hidden=include_hidden)
+        return cls.from_template(session.template, width=width, theme=theme)
 
     @staticmethod
     def _resolve_theme(theme: Theme | BuiltinTheme | str | None) -> Theme | None:
@@ -333,6 +367,12 @@ class GenomicFigure(GenomicFigureMethods):
         else:
             self._apply_theme_palette()
         return self
+
+    def track_visibility_widget(self, region: str | GenomicRegion) -> TrackVisibilityWidget:
+        """Return an ipywidgets-based show/hide control panel for notebooks."""
+        from .widgets import TrackVisibilityWidget
+
+        return TrackVisibilityWidget(self, region)
 
     @staticmethod
     def _aesthetic_explicitly_set(track: Track, field_name: str) -> bool:
@@ -634,26 +674,52 @@ class GenomicFigure(GenomicFigureMethods):
         return gr.extend(upstream=bp, downstream=bp)
 
     def _apply_autoscale_groups(
-        self, axes: list[matplotlib.axes.Axes], main_tracks: list[Track]
-    ) -> None:
+        self, gr: GenomicRegion, main_tracks: list[Track]
+    ) -> dict[int, tuple[float, float]]:
+        from .tracks.scaling import calculate_data_limits
+
         grouped: dict[str, list[int]] = {}
         for index, track in enumerate(main_tracks):
-            if track.autoscale_group:
+            if track.autoscale_group and (track.has_aesthetic("min_value") or track.has_aesthetic("max_value")):
                 grouped.setdefault(track.autoscale_group, []).append(index)
 
+        overrides: dict[int, tuple[float, float]] = {}
         for indices in grouped.values():
-            mins = []
-            maxs = []
+            raw_limits = []
             for index in indices:
-                y_limits = axes[index].get_ylim()
-                mins.append(y_limits[0])
-                maxs.append(y_limits[1])
-            group_min = min(mins)
-            group_max = max(maxs)
+                raw_limits.append(calculate_data_limits(main_tracks[index].fetch_data(gr)))
+
+            if not raw_limits:
+                continue
+
+            group_min = min(limit[0] for limit in raw_limits)
+            group_max = max(limit[1] for limit in raw_limits)
             if group_min == group_max:
-                group_max = group_min + 1
+                group_max = group_min + 1.0
+
             for index in indices:
-                axes[index].set_ylim(group_min, group_max)
+                track = main_tracks[index]
+                min_override = group_min
+                max_override = group_max
+
+                if (
+                    track.has_aesthetic("min_value")
+                    and self._aesthetic_explicitly_set(track, "min_value")
+                    and track.min_value is not None
+                ):
+                    min_override = float(track.min_value)
+                if (
+                    track.has_aesthetic("max_value")
+                    and self._aesthetic_explicitly_set(track, "max_value")
+                    and track.max_value is not None
+                ):
+                    max_override = float(track.max_value)
+
+                if min_override == max_override:
+                    max_override = min_override + 1.0
+                overrides[index] = (float(min_override), float(max_override))
+
+        return overrides
 
     def _font_family(self) -> str:
         if self.theme is not None:
@@ -736,16 +802,31 @@ class GenomicFigure(GenomicFigureMethods):
 
             Autoscaler(tracks=self.tracks, gr=gr).apply()
 
-        for ax, track in zip(axes, main_tracks):
+        group_limit_overrides = self._apply_autoscale_groups(gr, main_tracks)
+
+        for index, (ax, track) in enumerate(zip(axes, main_tracks)):
             ax.patch.set_alpha(0)
+            original_limits: dict[str, float | None] = {}
+            limit_override = group_limit_overrides.get(index)
+            if limit_override is not None:
+                min_override, max_override = limit_override
+                if track.has_aesthetic("min_value"):
+                    original_limits["min_value"] = track.min_value
+                    track.min_value = min_override
+                if track.has_aesthetic("max_value"):
+                    original_limits["max_value"] = track.max_value
+                    track.max_value = max_override
             try:
                 track.plot(ax, gr)
                 ax.set_xlim(gr.start, gr.end)
             except Exception as exc:
                 logger.error(f"Error plotting track {track.__class__.__name__}: {exc}")
                 ax.text(0.5, 0.5, f"Error: {exc}", ha="center", va="center", transform=ax.transAxes)
-
-        self._apply_autoscale_groups(axes, main_tracks)
+            finally:
+                if "min_value" in original_limits:
+                    track.min_value = original_limits["min_value"]
+                if "max_value" in original_limits:
+                    track.max_value = original_limits["max_value"]
 
         for highlight_gr in self._highlight_regions:
             if highlight_gr.chromosome == gr.chromosome:

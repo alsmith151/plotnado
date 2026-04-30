@@ -8,6 +8,71 @@ from .base import GenomicRegion, Track
 from .enums import ScalingMethod
 
 
+def extract_numeric_values(data: object) -> np.ndarray:
+    """Extract numeric values from supported track payloads.
+
+    Supports raw arrays, bedgraph-like DataFrames, pandas Series, and nested
+    sequences such as OverlayTrack component payloads.
+    """
+    if isinstance(data, pd.DataFrame):
+        if "value" in data.columns:
+            series = pd.to_numeric(data["value"], errors="coerce")
+        elif data.empty:
+            return np.array([], dtype=float)
+        else:
+            series = pd.to_numeric(data.iloc[:, -1], errors="coerce")
+        return series.dropna().to_numpy(dtype=float)
+
+    if isinstance(data, pd.Series):
+        return pd.to_numeric(data, errors="coerce").dropna().to_numpy(dtype=float)
+
+    if isinstance(data, np.ndarray):
+        flattened = np.asarray(data).ravel()
+        if flattened.size == 0:
+            return np.array([], dtype=float)
+        numeric = pd.to_numeric(pd.Series(flattened), errors="coerce").dropna()
+        return numeric.to_numpy(dtype=float)
+
+    if isinstance(data, (list, tuple)):
+        nested = [extract_numeric_values(item) for item in data]
+        nested = [values for values in nested if values.size > 0]
+        if not nested:
+            return np.array([], dtype=float)
+        return np.concatenate(nested, axis=0)
+
+    return np.array([], dtype=float)
+
+
+def calculate_data_limits(
+    data: object,
+    *,
+    min_value: float | None = None,
+    max_value: float | None = None,
+) -> tuple[float, float]:
+    """Calculate y-limits from track data with optional explicit overrides."""
+    values = extract_numeric_values(data)
+
+    if values.size == 0:
+        y_min = 0.0 if min_value is None else float(min_value)
+        y_max = 1.0 if max_value is None else float(max_value)
+    else:
+        data_min = float(np.nanmin(values))
+        data_max = float(np.nanmax(values))
+        y_min = float(min_value) if min_value is not None else float(min(0.0, data_min))
+        y_max = float(max_value) if max_value is not None else data_max
+
+    if y_min == y_max:
+        y_max = y_min + 1.0
+    return y_min, y_max
+
+
+def track_limit_explicitly_set(track: Track, field_name: str) -> bool:
+    """Return whether a min/max aesthetic was explicitly set by the user."""
+    aesthetics = getattr(track, "aesthetics", None)
+    explicit_fields = getattr(aesthetics, "model_fields_set", set())
+    return field_name in explicit_fields and getattr(aesthetics, field_name, None) is not None
+
+
 class Autoscaler:
     """
     Autoscale the data from multiple tracks to a single scale.
@@ -29,17 +94,7 @@ class Autoscaler:
 
     @staticmethod
     def _extract_numeric_values(data: pd.DataFrame | np.ndarray) -> np.ndarray:
-        if isinstance(data, pd.DataFrame):
-            if "value" in data.columns:
-                series = pd.to_numeric(data["value"], errors="coerce")
-                return series.dropna().to_numpy(dtype=float)
-            return np.array([], dtype=float)
-
-        flattened = np.asarray(data).ravel()
-        if flattened.size == 0:
-            return np.array([], dtype=float)
-        numeric = pd.to_numeric(pd.Series(flattened), errors="coerce").dropna()
-        return numeric.to_numpy(dtype=float)
+        return extract_numeric_values(data)
 
     @property
     def data(self) -> np.ndarray:
@@ -51,10 +106,9 @@ class Autoscaler:
             if not self._supports_autoscale(t):
                 continue
             data = t.fetch_data(self.gr)
-            if isinstance(data, (pd.DataFrame, np.ndarray)):
-                values = self._extract_numeric_values(data)
-                if values.size > 0:
-                    _data.append(values)
+            values = self._extract_numeric_values(data)
+            if values.size > 0:
+                _data.append(values)
 
         if not _data:
             return np.array([0])
@@ -92,10 +146,17 @@ class Autoscaler:
         for track in self.tracks:
             if not self._supports_autoscale(track):
                 continue
+            explicit_fields = getattr(track.aesthetics, "model_fields_set", None)
             if hasattr(track.aesthetics, "min_value"):
-                track.aesthetics.min_value = min_value
+                if not track_limit_explicitly_set(track, "min_value"):
+                    track.aesthetics.min_value = min_value
+                    if isinstance(explicit_fields, set):
+                        explicit_fields.discard("min_value")
             if hasattr(track.aesthetics, "max_value"):
-                track.aesthetics.max_value = max_value
+                if not track_limit_explicitly_set(track, "max_value"):
+                    track.aesthetics.max_value = max_value
+                    if isinstance(explicit_fields, set):
+                        explicit_fields.discard("max_value")
 
 
 class Scaler:

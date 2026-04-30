@@ -1,5 +1,7 @@
 # Reference
 
+This page is the quickest route to the high-level API contract. For exact field tables, use [Aesthetics Reference](aesthetics_reference.md). For runtime discovery, use `GenomicFigure.track_options(...)` from [API Reference](api_reference.md).
+
 ## GenomicFigure
 
 ```python
@@ -39,9 +41,34 @@ Key kwargs:
 
 #### `overlay(tracks, /, **kwargs)`
 
-Multiple signals in one panel. `tracks` is a list of data sources (same formats as `bigwig`).
+Multiple signals in one panel on a shared y-axis. `tracks` can be data sources, pre-built `BigWigTrack` objects, or other compatible overlay members.
 
-Key kwargs: `colors` (list), `alpha`, `linewidth`.
+Behavior summary:
+
+- Overlay derives one shared y-range from the union of all component values.
+- `fig.autoscale(True)` includes overlay component values when it computes a figure-wide range.
+- `autoscale_group` belongs on the overlay track itself when the overlay should sync with sibling signal panels.
+- Explicit overlay `min_value` / `max_value` wins on that edge, even when the overlay also participates in global or grouped autoscaling.
+
+Key kwargs:
+
+| Kwarg | Default | Description |
+| --- | --- | --- |
+| `colors` | — | Per-component colors applied in overlay order |
+| `alpha` | `1.0` | Shared opacity for the component signal tracks |
+| `min_value` / `max_value` | — | Fixed overlay bounds; overrides autoscaling on the specified edge |
+| `show_labels` | `True` | Show or suppress component track labels inside the overlay |
+| `autoscale_group` | — | Sync the overlay panel with sibling signal tracks |
+
+```python
+fig.overlay(
+    [signal_a, signal_b],
+    title="Replicate overlay",
+    autoscale_group="signal-panels",
+    colors=["#2ca02c", "#9467bd"],
+    alpha=0.55,
+)
+```
 
 #### `bigwig_diff(data_a, data_b, /, **kwargs)`
 

@@ -239,15 +239,18 @@ class BigWigTrack(Track):
         starts = data["start"].to_numpy(dtype=float)
         widths = (data["end"] - data["start"]).to_numpy(dtype=float)
         values = data["value"].to_numpy(dtype=float)
+        facecolor = self.color if self.fill else "none"
+        edgecolor = self.color if not self.fill and self.linewidth > 0 else "none"
+        linewidth = self.linewidth if not self.fill else 0.0
         ax.bar(
             starts,
             values,
             width=widths,
             align="edge",
             bottom=0,
-            color=self.color,
-            edgecolor=self.color,
-            linewidth=max(self.linewidth, 0.4),
+            color=facecolor,
+            edgecolor=edgecolor,
+            linewidth=linewidth,
             alpha=self.alpha,
         )
     

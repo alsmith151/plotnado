@@ -32,6 +32,7 @@ def main() -> None:
             signal(3.5, 1.5),
         ],
         title="Overlay",
+        autoscale_group="g1",
         colors=["#2ca02c", "#9467bd"],
         alpha=0.55,
     )

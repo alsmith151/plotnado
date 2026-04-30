@@ -20,6 +20,7 @@ class ScaleBarAesthetics(BaseAesthetics):
     Inherits color, alpha, and linewidth from BaseAesthetics.
     """
 
+    color: str = Field(default="black", description="Primary render color.")
     style: PlotStyle = Field(default=PlotStyle.STD, description="Scale bar style variant.")
     position: Position = Field(default=Position.LEFT, description="Horizontal anchor of the scale bar.")
     scale_distance: float | None = Field(

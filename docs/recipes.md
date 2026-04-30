@@ -1,12 +1,16 @@
 # Recipes
 
-Practical combinations of options and track types.
+Practical combinations of options and track types, with rendered output so you can see what the recipe actually produces.
 
 ## Autoscale + overlay + highlight
 
 - Enable global autoscaling with `gf.autoscale(True)`.
-- Overlay multiple signals with `gf.overlay(...)` / `OverlayTrack`.
+- Put `autoscale_group` on the overlay itself when the overlay should sync with nearby signal panels.
 - Mark regions with `gf.highlight(...)` and `gf.highlight_style(...)`.
+
+![Autoscale + overlay + highlight](images/examples/recipe_autoscale_overlay_highlight.png)
+
+Use this when you want one overlay panel to sit beside ordinary signal tracks without silently drifting onto a different y-scale.
 
 Script: `examples/recipes/01_autoscale_overlay_highlight.py`
 
@@ -15,6 +19,8 @@ Script: `examples/recipes/01_autoscale_overlay_highlight.py`
 - Apply publication defaults with `theme="publication"`.
 - Control labels with shorthand kwargs (`title`, `title_color`, `title_location`).
 - Save and reload figure definitions with TOML.
+
+![Theme, labels, and TOML](images/examples/recipe_theme_labels.png)
 
 Script: `examples/recipes/02_theme_labels_toml.py`
 
@@ -36,6 +42,10 @@ gf.bigwig("K562_signal.bw", title="K562 signal", color_group="K562")
 
 - Compare BigWig styles (`fill`, `fragment`, `scatter`, `std`).
 - Compare BED and narrowPeak interval behavior.
+
+![BigWig style comparison](images/examples/track_bigwig_styles.png)
+
+![BED and narrowPeak comparison](images/examples/track_bed_and_narrowpeak.png)
 
 Scripts:
 

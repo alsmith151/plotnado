@@ -1,5 +1,7 @@
 # Aesthetics
 
+This guide is about the visual layer: how tracks scale, label, color, and share space. For exact field names, pair it with [Aesthetics Reference](aesthetics_reference.md).
+
 Every track kwarg is routed automatically — aesthetics fields go into the style model, label fields go into the label model. You do not need to nest anything manually:
 
 ```python
@@ -132,7 +134,15 @@ fig.narrowpeak(
 
 ## Overlay, autoscale, and highlights
 
-`autoscale(True)` + `autoscale_group` links y-axes across tracks. `overlay()` draws multiple signals in one panel. `highlight()` shades a region.
+`overlay()` draws multiple signals in one panel. `autoscale(True)` and `autoscale_group` now treat overlays as first-class signal panels rather than leaving them on an isolated scale.
+
+Key rules:
+
+- Overlay panels derive one shared y-range from the union of their component tracks.
+- `fig.autoscale(True)` includes overlay component values when it computes figure-wide limits.
+- `autoscale_group` should be set on the overlay track itself when the overlay should match sibling signal panels.
+- Explicit overlay `min_value` / `max_value` overrides grouped or global autoscale on that edge.
+- `highlight()` is orthogonal to scaling; it shades the genomic interval without changing the y-range.
 
 ```python
 fig = GenomicFigure()
@@ -142,10 +152,19 @@ fig.highlight_style(color="#ffdd57", alpha=0.22)
 
 fig.bigwig(signal_a, title="Sample A", autoscale_group="g1", style="fill", color="#1f77b4")
 fig.bigwig(signal_b, title="Sample B", autoscale_group="g1", style="fill", color="#d62728")
-fig.overlay([signal_c, signal_d], title="Overlay", colors=["#2ca02c", "#9467bd"], alpha=0.55)
+fig.overlay(
+    [signal_c, signal_d],
+    title="Overlay",
+    autoscale_group="g1",
+    colors=["#2ca02c", "#9467bd"],
+    alpha=0.55,
+)
 ```
 
 ![Overlay, autoscale, highlight](images/aesthetics/overlay_autoscale.png)
+
+!!! tip "When overlay scaling looks wrong"
+    If the overlay panel should match nearby signal tracks, put `autoscale_group` on the overlay itself. Putting it only on the nested component tracks does not synchronize the panel with sibling axes.
 
 ---
 
