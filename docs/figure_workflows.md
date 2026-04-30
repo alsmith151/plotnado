@@ -108,4 +108,4 @@ loaded = GenomicFigure.from_toml("figure.toml")
 loaded.save("figure.png", "chr1:1,000,000-1,100,000")
 ```
 
-See `examples/recipes/02_theme_labels_toml.py` for a full round-trip script.
+See [examples/recipes/02_theme_labels_toml.py](https://github.com/alsmith151/plotnado/blob/main/examples/recipes/02_theme_labels_toml.py) for a full round-trip script.
