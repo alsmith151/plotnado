@@ -2533,7 +2533,7 @@ wheels = [
 
 [[package]]
 name = "plotnado"
-version = "0.4.dev5"
+version = "0.4.dev7"
 source = { editable = "." }
 dependencies = [
     { name = "loguru" },

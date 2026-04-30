@@ -139,7 +139,7 @@ def clean_up_temp_files():
 @pytest.fixture
 def temp_bigwig(clean_up_temp_files):
     """Create a temporary bigwig file for testing."""
-    import pyBigWig
+    import pybigtools
 
     # Create a temporary bigwig file
     temp_bw = tempfile.NamedTemporaryFile(suffix=".bw", delete=False)
@@ -147,16 +147,12 @@ def temp_bigwig(clean_up_temp_files):
     temp_bw.close()
 
     # Write data to bigwig file
-    bw = pyBigWig.open(temp_path, "w")
-    bw.addHeader([("chr1", 10000)], maxZooms=0)
-
-    # Add some test data
     start = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900]
     end = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
     values = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
-    bw.addEntries("chr1", start, ends=end, values=values)
-    bw.close()
+    records = [("chr1", s, e, value) for s, e, value in zip(start, end, values, strict=False)]
+    pybigtools.open(temp_path, "w").write({"chr1": 10000}, records)
 
     # Register for cleanup
     clean_up_temp_files(temp_path)
