@@ -775,27 +775,24 @@ class GenomicFigure(GenomicFigureMethods):
                 ax = fig.add_subplot(gs[index], sharex=axes[0])
             axes.append(ax)
 
-        def create_overlay_ax(zorder: int, label: str):
-            ax = fig.add_axes(axes[0].get_position(), label=label, zorder=zorder)
+        def overlay_bounds() -> list[float]:
             pos_top = axes[0].get_position()
             pos_bottom = axes[-1].get_position()
-            ax.set_position(
-                [
-                    pos_top.x0,
-                    pos_bottom.y0,
-                    pos_top.width,
-                    pos_top.y1 - pos_bottom.y0,
-                ]
-            )
+            return [
+                pos_top.x0,
+                pos_bottom.y0,
+                pos_top.width,
+                pos_top.y1 - pos_bottom.y0,
+            ]
+
+        def create_overlay_ax(zorder: int, label: str):
+            ax = fig.add_axes(overlay_bounds(), label=label, zorder=zorder)
             ax.patch.set_alpha(0)
             from .tracks.utils import clean_axis
 
             clean_axis(ax)
             ax.set_xlim(gr.start, gr.end)
             return ax
-
-        bg_ax = create_overlay_ax(zorder=-1, label="background_overlay")
-        fg_ax = create_overlay_ax(zorder=10, label="foreground_overlay")
 
         if self._autoscale:
             from .tracks.scaling import Autoscaler
@@ -827,35 +824,6 @@ class GenomicFigure(GenomicFigureMethods):
                     track.min_value = original_limits["min_value"]
                 if "max_value" in original_limits:
                     track.max_value = original_limits["max_value"]
-
-        for highlight_gr in self._highlight_regions:
-            if highlight_gr.chromosome == gr.chromosome:
-                start = max(highlight_gr.start, gr.start)
-                end = min(highlight_gr.end, gr.end)
-                if start < end:
-                    bg_ax.axvspan(
-                        start,
-                        end,
-                        color=self.highlight_color,
-                        alpha=self.highlight_alpha,
-                        zorder=-1,
-                    )
-
-        for track in global_tracks:
-            try:
-                if isinstance(track, HighlightsFromFile):
-                    track.plot(bg_ax, gr)
-                elif isinstance(track, VLineTrack):
-                    track.plot(fg_ax, gr)
-                elif hasattr(track, "plot_on_axes"):
-                    track.plot_on_axes(gr, axes)
-            except Exception as exc:
-                logger.error(f"Error plotting global track {track.__class__.__name__}: {exc}")
-
-        font_family = self._font_family()
-        for axis in fig.axes:
-            for text_artist in axis.texts:
-                text_artist.set_fontfamily(font_family)
 
         if self.theme is not None:
             fig.subplots_adjust(
@@ -893,6 +861,38 @@ class GenomicFigure(GenomicFigureMethods):
                     fig.add_artist(separator)
         else:
             fig.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.05)
+
+        bg_ax = create_overlay_ax(zorder=-1, label="background_overlay")
+        fg_ax = create_overlay_ax(zorder=10, label="foreground_overlay")
+
+        for highlight_gr in self._highlight_regions:
+            if highlight_gr.chromosome == gr.chromosome:
+                start = max(highlight_gr.start, gr.start)
+                end = min(highlight_gr.end, gr.end)
+                if start < end:
+                    bg_ax.axvspan(
+                        start,
+                        end,
+                        color=self.highlight_color,
+                        alpha=self.highlight_alpha,
+                        zorder=-1,
+                    )
+
+        for track in global_tracks:
+            try:
+                if isinstance(track, HighlightsFromFile):
+                    track.plot(bg_ax, gr)
+                elif isinstance(track, VLineTrack):
+                    track.plot(fg_ax, gr)
+                elif hasattr(track, "plot_on_axes"):
+                    track.plot_on_axes(gr, axes)
+            except Exception as exc:
+                logger.error(f"Error plotting global track {track.__class__.__name__}: {exc}")
+
+        font_family = self._font_family()
+        for axis in fig.axes:
+            for text_artist in axis.texts:
+                text_artist.set_fontfamily(font_family)
 
         if show:
             plt.show()

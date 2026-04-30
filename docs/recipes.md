@@ -12,7 +12,7 @@ Practical combinations of options and track types, with rendered output so you c
 
 Use this when you want one overlay panel to sit beside ordinary signal tracks without silently drifting onto a different y-scale.
 
-Script: `examples/recipes/01_autoscale_overlay_highlight.py`
+Source: [examples/recipes/01_autoscale_overlay_highlight.py](https://github.com/alsmith151/plotnado/blob/main/examples/recipes/01_autoscale_overlay_highlight.py)
 
 ## Theme + labels + TOML round-trip
 
@@ -22,7 +22,7 @@ Script: `examples/recipes/01_autoscale_overlay_highlight.py`
 
 ![Theme, labels, and TOML](images/examples/recipe_theme_labels.png)
 
-Script: `examples/recipes/02_theme_labels_toml.py`
+Source: [examples/recipes/02_theme_labels_toml.py](https://github.com/alsmith151/plotnado/blob/main/examples/recipes/02_theme_labels_toml.py)
 
 ## Autocolor + color groups
 
@@ -49,5 +49,7 @@ gf.bigwig("K562_signal.bw", title="K562 signal", color_group="K562")
 
 Scripts:
 
-- `examples/tracks/01_bigwig_styles.py`
-- `examples/tracks/02_bed_and_narrowpeak.py`
+- [examples/tracks/01_bigwig_styles.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/01_bigwig_styles.py)
+- [examples/tracks/02_bed_and_narrowpeak.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/02_bed_and_narrowpeak.py)
+
+More rendered runnable outputs, including quickstart, links/hline/vline, and gene-label examples, are collected on [Example Coverage](example_coverage.md).

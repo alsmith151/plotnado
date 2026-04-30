@@ -22,7 +22,8 @@ def main() -> None:
     fig.scalebar()
     fig.bigwig(signal(0.0), title="fill", style="fill", color="#1f77b4")
     fig.bigwig(signal(0.8), title="fragment", style="fragment", color="#d62728")
-    fig.bigwig(signal(1.6), title="scatter", style="scatter", color="#2ca02c", scatter_point_size=14)
+    fig.bigwig(signal(1.6), title="scatter", style="scatter", color="#2ca02c", scatter_point_size=10)
+    fig.bigwig(signal(2.4), title="std", style="std", color="#9467bd")
 
     outfile = outdir / "track_bigwig_styles.png"
     fig.save(outfile, "chr1:1,010,000-1,080,000", dpi=220)

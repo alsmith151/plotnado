@@ -245,6 +245,39 @@ class TestFigureRefactor:
         assert xlim[0] == 50
         assert xlim[1] == 250
 
+    def test_highlight_and_vline_overlay_axes_span_all_tracks(self):
+        df = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [100, 200],
+                "end": [200, 300],
+                "value": [1.0, 2.0],
+            }
+        )
+
+        fig = GenomicFigure(theme="publication")
+        fig.highlight("chr1:120-180")
+        fig.vline(150)
+        fig.scalebar()
+        fig.axis()
+        fig.bigwig(df, title="signal-a")
+        fig.bigwig(df, title="signal-b")
+
+        out = fig.plot("chr1:100-300", show=False)
+
+        overlay_labels = {"background_overlay", "foreground_overlay"}
+        axes_by_label = {ax.get_label(): ax for ax in out.axes}
+        main_axes = [ax for ax in out.axes if ax.get_label() not in overlay_labels]
+        top_bounds = main_axes[0].get_position()
+        bottom_bounds = main_axes[-1].get_position()
+
+        for label in overlay_labels:
+            overlay_bounds = axes_by_label[label].get_position()
+            assert overlay_bounds.x0 == pytest.approx(top_bounds.x0)
+            assert overlay_bounds.x1 == pytest.approx(top_bounds.x1)
+            assert overlay_bounds.y1 == pytest.approx(top_bounds.y1)
+            assert overlay_bounds.y0 == pytest.approx(bottom_bounds.y0)
+
     def test_plot_regions_list(self):
         fig = GenomicFigure().add_track(ScaleBar())
         plots = fig.plot_regions(["chr1:100-200", "chr1:300-400"], show=False)
