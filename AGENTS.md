@@ -147,3 +147,7 @@ uv run pytest tests/
 ```
 
 Entry point: `plotnado = "plotnado.cli.cli:main"` (defined in `pyproject.toml`)
+
+# Notes
+
+The main branch is protected; create a feature branch and open a PR for review before merging. Follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) spec for commit messages.
