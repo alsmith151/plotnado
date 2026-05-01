@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
-import subprocess
+import os
+import runpy
 import sys
+import traceback
 from pathlib import Path
 
 CORE_SCRIPTS = [
@@ -60,22 +62,36 @@ def main(argv: list[str] | None = None) -> None:
     args = parser.parse_args(argv)
 
     root = Path(__file__).resolve().parent
+    repo_root = root.parent
+    repo_root_str = str(repo_root)
+    if repo_root_str not in sys.path:
+        sys.path.insert(0, repo_root_str)
     failures: list[str] = []
 
     for rel_path in scripts_to_run(include_remote=args.include_remote):
         script = root / rel_path
-        print(f"\\n>>> Running {script.relative_to(root)}")
-        result = subprocess.run([sys.executable, str(script)], cwd=str(root.parent))
-        if result.returncode != 0:
+        print(f"\n>>> Running {script.relative_to(root)}")
+        previous_cwd = Path.cwd()
+        try:
+            os.chdir(repo_root)
+            runpy.run_path(str(script), run_name="__main__")
+        except SystemExit as exc:
+            code = exc.code if isinstance(exc.code, int) else 1
+            if code != 0:
+                failures.append(rel_path)
+        except Exception:
+            traceback.print_exc()
             failures.append(rel_path)
+        finally:
+            os.chdir(previous_cwd)
 
     if failures:
-        print("\\nSome examples failed:")
+        print("\nSome examples failed:")
         for rel_path in failures:
             print(f" - {rel_path}")
         raise SystemExit(1)
 
-    print("\\nAll examples completed successfully.")
+    print("\nAll examples completed successfully.")
 
 
 if __name__ == "__main__":

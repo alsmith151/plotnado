@@ -30,7 +30,7 @@ cooler = ["cooler", "capcruncher"]
 quantnado = ["quantnado"]
 toml = ["tomli; python_version < '3.11'", "tomli-w"]
 notebook = ["ipywidgets>=8"]
-dev = ["pytest", "pytest-mock", "pytest-assume", "pre-commit", "ipywidgets>=8"]
+dev = ["pytest", "pytest-cov", "pytest-mock", "pytest-assume", "pre-commit", "ipywidgets>=8"]
 docs = [
 	"mkdocs==1.6.1",
 	"mkdocs-material>=9.5.18",
@@ -51,6 +51,7 @@ all = [
 	"tomli-w",
 	"ipywidgets>=8",
 	"pytest",
+	"pytest-cov",
 	"pytest-mock",
 	"pytest-assume",
 	"pre-commit",

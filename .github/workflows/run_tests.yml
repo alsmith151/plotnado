@@ -32,13 +32,15 @@ jobs:
     - name: Install dependencies
       run: |
         pip install uv
-        uv pip install . pytest pytest-cov --system
+        uv pip install ".[dev]" --system
     - name: Run tests
       run: |
-        pytest tests/ -v --cov=plotnado
+        python -m pytest tests/ -v --cov=plotnado --cov-report=term-missing --cov-report=xml
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
+        files: coverage.xml
+        name: plotnado-coverage
         fail_ci_if_error: false

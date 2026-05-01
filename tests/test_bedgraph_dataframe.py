@@ -42,7 +42,7 @@ class TestBedgraphDataFrame:
             'value': [0.1, 0.2, 0.3],
             'extra': ['a', 'b', 'c'],
         }
-        with pytest.raises(SchemaErrors):
+        with pytest.raises((SchemaError, SchemaErrors)):
             BedgraphDataFrame(data)
 
     def test_string_columns_are_coerced(self):
