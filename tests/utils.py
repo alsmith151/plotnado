@@ -8,7 +8,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import pyBigWig
+import pybigtools
 from pybedtools import BedTool
 
 
@@ -32,10 +32,6 @@ def create_test_bigwig(chromosome="chr1", start=0, end=1000, num_points=10, valu
     temp_path = temp_bw.name
     temp_bw.close()
     
-    # Create the bigwig file
-    bw = pyBigWig.open(temp_path, "w")
-    bw.addHeader([(chromosome, end)], maxZooms=0)
-    
     # Create the data
     intervals = end - start
     step = intervals // num_points
@@ -53,9 +49,12 @@ def create_test_bigwig(chromosome="chr1", start=0, end=1000, num_points=10, valu
     # Add entries
     starts = [start + i * step for i in range(num_points)]
     ends = [start + (i + 1) * step for i in range(num_points)]
-    
-    bw.addEntries(chromosome, starts, ends=ends, values=y.tolist())
-    bw.close()
+
+    records = [
+        (chromosome, interval_start, interval_end, float(value))
+        for interval_start, interval_end, value in zip(starts, ends, y.tolist(), strict=False)
+    ]
+    pybigtools.open(temp_path, "w").write({chromosome: end}, records)
     
     return temp_path
 

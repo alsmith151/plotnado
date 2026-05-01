@@ -21,6 +21,7 @@ Use `overlay` when the signals should be compared directly on one axis. Put `aut
 Scripts:
 
 - [examples/tracks/01_bigwig_styles.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/01_bigwig_styles.py)
+- [examples/tracks/04_bigwig_collection_and_diff.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/04_bigwig_collection_and_diff.py)
 - [examples/recipes/01_autoscale_overlay_highlight.py](https://github.com/alsmith151/plotnado/blob/main/examples/recipes/01_autoscale_overlay_highlight.py)
 
 ## Interval and annotation tracks
@@ -45,6 +46,10 @@ Scripts:
 
 These require cooler-compatible files.
 
+Scripts:
+
+- [examples/tracks/05_matrix_tracks.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/05_matrix_tracks.py)
+
 ## QuantNado tracks
 
 - `quantnado_coverage`
@@ -53,6 +58,10 @@ These require cooler-compatible files.
 - `quantnado_variant`
 
 These support object-backed and array-backed workflows.
+
+Scripts:
+
+- [examples/tracks/06_quantnado_tracks.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/06_quantnado_tracks.py)
 
 ## Field-level options
 
@@ -69,6 +78,6 @@ These support object-backed and array-backed workflows.
 | `bed`, `narrowpeak` | Runnable script | [examples/tracks/02_bed_and_narrowpeak.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/02_bed_and_narrowpeak.py) |
 | `links`, `hline`, `vline` | Runnable script | [examples/tracks/03_links_annotations.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/03_links_annotations.py) |
 | `highlight`, `overlay` | Runnable script | [examples/recipes/01_autoscale_overlay_highlight.py](https://github.com/alsmith151/plotnado/blob/main/examples/recipes/01_autoscale_overlay_highlight.py) |
-| `bigwig_collection`, `bigwig_diff` | Documented pattern | [Recipes](recipes.md) |
-| `cooler`, `capcruncher`, `cooler_average` | Documented pattern | [Track Catalog](track_catalog.md) |
-| QuantNado aliases | Documented pattern | [Track Construction](quickstart_tracks.md) |
+| `bigwig_collection`, `bigwig_diff` | Runnable script (remote Blueprint crop staged in a temp dir) | [examples/tracks/04_bigwig_collection_and_diff.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/04_bigwig_collection_and_diff.py) |
+| `cooler`, `capcruncher`, `cooler_average` | Runnable script | [examples/tracks/05_matrix_tracks.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/05_matrix_tracks.py) |
+| QuantNado aliases | Runnable script | [examples/tracks/06_quantnado_tracks.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/06_quantnado_tracks.py) |
