@@ -1,10 +1,23 @@
 # PlotNado
 
-![PlotNado logo](docs/images/Logo.jpeg)
+<p align="center">
+  <img src="docs/images/Logo.jpeg" alt="PlotNado logo" width="240">
+</p>
 
-[![Tests](https://github.com/alsmith151/plotnado/actions/workflows/run_tests.yml/badge.svg)](https://github.com/alsmith151/plotnado/actions/workflows/run_tests.yml)
+<p align="center">
+  Lightweight genome browser-style plotting for Python scripts, notebooks, and YAML-driven CLI workflows.
+</p>
 
-PlotNado is a lightweight Python package for building genome browser-style figures.
+<p align="center">
+  <a href="https://github.com/alsmith151/plotnado/actions/workflows/run_tests.yml">
+    <img alt="Tests" src="https://github.com/alsmith151/plotnado/actions/workflows/run_tests.yml/badge.svg">
+  </a>
+</p>
+
+PlotNado is a lightweight Python package for building genome browser-style figures with publication-style defaults.
+Use it directly from Python or generate, validate, and render YAML templates from the CLI.
+
+Quick links: [Install](#install) | [Python Quick Start](#python-quick-start) | [CLI Quick Start](#cli-quick-start)
 
 It supports two complementary workflows:
 
