@@ -29,6 +29,8 @@ test.def
 plan-apiUsabilityOverhaul.prompt.md
 plan-plotnadoRefactor.prompt.md
 pytestdebug.log
+.coverage
+coverage.xml
 run_tests.py
 .venv
 dist/
