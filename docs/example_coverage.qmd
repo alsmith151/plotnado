@@ -171,4 +171,4 @@ for alias in sorted(GenomicFigure.available_track_aliases()):
     GenomicFigure.track_options(alias)
 ```
 
-For full generated tables, see [Aesthetics Reference](aesthetics_reference.md).
+For full generated tables, see [Aesthetics Reference](aesthetics_reference.qmd).

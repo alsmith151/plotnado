@@ -1,0 +1,79 @@
+---
+title: Simple Overlays
+jupyter: python3
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+Overlay tracks put several signal series into one panel with one shared y-axis. This page uses in-memory signal tables so the output is deterministic during docs builds.
+
+## Setup
+
+```{python}
+import numpy as np
+import pandas as pd
+
+from plotnado import GenomicFigure
+```
+
+```{python}
+#| echo: false
+REGION = "chr1:1,010,000-1,080,000"
+
+
+def signal(phase=0.0, scale=1.0, step=1_000):
+    bins = np.arange(1_000_000, 1_100_000, step)
+    values = scale * (4 + 2 * np.sin(np.linspace(phase, 6 + phase, bins.shape[0])))
+    return pd.DataFrame(
+        {"chrom": "chr1", "start": bins, "end": bins + step, "value": values}
+    )
+```
+
+## Separate signal panels
+
+```{python}
+fig = GenomicFigure(track_height=1.1)
+fig.axis()
+fig.bigwig(signal(0.0, scale=2.0), title="Sample A", style="fill", color="#1f77b4")
+fig.bigwig(signal(1.2, scale=3.0), title="Sample B", style="fill", color="#d62728")
+
+fig.plot(REGION)
+```
+
+## Overlay the same signals
+
+```{python}
+fig = GenomicFigure(track_height=1.25)
+fig.axis()
+fig.overlay(
+    [signal(0.0, scale=2.0), signal(1.2, scale=3.0)],
+    title="Sample overlay",
+    colors=["#1f77b4", "#d62728"],
+    alpha=0.6,
+)
+
+fig.plot(REGION)
+```
+
+## Overlay with autoscale and highlight
+
+```{python}
+fig = GenomicFigure(track_height=1.25)
+fig.autoscale(True)
+fig.highlight("chr1:1,032,000-1,046,000")
+fig.highlight_style(color="#ffdd57", alpha=0.22)
+fig.axis()
+fig.bigwig(signal(0.0, scale=2.0), title="Sample A", autoscale_group="g1", style="fill", color="#1f77b4")
+fig.bigwig(signal(1.2, scale=10.0), title="Sample B", autoscale_group="g1", style="fill", color="#d62728")
+fig.overlay(
+    [signal(0.9, scale=4.2), signal(1.5, scale=3.5)],
+    title="Overlay",
+    autoscale_group="g1",
+    colors=["#2ca02c", "#9467bd"],
+    alpha=0.55,
+)
+
+fig.plot(REGION)
+```

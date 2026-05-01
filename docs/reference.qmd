@@ -1,6 +1,6 @@
 # Reference
 
-This page is the quickest route to the high-level API contract. For exact field tables, use [Aesthetics Reference](aesthetics_reference.md). For runtime discovery, use `GenomicFigure.track_options(...)` from [API Reference](api_reference.md).
+This page is the quickest route to the high-level API contract. For exact field tables, use [Aesthetics Reference](aesthetics_reference.qmd). For runtime discovery, use `GenomicFigure.track_options(...)` from [API Reference](api_reference.qmd).
 
 ## GenomicFigure
 
@@ -70,6 +70,10 @@ fig.overlay(
 )
 ```
 
+Output:
+
+![Overlay reference output](images/aesthetics/overlay_autoscale.png)
+
 #### `bigwig_diff(data_a, data_b, /, **kwargs)`
 
 Difference track between two BigWig sources. `method` selects `"subtraction"`, `"ratio"`, or `"log2ratio"`.
@@ -132,6 +136,68 @@ Horizontal or vertical reference lines. `color` and `linewidth` are the main kwa
 
 ---
 
+### Matrix
+
+#### `cooler(data, /, **kwargs)`
+
+Contact matrix panel for cooler-compatible files. The current region is rendered as a matrix/heatmap.
+
+Key kwargs:
+
+| Kwarg | Default | Description |
+| --- | --- | --- |
+| `balance` | track default | Use balanced matrix values when available |
+| `cmap` | track default | Matplotlib colormap |
+| `min_value` / `max_value` | — | Fixed color scale limits |
+
+#### `cooler_average(files, /, **kwargs)`
+
+Averaged contact matrix panel across multiple cooler-compatible files.
+
+Key kwargs: `balance`, `cmap`, `min_value`, `max_value`.
+
+#### `capcruncher(data, /, **kwargs)`
+
+Viewpoint-centric matrix track from CapCruncher reporters-store output.
+
+Key kwargs:
+
+| Kwarg | Default | Description |
+| --- | --- | --- |
+| `viewpoint` | — | Viewpoint/group to resolve inside the HDF5 container |
+| `balance` | track default | Use balanced values when available |
+| `cmap` | track default | Matplotlib colormap |
+
+---
+
+### QuantNado
+
+#### `quantnado_coverage(name, /, **kwargs)`
+
+Coverage signal read from a QuantNado dataset.
+
+Key kwargs: `dataset_path`, `color`, `fill`, `min_value`, `max_value`.
+
+#### `quantnado_stranded_coverage(name, /, **kwargs)`
+
+Stranded coverage track with separate forward/reverse styling.
+
+Key kwargs: `dataset_path`, `color`, `reverse_color`, `min_value`, `max_value`.
+
+#### `quantnado_methylation(name, /, **kwargs)`
+
+Point-based methylation percentage track.
+
+Key kwargs: `dataset_path`, `color`, `point_size`, `alpha`.
+
+#### `quantnado_variant(name, /, **kwargs)`
+
+Variant allele balance and genotype marker track.
+
+Key kwargs: `dataset_path`, `het_color`, `hom_alt_color`, `marker_size`.
+
+---
+
 ### Annotation
 
 #### `genes(genome="hg38", /, **kwargs)`
@@ -174,6 +240,10 @@ fig.highlight_style(color="#ffdd57", alpha=0.22)
 fig.defaults(genome="hg38")        # shortcut for autocolor + genes defaults
 ```
 
+Output:
+
+![Figure-level controls output](images/aesthetics/overlay_autoscale.png)
+
 ### Autoscale groups
 
 Tracks sharing the same `autoscale_group` string are scaled to the same y-axis range after all data is loaded:
@@ -183,6 +253,10 @@ fig.autoscale(True)
 fig.bigwig("a.bw", title="A", autoscale_group="chip")
 fig.bigwig("b.bw", title="B", autoscale_group="chip")
 ```
+
+Output:
+
+![Autoscale group output](images/aesthetics/overlay_autoscale.png)
 
 ### Color groups
 
@@ -194,6 +268,10 @@ fig.bigwig("a.bw", title="A signal", color_group="sample_a")
 fig.bed("a.bed",   title="A peaks",  color_group="sample_a")
 fig.bigwig("b.bw", title="B signal", color_group="sample_b")
 ```
+
+Output:
+
+![Color group output](images/aesthetics/autocolor.png)
 
 ---
 
@@ -207,6 +285,10 @@ fig.plot_regions(["chr1:1,000,000-2,000,000", "chr2:5,000,000-6,000,000"], ncols
 fig.save("out.png", region="chr1:1,000,000-2,000,000", dpi=200)
 fig.save("out.pdf", region="GNAQ")
 ```
+
+Output:
+
+![Plotting and saving output](images/examples/basic_figure.png)
 
 ---
 
@@ -247,6 +329,10 @@ fig.plot(locus)
 fig.to_toml("figure.toml")
 fig2 = GenomicFigure.from_toml("figure.toml")
 ```
+
+Output:
+
+![Loaded figure config output](images/examples/recipe_theme_labels_from_toml.png)
 
 ---
 

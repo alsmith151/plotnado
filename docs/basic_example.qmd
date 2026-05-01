@@ -1,0 +1,80 @@
+---
+title: Basic Example
+jupyter: python3
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+This page is an executable PlotNado walkthrough. Each plotting cell builds the figure with the public API and displays the plot it creates.
+
+## Setup
+
+```{python}
+import numpy as np
+import pandas as pd
+
+from plotnado import GenomicFigure
+```
+
+```{python}
+#| echo: false
+REGION = "chr1:1,010,000-1,080,000"
+
+
+def signal(phase=0.0, scale=1.0, step=1_000):
+    bins = np.arange(1_000_000, 1_100_000, step)
+    values = scale * (4 + 2 * np.sin(np.linspace(phase, 6 + phase, bins.shape[0])))
+    return pd.DataFrame(
+        {"chrom": "chr1", "start": bins, "end": bins + step, "value": values}
+    )
+
+
+def bed_intervals():
+    return pd.DataFrame(
+        {
+            "chrom": ["chr1"] * 5,
+            "start": [1_012_000, 1_022_000, 1_038_000, 1_055_000, 1_068_000],
+            "end": [1_016_000, 1_028_000, 1_046_000, 1_062_000, 1_074_000],
+            "name": ["a", "b", "c", "d", "e"],
+        }
+    )
+```
+
+## Build a first figure
+
+```{python}
+fig = GenomicFigure(width=11, track_height=1.2)
+fig.scalebar()
+fig.axis()
+fig.genes("hg38", title="Genes")
+fig.bigwig(signal(), title="Synthetic signal", style="fill", color="#1f77b4")
+
+fig.plot(REGION)
+```
+
+## Add intervals and semantic colors
+
+```{python}
+fig = GenomicFigure(width=11, track_height=1.1)
+fig.autocolor()
+fig.scalebar()
+fig.axis()
+fig.bigwig(signal(0.0), title="Sample A signal", color_group="A", style="fill")
+fig.bed(bed_intervals(), title="Sample A peaks", color_group="A", display="expanded")
+fig.bigwig(signal(1.5), title="Sample B signal", color_group="B", style="fill")
+fig.bed(bed_intervals(), title="Sample B peaks", color_group="B", display="expanded")
+
+fig.plot(REGION)
+```
+
+## Save the figure
+
+```{python}
+fig.save("docs/GNAQ_H3K79me2.png", region=REGION, dpi=180)
+```
+
+The saved file is the same figure definition rendered to disk.
+
+![Saved basic example output](GNAQ_H3K79me2.png)

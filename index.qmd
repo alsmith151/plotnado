@@ -1,0 +1,199 @@
+---
+title: PlotNado
+page-layout: full
+title-block-style: none
+---
+
+::: {.pn-hero}
+::: {.pn-hero__copy}
+<p class="pn-eyebrow">Genome browser figures without the browser</p>
+
+# Publication&#8209;ready genomic tracks in Python.
+
+<p class="pn-lead">PlotNado composes BigWig signals, genes, peaks, interactions, and overlays into clean genome-browser style figures with a high-level API and a file-driven CLI.</p>
+
+::: {.pn-actions}
+<a class="pn-button pn-button--primary" href="docs/quickstart.html">Start with Quick Start</a>
+<a class="pn-button pn-button--secondary" href="docs/track_catalog.html">Browse track catalog</a>
+<a class="pn-button pn-button--ghost" href="docs/cli.html">Explore the CLI</a>
+:::
+
+::: {.pn-stats}
+::: {.pn-stat}
+**Python API**
+
+Chain one track method at a time.
+:::
+
+::: {.pn-stat}
+**CLI + YAML**
+
+Infer, edit, validate, and render templates.
+:::
+
+::: {.pn-stat}
+**Track-first design**
+
+Signals, annotations, overlays, and matrices.
+:::
+:::
+:::
+
+::: {.pn-hero__visual}
+![PlotNado example figure](docs/images/examples/basic_figure.png)
+
+<p class="pn-caption">A composed PlotNado figure with signal, annotation, and structural tracks.</p>
+:::
+:::
+
+::: {.pn-section}
+## Pick your entry point
+
+Most readers need one of three routes: get a figure rendered quickly, understand which track type to use, or tune the figure until it is publication-ready.
+:::
+
+::: {.pn-card-grid}
+::: {.pn-card}
+<p class="pn-kicker">Start Here</p>
+
+### Install and render your first figure
+
+Use the Quick Start when you want a working figure with minimal setup and clear defaults.
+
+::: {.pn-linklist}
+[Installation](docs/installation.qmd)
+[Quick Start](docs/quickstart.qmd)
+[Track construction patterns](docs/quickstart_tracks.qmd)
+:::
+:::
+
+::: {.pn-card}
+<p class="pn-kicker">Build With Confidence</p>
+
+### Choose the right track and input model
+
+Learn which track to reach for, what each one expects, and where to find concrete examples.
+
+::: {.pn-linklist}
+[Track Catalog](docs/track_catalog.qmd)
+[Data Inputs](docs/data_inputs.qmd)
+[Example Coverage](docs/example_coverage.qmd)
+:::
+:::
+
+::: {.pn-card}
+<p class="pn-kicker">Tune The Result</p>
+
+### Dial in styling, scaling, and layout
+
+Use the aesthetics and recipes guides when the figure works but does not yet communicate clearly.
+
+::: {.pn-linklist}
+[Aesthetics](docs/aesthetics.qmd)
+[Recipes](docs/recipes.qmd)
+[Troubleshooting](docs/troubleshooting.qmd)
+:::
+:::
+:::
+
+::: {.pn-section}
+## Two workflows, one rendering model
+
+PlotNado offers a fluent Python API for notebooks and pipelines, plus a CLI that turns genomic inputs into editable YAML templates.
+:::
+
+::: {.pn-card-grid}
+::: {.pn-card}
+<p class="pn-kicker">Python API</p>
+
+### Compose tracks directly in code
+
+Add tracks one method at a time and save the result in a single region-specific render step.
+
+```python
+from plotnado import GenomicFigure
+
+fig = GenomicFigure(theme="publication")
+fig.scalebar()
+fig.axis()
+fig.genes("hg38")
+fig.bigwig("signal.bw", title="ChIP signal", style="fill")
+fig.save("output.png", region="chr1:1,010,000-1,080,000")
+```
+
+<p class="pn-output-label">Output</p>
+
+![Output from the Python API composition example](docs/images/examples/basic_figure.png){.pn-code-output}
+:::
+
+::: {.pn-card}
+<p class="pn-kicker">CLI + YAML</p>
+
+### Infer a template, then edit and render it
+
+This route is useful when the inputs already exist on disk and you want a reproducible, file-driven workflow.
+
+```bash
+plotnado init *.bw peaks.narrowpeak --auto --output template.yaml
+plotnado validate template.yaml
+plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output out.png
+```
+
+<p class="pn-output-label">Output</p>
+
+![Output from a rendered CLI template](docs/images/examples/quickstart_first_plot.png){.pn-code-output}
+:::
+
+::: {.pn-card}
+<p class="pn-kicker">Need Options Fast?</p>
+
+### Inspect the runtime metadata
+
+Every track exposes discoverable options, so you do not have to guess field names or dig through source first.
+
+```python
+from plotnado import GenomicFigure
+
+GenomicFigure.track_options("overlay")
+GenomicFigure.track_options_markdown("bigwig")
+```
+:::
+:::
+
+::: {.pn-section}
+## Rendered examples
+
+The docs include plotted outputs, not just code snippets, so you can see what each configuration actually produces.
+:::
+
+::: {.pn-showcase}
+::: {.pn-showcase__item}
+![Quick start output](docs/images/quickstart.png)
+
+### First figure
+
+Start from a minimal stack: scale bar, axis, genes, and one signal track.
+:::
+
+::: {.pn-showcase__item}
+![Overlay autoscale output](docs/images/aesthetics/overlay_autoscale.png)
+
+### Overlay + autoscale
+
+Overlay multiple signals in one panel while keeping y-scaling explicit and readable.
+:::
+
+::: {.pn-showcase__item}
+![Theme and labels output](docs/images/examples/recipe_theme_labels.png)
+
+### Theme-driven polish
+
+Refine color, labels, and spacing once the track composition is correct.
+:::
+:::
+
+::: {.pn-section}
+## Where to go next
+
+<p class="pn-inline-note">If the figure is blank or scaling looks wrong, go straight to <a href="docs/troubleshooting.html">Troubleshooting</a>. If you are deciding between track types, start with the <a href="docs/track_catalog.html">Track Catalog</a>. If you want exact parameters, jump to <a href="docs/reference.html">Reference</a> and <a href="docs/api_reference.html">API Reference</a>.</p>
+:::

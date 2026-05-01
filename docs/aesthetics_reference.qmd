@@ -1,0 +1,349 @@
+# Aesthetics Reference
+
+Use this page when you want the fastest route to track fields and styling options without reading source.
+
+Every track exposes three groups of fields:
+
+- `track`: constructor-level fields such as `title`, `height`, `autoscale_group`, and `color_group`
+- `aesthetics`: visual controls such as `style`, `color`, `alpha`, `min_value`, and `max_value`
+- `label`: title and scale annotation controls such as `plot_scale`, `title_location`, and `scale_location`
+
+## Discover fields at runtime
+
+```python
+from plotnado import GenomicFigure, BigWigTrack, list_options
+
+GenomicFigure.track_options("bigwig")
+GenomicFigure.track_options("overlay")
+GenomicFigure.track_options_markdown("genes")
+
+BigWigTrack.options()
+BigWigTrack.options_markdown()
+list_options(BigWigTrack)
+```
+
+## High-value fields by category
+
+| Category | Common fields | Notes |
+| --- | --- | --- |
+| Track | `title`, `height`, `autoscale_group`, `color_group` | These apply to the whole track panel |
+| Aesthetics | `color`, `alpha`, `style`, `min_value`, `max_value` | These affect how the track is drawn |
+| Label | `plot_title`, `plot_scale`, `title_location`, `scale_location` | These control title and scale text |
+
+## Track Option Index
+
+These anchors are stable targets for the [Track Catalog](track_catalog.qmd). Use the runtime calls shown in each section for the complete field table in your installed version.
+
+### BigWig / bedGraph {#options-bigwig}
+
+Aliases: `bigwig`, `bw`, `signal`, `bedgraph`
+
+Runtime reference:
+
+```python
+GenomicFigure.track_options("bigwig")
+GenomicFigure.track_options_markdown("bigwig")
+```
+
+High-value controls:
+
+| Area | Fields |
+| --- | --- |
+| Signal drawing | `style`, `color`, `alpha`, `linewidth`, `scatter_point_size` |
+| Signal limits | `min_value`, `max_value`, `smoothing_window`, `smoothing_method` |
+| Figure coordination | `autoscale_group`, `color_group`, `height` |
+| Labels | `title`, `plot_scale`, `scale_location`, `label_on_track`, `label_box_enabled` |
+
+### Overlay / BigWig overlay {#options-overlay}
+
+Aliases: `overlay`, `bigwig_overlay`
+
+Runtime reference:
+
+```python
+GenomicFigure.track_options("overlay")
+GenomicFigure.track_options_markdown("overlay")
+```
+
+Overlay tracks are scaled as a single panel.
+
+- `autoscale_group` belongs on the overlay itself when the whole panel should match sibling signal tracks.
+- Explicit overlay `min_value` / `max_value` overrides grouped or global autoscale on that edge.
+- `show_labels=False` is useful when the overlay is dense and the panel title carries enough meaning.
+
+High-value controls:
+
+| Area | Fields |
+| --- | --- |
+| Components | `tracks`, `colors`, `alpha`, `show_labels` |
+| Shared scale | `min_value`, `max_value`, `autoscale_group` |
+| Labels | `title`, `plot_scale`, `scale_location`, `label_on_track` |
+
+### BigWig collection {#options-bigwig-collection}
+
+Alias: `bigwig_collection`
+
+Runtime reference:
+
+```python
+GenomicFigure.track_options("bigwig_collection")
+GenomicFigure.track_options_markdown("bigwig_collection")
+```
+
+High-value controls:
+
+| Area | Fields |
+| --- | --- |
+| Inputs | `files`, `labels` |
+| Styling | `colors`, `alpha`, `height` |
+| Coordination | `title`, `color_group` |
+
+### BigWig diff {#options-bigwig-diff}
+
+Alias: `bigwig_diff`
+
+Runtime reference:
+
+```python
+GenomicFigure.track_options("bigwig_diff")
+GenomicFigure.track_options_markdown("bigwig_diff")
+```
+
+High-value controls:
+
+| Area | Fields |
+| --- | --- |
+| Inputs | `data_a`, `data_b`, `method` |
+| Positive/negative signal | `positive_color`, `negative_color`, `bar_alpha` |
+| Scale | `min_value`, `max_value`, `height` |
+
+### BED / annotation / unknown fallback {#options-bed}
+
+Aliases: `bed`, `annotation`, `unknown`
+
+Runtime reference:
+
+```python
+GenomicFigure.track_options("bed")
+GenomicFigure.track_options_markdown("bed")
+```
+
+High-value controls:
+
+| Area | Fields |
+| --- | --- |
+| Interval layout | `display`, `interval_height`, `max_rows`, `draw_edges` |
+| Labels | `show_labels`, `label_field`, `font_size`, `title` |
+| Styling | `color`, `alpha`, `height`, `color_group` |
+
+### NarrowPeak {#options-narrowpeak}
+
+Alias: `narrowpeak`
+
+Runtime reference:
+
+```python
+GenomicFigure.track_options("narrowpeak")
+GenomicFigure.track_options_markdown("narrowpeak")
+```
+
+High-value controls:
+
+| Area | Fields |
+| --- | --- |
+| Peak layout | `display`, `show_summit`, `show_labels` |
+| Score styling | `color_by`, `cmap`, `color`, `alpha` |
+| Labels | `label_field`, `font_size`, `title` |
+
+### Genes / gene {#options-genes}
+
+Aliases: `genes`, `gene`
+
+Runtime reference:
+
+```python
+GenomicFigure.track_options("genes")
+GenomicFigure.track_options_markdown("genes")
+```
+
+High-value controls:
+
+| Area | Fields |
+| --- | --- |
+| Annotation source | `genome`, `data` |
+| Layout | `display`, `minimum_gene_length`, `max_number_of_rows`, `height` |
+| Gene labels | `show_labels`, `gene_label_font_size`, `color` |
+
+### Links {#options-links}
+
+Alias: `links`
+
+Runtime reference:
+
+```python
+GenomicFigure.track_options("links")
+GenomicFigure.track_options_markdown("links")
+```
+
+High-value controls:
+
+| Area | Fields |
+| --- | --- |
+| Input | BEDPE-like `data`, optional `score` |
+| Arc styling | `color_by_score`, `cmap`, `alpha`, `linewidth` |
+| Labels/layout | `title`, `height` |
+
+### Highlight {#options-highlight}
+
+Alias: `highlight`
+
+Runtime reference:
+
+```python
+GenomicFigure.track_options("highlight")
+GenomicFigure.track_options_markdown("highlight")
+```
+
+High-value controls:
+
+| Area | Fields |
+| --- | --- |
+| Input | BED-like file/table or inline `fig.highlight(...)` region |
+| Styling | `color`, `alpha` |
+| Behavior | Drawn behind tracks; does not change y-axis limits |
+
+### HLine / VLine {#options-lines}
+
+Aliases: `hline`, `vline`
+
+Runtime reference:
+
+```python
+GenomicFigure.track_options("hline")
+GenomicFigure.track_options("vline")
+```
+
+High-value controls:
+
+| Area | Fields |
+| --- | --- |
+| Position | y-value for `hline`, genomic x-position for `vline` |
+| Styling | `color`, `linewidth`, `linestyle`, `alpha` |
+| Behavior | Drawn as reference marks over existing panels |
+
+### Cooler / Cooler average {#options-cooler}
+
+Aliases: `cooler`, `cooler_average`
+
+Runtime reference:
+
+```python
+GenomicFigure.track_options("cooler")
+GenomicFigure.track_options("cooler_average")
+```
+
+High-value controls:
+
+| Area | Fields |
+| --- | --- |
+| Input | cooler-compatible path(s) |
+| Matrix rendering | `balance`, `cmap`, `min_value`, `max_value` |
+| Layout | `height`, `title` |
+
+### CapCruncher {#options-capcruncher}
+
+Alias: `capcruncher`
+
+Runtime reference:
+
+```python
+GenomicFigure.track_options("capcruncher")
+GenomicFigure.track_options_markdown("capcruncher")
+```
+
+High-value controls:
+
+| Area | Fields |
+| --- | --- |
+| Input | CapCruncher HDF5 reporters store |
+| Viewpoint | `viewpoint` |
+| Matrix rendering | `balance`, `cmap`, `min_value`, `max_value` |
+
+### QuantNado coverage {#options-quantnado-coverage}
+
+Aliases: `quantnado_coverage`, `quantnado_stranded_coverage`
+
+Runtime reference:
+
+```python
+GenomicFigure.track_options("quantnado_coverage")
+GenomicFigure.track_options("quantnado_stranded_coverage")
+```
+
+High-value controls:
+
+| Area | Fields |
+| --- | --- |
+| Input | QuantNado object name plus `dataset_path` |
+| Coverage styling | `color`, `fill`, `reverse_color` |
+| Scale/layout | `min_value`, `max_value`, `height`, `title` |
+
+### QuantNado methylation {#options-quantnado-methylation}
+
+Alias: `quantnado_methylation`
+
+Runtime reference:
+
+```python
+GenomicFigure.track_options("quantnado_methylation")
+GenomicFigure.track_options_markdown("quantnado_methylation")
+```
+
+High-value controls:
+
+| Area | Fields |
+| --- | --- |
+| Input | QuantNado methylation dataset |
+| Point styling | `color`, `point_size`, `alpha` |
+| Scale/layout | methylation percentage scale, `height`, `title` |
+
+### QuantNado variant {#options-quantnado-variant}
+
+Alias: `quantnado_variant`
+
+Runtime reference:
+
+```python
+GenomicFigure.track_options("quantnado_variant")
+GenomicFigure.track_options_markdown("quantnado_variant")
+```
+
+High-value controls:
+
+| Area | Fields |
+| --- | --- |
+| Input | QuantNado variant dataset |
+| Genotype styling | `het_color`, `hom_alt_color`, `marker_size` |
+| Scale/layout | allele-balance scale, `height`, `title` |
+
+### Structural tracks {#options-structural}
+
+Aliases: `scalebar`, `scale`, `axis`, `spacer`
+
+Runtime reference:
+
+```python
+GenomicFigure.track_options("scalebar")
+GenomicFigure.track_options("axis")
+GenomicFigure.track_options("spacer")
+```
+
+High-value controls:
+
+| Track | Fields |
+| --- | --- |
+| `scalebar` / `scale` | `plot_scale`, `scale_location`, `scale_size`, `height` |
+| `axis` | `num_ticks`, tick/label styling, `height` |
+| `spacer` | `height` |
+
+For behavior details, see [Reference](reference.qmd) and [Track Catalog](track_catalog.qmd).

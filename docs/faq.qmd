@@ -33,7 +33,7 @@ Treat the overlay as the unit of scaling:
 
 ## What is the recommended coding style?
 
-Use a single `GenomicFigure` instance (`gf`) and chain helper methods. See [Track Construction](quickstart_tracks.md).
+Use a single `GenomicFigure` instance (`gf`) and chain helper methods. See [Track Construction](quickstart_tracks.qmd).
 
 ## How do I share figure definitions?
 

@@ -38,3 +38,6 @@ demo_genome_browser.py
 pr_docs.txt
 test_parser.py
 examples/output/*
+
+/.quarto/
+**/*.quarto_ipynb

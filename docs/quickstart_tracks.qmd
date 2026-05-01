@@ -34,6 +34,10 @@ gf.axis()
 gf.plot_gene("GNAQ")
 ```
 
+Output:
+
+![Track construction output](images/examples/basic_figure.png)
+
 ## 2) Generic alias entrypoint (`add_track`)
 
 Best when alias names come from config/TOML/CLI inputs.
@@ -43,6 +47,10 @@ gf.add_track("scalebar")
 gf.add_track("genes", genome="hg38")
 gf.add_track("bigwig", data="signal.bw", title="ChIP", style="std")
 ```
+
+Output:
+
+![Alias-added track output](images/examples/quickstart_aliases_and_options.png)
 
 ## 3) Explicit track objects
 
@@ -59,6 +67,10 @@ gf.add_track(
     )
 )
 ```
+
+Output:
+
+![Explicit BigWig track output](images/examples/track_bigwig_styles.png)
 
 ## 4) Mixed approach (recommended in real projects)
 
@@ -79,6 +91,10 @@ gf.overlay(
     alpha=0.6,
 )
 ```
+
+Output:
+
+![Overlay output](images/aesthetics/overlay_autoscale.png)
 
 Practical rule:
 
@@ -117,6 +133,10 @@ gf.bigwig(
 )
 ```
 
+Output:
+
+![Automatic kwarg routing output](images/aesthetics/bigwig_styles.png)
+
 ## Color management (`autocolor`, `color_group`)
 
 Use `autocolor()` to assign colors automatically from the active theme.
@@ -127,6 +147,10 @@ gf.autocolor()
 gf.bigwig("sample_a.bw", title="Sample A")
 gf.bigwig("sample_b.bw", title="Sample B")
 ```
+
+Output:
+
+![Autocolor output](images/aesthetics/autocolor.png)
 
 Use `color_group` when multiple tracks should share the same assigned color.
 
@@ -140,6 +164,10 @@ gf.bigwig("signal_a.bw", title="A signal", color_group="A")
 gf.bed("peaks_b.bigBed", title="B peaks", color_group="B")
 gf.bigwig("signal_b.bw", title="B signal", color_group="B")
 ```
+
+Output:
+
+![Color group output](images/aesthetics/autocolor.png)
 
 Practical rule:
 
@@ -157,4 +185,4 @@ GenomicFigure.track_options("overlay")
 GenomicFigure.track_options_markdown("genes")
 ```
 
-See [Track Aliases](track_aliases.md) for alias notes, [Example Coverage](example_coverage.md) for runnable script mapping, and [Best Practices](best_practices.md) for production guidance.
+See [Track Aliases](track_aliases.qmd) for alias notes, [Example Coverage](example_coverage.qmd) for runnable script mapping, and [Best Practices](best_practices.qmd) for production guidance.

@@ -30,6 +30,10 @@ gf.bed("B.bigBed", title="B peaks", color_group="B")
 gf.bigwig("B.bw", title="B signal", color_group="B")
 ```
 
+Output:
+
+![Semantically consistent colors output](images/aesthetics/autocolor.png)
+
 ## Use aliases for speed, models for strictness
 
 - Use alias helpers (`fig.bigwig(...)`, `fig.bed(...)`) for exploratory work.
@@ -61,7 +65,7 @@ GenomicFigure.track_options_markdown("genes")
 
 ```bash
 uv run pytest tests/ -v
-uv run mkdocs build --strict
+quarto render
 ```
 
 - Prefer example scripts in `examples/` as regression fixtures for plotting behavior.

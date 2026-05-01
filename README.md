@@ -92,6 +92,10 @@ fig.bigwig(signal, title="Synthetic signal", style="fill", color="#1f77b4")
 fig.save("quickstart.png", "chr1:1,010,000-1,080,000")
 ```
 
+Output:
+
+![Quickstart output](docs/images/quickstart.png)
+
 `GenomicFigure()` uses publication-style defaults automatically. Use `GenomicFigure(theme=None)` to opt out.
 
 ## CLI Quick Start
@@ -128,6 +132,10 @@ from plotnado import GenomicFigure
 fig = GenomicFigure.from_template("template.yaml")
 fig.save("browser_view.png", region="chr1:1,000,000-1,100,000")
 ```
+
+Output:
+
+![Template-rendered output](docs/images/examples/quickstart_first_plot.png)
 
 ## What The Template Looks Like
 
@@ -188,8 +196,8 @@ BigWigTrack.options_markdown()
 
 ```bash
 uv sync --extra docs
-uv run mkdocs build --strict
-uv run mkdocs serve
+quarto render
+quarto preview
 ```
 
 ## Development

@@ -71,6 +71,10 @@ Render a template for one or more regions:
 plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output output.png
 ```
 
+Output:
+
+![CLI plot output](images/examples/quickstart_first_plot.png)
+
 Useful options:
 
 - `--region` / `-r`: genomic region or gene name; repeat for multiple outputs
@@ -88,6 +92,10 @@ plotnado plot template.yaml --region chr1:1,000,000-2,000,000 --region chr2:5,00
 plotnado plot template.yaml --region chr1:1,000,000-2,000,000 --output plot.pdf --dpi 300
 ```
 
+Output:
+
+![Additional CLI plot output](images/examples/quickstart_first_plot.png)
+
 Gene-name resolution requires `genome` to be defined in the template.
 
 ## Python bridge
@@ -100,3 +108,7 @@ from plotnado import GenomicFigure
 fig = GenomicFigure.from_template("template.yaml")
 fig.save("output.png", region="chr1:1,000,000-1,100,000")
 ```
+
+Output:
+
+![Python bridge output](images/examples/quickstart_first_plot.png)

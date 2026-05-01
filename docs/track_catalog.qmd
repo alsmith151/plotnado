@@ -1,0 +1,99 @@
+# Track Catalog
+
+This is the practical reference for choosing a track and understanding what it adds to a `GenomicFigure`. Each entry describes what appears in the figure, what data shape it expects, and where to inspect the full options.
+
+## Visual Map
+
+<div class="pn-track-grid">
+    <div class="pn-track-card">
+        <img src="images/quickstart.png" alt="Scale bar, genomic axis, genes, and BigWig tracks" />
+        <h3><code>scalebar</code>, <code>axis</code>, <code>genes</code></h3>
+        <p>Structural context tracks plus a gene annotation panel.</p>
+    </div>
+    <div class="pn-track-card">
+        <img src="images/aesthetics/bigwig_styles.png" alt="BigWig fill, fragment, scatter, and standard-deviation styles" />
+        <h3><code>bigwig</code>, <code>bedgraph</code></h3>
+        <p>Continuous signal rendered as fill, fragments, points, or standard-deviation bands.</p>
+    </div>
+    <div class="pn-track-card">
+        <img src="images/aesthetics/overlay_autoscale.png" alt="Overlay track with highlighted genomic region" />
+        <h3><code>overlay</code>, <code>highlight</code></h3>
+        <p>Multiple signals on one y-axis with a highlighted interval.</p>
+    </div>
+    <div class="pn-track-card">
+        <img src="images/aesthetics/bed_narrowpeak.png" alt="BED intervals and narrowPeak intervals" />
+        <h3><code>bed</code>, <code>narrowpeak</code></h3>
+        <p>Interval rectangles, labels, peak scores, and summit markers.</p>
+    </div>
+    <div class="pn-track-card">
+        <img src="images/aesthetics/links.png" alt="Link arcs with horizontal and vertical reference lines" />
+        <h3><code>links</code>, <code>hline</code>, <code>vline</code></h3>
+        <p>Interaction arcs with horizontal and vertical reference lines.</p>
+    </div>
+    <div class="pn-track-card">
+        <img src="images/examples/track_matrix_cooler_average.png" alt="Cooler and cooler average matrix tracks" />
+        <h3><code>cooler</code>, <code>cooler_average</code></h3>
+        <p>Contact matrix tracks for cooler-compatible files.</p>
+    </div>
+</div>
+
+## Signal tracks
+
+| Track / aliases | What appears in the figure | Input model | Choose it when | Full reference |
+|---|---|---|---|---|
+| `bigwig`, `bw`, `signal`, `bedgraph` | One quantitative signal panel with its own y-axis. The signal can render as filled area, fragments, scatter points, or standard-deviation bands. | BigWig path/URL or bedGraph-like table with `chrom`, `start`, `end`, `value`. | You have one continuous genomic signal such as coverage, ChIP-seq, ATAC-seq, or bedGraph-like values. | [Options](aesthetics_reference.qmd#options-bigwig), [API](reference.qmd#bigwigdata-kwargs), [Examples](example_coverage.qmd#bigwig-styles) |
+| `overlay`, `bigwig_overlay` | One signal panel containing multiple series on a shared y-axis. Component colors distinguish the series. | List of BigWig paths, signal tables, or compatible `BigWigTrack` objects. | You want direct visual comparison between signals and a single scale is meaningful. | [Options](aesthetics_reference.qmd#options-overlay), [API](reference.qmd#overlaytracks-kwargs), [Examples](example_coverage.qmd#overlay-autoscale-and-highlight) |
+| `bigwig_collection` | Multi-sample signal collection panel, useful for compact comparison across several BigWigs. | List of BigWig paths plus optional labels/colors. | You have a batch of signal files that should be displayed as a coordinated collection. | [Options](aesthetics_reference.qmd#options-bigwig-collection), [API](reference.qmd#bigwig_collectionfiles-kwargs), [Examples](example_coverage.qmd#bigwig-collection-and-diff) |
+| `bigwig_diff` | Difference panel showing positive and negative deviations between two signal files. | Two BigWig sources. | You need subtraction, ratio, or log2-ratio style comparison between matched tracks. | [Options](aesthetics_reference.qmd#options-bigwig-diff), [API](reference.qmd#bigwig_diffdata_a-data_b-kwargs), [Examples](example_coverage.qmd#bigwig-collection-and-diff) |
+
+When using `overlay`, put `autoscale_group` on the overlay itself if the entire overlay panel should share limits with neighboring signal panels.
+
+## Interval and annotation tracks
+
+| Track / aliases | What appears in the figure | Input model | Choose it when | Full reference |
+|---|---|---|---|---|
+| `bed`, `annotation`, `unknown` | Rectangular genomic intervals, optionally stacked and labeled. | BED/BigBed path or table with at least `chrom`, `start`, `end`; optional `name`. | You need to show intervals such as peaks, enhancers, domains, or hand-curated annotations. | [Options](aesthetics_reference.qmd#options-bed), [API](reference.qmd#beddata-kwargs), [Examples](example_coverage.qmd#bed-and-narrowpeak) |
+| `narrowpeak` | Peak intervals with optional score-colored fills and summit markers. | ENCODE narrowPeak file/table. | Your input is a narrowPeak file and summit/score information should be visible. | [Options](aesthetics_reference.qmd#options-narrowpeak), [API](reference.qmd#narrowpeakdata-kwargs), [Examples](example_coverage.qmd#bed-and-narrowpeak) |
+| `genes`, `gene` | Gene models with exons/introns and labels, either collapsed or expanded. | Built-in genome name such as `hg38`/`mm10`, or custom annotation data. | You want gene context for the plotted locus. | [Options](aesthetics_reference.qmd#options-genes), [API](reference.qmd#genesgenomehg38-kwargs), [Examples](example_coverage.qmd#gene-label-strategies) |
+| `links` | Arc-shaped interactions between two genomic anchors. | BEDPE-like table with `chrom1`, `start1`, `end1`, `chrom2`, `start2`, `end2`; optional `score`. | You need loops, contacts, enhancer-promoter links, or paired anchors. | [Options](aesthetics_reference.qmd#options-links), [API](reference.qmd#linksdata-kwargs), [Examples](example_coverage.qmd#links-hline-and-vline) |
+| `highlight` | Shaded vertical region applied behind plotted tracks. It does not create a standalone data panel. | BED-like intervals or inline strings via `fig.highlight("chr:start-end")`. | You want to mark a region of interest across tracks without changing the y-scale. | [Options](aesthetics_reference.qmd#options-highlight), [API](reference.qmd#highlightsdata-kwargs), [Examples](example_coverage.qmd#overlay-autoscale-and-highlight) |
+| `hline`, `vline` | Horizontal or vertical reference lines over plot panels. | Numeric y-value for `hline`; genomic coordinate for `vline`. | You need thresholds, cut points, or fixed positional markers. | [Options](aesthetics_reference.qmd#options-lines), [API](reference.qmd#hliney_value-kwargs-vlinex_position-kwargs), [Examples](example_coverage.qmd#links-hline-and-vline) |
+
+## Matrix tracks
+
+| Track / aliases | What appears in the figure | Input model | Choose it when | Full reference |
+|---|---|---|---|---|
+| `cooler` | Contact matrix panel for the current region. | Cooler-compatible file path. | You want to inspect Hi-C or contact-map intensity for a locus. | [Options](aesthetics_reference.qmd#options-cooler), [API](reference.qmd#coolerdata-kwargs), [Examples](example_coverage.qmd#cooler-and-cooler_average) |
+| `cooler_average` | Averaged matrix panel across multiple cooler-compatible inputs. | List of cooler-compatible file paths. | You want a mean contact-map view across samples or replicates. | [Options](aesthetics_reference.qmd#options-cooler), [API](reference.qmd#cooler_averagefiles-kwargs), [Examples](example_coverage.qmd#cooler-and-cooler_average) |
+| `capcruncher` | Viewpoint-centric matrix panel from CapCruncher output. | CapCruncher HDF5 reporters store plus a `viewpoint`. | You are plotting capture-C / CapCruncher interaction profiles. | [Options](aesthetics_reference.qmd#options-capcruncher), [API](reference.qmd#capcruncherdata-kwargs), [Examples](example_coverage.qmd#capcruncher-viewpoint-matrix) |
+
+## QuantNado tracks
+
+| Track / aliases | What appears in the figure | Input model | Choose it when | Full reference |
+|---|---|---|---|---|
+| `quantnado_coverage` | Coverage signal from a QuantNado dataset. | QuantNado object name and `dataset_path`. | You want file-backed coverage without first converting to BigWig. | [Options](aesthetics_reference.qmd#options-quantnado-coverage), [API](reference.qmd#quantnado_coveragename-kwargs), [Examples](example_coverage.qmd#quantnado-coverage-and-stranded-coverage) |
+| `quantnado_stranded_coverage` | Forward/reverse stranded coverage in one track. | QuantNado stranded coverage dataset. | Strand orientation matters, for example RNA-seq signal. | [Options](aesthetics_reference.qmd#options-quantnado-coverage), [API](reference.qmd#quantnado_stranded_coveragename-kwargs), [Examples](example_coverage.qmd#quantnado-coverage-and-stranded-coverage) |
+| `quantnado_methylation` | Point-style methylation percentages across the locus. | QuantNado methylation dataset. | You want methylation proportions at genomic positions. | [Options](aesthetics_reference.qmd#options-quantnado-methylation), [API](reference.qmd#quantnado_methylationname-kwargs), [Examples](example_coverage.qmd#quantnado-methylation-and-variant-tracks) |
+| `quantnado_variant` | Variant markers colored by genotype/state and allele balance. | QuantNado variant dataset. | You want SNP/variant context alongside other genomic tracks. | [Options](aesthetics_reference.qmd#options-quantnado-variant), [API](reference.qmd#quantnado_variantname-kwargs), [Examples](example_coverage.qmd#quantnado-methylation-and-variant-tracks) |
+
+## Structural tracks
+
+| Track / aliases | What appears in the figure | Input model | Choose it when | Full reference |
+|---|---|---|---|---|
+| `scalebar`, `scale` | Genomic distance bar, usually at the top or bottom of the stack. | No external data. | You want a quick visual distance cue. | [Options](aesthetics_reference.qmd#options-structural), [API](reference.qmd#scalebarkwargs), [Examples](example_coverage.qmd#quickstart-first-plot) |
+| `axis` | Genomic coordinate ticks and labels. | No external data. | You want exact coordinate context for the rendered interval. | [Options](aesthetics_reference.qmd#options-structural), [API](reference.qmd#axiskwargs), [Examples](example_coverage.qmd#quickstart-first-plot) |
+| `spacer` | Blank vertical space between panels. | No external data. | You need to separate dense groups of tracks or tune layout rhythm. | [Options](aesthetics_reference.qmd#options-structural), [API](reference.qmd#spacerheight0.5-kwargs), [Examples](example_coverage.qmd#basic-figure) |
+
+## Runtime lookup
+
+Use runtime introspection when you need the exact available fields in your installed version:
+
+```python
+from plotnado import GenomicFigure
+
+GenomicFigure.available_track_aliases()
+GenomicFigure.track_options("bigwig")
+GenomicFigure.track_options_markdown("genes")
+```
+
+For runnable output examples, see [Example Coverage](example_coverage.qmd).

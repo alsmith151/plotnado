@@ -30,6 +30,10 @@ fig.overlay(
 )
 ```
 
+Output:
+
+![Overlay troubleshooting output](images/aesthetics/overlay_autoscale.png)
+
 If two series need fundamentally different scales to remain interpretable, split them into separate panels instead of forcing them into one overlay.
 
 ## Overlay label shows an unexpected range
@@ -45,7 +49,7 @@ PlotNado requires Python 3.12+.
 
 ```bash
 uv run python --version
-uv run mkdocs build --strict
+quarto render
 ```
 
 ## TOML export/import errors
@@ -67,4 +71,4 @@ GenomicFigure.track_options("overlay")
 GenomicFigure.track_options_markdown("bigwig")
 ```
 
-Then compare with [Aesthetics Reference](aesthetics_reference.md) and [Reference](reference.md).
+Then compare with [Aesthetics Reference](aesthetics_reference.qmd) and [Reference](reference.qmd).

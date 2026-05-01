@@ -32,11 +32,19 @@ gf.bigwig(signal, title="Synthetic signal", style="fill")
 gf.save("quickstart.png", "chr1:1,010,000-1,080,000")
 ```
 
+Output:
+
+![Quickstart output](images/quickstart.png)
+
 ## 2) Run a ready-made script
 
 ```bash
 python examples/quickstart/01_first_plot.py
 ```
+
+Output:
+
+![Ready-made quickstart script output](images/examples/quickstart_first_plot.png)
 
 ## 3) Generate a template with the CLI
 
@@ -45,6 +53,10 @@ plotnado init sample1.bw sample2.bw peaks.narrowpeak --auto --output template.ya
 plotnado validate template.yaml
 plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output quickstart-cli.png
 ```
+
+Output:
+
+![Template-rendered quickstart output](images/examples/quickstart_first_plot.png)
 
 `plotnado plot` also accepts gene symbols such as `--region GNAQ` when the template has a `genome` value.
 
@@ -56,6 +68,10 @@ from plotnado import GenomicFigure
 gf = GenomicFigure.from_template("template.yaml")
 gf.save("quickstart-from-template.png", region="chr1:1,000,000-1,100,000")
 ```
+
+Output:
+
+![Python-loaded template output](images/examples/quickstart_first_plot.png)
 
 ## 4) Start from a public UCSC hub in a notebook
 
@@ -81,8 +97,8 @@ Set `include_hidden=True` when you want hub tracks that are hidden by default to
 
 ## 5) Next steps
 
-- Learn all track-add patterns: [Track Construction](quickstart_tracks.md)
-- Learn the template workflow: [CLI](cli.md)
-- Review practical defaults: [Best Practices](best_practices.md)
-- Explore track families: [Track Catalog](track_catalog.md)
-- See a longer live notebook walkthrough: [Worked Examples](worked_examples.ipynb)
+- Learn all track-add patterns: [Track Construction](quickstart_tracks.qmd)
+- Learn the template workflow: [CLI](cli.qmd)
+- Review practical defaults: [Best Practices](best_practices.qmd)
+- Explore track families: [Track Catalog](track_catalog.qmd)
+- See a longer executable walkthrough: [Worked Examples](worked_examples.qmd)
