@@ -2698,7 +2698,7 @@ wheels = [
 
 [[package]]
 name = "plotnado"
-version = "0.4.dev10"
+version = "0.4.dev11"
 source = { editable = "." }
 dependencies = [
     { name = "loguru" },
@@ -2744,8 +2744,11 @@ dev = [
     { name = "pytest-mock" },
 ]
 docs = [
+    { name = "capcruncher" },
+    { name = "cooler" },
     { name = "ipykernel" },
     { name = "jupyter" },
+    { name = "quantnado" },
     { name = "tomli-w" },
 ]
 notebook = [
@@ -2762,8 +2765,10 @@ toml = [
 requires-dist = [
     { name = "capcruncher", marker = "extra == 'all'" },
     { name = "capcruncher", marker = "extra == 'cooler'" },
+    { name = "capcruncher", marker = "extra == 'docs'" },
     { name = "cooler", marker = "extra == 'all'" },
     { name = "cooler", marker = "extra == 'cooler'" },
+    { name = "cooler", marker = "extra == 'docs'" },
     { name = "ipykernel", marker = "extra == 'all'", specifier = ">=6.29.0" },
     { name = "ipykernel", marker = "extra == 'docs'", specifier = ">=6.29.0" },
     { name = "ipywidgets", marker = "extra == 'all'", specifier = ">=8" },
@@ -2791,6 +2796,7 @@ requires-dist = [
     { name = "pytest-mock", marker = "extra == 'dev'" },
     { name = "pyyaml" },
     { name = "quantnado", marker = "extra == 'all'" },
+    { name = "quantnado", marker = "extra == 'docs'" },
     { name = "quantnado", marker = "extra == 'quantnado'" },
     { name = "rich" },
     { name = "tomli", marker = "python_full_version < '3.11' and extra == 'all'" },

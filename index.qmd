@@ -77,7 +77,7 @@ Learn which track to reach for, what each one expects, and where to find concret
 ::: {.pn-linklist}
 [Track Catalog](docs/track_catalog.qmd)
 [Data Inputs](docs/data_inputs.qmd)
-[Example Coverage](docs/example_coverage.qmd)
+[Living Gallery](docs/example_coverage.qmd)
 :::
 :::
 

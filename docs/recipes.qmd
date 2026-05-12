@@ -54,4 +54,4 @@ Scripts:
 - [examples/tracks/01_bigwig_styles.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/01_bigwig_styles.py)
 - [examples/tracks/02_bed_and_narrowpeak.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/02_bed_and_narrowpeak.py)
 
-More rendered runnable outputs, including quickstart, links/hline/vline, and gene-label examples, are collected on [Example Coverage](example_coverage.qmd).
+More rendered runnable outputs, including quickstart, links/hline/vline, and gene-label examples, are collected in the [Living Gallery](example_coverage.qmd).

@@ -52,7 +52,7 @@ website:
             href: docs/api_reference.qmd
           - text: Track Aliases
             href: docs/track_aliases.qmd
-          - text: Example Coverage
+          - text: Living Gallery
             href: docs/example_coverage.qmd
           - text: Reference Summary
             href: docs/reference/SUMMARY.qmd
@@ -60,7 +60,7 @@ website:
         href: docs/cli.qmd
       - text: Examples
         menu:
-          - text: Example Coverage
+          - text: Living Gallery
             href: docs/example_coverage.qmd
           - text: Basic Example
             href: docs/basic_example.qmd

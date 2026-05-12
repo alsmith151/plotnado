@@ -73,8 +73,8 @@ When using `overlay`, put `autoscale_group` on the overlay itself if the entire 
 |---|---|---|---|---|
 | `quantnado_coverage` | Coverage signal from a QuantNado dataset. | QuantNado object name and `dataset_path`. | You want file-backed coverage without first converting to BigWig. | [Options](aesthetics_reference.qmd#options-quantnado-coverage), [API](reference.qmd#quantnado_coveragename-kwargs), [Examples](example_coverage.qmd#quantnado-coverage-and-stranded-coverage) |
 | `quantnado_stranded_coverage` | Forward/reverse stranded coverage in one track. | QuantNado stranded coverage dataset. | Strand orientation matters, for example RNA-seq signal. | [Options](aesthetics_reference.qmd#options-quantnado-coverage), [API](reference.qmd#quantnado_stranded_coveragename-kwargs), [Examples](example_coverage.qmd#quantnado-coverage-and-stranded-coverage) |
-| `quantnado_methylation` | Point-style methylation percentages across the locus. | QuantNado methylation dataset. | You want methylation proportions at genomic positions. | [Options](aesthetics_reference.qmd#options-quantnado-methylation), [API](reference.qmd#quantnado_methylationname-kwargs), [Examples](example_coverage.qmd#quantnado-methylation-and-variant-tracks) |
-| `quantnado_variant` | Variant markers colored by genotype/state and allele balance. | QuantNado variant dataset. | You want SNP/variant context alongside other genomic tracks. | [Options](aesthetics_reference.qmd#options-quantnado-variant), [API](reference.qmd#quantnado_variantname-kwargs), [Examples](example_coverage.qmd#quantnado-methylation-and-variant-tracks) |
+| `quantnado_methylation` | Point-style methylation percentages across the locus. | QuantNado methylation dataset. | You want methylation proportions at genomic positions. | [Options](aesthetics_reference.qmd#options-quantnado-methylation), [API](reference.qmd#quantnado_methylationname-kwargs), [Examples](example_coverage.qmd#quantnado-methylation) |
+| `quantnado_variant` | Variant markers colored by genotype/state and allele balance. | QuantNado variant dataset. | You want SNP/variant context alongside other genomic tracks. | [Options](aesthetics_reference.qmd#options-quantnado-variant), [API](reference.qmd#quantnado_variantname-kwargs), [Examples](example_coverage.qmd#quantnado-variant) |
 
 ## Structural tracks
 
@@ -96,4 +96,4 @@ GenomicFigure.track_options("bigwig")
 GenomicFigure.track_options_markdown("genes")
 ```
 
-For runnable output examples, see [Example Coverage](example_coverage.qmd).
+For runnable output examples, see the [Living Gallery](example_coverage.qmd).

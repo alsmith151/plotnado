@@ -185,4 +185,4 @@ GenomicFigure.track_options("overlay")
 GenomicFigure.track_options_markdown("genes")
 ```
 
-See [Track Aliases](track_aliases.qmd) for alias notes, [Example Coverage](example_coverage.qmd) for runnable script mapping, and [Best Practices](best_practices.qmd) for production guidance.
+See [Track Aliases](track_aliases.qmd) for alias notes, the [Living Gallery](example_coverage.qmd) for rendered code examples, and [Best Practices](best_practices.qmd) for production guidance.
