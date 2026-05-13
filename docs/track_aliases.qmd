@@ -14,6 +14,10 @@ gf.add_track("genes", genome="hg38")
 gf.add_track("bigwig", data="signal.bw", style="fill")
 ```
 
+Output:
+
+![Alias usage output](images/examples/quickstart_aliases_and_options.png)
+
 ## How kwargs are routed
 
 - Track constructor fields: passed directly.
@@ -38,4 +42,4 @@ aliases = GenomicFigure.available_track_aliases()
 print("\n".join(f"{k} -> {v}" for k, v in sorted(aliases.items())))
 ```
 
-Use [Track Catalog](track_catalog.md) for track families and [Aesthetics Reference](aesthetics_reference.md) for full field-level options.
+Use [Track Catalog](track_catalog.qmd) for track families and [Aesthetics Reference](aesthetics_reference.qmd) for full field-level options.

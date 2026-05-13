@@ -32,16 +32,12 @@ toml = ["tomli; python_version < '3.11'", "tomli-w"]
 notebook = ["ipywidgets>=8"]
 dev = ["pytest", "pytest-cov", "pytest-mock", "pytest-assume", "pre-commit", "ipywidgets>=8"]
 docs = [
-	"mkdocs==1.6.1",
-	"mkdocs-material>=9.5.18",
-	"mkdocstrings>=1.0.3",
-	"mkdocs-literate-nav>=0.6.2",
-	"mkdocs-gen-files>=0.6.0",
-	"mkdocs-jupyter>=0.25.1",
-	"mkdocs-click>=0.9.0",
-	"pymdown-extensions>=10.21",
+	"jupyter>=1.1.1",
+	"ipykernel>=6.29.0",
 	"tomli-w",
-	"mkdocstrings[python]>=1.0.3",
+	"cooler",
+	"capcruncher",
+	"quantnado",
 ]
 all = [
 	"cooler",
@@ -55,15 +51,8 @@ all = [
 	"pytest-mock",
 	"pytest-assume",
 	"pre-commit",
-	"mkdocs==1.6.1",
-	"mkdocs-material>=9.5.18",
-	"mkdocstrings>=1.0.3",
-	"mkdocs-literate-nav>=0.6.2",
-	"mkdocs-gen-files>=0.6.0",
-	"mkdocs-jupyter>=0.25.1",
-	"mkdocs-click>=0.9.0",
-	"pymdown-extensions>=10.21",
-	"mkdocstrings[python]>=1.0.3",
+	"jupyter>=1.1.1",
+	"ipykernel>=6.29.0",
 ]
 
 

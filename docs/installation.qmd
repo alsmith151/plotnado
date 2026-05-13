@@ -87,8 +87,8 @@ uv run plotnado validate --help
 ## Build docs locally
 
 ```bash
-uv run mkdocs build --strict
-uv run mkdocs serve
+quarto render
+quarto preview
 ```
 
 ## Run tests

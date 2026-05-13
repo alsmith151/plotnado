@@ -1,44 +1,56 @@
 name: Build Docs
+
 on:
   push:
     branches:
       - master
       - main
       - docs
+  pull_request:
+    branches:
+      - master
+      - main
+
 permissions:
   contents: write
+
 jobs:
-  deploy:
+  render:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
-      - uses: actions/cache@v3
-        with:
-          key: mkdocs-material-${{ env.cache_id }}
-          path: .cache
-          restore-keys: |
-            mkdocs-material-
+
       - name: Install OS dependencies
-        shell: bash -el {0}
         run: |
-          sudo apt update
-          sudo apt install -y build-essential zlib1g-dev libcurl4-openssl-dev
-      - name: Install the package
-        shell: bash -el {0}
+          sudo apt-get update
+          sudo apt-get remove -y libcurl4-openssl-dev || true
+          sudo apt-get install -y \
+            build-essential \
+            zlib1g-dev \
+            libcurl4-gnutls-dev \
+            bedtools \
+            libhts-dev \
+            samtools
+
+      - name: Install PlotNado docs environment
         run: |
-          pip install numpy cython
-          git clone https://github.com/hiclib/iced.git
-          cd iced
-          for fn in $(find . -iname "*.pyx"); do cython $fn; done
-          pip install . -v
-          cd ..
-          rm -rf iced
-          pip install . -v
-      - name: Install Mkdocs plugins
-        run: pip install mkdocs-material mkdocstrings-python mkdocs-click pygments mkdocs-gen-files mkdocs-jupyter mkdocs-autorefs mkdocs-literate-nav mkdocs-section-index
-      - name: Build the documentation
-        run: mkdocs gh-deploy --force
+          python -m pip install --upgrade pip uv
+          uv pip install --system -e ".[docs]"
+
+      - name: Render Quarto documentation
+        run: quarto render
+
+      - name: Publish Quarto site
+        if: github.event_name == 'push'
+        uses: quarto-dev/quarto-actions/publish@v2
+        with:
+          target: gh-pages
+          render: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

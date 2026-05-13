@@ -1,0 +1,135 @@
+---
+title: Worked Examples
+jupyter: python3
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+These examples use deterministic in-memory data so the documentation build exercises the PlotNado API and produces real plots without depending on remote servers.
+
+## Setup
+
+```{python}
+import numpy as np
+import pandas as pd
+
+from plotnado import GenomicFigure
+```
+
+```{python}
+#| echo: false
+REGION = "chr1:1,010,000-1,080,000"
+
+
+def signal(phase=0.0, scale=1.0, step=1_000):
+    bins = np.arange(1_000_000, 1_100_000, step)
+    values = scale * (4 + 2 * np.sin(np.linspace(phase, 6 + phase, bins.shape[0])))
+    return pd.DataFrame(
+        {"chrom": "chr1", "start": bins, "end": bins + step, "value": values}
+    )
+
+
+candidate_peaks = pd.DataFrame(
+    {
+        "chrom": ["chr1"] * 4,
+        "start": [1_012_000, 1_026_000, 1_041_000, 1_061_000],
+        "end": [1_018_000, 1_034_000, 1_050_000, 1_071_000],
+        "name": ["candidate_1", "candidate_2", "candidate_3", "candidate_4"],
+    }
+)
+
+links = pd.DataFrame(
+    {
+        "chrom1": ["chr1", "chr1", "chr1"],
+        "start1": [1_010_000, 1_022_000, 1_042_000],
+        "end1": [1_012_000, 1_024_000, 1_045_000],
+        "chrom2": ["chr1", "chr1", "chr1"],
+        "start2": [1_035_000, 1_054_000, 1_072_000],
+        "end2": [1_037_000, 1_056_000, 1_074_000],
+        "score": [2.2, 6.5, 9.8],
+    }
+)
+```
+
+## Example 1: stacked signal tracks
+
+This mirrors a common review workflow: compare two signal tracks in separate panels and keep the y-axis scaling synchronized.
+
+```{python}
+stacked_fig = GenomicFigure(track_height=1.1)
+stacked_fig.scalebar()
+stacked_fig.axis()
+stacked_fig.genes("hg38", title="Genes")
+stacked_fig.bigwig(
+    signal(0.0, scale=2.0),
+    title="Sample A signal",
+    style="fill",
+    color="#1f77b4",
+    autoscale_group="review",
+)
+stacked_fig.bigwig(
+    signal(1.3, scale=7.0),
+    title="Sample B signal",
+    style="fill",
+    color="#d62728",
+    autoscale_group="review",
+)
+
+stacked_fig.plot(REGION)
+```
+
+## Example 2: overlay with a shared axis
+
+Use an overlay when the series should be compared directly in one panel.
+
+```{python}
+overlay_fig = GenomicFigure(track_height=1.2)
+overlay_fig.scalebar()
+overlay_fig.axis()
+overlay_fig.overlay(
+    [signal(0.0, scale=2.0), signal(1.3, scale=7.0)],
+    title="Signal overlay",
+    colors=["#1f77b4", "#d62728"],
+    alpha=0.6,
+)
+
+overlay_fig.plot(REGION)
+```
+
+## Example 3: review plot with signals, intervals, and links
+
+Combine quantitative signal, candidate intervals, interaction arcs, and a highlighted region in one figure.
+
+```{python}
+review_fig = GenomicFigure(track_height=1.1)
+review_fig.autoscale(True)
+review_fig.highlight("chr1:1,032,000-1,046,000")
+review_fig.highlight_style(color="#ffdd57", alpha=0.22)
+review_fig.scalebar()
+review_fig.axis()
+review_fig.bigwig(
+    signal(0.4, scale=3.0),
+    title="Review signal",
+    style="fill",
+    color="#0f766e",
+    autoscale_group="review",
+)
+review_fig.bed(
+    candidate_peaks,
+    title="Candidate peaks",
+    color="#f59e0b",
+    display="expanded",
+    show_labels=True,
+)
+review_fig.links(
+    links,
+    title="Candidate links",
+    color_by_score=True,
+    cmap="viridis",
+    alpha=0.8,
+)
+
+review_fig.plot(REGION)
+```

@@ -2,8 +2,8 @@
 
 Use this section when you need API-level details beyond the task-oriented guides.
 
-- Generated module/class reference: [Reference Summary](reference/SUMMARY.md)
-- Auto-generated options reference for every track: [Aesthetics Reference](aesthetics_reference.md)
+- Generated module/class reference: [Reference Summary](reference/SUMMARY.qmd)
+- Auto-generated options reference for every track: [Aesthetics Reference](aesthetics_reference.qmd)
 
 ## Discover options at runtime
 
@@ -32,7 +32,7 @@ Each option payload is split into:
 - `aesthetics`: style model fields (`aesthetics={...}` or shorthand kwargs).
 - `label`: label controls (`label={...}` or shorthand kwargs).
 
-If you want a browsable summary rather than runtime output, start with [Aesthetics Reference](aesthetics_reference.md).
+If you want a browsable summary rather than runtime output, start with [Aesthetics Reference](aesthetics_reference.qmd).
 
 ## `GenomicFigure` helper methods: automatic kwargs
 
@@ -56,6 +56,10 @@ gf.bigwig(
 )
 ```
 
+Output:
+
+![Helper method output](images/quickstart.png)
+
 `color_group` is a track-level kwarg and works well with `gf.autocolor()` for consistent sample coloring:
 
 ```python
@@ -64,6 +68,10 @@ gf.autocolor()
 gf.bed("sampleA.bigBed", title="A peaks", color_group="sampleA")
 gf.bigwig("sampleA.bw", title="A signal", color_group="sampleA")
 ```
+
+Output:
+
+![Color group helper output](images/aesthetics/autocolor.png)
 
 ## Common entry points
 
@@ -91,4 +99,4 @@ After a figure is built, tracks can be edited in-place.
 
 All editing methods return `self` for chaining.
 
-For practical usage, prefer [Quick Start](quickstart.md), [Track Catalog](track_catalog.md), and [Recipes](recipes.md).
+For practical usage, prefer [Quick Start](quickstart.qmd), [Track Catalog](track_catalog.qmd), and [Recipes](recipes.qmd).

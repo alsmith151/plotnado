@@ -6,17 +6,29 @@
 gf.plot("chr1:1,000,000-1,100,000")
 ```
 
+Output:
+
+![Single region plot output](images/examples/basic_figure.png)
+
 ## Extend around region
 
 ```python
 gf.plot("chr1:1,000,000-1,050,000", extend=0.25)
 ```
 
+Output:
+
+![Extended region plot output](images/examples/basic_figure.png)
+
 ## Plot many regions
 
 ```python
 gf.plot_regions(["chr1:1,000,000-1,050,000", "chr1:1,060,000-1,110,000"], ncols=2)
 ```
+
+Output:
+
+![Multi-region plot output](images/examples/advanced_features.png)
 
 `plot_regions` also accepts a BED path.
 
@@ -25,6 +37,10 @@ gf.plot_regions(["chr1:1,000,000-1,050,000", "chr1:1,060,000-1,110,000"], ncols=
 ```python
 gf.plot_gene("GNAQ", extend=0.5)
 ```
+
+Output:
+
+![Gene plot output](images/examples/recipe_gene_label_strategies.png)
 
 ## Load from an IGV session
 
@@ -36,6 +52,10 @@ from plotnado import GenomicFigure
 fig, locus = GenomicFigure.from_igv_session("session.xml")
 fig.plot(locus)  # locus is the session's saved view region
 ```
+
+Output:
+
+![IGV session plot output](images/examples/basic_figure.png)
 
 Track colors, fixed scales (`min`/`max`), autoscale groups, and gene annotations are
 all preserved. The session locus is returned alongside the figure so you can use it
@@ -51,6 +71,10 @@ session = parse_igv_session("session.xml")
 fig = GenomicFigure.from_template(session.template)
 fig.plot(session.locus)
 ```
+
+Output:
+
+![Parsed IGV session output](images/examples/basic_figure.png)
 
 ## Edit tracks after building a figure
 
@@ -107,5 +131,9 @@ gf.to_toml("figure.toml")
 loaded = GenomicFigure.from_toml("figure.toml")
 loaded.save("figure.png", "chr1:1,000,000-1,100,000")
 ```
+
+Output:
+
+![TOML round-trip output](images/examples/recipe_theme_labels_from_toml.png)
 
 See [examples/recipes/02_theme_labels_toml.py](https://github.com/alsmith151/plotnado/blob/main/examples/recipes/02_theme_labels_toml.py) for a full round-trip script.

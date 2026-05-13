@@ -1,0 +1,98 @@
+project:
+  type: website
+  output-dir: site
+  execute-dir: project
+  render:
+    - index.qmd
+    - docs/*.qmd
+    - docs/reference/*.qmd
+
+website:
+  title: "PlotNado Documentation"
+  description: "Publication-ready genome browser figures in Python."
+  site-url: "https://alsmith151.github.io/plotnado"
+  repo-url: "https://github.com/alsmith151/plotnado"
+  repo-actions: [edit, issue]
+  favicon: docs/images/Logo.jpeg
+  search:
+    location: navbar
+    type: overlay
+  navbar:
+    logo: docs/images/Logo.jpeg
+    left:
+      - text: Home
+        href: index.qmd
+      - text: Getting Started
+        menu:
+          - text: Installation
+            href: docs/installation.qmd
+          - text: Quick Start
+            href: docs/quickstart.qmd
+          - text: Track Construction
+            href: docs/quickstart_tracks.qmd
+      - text: Guides
+        menu:
+          - text: Track Catalog
+            href: docs/track_catalog.qmd
+          - text: Data Inputs
+            href: docs/data_inputs.qmd
+          - text: Figure Workflows
+            href: docs/figure_workflows.qmd
+          - text: Aesthetics
+            href: docs/aesthetics.qmd
+          - text: Recipes
+            href: docs/recipes.qmd
+          - text: Best Practices
+            href: docs/best_practices.qmd
+      - text: Reference
+        menu:
+          - text: Overview
+            href: docs/reference.qmd
+          - text: API Reference
+            href: docs/api_reference.qmd
+          - text: Track Aliases
+            href: docs/track_aliases.qmd
+          - text: Living Gallery
+            href: docs/example_coverage.qmd
+          - text: Reference Summary
+            href: docs/reference/SUMMARY.qmd
+      - text: CLI
+        href: docs/cli.qmd
+      - text: Examples
+        menu:
+          - text: Living Gallery
+            href: docs/example_coverage.qmd
+          - text: Basic Example
+            href: docs/basic_example.qmd
+          - text: Simple Overlays
+            href: docs/simple_overlays.qmd
+          - text: Worked Examples
+            href: docs/worked_examples.qmd
+      - text: Help
+        menu:
+          - text: FAQ
+            href: docs/faq.qmd
+          - text: Troubleshooting
+            href: docs/troubleshooting.qmd
+      - text: Changelog
+        href: docs/changelog.qmd
+
+format:
+  html:
+    theme:
+      light: [cosmo, docs/stylesheets/plotnado.scss]
+      dark: [darkly, docs/stylesheets/plotnado.scss]
+    toc: true
+    toc-depth: 4
+    code-copy: true
+    code-overflow: wrap
+    page-layout: full
+
+execute:
+  enabled: true
+  warning: false
+  message: false
+  error: false
+  freeze: false
+
+metadata-files: []
