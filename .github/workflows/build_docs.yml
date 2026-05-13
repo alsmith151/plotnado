@@ -28,8 +28,15 @@ jobs:
 
       - name: Install OS dependencies
         run: |
-          sudo apt update
-          sudo apt install -y build-essential zlib1g-dev libcurl4-openssl-dev bedtools libhts-dev samtools
+          sudo apt-get update
+          sudo apt-get remove -y libcurl4-openssl-dev || true
+          sudo apt-get install -y \
+            build-essential \
+            zlib1g-dev \
+            libcurl4-gnutls-dev \
+            bedtools \
+            libhts-dev \
+            samtools
 
       - name: Install PlotNado docs environment
         run: |
