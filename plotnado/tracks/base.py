@@ -20,7 +20,7 @@ class LabelConfig(BaseModel):
     plot_title: bool = Field(default=True, description="Show the track title text.")
     plot_scale: bool = Field(default=True, description="Show the y-scale range annotation.")
     label_on_track: bool = Field(
-        default=False,
+        default=True,
         description="Draw labels inside the track plotting area instead of margins.",
     )
     data_range_style: DataRangeStyle = Field(
@@ -32,7 +32,7 @@ class LabelConfig(BaseModel):
         description="Draw a translucent white box behind label text for legibility.",
     )
     label_box_alpha: float = Field(
-        default=0.9,
+        default=0.85,
         description="Opacity of the label background box (0-1).",
     )
 
@@ -442,6 +442,7 @@ class TrackLabeller(BaseModel):
             verticalalignment="top",
             bbox=title_bbox,
             transform=ax.transAxes,
+            zorder=10,
             fontdict={
                 "size": self.title_size,
                 "color": self.title_color,
@@ -480,6 +481,7 @@ class TrackLabeller(BaseModel):
             verticalalignment="top",
             bbox=scale_bbox,
             transform=ax.transAxes,
+            zorder=10,
             fontdict={
                 "size": self.scale_size,
                 "color": self.scale_color,

@@ -180,3 +180,166 @@ fig.plot("chr1:1,000,000-1,100,000", show=False)
 ```
 
 Built-in themes include `"default"`, `"minimal"`, and `"publication"`.
+
+## Signal smoothing
+
+`smoothing_window` applies a rolling window over the binned signal before rendering. `smoothing_method` selects `"mean"` (default) or `"median"`. Set `smoothing_center=True` (default) to center the window so peaks stay aligned with their genomic position.
+
+```{python}
+#| fig-cap: "A window of 5 bins visibly smooths noisy signal while preserving peak position; `median` smoothing is more robust to spikes."
+from plotnado import GenomicFigure
+from plotnado.examples import REGION, signal
+
+fig = GenomicFigure(track_height=1.15)
+fig.scalebar()
+fig.bigwig(signal(), title="raw", style="fill", color="#aec7e8")
+fig.bigwig(signal(), title="smoothing_window=5, mean", style="fill", color="#1f77b4",
+           smoothing_window=5, smoothing_method="mean")
+fig.bigwig(signal(), title="smoothing_window=5, median", style="fill", color="#d62728",
+           smoothing_window=5, smoothing_method="median")
+fig.axis()
+fig.plot(REGION)
+```
+
+## Threshold and coordinate markers
+
+`hline` draws a horizontal line at a fixed y-value — useful for significance thresholds or baseline references. `vline` draws a vertical line at a fixed genomic coordinate. Both are zero-height overlay tracks so they do not consume panel space.
+
+```{python}
+#| fig-cap: "`hline` marks a threshold across the full panel width; `vline` marks a specific genomic position."
+from plotnado import GenomicFigure
+from plotnado.examples import REGION, signal
+
+fig = GenomicFigure(track_height=1.3)
+fig.scalebar()
+fig.hline(3.0, color="#d62728", linestyle="--", linewidth=1.2, alpha=0.8)
+fig.vline("chr1:1,044,000", color="#2ca02c", linestyle=":", linewidth=1.5, alpha=0.9)
+fig.bigwig(signal(scale=6.0), title="signal with markers", style="fill", color="#1f77b4")
+fig.axis()
+fig.plot(REGION)
+```
+
+Key options for both tracks:
+
+| Option | Default | Effect |
+|---|---|---|
+| `color` | `"steelblue"` | Line color. |
+| `linestyle` | `"--"` | Any matplotlib linestyle: `"-"`, `"--"`, `"-."`, `":"`. |
+| `linewidth` | `1.0` | Line width in points. |
+| `alpha` | `1.0` | Opacity. |
+| `zorder` | `10` | Rendering layer; higher values draw on top. |
+
+## BigWig difference options
+
+`bigwig_diff` computes a per-bin difference between two BigWig files. The `method` parameter controls the arithmetic:
+
+| `method` | Formula |
+|---|---|
+| `"subtract"` (default) | A − B |
+| `"ratio"` | A / B |
+| `"log2ratio"` | log₂(A / B) |
+
+Positive and negative bars are colored independently. The zero baseline is also configurable. Both file paths and in-memory DataFrames are accepted:
+
+```{python}
+#| fig-cap: "Subtract (default) shows raw difference; log2ratio compresses dynamic range. Positive bars use `positive_color`, negative use `negative_color`."
+from plotnado import GenomicFigure
+from plotnado.examples import REGION, signal
+
+a = signal(scale=4.0, phase=0.0)
+b = signal(scale=2.0, phase=0.8)
+
+fig = GenomicFigure(track_height=1.4)
+fig.scalebar()
+fig.bigwig(a, title="Control", color="#1f77b4")
+fig.bigwig(b, title="Treatment", color="#d62728")
+fig.bigwig_diff(a, b, title="subtract (default)", method="subtract",
+                positive_color="#d62728", negative_color="#1f77b4", bar_alpha=0.6)
+fig.bigwig_diff(a, b, title="log2ratio",         method="log2ratio",
+                positive_color="#e67e22", negative_color="#8e44ad", bar_alpha=0.6)
+fig.axis()
+fig.plot(REGION)
+```
+
+## BigWig collection style and labels
+
+`bigwig_collection` renders multiple BigWig files in a single panel. Use `style` to choose how they are arranged:
+
+| `style` | Behaviour |
+|---|---|
+| `"overlay"` (default) | All series share one y-axis, drawn on top of each other. |
+| `"stacked"` | Each series occupies its own horizontal band. |
+
+`labels` assigns a per-file legend label; falls back to filenames when omitted.
+
+```python
+files = ["sample_a.bw", "sample_b.bw", "sample_c.bw"]
+
+# Overlay — useful for direct comparison
+fig.bigwig_collection(files, title="Samples", style="overlay",
+                      labels=["Control", "Treatment A", "Treatment B"],
+                      colors=["#1f77b4", "#d62728", "#2ca02c"])
+
+# Stacked — useful for many samples
+fig.bigwig_collection(files, title="Samples", style="stacked")
+```
+
+## Gene label strategies
+
+`label_overlap_strategy` controls what happens when two gene name labels would overlap horizontally:
+
+| Strategy | Behaviour |
+|---|---|
+| `"auto"` (default) | Resolves to `"smart"` in most cases. |
+| `"smart"` | Stacks labels into extra lanes above the gene row, using horizontal nudging where possible. |
+| `"stagger"` | Alternates labels between two fixed vertical offsets. |
+| `"suppress"` | Hides the second label entirely when a collision is detected. |
+| `"auto_expand"` | Switches the whole track from collapsed to expanded display when collisions occur. |
+
+```{python}
+#| fig-cap: "`smart` (default) nudges colliding labels upward into lanes; `suppress` silently drops them; `stagger` alternates heights."
+from plotnado import GenomicFigure
+from plotnado.examples import WIDE_REGION
+
+fig = GenomicFigure(track_height=1.4)
+fig.scalebar()
+fig.genes("hg38", title="smart (default)", label_overlap_strategy="smart")
+fig.genes("hg38", title="suppress", label_overlap_strategy="suppress")
+fig.genes("hg38", title="stagger", label_overlap_strategy="stagger")
+fig.axis()
+fig.plot(WIDE_REGION)
+```
+
+`gene_label_style` sets the font style for gene names:
+
+```{python}
+#| fig-cap: "Italic (default) distinguishes gene names from surrounding annotation text; normal and oblique are alternatives."
+from plotnado import GenomicFigure
+from plotnado.examples import WIDE_REGION
+
+fig = GenomicFigure(track_height=1.4)
+fig.scalebar()
+fig.genes("hg38", title="italic (default)", gene_label_style="italic")
+fig.genes("hg38", title="normal", gene_label_style="normal")
+fig.axis()
+fig.plot(WIDE_REGION)
+```
+
+## Axis human-readable labels
+
+Set `use_human_readable_labels=True` to display tick labels with k / M / G suffixes instead of raw base-pair numbers. Useful for large regions where raw numbers become hard to read.
+
+```{python}
+#| fig-cap: "Human-readable labels (bottom) keep the axis uncluttered over large regions."
+from plotnado import GenomicFigure
+from plotnado.examples import signal
+
+LONG_REGION = "chr1:1,000,000-2,000,000"
+
+fig = GenomicFigure(track_height=0.8)
+fig.bigwig(signal(), title="raw bp ticks")
+fig.axis(use_human_readable_labels=False)
+fig.bigwig(signal(), title="k/M ticks")
+fig.axis(use_human_readable_labels=True)
+fig.plot(LONG_REGION)
+```

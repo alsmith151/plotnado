@@ -33,7 +33,7 @@ class ScaleBarAesthetics(BaseAesthetics):
     tick_linewidth: float = Field(default=1.4, description="Line width of terminal scale ticks.")
     tick_height: float = Field(default=0.1, description="Half-height of terminal ticks in axis units.")
     label_offset: float = Field(
-        default=0.25,
+        default=0.35,
         description="Vertical distance between bar baseline and text label.",
     )
 

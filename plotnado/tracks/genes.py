@@ -450,6 +450,18 @@ class Genes(Track):
             return "…"
         return f"{text[: max_chars - 1]}…"
 
+    def _min_label_y(self, ax: matplotlib.axes.Axes, base_y: float) -> float:
+        """Minimum y so a label clears the gene body rectangle."""
+        gene_top = base_y + float(self.interval_height) / 2.0
+        scales = self._data_pixel_scales(ax)
+        if scales is not None:
+            _, px_per_y = scales
+            dpi = self._resolve_figure_dpi(ax)
+            text_half = (float(self.gene_label_font_size) * (dpi / 72.0) * 0.5) / px_per_y
+        else:
+            text_half = float(self.interval_height) * 0.7
+        return gene_top + text_half + 0.01
+
     def _estimate_bp_per_px(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> float:
         viewport_bp = max(float(gr.length), 1.0)
         axes_width_px = 1000.0
@@ -679,11 +691,13 @@ class Genes(Track):
 
             if strategy == "smart":
                 chosen: LabelPlacement | None = None
+                min_y = self._min_label_y(ax, base_y)
                 for lane_index in range(max(1, len(genes_df) + 1)):
-                    y_pos = (
+                    y_pos = max(
                         base_y
                         + (float(self.label_vertical_offset) * float(self.row_scale))
-                        + (lane_index * lane_step)
+                        + (lane_index * lane_step),
+                        min_y,
                     )
                     lane_key = (row_index, lane_index)
                     last_end = smart_lane_last_end.get(lane_key, float("-inf"))
@@ -769,7 +783,10 @@ class Genes(Track):
                     continue
 
                 y_offset = float(self.label_stagger_offset) * float(self.row_scale)
-                y_pos = base_y + y_offset if lane_used == 0 else base_y - y_offset
+                if lane_used == 0:
+                    y_pos = max(base_y + y_offset, self._min_label_y(ax, base_y))
+                else:
+                    y_pos = base_y - y_offset
                 placements.append(
                     LabelPlacement(
                         text=text,
@@ -813,7 +830,7 @@ class Genes(Track):
 
             row_last_end[row_index] = label_end
             y_offset = float(self.label_vertical_offset) * float(self.row_scale)
-            y_pos = base_y + y_offset
+            y_pos = max(base_y + y_offset, self._min_label_y(ax, base_y))
             placements.append(
                 LabelPlacement(
                     text=text,

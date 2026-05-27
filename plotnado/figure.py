@@ -838,15 +838,7 @@ class GenomicFigure(GenomicFigureMethods):
                 for index, axis in enumerate(axes[:-1]):
                     track_above = main_tracks[index]
                     track_below = main_tracks[index + 1]
-                    if isinstance(track_above, Genes):
-                        continue
-                    if (
-                        isinstance(track_above, ScaleBar)
-                        and isinstance(track_below, Genes)
-                    ) or (
-                        isinstance(track_above, Genes)
-                        and isinstance(track_below, ScaleBar)
-                    ):
+                    if isinstance(track_above, (Genes, ScaleBar)):
                         continue
                     y = axis.get_position().y0
                     separator = matplotlib.lines.Line2D(

@@ -638,8 +638,8 @@ class GenomicFigureMethods:
     @overload
     def bigwig_diff(
         self,
-        file_a: str,
-        file_b: str,
+        file_a: str | pd.DataFrame,
+        file_b: str | pd.DataFrame,
         /,
         *,
         autoscale_group: str | None = ...,
@@ -679,13 +679,13 @@ class GenomicFigureMethods:
     ) -> Self: ...
     # END AUTO-GENERATED OVERLOAD: bigwig_diff
     def bigwig_diff(
-        self, file_a: str, file_b: str, /, **kwargs: Unpack[BigwigDiffKwargs]
+        self, file_a: str | pd.DataFrame, file_b: str | pd.DataFrame, /, **kwargs: Unpack[BigwigDiffKwargs]
     ) -> Self:
         """Add a two-signal BigWig difference track.
 
         Args:
-            file_a: First BigWig file path.
-            file_b: Second BigWig file path.
+            file_a: First BigWig file path or in-memory bedgraph DataFrame.
+            file_b: Second BigWig file path or in-memory bedgraph DataFrame.
             **kwargs: `BigWigDiff` constructor kwargs; shorthand composition routes
                 aesthetics and label fields automatically.
 

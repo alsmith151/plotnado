@@ -32,8 +32,8 @@ class BigWigDiffAesthetics(BaseAesthetics):
 class BigWigDiff(Track):
     """Difference track for two BigWig signals."""
 
-    file_a: str = Field(description="Path to first BigWig input.")
-    file_b: str = Field(description="Path to second BigWig input.")
+    file_a: str | pd.DataFrame = Field(description="Path to first BigWig input, or an in-memory bedgraph DataFrame.")
+    file_b: str | pd.DataFrame = Field(description="Path to second BigWig input, or an in-memory bedgraph DataFrame.")
     method: BigWigDiffMethod = Field(
         default=BigWigDiffMethod.SUBTRACT,
         description="Computation used to derive differential signal values.",

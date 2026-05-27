@@ -189,7 +189,7 @@ def generate_blocks() -> dict[str, str]:
         ("capcruncher", CapcruncherTrack, ["file: str"], {"file"}, True),
         ("cooler_average", CoolerAverage, ["files: list[str]"], {"files"}, True),
         ("bigwig_collection", BigWigCollection, ["files: list[str]"], {"files"}, True),
-        ("bigwig_diff", BigWigDiff, ["file_a: str", "file_b: str"], {"file_a", "file_b"}, True),
+        ("bigwig_diff", BigWigDiff, ["file_a: str | pd.DataFrame", "file_b: str | pd.DataFrame"], {"file_a", "file_b"}, True),
         ("bigwig_overlay", OverlayTrack, ["tracks: list[Any]"], {"tracks"}, True),
         ("overlay", OverlayTrack, ["tracks: list[Any]"], {"tracks"}, True),
         ("narrowpeak", NarrowPeakTrack, ["data: Any"], {"data"}, True),

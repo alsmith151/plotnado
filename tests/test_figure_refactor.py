@@ -43,7 +43,7 @@ class TestFigureRefactor:
         assert fig.highlight_color == "#ffd700"
         assert fig.highlight_alpha == 0.15
 
-    def test_default_publication_theme_disables_label_boxes(self):
+    def test_default_publication_theme_enables_label_boxes(self):
         df = pd.DataFrame(
             {
                 "chrom": ["chr1", "chr1"],
@@ -55,7 +55,8 @@ class TestFigureRefactor:
         fig = GenomicFigure()
         fig.add_track(BigWigTrack(data=df))
 
-        assert fig.tracks[0].label.label_box_enabled is False
+        assert fig.tracks[0].label.label_box_enabled is True
+        assert fig.tracks[0].label.label_box_alpha == 0.85
 
     def test_theme_font_family_syncs_label_fonts(self):
         theme = Theme(font_family="Arial")
