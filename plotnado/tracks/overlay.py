@@ -9,7 +9,7 @@ from pydantic import ConfigDict, Field, PrivateAttr
 
 from .region import GenomicRegion
 from .base import LabelConfig, Track, TrackLabeller
-from .scaling import calculate_data_limits
+from .scaling import add_y_headroom, calculate_data_limits, track_autoscale_payload
 from .utils import clean_axis
 from .bigwig import BigWigTrack, BigwigAesthetics
 from .enums import PlotStyle, TrackType
@@ -103,11 +103,14 @@ class OverlayTrack(Track):
         return [t.fetch_data(gr) for t in self._track_instances]
 
     def _shared_limits(self, gr: GenomicRegion) -> tuple[float, float]:
-        return calculate_data_limits(
-            self.fetch_data(gr),
+        y_min, y_max = calculate_data_limits(
+            track_autoscale_payload(self, gr),
             min_value=self.min_value,
             max_value=self.max_value,
         )
+        if self.max_value is not None:
+            return y_min, y_max
+        return add_y_headroom(y_min, y_max)
 
     def plot(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
         """Plot overlaid tracks."""

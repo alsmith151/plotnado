@@ -330,6 +330,7 @@ class TestFigureRefactor:
         ylim1 = out.axes[0].get_ylim()
         ylim2 = out.axes[1].get_ylim()
         assert ylim1 == ylim2
+        assert ylim1[1] > 20.0
 
     def test_autoscale_group_overlay_matches_peer_track(self):
         df1 = pd.DataFrame(
@@ -351,7 +352,9 @@ class TestFigureRefactor:
 
         out = fig.plot("chr1:90-210", show=False)
 
-        assert out.axes[0].get_ylim() == out.axes[1].get_ylim() == (0.0, 20.0)
+        assert out.axes[0].get_ylim() == out.axes[1].get_ylim()
+        assert out.axes[0].get_ylim()[0] == 0.0
+        assert out.axes[0].get_ylim()[1] > 20.0
 
     def test_autoscale_group_overlay_preserves_explicit_limit_and_label(self):
         df1 = pd.DataFrame(
@@ -376,8 +379,49 @@ class TestFigureRefactor:
         out = fig.plot("chr1:90-210", show=False)
 
         assert out.axes[0].get_ylim() == (0.0, 7.0)
-        assert out.axes[1].get_ylim() == (0.0, 20.0)
+        assert out.axes[1].get_ylim()[0] == 0.0
+        assert out.axes[1].get_ylim()[1] > 20.0
         assert "[ 0 - 7 ]" in [text.get_text() for text in out.axes[0].texts]
+
+    def test_autoscale_group_overlay_uses_smoothed_component_values(self):
+        smoothed_df = pd.DataFrame(
+            {
+                "chrom": ["chr1"] * 5,
+                "start": [100, 150, 200, 250, 300],
+                "end": [150, 200, 250, 300, 350],
+                "value": [0.0, 0.0, 10.0, 0.0, 0.0],
+            }
+        )
+        peer_df = pd.DataFrame(
+            {
+                "chrom": ["chr1"] * 5,
+                "start": [100, 150, 200, 250, 300],
+                "end": [150, 200, 250, 300, 350],
+                "value": [5.0, 5.0, 5.0, 5.0, 5.0],
+            }
+        )
+
+        fig = GenomicFigure()
+        fig.add_track(
+            OverlayTrack(
+                tracks=[
+                    BigWigTrack(
+                        data=smoothed_df,
+                        title="overlay-smoothed",
+                        aesthetics=BigwigAesthetics(smoothing_window=3, smoothing_method="median"),
+                    )
+                ],
+                autoscale_group="g1",
+                title="Overlay",
+            )
+        )
+        fig.add_track(BigWigTrack(data=peer_df, autoscale_group="g1", title="Peer"))
+
+        out = fig.plot("chr1:90-360", show=False)
+
+        assert out.axes[0].get_ylim() == out.axes[1].get_ylim()
+        assert out.axes[0].get_ylim()[0] == 0.0
+        assert out.axes[0].get_ylim()[1] > 5.0
 
     def test_global_autoscale_includes_overlay_values(self):
         df1 = pd.DataFrame(

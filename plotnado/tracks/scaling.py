@@ -8,6 +8,19 @@ from .base import GenomicRegion, Track
 from .enums import ScalingMethod
 
 
+def track_autoscale_payload(track: Track, gr: GenomicRegion) -> object:
+    """Fetch the payload that should contribute to autoscaled y-limits."""
+    nested_tracks = getattr(track, "_track_instances", None)
+    if isinstance(nested_tracks, list):
+        return [track_autoscale_payload(nested_track, gr) for nested_track in nested_tracks]
+
+    data = track.fetch_data(gr)
+    apply_smoothing = getattr(track, "_apply_smoothing", None)
+    if callable(apply_smoothing):
+        data = apply_smoothing(data)
+    return data
+
+
 def extract_numeric_values(data: object) -> np.ndarray:
     """Extract numeric values from supported track payloads.
 
@@ -66,6 +79,15 @@ def calculate_data_limits(
     return y_min, y_max
 
 
+def add_y_headroom(y_min: float, y_max: float, *, fraction: float = 0.10) -> tuple[float, float]:
+    """Add a small top margin so autoscaled filled tracks do not render flush to the axis."""
+    if y_max <= y_min:
+        return y_min, y_min + 1.0
+
+    padding = max((y_max - y_min) * fraction, 1e-9)
+    return y_min, y_max + padding
+
+
 def track_limit_explicitly_set(track: Track, field_name: str) -> bool:
     """Return whether a min/max aesthetic was explicitly set by the user."""
     aesthetics = getattr(track, "aesthetics", None)
@@ -105,7 +127,7 @@ class Autoscaler:
         for t in self.tracks:
             if not self._supports_autoscale(t):
                 continue
-            data = t.fetch_data(self.gr)
+            data = track_autoscale_payload(t, self.gr)
             values = self._extract_numeric_values(data)
             if values.size > 0:
                 _data.append(values)

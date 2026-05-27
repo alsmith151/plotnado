@@ -676,7 +676,7 @@ class GenomicFigure(GenomicFigureMethods):
     def _apply_autoscale_groups(
         self, gr: GenomicRegion, main_tracks: list[Track]
     ) -> dict[int, tuple[float, float]]:
-        from .tracks.scaling import calculate_data_limits
+        from .tracks.scaling import add_y_headroom, calculate_data_limits, track_autoscale_payload
 
         grouped: dict[str, list[int]] = {}
         for index, track in enumerate(main_tracks):
@@ -687,7 +687,9 @@ class GenomicFigure(GenomicFigureMethods):
         for indices in grouped.values():
             raw_limits = []
             for index in indices:
-                raw_limits.append(calculate_data_limits(main_tracks[index].fetch_data(gr)))
+                track = main_tracks[index]
+                data = track_autoscale_payload(track, gr)
+                raw_limits.append(calculate_data_limits(data))
 
             if not raw_limits:
                 continue
@@ -696,6 +698,8 @@ class GenomicFigure(GenomicFigureMethods):
             group_max = max(limit[1] for limit in raw_limits)
             if group_min == group_max:
                 group_max = group_min + 1.0
+            else:
+                group_min, group_max = add_y_headroom(group_min, group_max)
 
             for index in indices:
                 track = main_tracks[index]

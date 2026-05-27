@@ -1,6 +1,7 @@
 import pandas as pd
 
 from plotnado import GenomicFigure
+from plotnado.tracks.bigwig import BigwigAesthetics
 from plotnado.tracks.base import GenomicRegion
 from plotnado.tracks import BigWigTrack, BigwigOverlay, OverlayTrack
 from plotnado.tracks.enums import PlotStyle
@@ -64,7 +65,8 @@ def test_overlay_shared_limits_include_all_components():
 
     limits = overlay._shared_limits(GenomicRegion(chromosome="chr1", start=1000, end=1300))
 
-    assert limits == (0.0, 20.0)
+    assert limits[0] == 0.0
+    assert limits[1] > 20.0
 
 
 def test_overlay_shared_limits_preserve_explicit_overrides():
@@ -89,3 +91,29 @@ def test_overlay_propagates_style_to_wrapped_bigwig_inputs():
 
     assert all(isinstance(track, BigWigTrack) for track in overlay._track_instances)
     assert all(track.style == PlotStyle.FRAGMENT for track in overlay._track_instances)
+
+
+def test_overlay_shared_limits_respect_smoothed_component_values():
+    spike = pd.DataFrame(
+        {
+            "chrom": ["chr1"] * 5,
+            "start": [1000, 1100, 1200, 1300, 1400],
+            "end": [1100, 1200, 1300, 1400, 1500],
+            "value": [0.0, 0.0, 10.0, 0.0, 0.0],
+        }
+    )
+
+    overlay = OverlayTrack(
+        tracks=[
+            BigWigTrack(
+                data=spike,
+                title="smoothed",
+                aesthetics=BigwigAesthetics(smoothing_window=3, smoothing_method="median"),
+            )
+        ]
+    )
+
+    limits = overlay._shared_limits(GenomicRegion(chromosome="chr1", start=1000, end=1500))
+
+    assert limits[0] == 0.0
+    assert limits[1] > 1.0

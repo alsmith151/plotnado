@@ -183,20 +183,20 @@ Built-in themes include `"default"`, `"minimal"`, and `"publication"`.
 
 ## Signal smoothing
 
-`smoothing_window` applies a rolling window over the binned signal before rendering. `smoothing_method` selects `"mean"` (default) or `"median"`. Set `smoothing_center=True` (default) to center the window so peaks stay aligned with their genomic position.
+`smoothing_window` applies a rolling window over the binned signal before rendering. `smoothing_method` selects `"mean"` (default) or `"median"`. Set `smoothing_center=True` (default) to center the window so peaks stay aligned with their genomic position. With a large median window, broad peaks can develop flat tops because many adjacent bins share the same median; that shape is expected and is not y-axis clipping.
 
 ```{python}
-#| fig-cap: "A window of 5 bins visibly smooths noisy signal while preserving peak position; `median` smoothing is more robust to spikes."
+#| fig-cap: "A window of 50 bins visibly smooths noisy signal while preserving peak position; `median` smoothing is more robust to spikes, and with a large window it can produce flat-topped peaks by design."
 from plotnado import GenomicFigure
 from plotnado.examples import REGION, signal
 
 fig = GenomicFigure(track_height=1.15)
 fig.scalebar()
-fig.bigwig(signal(), title="raw", style="fill", color="#aec7e8")
-fig.bigwig(signal(), title="smoothing_window=5, mean", style="fill", color="#1f77b4",
-           smoothing_window=5, smoothing_method="mean")
-fig.bigwig(signal(), title="smoothing_window=5, median", style="fill", color="#d62728",
-           smoothing_window=5, smoothing_method="median")
+fig.bigwig(signal(), title="raw", style="fill", color="#aec7e8", autoscale_group='signal')
+fig.bigwig(signal(), title="smoothing_window=50, mean", style="fill", color="#1f77b4",
+           smoothing_window=50, smoothing_method="mean", autoscale_group='signal')
+fig.bigwig(signal(), title="smoothing_window=50, median", style="fill", color="#d62728",
+           smoothing_window=50, smoothing_method="median", autoscale_group='signal')
 fig.axis()
 fig.plot(REGION)
 ```
