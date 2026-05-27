@@ -2,74 +2,78 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://alsmith151.github.io/plotnado/docs/troubleshooting.html</loc>
-    <lastmod>2026-05-27T11:08:23.775Z</lastmod>
+    <lastmod>2026-05-27T12:23:13.017Z</lastmod>
   </url>
   <url>
     <loc>https://alsmith151.github.io/plotnado/docs/track_aliases.html</loc>
-    <lastmod>2026-05-27T11:08:23.775Z</lastmod>
+    <lastmod>2026-05-27T12:23:13.017Z</lastmod>
   </url>
   <url>
     <loc>https://alsmith151.github.io/plotnado/docs/reference.html</loc>
-    <lastmod>2026-05-27T11:08:23.775Z</lastmod>
+    <lastmod>2026-05-27T12:23:13.017Z</lastmod>
   </url>
   <url>
     <loc>https://alsmith151.github.io/plotnado/docs/quickstart_tracks.html</loc>
-    <lastmod>2026-05-27T11:08:23.775Z</lastmod>
+    <lastmod>2026-05-27T12:23:13.017Z</lastmod>
   </url>
   <url>
     <loc>https://alsmith151.github.io/plotnado/docs/option_lookup.html</loc>
-    <lastmod>2026-05-27T11:08:23.775Z</lastmod>
+    <lastmod>2026-05-27T12:23:13.017Z</lastmod>
   </url>
   <url>
     <loc>https://alsmith151.github.io/plotnado/docs/figure_workflows.html</loc>
-    <lastmod>2026-05-27T11:08:23.775Z</lastmod>
+    <lastmod>2026-05-27T12:23:13.017Z</lastmod>
   </url>
   <url>
-    <loc>https://alsmith151.github.io/plotnado/docs/data_inputs.html</loc>
-    <lastmod>2026-05-27T11:08:23.775Z</lastmod>
-  </url>
-  <url>
-    <loc>https://alsmith151.github.io/plotnado/docs/changelog.html</loc>
-    <lastmod>2026-05-27T11:08:23.775Z</lastmod>
-  </url>
-  <url>
-    <loc>https://alsmith151.github.io/plotnado/docs/aesthetics.html</loc>
-    <lastmod>2026-05-27T11:08:23.775Z</lastmod>
-  </url>
-  <url>
-    <loc>https://alsmith151.github.io/plotnado/index.html</loc>
-    <lastmod>2026-05-27T11:08:23.801Z</lastmod>
-  </url>
-  <url>
-    <loc>https://alsmith151.github.io/plotnado/docs/best_practices.html</loc>
-    <lastmod>2026-05-27T11:08:23.775Z</lastmod>
+    <loc>https://alsmith151.github.io/plotnado/docs/examples.html</loc>
+    <lastmod>2026-05-27T12:23:13.017Z</lastmod>
   </url>
   <url>
     <loc>https://alsmith151.github.io/plotnado/docs/cli.html</loc>
-    <lastmod>2026-05-27T11:08:23.775Z</lastmod>
+    <lastmod>2026-05-27T12:23:13.017Z</lastmod>
+  </url>
+  <url>
+    <loc>https://alsmith151.github.io/plotnado/docs/best_practices.html</loc>
+    <lastmod>2026-05-27T12:23:13.017Z</lastmod>
+  </url>
+  <url>
+    <loc>https://alsmith151.github.io/plotnado/index.html</loc>
+    <lastmod>2026-05-27T12:23:13.044Z</lastmod>
+  </url>
+  <url>
+    <loc>https://alsmith151.github.io/plotnado/docs/aesthetics.html</loc>
+    <lastmod>2026-05-27T12:23:13.017Z</lastmod>
+  </url>
+  <url>
+    <loc>https://alsmith151.github.io/plotnado/docs/changelog.html</loc>
+    <lastmod>2026-05-27T12:23:13.017Z</lastmod>
+  </url>
+  <url>
+    <loc>https://alsmith151.github.io/plotnado/docs/data_inputs.html</loc>
+    <lastmod>2026-05-27T12:23:13.017Z</lastmod>
   </url>
   <url>
     <loc>https://alsmith151.github.io/plotnado/docs/faq.html</loc>
-    <lastmod>2026-05-27T11:08:23.775Z</lastmod>
+    <lastmod>2026-05-27T12:23:13.017Z</lastmod>
   </url>
   <url>
     <loc>https://alsmith151.github.io/plotnado/docs/installation.html</loc>
-    <lastmod>2026-05-27T11:08:23.775Z</lastmod>
+    <lastmod>2026-05-27T12:23:13.017Z</lastmod>
   </url>
   <url>
     <loc>https://alsmith151.github.io/plotnado/docs/quickstart.html</loc>
-    <lastmod>2026-05-27T11:08:23.775Z</lastmod>
+    <lastmod>2026-05-27T12:23:13.017Z</lastmod>
   </url>
   <url>
     <loc>https://alsmith151.github.io/plotnado/docs/recipes.html</loc>
-    <lastmod>2026-05-27T11:08:23.775Z</lastmod>
+    <lastmod>2026-05-27T12:23:13.017Z</lastmod>
   </url>
   <url>
     <loc>https://alsmith151.github.io/plotnado/docs/template_schema.html</loc>
-    <lastmod>2026-05-27T11:08:23.775Z</lastmod>
+    <lastmod>2026-05-27T12:23:13.017Z</lastmod>
   </url>
   <url>
     <loc>https://alsmith151.github.io/plotnado/docs/track_catalog.html</loc>
-    <lastmod>2026-05-27T11:08:23.775Z</lastmod>
+    <lastmod>2026-05-27T12:23:13.017Z</lastmod>
   </url>
 </urlset>

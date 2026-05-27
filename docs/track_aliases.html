@@ -80,9 +80,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-bd31b91f9ddb1a75e3744ba9797c8182.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-e9f872f2cd0ea725a55848b536195f79.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-a023808155192ba0b8721be52e261cfa.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-e9f872f2cd0ea725a55848b536195f79.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-347c76f3922e9c7b1f88642e221dcbf2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-cf8ae49b665e302d0bf992539d2f6917.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-347c76f3922e9c7b1f88642e221dcbf2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -319,6 +319,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
     </ul>
   </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../docs/examples.html"> 
+<span class="menu-text">Examples</span></a>
+  </li>  
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-guides" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Guides</span>
@@ -405,7 +409,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
@@ -416,7 +420,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#track-aliases" id="toc-track-aliases" class="nav-link active" data-scroll-target="#track-aliases">Track Aliases</a>
   <ul>
   <li><a href="#alias-usage" id="toc-alias-usage" class="nav-link" data-scroll-target="#alias-usage">Alias usage</a></li>
-  <li><a href="#how-kwargs-are-routed" id="toc-how-kwargs-are-routed" class="nav-link" data-scroll-target="#how-kwargs-are-routed">How kwargs are routed</a></li>
   <li><a href="#common-aliases" id="toc-common-aliases" class="nav-link" data-scroll-target="#common-aliases">Common aliases</a></li>
   <li><a href="#current-alias-map" id="toc-current-alias-map" class="nav-link" data-scroll-target="#current-alias-map">Current alias map</a></li>
   </ul></li>
@@ -424,10 +427,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="toc-actions"><ul><li><a href="https://github.com/alsmith151/plotnado/edit/main/docs/track_aliases.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/alsmith151/plotnado/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">How kwargs are routed</h1>
+</div>
 
 
 
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
 
 
 <section id="track-aliases" class="level1">
@@ -435,28 +454,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><code>GenomicFigure.add_track()</code> accepts a concrete track object or a string alias. Aliases are the bridge between Python, YAML templates, and generated config.</p>
 <section id="alias-usage" class="level2">
 <h2 class="anchored" data-anchor-id="alias-usage">Alias usage</h2>
-<div id="f1de00f9" class="cell" data-execution_count="1">
+<div id="8499da46" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> docs._examples <span class="im">import</span> REGION, signal</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure().autocolor(<span class="st">"Set2"</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>fig.add_track(<span class="st">"scalebar"</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>fig.add_track(<span class="st">"axis"</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>fig.add_track(<span class="st">"bigwig"</span>, data<span class="op">=</span>signal(phase<span class="op">=</span><span class="fl">0.0</span>), title<span class="op">=</span><span class="st">"Replicate A"</span>, style<span class="op">=</span><span class="st">"fill"</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>fig.add_track(<span class="st">"bigwig"</span>, data<span class="op">=</span>signal(phase<span class="op">=</span><span class="fl">0.9</span>), title<span class="op">=</span><span class="st">"Replicate B"</span>, style<span class="op">=</span><span class="st">"fill"</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>fig.plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado.examples <span class="im">import</span> REGION, signal</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># signal() → DataFrame(chrom, start, end, value) — replace with a BigWig path/URL or DataFrame</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure().autocolor(<span class="st">"Set2"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>fig.add_track(<span class="st">"scalebar"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>fig.add_track(<span class="st">"axis"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>fig.add_track(<span class="st">"bigwig"</span>, data<span class="op">=</span>signal(phase<span class="op">=</span><span class="fl">0.0</span>), title<span class="op">=</span><span class="st">"Replicate A"</span>, style<span class="op">=</span><span class="st">"fill"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>fig.add_track(<span class="st">"bigwig"</span>, data<span class="op">=</span>signal(phase<span class="op">=</span><span class="fl">0.9</span>), title<span class="op">=</span><span class="st">"Replicate B"</span>, style<span class="op">=</span><span class="st">"fill"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>fig.plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="track_aliases_files/figure-html/cell-2-output-1.png" width="1073" height="301" class="figure-img"></p>
+<figcaption>Alias-added tracks render the same way as helper-method tracks.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Caption: alias-added tracks render the same way as helper-method tracks.</p>
-</section>
-<section id="how-kwargs-are-routed" class="level2">
-<h2 class="anchored" data-anchor-id="how-kwargs-are-routed">How kwargs are routed</h2>
 <ul>
 <li>Track constructor fields are passed directly.</li>
 <li>Aesthetics fields such as <code>color</code>, <code>alpha</code>, and <code>style</code> are routed to <code>aesthetics</code>.</li>

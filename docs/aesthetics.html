@@ -80,9 +80,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-bd31b91f9ddb1a75e3744ba9797c8182.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-e9f872f2cd0ea725a55848b536195f79.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-a023808155192ba0b8721be52e261cfa.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-e9f872f2cd0ea725a55848b536195f79.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-347c76f3922e9c7b1f88642e221dcbf2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-cf8ae49b665e302d0bf992539d2f6917.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-347c76f3922e9c7b1f88642e221dcbf2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -319,6 +319,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
     </ul>
   </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../docs/examples.html"> 
+<span class="menu-text">Examples</span></a>
+  </li>  
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-guides" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Guides</span>
@@ -405,7 +409,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
@@ -427,10 +431,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="toc-actions"><ul><li><a href="https://github.com/alsmith151/plotnado/edit/main/docs/aesthetics.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/alsmith151/plotnado/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Signal resolution</h1>
+</div>
 
 
 
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
 
 
 <section id="aesthetics" class="level1">
@@ -439,130 +459,224 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="bigwig-styles" class="level2">
 <h2 class="anchored" data-anchor-id="bigwig-styles">BigWig styles</h2>
 <p><code>style</code> changes how a quantitative signal is drawn.</p>
-<div id="acc1cbb5" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> docs._examples <span class="im">import</span> REGION, style_comparison</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> style_comparison()</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>fig.plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="d4587945" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado.examples <span class="im">import</span> REGION, signal</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># signal() returns a synthetic ChIP-seq-like DataFrame(chrom, start, end, value)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># In real use pass a BigWig path/URL or any DataFrame with those columns</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># REGION is a string like "chr1:1,000,000-1,100,000"</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(track_height<span class="op">=</span><span class="fl">1.15</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>fig.scalebar()</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(phase<span class="op">=</span><span class="fl">0.0</span>), title<span class="op">=</span><span class="st">"fill"</span>, style<span class="op">=</span><span class="st">"fill"</span>, color<span class="op">=</span><span class="st">"#1f77b4"</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(phase<span class="op">=</span><span class="fl">0.8</span>), title<span class="op">=</span><span class="st">"fragment"</span>, style<span class="op">=</span><span class="st">"fragment"</span>, color<span class="op">=</span><span class="st">"#d62728"</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(phase<span class="op">=</span><span class="fl">1.6</span>), title<span class="op">=</span><span class="st">"scatter"</span>, style<span class="op">=</span><span class="st">"scatter"</span>, color<span class="op">=</span><span class="st">"#2ca02c"</span>, scatter_point_size<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(phase<span class="op">=</span><span class="fl">2.4</span>), title<span class="op">=</span><span class="st">"std"</span>, style<span class="op">=</span><span class="st">"std"</span>, color<span class="op">=</span><span class="st">"#9467bd"</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>fig.plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="aesthetics_files/figure-html/cell-2-output-1.png" width="1073" height="465" class="figure-img"></p>
+<figcaption><code>fill</code> is the default for continuous signal, <code>fragment</code> emphasizes bins, <code>scatter</code> shows individual values, and <code>std</code> draws a band-style summary.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Caption: <code>fill</code> is the default for continuous signal, <code>fragment</code> emphasizes bins, <code>scatter</code> shows individual values, and <code>std</code> draws a band-style summary.</p>
+<p><code>n_bins</code> divides the plotted region into a fixed number of equal bins regardless of the source resolution. <code>bin_size</code> sets the bin width in base pairs instead. Both work with BigWig files and DataFrames; overlapping source intervals are averaged by overlap length.</p>
+<div id="194c12a6" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado.examples <span class="im">import</span> REGION, signal</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># signal() returns a synthetic ChIP-seq-like DataFrame(chrom, start, end, value) at 200 bp bins</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># In real use pass a BigWig path/URL or any DataFrame with those columns</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(track_height<span class="op">=</span><span class="fl">1.15</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>fig.scalebar()</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(), title<span class="op">=</span><span class="st">"bin_size=5000 (coarse)"</span>, style<span class="op">=</span><span class="st">"fill"</span>, color<span class="op">=</span><span class="st">"#9467bd"</span>, bin_size<span class="op">=</span><span class="dv">5000</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(), title<span class="op">=</span><span class="st">"bin_size=1000"</span>,           style<span class="op">=</span><span class="st">"fill"</span>, color<span class="op">=</span><span class="st">"#d62728"</span>, bin_size<span class="op">=</span><span class="dv">1000</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(), title<span class="op">=</span><span class="st">"bin_size=200 (native)"</span>,   style<span class="op">=</span><span class="st">"fill"</span>, color<span class="op">=</span><span class="st">"#1f77b4"</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(), title<span class="op">=</span><span class="st">"n_bins=50"</span>,                 style<span class="op">=</span><span class="st">"fill"</span>, color<span class="op">=</span><span class="st">"#2ca02c"</span>, n_bins<span class="op">=</span><span class="dv">50</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(), title<span class="op">=</span><span class="st">"n_bins=200"</span>,                style<span class="op">=</span><span class="st">"fill"</span>, color<span class="op">=</span><span class="st">"#ff7f0e"</span>, n_bins<span class="op">=</span><span class="dv">200</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>fig.axis()</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>fig.plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="aesthetics_files/figure-html/cell-3-output-1.png" width="1073" height="600" class="figure-img"></p>
+<figcaption>Coarser binning compresses the signal into broader summaries; finer bins preserve peak shape. The bottom track is the native 200 bp resolution from the synthetic data.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Use <code>n_bins</code> when you want consistent resolution across regions of different sizes:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Always 200 bins regardless of zoom level</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fig.bigwig(<span class="st">"signal.bw"</span>, n_bins<span class="op">=</span><span class="dv">200</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Fixed bin width across any region</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>fig.bigwig(<span class="st">"signal.bw"</span>, bin_size<span class="op">=</span><span class="dv">500</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="color-and-alpha" class="level2">
 <h2 class="anchored" data-anchor-id="color-and-alpha">Color and alpha</h2>
-<div id="766c432f" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> docs._examples <span class="im">import</span> REGION, signal</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(track_height<span class="op">=</span><span class="fl">1.0</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(), title<span class="op">=</span><span class="st">"alpha=1.0"</span>, style<span class="op">=</span><span class="st">"fill"</span>, color<span class="op">=</span><span class="st">"#1f77b4"</span>, alpha<span class="op">=</span><span class="fl">1.0</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(phase<span class="op">=</span><span class="fl">0.8</span>), title<span class="op">=</span><span class="st">"alpha=0.65"</span>, style<span class="op">=</span><span class="st">"fill"</span>, color<span class="op">=</span><span class="st">"#d62728"</span>, alpha<span class="op">=</span><span class="fl">0.65</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(phase<span class="op">=</span><span class="fl">1.6</span>), title<span class="op">=</span><span class="st">"alpha=0.35"</span>, style<span class="op">=</span><span class="st">"fill"</span>, color<span class="op">=</span><span class="st">"#2ca02c"</span>, alpha<span class="op">=</span><span class="fl">0.35</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>fig.plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="2">
-<div>
+<div id="d7d3b661" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado.examples <span class="im">import</span> REGION, signal</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># signal() → DataFrame(chrom, start, end, value) — replace with a BigWig path/URL or DataFrame</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(track_height<span class="op">=</span><span class="fl">1.0</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(), title<span class="op">=</span><span class="st">"alpha=1.0"</span>, style<span class="op">=</span><span class="st">"fill"</span>, color<span class="op">=</span><span class="st">"#1f77b4"</span>, alpha<span class="op">=</span><span class="fl">1.0</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(phase<span class="op">=</span><span class="fl">0.8</span>), title<span class="op">=</span><span class="st">"alpha=0.65"</span>, style<span class="op">=</span><span class="st">"fill"</span>, color<span class="op">=</span><span class="st">"#d62728"</span>, alpha<span class="op">=</span><span class="fl">0.65</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(phase<span class="op">=</span><span class="fl">1.6</span>), title<span class="op">=</span><span class="st">"alpha=0.35"</span>, style<span class="op">=</span><span class="st">"fill"</span>, color<span class="op">=</span><span class="st">"#2ca02c"</span>, alpha<span class="op">=</span><span class="fl">0.35</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>fig.plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="aesthetics_files/figure-html/cell-3-output-1.png" width="1073" height="290" class="figure-img"></p>
+<p><img src="aesthetics_files/figure-html/cell-4-output-1.png" width="1073" height="290" class="figure-img"></p>
+<figcaption>Use opacity to reduce visual dominance when several panels are compared.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Caption: use opacity to reduce visual dominance when several panels are compared.</p>
 </section>
 <section id="autocolor-and-groups" class="level2">
 <h2 class="anchored" data-anchor-id="autocolor-and-groups">Autocolor and groups</h2>
 <p>Use <code>autocolor()</code> once, then assign related tracks the same <code>color_group</code>.</p>
-<div id="5ca3c7c1" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> docs._examples <span class="im">import</span> REGION, intervals, signal</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(track_height<span class="op">=</span><span class="fl">1.1</span>).autocolor(<span class="st">"Set2"</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(phase<span class="op">=</span><span class="fl">0.0</span>), title<span class="op">=</span><span class="st">"Sample A signal"</span>, color_group<span class="op">=</span><span class="st">"A"</span>)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>fig.bed(intervals(), title<span class="op">=</span><span class="st">"Sample A peaks"</span>, color_group<span class="op">=</span><span class="st">"A"</span>, display<span class="op">=</span><span class="st">"expanded"</span>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(phase<span class="op">=</span><span class="fl">1.2</span>), title<span class="op">=</span><span class="st">"Sample B signal"</span>, color_group<span class="op">=</span><span class="st">"B"</span>)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>fig.bed(intervals().assign(name<span class="op">=</span>[<span class="st">"b1"</span>, <span class="st">"b2"</span>, <span class="st">"b3"</span>, <span class="st">"b4"</span>]), title<span class="op">=</span><span class="st">"Sample B peaks"</span>, color_group<span class="op">=</span><span class="st">"B"</span>, display<span class="op">=</span><span class="st">"expanded"</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>fig.plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="3">
-<div>
+<div id="b21329ad" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado.examples <span class="im">import</span> REGION, intervals, signal</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># signal() → DataFrame(chrom, start, end, value) — replace with a BigWig path/URL or DataFrame</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># intervals() → DataFrame(chrom, start, end, name) — replace with a BED/BigBed path, URL, or DataFrame</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(track_height<span class="op">=</span><span class="fl">1.1</span>).autocolor(<span class="st">"Set2"</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(phase<span class="op">=</span><span class="fl">0.0</span>), title<span class="op">=</span><span class="st">"Sample A signal"</span>, color_group<span class="op">=</span><span class="st">"A"</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>fig.bed(intervals(), title<span class="op">=</span><span class="st">"Sample A peaks"</span>, color_group<span class="op">=</span><span class="st">"A"</span>, display<span class="op">=</span><span class="st">"expanded"</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(phase<span class="op">=</span><span class="fl">1.2</span>), title<span class="op">=</span><span class="st">"Sample B signal"</span>, color_group<span class="op">=</span><span class="st">"B"</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>fig.bed(intervals().assign(name<span class="op">=</span>[<span class="st">"b1"</span>, <span class="st">"b2"</span>, <span class="st">"b3"</span>, <span class="st">"b4"</span>]), title<span class="op">=</span><span class="st">"Sample B peaks"</span>, color_group<span class="op">=</span><span class="st">"B"</span>, display<span class="op">=</span><span class="st">"expanded"</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>fig.plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="aesthetics_files/figure-html/cell-4-output-1.png" width="1073" height="416" class="figure-img"></p>
+<p><img src="aesthetics_files/figure-html/cell-5-output-1.png" width="1073" height="416" class="figure-img"></p>
+<figcaption>Color groups keep semantically related tracks aligned without hard-coding every color.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Caption: color groups keep semantically related tracks aligned without hard-coding every color.</p>
 </section>
 <section id="label-placement" class="level2">
 <h2 class="anchored" data-anchor-id="label-placement">Label placement</h2>
-<div id="a959e481" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> docs._examples <span class="im">import</span> REGION, signal</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(track_height<span class="op">=</span><span class="fl">1.0</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(), title<span class="op">=</span><span class="st">"left margin"</span>, title_location<span class="op">=</span><span class="st">"left"</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(phase<span class="op">=</span><span class="fl">0.7</span>), title<span class="op">=</span><span class="st">"right margin"</span>, title_location<span class="op">=</span><span class="st">"right"</span>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(phase<span class="op">=</span><span class="fl">1.4</span>), title<span class="op">=</span><span class="st">"on track"</span>, label_on_track<span class="op">=</span><span class="va">True</span>, label_box_enabled<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>fig.plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="4">
-<div>
+<div id="c93120f5" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado.examples <span class="im">import</span> REGION, signal</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># signal() → DataFrame(chrom, start, end, value) — replace with a BigWig path/URL or DataFrame</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(track_height<span class="op">=</span><span class="fl">1.0</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(),           title<span class="op">=</span><span class="st">"title_location='left'"</span>,                       title_location<span class="op">=</span><span class="st">"left"</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(phase<span class="op">=</span><span class="fl">0.7</span>),  title<span class="op">=</span><span class="st">"title_location='right'"</span>,                      title_location<span class="op">=</span><span class="st">"right"</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(phase<span class="op">=</span><span class="fl">1.4</span>),  title<span class="op">=</span><span class="st">"label_on_track, no box"</span>,                      label_on_track<span class="op">=</span><span class="va">True</span>, label_box_enabled<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(phase<span class="op">=</span><span class="fl">2.1</span>),  title<span class="op">=</span><span class="st">"label_on_track + label_box_enabled"</span>,          label_on_track<span class="op">=</span><span class="va">True</span>, label_box_enabled<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>fig.plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="aesthetics_files/figure-html/cell-5-output-1.png" width="1073" height="290" class="figure-img"></p>
+<p><img src="aesthetics_files/figure-html/cell-6-output-1.png" width="1073" height="380" class="figure-img"></p>
+<figcaption><code>title_location</code> anchors the label left or right; <code>label_box_enabled</code> adds a legibility box; <code>label_on_track</code> with the box is useful for compact multi-track figures.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Caption: on-track labels are useful for compact figures, especially with a label box.</p>
 </section>
 <section id="overlay-autoscale-and-highlights" class="level2">
 <h2 class="anchored" data-anchor-id="overlay-autoscale-and-highlights">Overlay, autoscale, and highlights</h2>
-<div id="f95b4c43" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> docs._examples <span class="im">import</span> REGION, overlay_comparison</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> overlay_comparison()</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>fig.plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="5">
-<div>
+<div id="87d1ac4a" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado.examples <span class="im">import</span> REGION, review_signal</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># review_signal() → DataFrame(chrom, start, end, value) — replace with BigWig paths/URLs or DataFrames</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>signal_a <span class="op">=</span> review_signal(<span class="fl">2.0</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>signal_b <span class="op">=</span> review_signal(<span class="fl">10.0</span>, <span class="fl">1.2</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(track_height<span class="op">=</span><span class="fl">1.2</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>fig.autoscale(<span class="va">True</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>fig.highlight(<span class="st">"chr1:1,032,000-1,046,000"</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>fig.highlight_style(color<span class="op">=</span><span class="st">"#ffdd57"</span>, alpha<span class="op">=</span><span class="fl">0.22</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal_a, title<span class="op">=</span><span class="st">"Control"</span>, autoscale_group<span class="op">=</span><span class="st">"signal"</span>, color<span class="op">=</span><span class="st">"#1f77b4"</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal_b, title<span class="op">=</span><span class="st">"Treatment"</span>, autoscale_group<span class="op">=</span><span class="st">"signal"</span>, color<span class="op">=</span><span class="st">"#d62728"</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>fig.overlay(</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    [signal_a, signal_b],</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Overlay"</span>,</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    autoscale_group<span class="op">=</span><span class="st">"signal"</span>,</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    colors<span class="op">=</span>[<span class="st">"#1f77b4"</span>, <span class="st">"#d62728"</span>],</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="fl">0.55</span>,</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>fig.plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="aesthetics_files/figure-html/cell-6-output-1.png" width="1073" height="474" class="figure-img"></p>
+<p><img src="aesthetics_files/figure-html/cell-7-output-1.png" width="1073" height="452" class="figure-img"></p>
+<figcaption><code>highlight()</code> marks a locus without changing y-limits; <code>autoscale_group</code> on the overlay synchronizes the panel with neighboring signal tracks.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Caption: <code>highlight()</code> marks a locus without changing y-limits; <code>autoscale_group</code> on the overlay synchronizes the panel with neighboring signal tracks.</p>
 </section>
 <section id="bed-narrowpeak-and-links" class="level2">
 <h2 class="anchored" data-anchor-id="bed-narrowpeak-and-links">BED, narrowPeak, and links</h2>
-<div id="f03f5687" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> docs._examples <span class="im">import</span> REGION, intervals, links, narrowpeaks</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(track_height<span class="op">=</span><span class="fl">1.1</span>)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>fig.axis()</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>fig.bed(intervals(), title<span class="op">=</span><span class="st">"BED intervals"</span>, display<span class="op">=</span><span class="st">"expanded"</span>, show_labels<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>fig.narrowpeak(narrowpeaks(), title<span class="op">=</span><span class="st">"narrowPeak"</span>, color_by<span class="op">=</span><span class="st">"signalValue"</span>, cmap<span class="op">=</span><span class="st">"Oranges"</span>, show_summit<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>fig.links(links(), title<span class="op">=</span><span class="st">"Links"</span>, color_by_score<span class="op">=</span><span class="va">True</span>, cmap<span class="op">=</span><span class="st">"viridis"</span>, alpha<span class="op">=</span><span class="fl">0.8</span>)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>fig.plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
-<div>
+<div id="064225d0" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado.examples <span class="im">import</span> REGION, intervals, links, narrowpeaks</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># intervals() → DataFrame(chrom, start, end, name) — replace with a BED/BigBed path, URL, or DataFrame</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># narrowpeaks() → DataFrame(chrom, start, end, name, score, strand, signalValue, pValue, qValue, peak) — replace with a .narrowPeak path or DataFrame</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># links() → DataFrame(chrom1, start1, end1, chrom2, start2, end2, score) — replace with a BEDPE path or DataFrame</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(track_height<span class="op">=</span><span class="fl">1.1</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>fig.bed(intervals(), title<span class="op">=</span><span class="st">"BED intervals"</span>, display<span class="op">=</span><span class="st">"expanded"</span>, show_labels<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>fig.narrowpeak(narrowpeaks(), title<span class="op">=</span><span class="st">"narrowPeak"</span>, color_by<span class="op">=</span><span class="st">"signalValue"</span>, cmap<span class="op">=</span><span class="st">"Oranges"</span>, show_summit<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>fig.links(links(), title<span class="op">=</span><span class="st">"Links"</span>, color_by_score<span class="op">=</span><span class="va">True</span>, cmap<span class="op">=</span><span class="st">"viridis"</span>, alpha<span class="op">=</span><span class="fl">0.8</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>fig.axis()</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>fig.plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="aesthetics_files/figure-html/cell-7-output-1.png" width="1073" height="436" class="figure-img"></p>
+<p><img src="aesthetics_files/figure-html/cell-8-output-1.png" width="1073" height="446" class="figure-img"></p>
+<figcaption>Interval, peak, and link tracks use tabular inputs with genomic coordinate columns.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Caption: interval, peak, and link tracks use tabular inputs with genomic coordinate columns.</p>
 </section>
 <section id="themes" class="level2">
 <h2 class="anchored" data-anchor-id="themes">Themes</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(theme<span class="op">=</span><span class="st">"publication"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="24f1b900" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado.examples <span class="im">import</span> signal, REGION</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(theme<span class="op">=</span><span class="st">"publication"</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>fig.scalebar()</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(), title<span class="op">=</span><span class="st">"Publication theme"</span>, style<span class="op">=</span><span class="st">"fill"</span>, color<span class="op">=</span><span class="st">"#1f77b4"</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>fig.axis()</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>fig.plot(<span class="st">"chr1:1,000,000-1,100,000"</span>, show<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(theme<span class="op">=</span><span class="st">"minimal"</span>)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>fig.scalebar()</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(), title<span class="op">=</span><span class="st">"Minimal theme"</span>, style<span class="op">=</span><span class="st">"fill"</span>, color<span class="op">=</span><span class="st">"#1f77b4"</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>fig.axis()</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>fig.plot(<span class="st">"chr1:1,000,000-1,100,000"</span>, show<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="aesthetics_files/figure-html/cell-9-output-1.png" width="1104" height="198" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<div>
+<figure class="figure">
+<p><img src="aesthetics_files/figure-html/cell-9-output-2.png" width="1089" height="194" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>Built-in themes include <code>"default"</code>, <code>"minimal"</code>, and <code>"publication"</code>.</p>
 
 

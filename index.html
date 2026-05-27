@@ -80,9 +80,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-bd31b91f9ddb1a75e3744ba9797c8182.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-9a779609c76fab34e8a60fdd1d80ba8e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-a3d43bb0844972b80a44a9ac56bfae22.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-9a779609c76fab34e8a60fdd1d80ba8e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-347c76f3922e9c7b1f88642e221dcbf2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-cf8ae49b665e302d0bf992539d2f6917.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-347c76f3922e9c7b1f88642e221dcbf2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -319,6 +319,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
     </ul>
   </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./docs/examples.html"> 
+<span class="menu-text">Examples</span></a>
+  </li>  
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-guides" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Guides</span>
@@ -413,32 +417,39 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#plotnado" id="toc-plotnado" class="nav-link active" data-scroll-target="#plotnado">PlotNado</a>
-  <ul>
-  <li><a href="#first-figure" id="toc-first-figure" class="nav-link" data-scroll-target="#first-figure">First figure</a></li>
+  <li><a href="#first-figure" id="toc-first-figure" class="nav-link active" data-scroll-target="#first-figure">First figure</a></li>
   <li><a href="#common-routes" id="toc-common-routes" class="nav-link" data-scroll-target="#common-routes">Common routes</a></li>
   <li><a href="#two-workflows" id="toc-two-workflows" class="nav-link" data-scroll-target="#two-workflows">Two workflows</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#python-api" id="toc-python-api" class="nav-link" data-scroll-target="#python-api">Python API</a></li>
   <li><a href="#cli-yaml" id="toc-cli-yaml" class="nav-link" data-scroll-target="#cli-yaml">CLI + YAML</a></li>
-  </ul></li>
-  <li><a href="#visual-options" id="toc-visual-options" class="nav-link" data-scroll-target="#visual-options">Visual options</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/alsmith151/plotnado/edit/main/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/alsmith151/plotnado/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><h1 class="title display-7">PlotNado</h1></header>
+<main class="content column-page-left" id="quarto-document-content">
 
 
-<header id="title-block-header">
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">PlotNado</h1>
+</div>
+
+
+
+<div class="quarto-title-meta column-page-left">
+
+    
+  
+    
+  </div>
+  
 
 
 </header>
 
 
-<section id="plotnado" class="level1">
-<h1>PlotNado</h1>
 <p>PlotNado builds genome browser-style figures from Python code or editable YAML templates. It is useful when you need reproducible plots for BigWig-like signals, intervals, peaks, links, genes, and optional matrix-style genomic data.</p>
 <div class="callout callout-style-simple callout-note">
 <div class="callout-body d-flex">
@@ -452,16 +463,50 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="first-figure" class="level2">
 <h2 class="anchored" data-anchor-id="first-figure">First figure</h2>
-<div id="ff66440b" class="cell" data-execution_count="1">
+<div id="30f0b935" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotnado</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure, PlotStyle</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>BLUEPRINT_MONOCYTE_BW <span class="op">=</span> (</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/GRCh38/venous_blood"</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"/C000S5/CD14-positive_CD16-negative_classical_monocyte/ChIP-Seq/NCMLS"</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"/C000S5H2.ERX173536.H3K27ac.bwa.GRCh38.20150529.bw"</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>BLUEPRINT_MONOCYTE_BB <span class="op">=</span> (</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/GRCh38/venous_blood"</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"/C000S5/CD14-positive_CD16-negative_classical_monocyte/ChIP-Seq/NCMLS"</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"/C000S5H2.ERX173536.H3K27ac.bwa.GRCh38.20150527.bb"</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>CANDIDATE_BED <span class="op">=</span> <span class="bu">str</span>(</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    Path(plotnado.<span class="va">__file__</span>).parent.parent <span class="op">/</span> <span class="st">"examples"</span> <span class="op">/</span> <span class="st">"data"</span> <span class="op">/</span> <span class="st">"blueprint_monocyte_lyz_candidate_peaks.bed"</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(width<span class="op">=</span><span class="dv">11</span>, track_height<span class="op">=</span><span class="fl">0.7</span>, theme<span class="op">=</span><span class="st">"publication"</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>fig.scalebar()</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>fig.genes(<span class="st">"hg38"</span>, height<span class="op">=</span><span class="fl">0.55</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>fig.bigwig(</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    BLUEPRINT_MONOCYTE_BW,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Monocyte H3K27ac"</span>,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    style<span class="op">=</span>PlotStyle.FRAGMENT,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"#d9485f"</span>,</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="fl">0.75</span>,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    label_on_track<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    label_box_enabled<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    plot_scale<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>fig.bed(BLUEPRINT_MONOCYTE_BB, title<span class="op">=</span><span class="st">"H3K27ac peaks"</span>, color<span class="op">=</span><span class="st">"#f59e0b"</span>, height<span class="op">=</span><span class="fl">0.35</span>, show_labels<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>fig.bed(CANDIDATE_BED, title<span class="op">=</span><span class="st">"Candidate loci"</span>, color<span class="op">=</span><span class="st">"#0f766e"</span>, show_labels<span class="op">=</span><span class="va">True</span>, label_field<span class="op">=</span><span class="st">"name"</span>, font_size<span class="op">=</span><span class="dv">7</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>fig.axis()</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>fig.plot(<span class="st">"chr12:69,310,000-69,400,000"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/cell-2-output-1.png" width="985" height="301" class="figure-img"></p>
+<p><img src="index_files/figure-html/cell-2-output-1.png" width="985" height="229" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>The example is rendered by Quarto from deterministic in-memory data. The same pattern is used throughout the docs so code and output stay in sync.</p>
 </section>
 <section id="common-routes" class="level2">
 <h2 class="anchored" data-anchor-id="common-routes">Common routes</h2>
@@ -504,38 +549,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="two-workflows">Two workflows</h2>
 <section id="python-api" class="level3">
 <h3 class="anchored" data-anchor-id="python-api">Python API</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> (</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    GenomicFigure()</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    .scalebar()</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    .axis()</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    .bigwig(signal, title<span class="op">=</span><span class="st">"Signal"</span>, style<span class="op">=</span><span class="st">"fill"</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    .bed(intervals, title<span class="op">=</span><span class="st">"Intervals"</span>, display<span class="op">=</span><span class="st">"expanded"</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>fig.save(<span class="st">"plot.png"</span>, region<span class="op">=</span><span class="st">"chr1:1,010,000-1,080,000"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> (</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    GenomicFigure()</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    .scalebar()</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    .bigwig(signal, title<span class="op">=</span><span class="st">"Signal"</span>, style<span class="op">=</span><span class="st">"fill"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    .bed(intervals, title<span class="op">=</span><span class="st">"Intervals"</span>, display<span class="op">=</span><span class="st">"expanded"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    .axis()</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>fig.save(<span class="st">"plot.png"</span>, region<span class="op">=</span><span class="st">"chr1:1,010,000-1,080,000"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Use this route in scripts, notebooks, analysis pipelines, and executable docs.</p>
 </section>
 <section id="cli-yaml" class="level3">
 <h3 class="anchored" data-anchor-id="cli-yaml">CLI + YAML</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run plotnado init sample1.bw peaks.narrowpeak <span class="at">--auto</span> <span class="at">--output</span> template.yaml</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run plotnado validate template.yaml</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run plotnado plot template.yaml <span class="at">--region</span> chr1:1,000,000-1,100,000 <span class="at">--output</span> plot.png</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run plotnado init sample1.bw peaks.narrowpeak <span class="at">--auto</span> <span class="at">--output</span> template.yaml</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run plotnado validate template.yaml</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run plotnado plot template.yaml <span class="at">--region</span> chr1:1,000,000-1,100,000 <span class="at">--output</span> plot.png</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Use this route when the figure definition should be reviewed or versioned as a human-editable YAML file.</p>
-</section>
-</section>
-<section id="visual-options" class="level2">
-<h2 class="anchored" data-anchor-id="visual-options">Visual options</h2>
-<p>Most option guidance is shown where it matters. For example, signal style choices are visible in the rendered comparison below.</p>
-<div id="27bab758" class="cell" data-execution_count="2">
-<div class="cell-output cell-output-display" data-execution_count="2">
-<div>
-<figure class="figure">
-<p><img src="index_files/figure-html/cell-3-output-1.png" width="1073" height="465" class="figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
 <p>For compact runtime lookup, use <a href="./docs/option_lookup.html">Compact Options</a>.</p>
 
 

@@ -80,9 +80,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-bd31b91f9ddb1a75e3744ba9797c8182.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-e9f872f2cd0ea725a55848b536195f79.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-a023808155192ba0b8721be52e261cfa.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-e9f872f2cd0ea725a55848b536195f79.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-347c76f3922e9c7b1f88642e221dcbf2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-cf8ae49b665e302d0bf992539d2f6917.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-347c76f3922e9c7b1f88642e221dcbf2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -319,6 +319,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
     </ul>
   </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../docs/examples.html"> 
+<span class="menu-text">Examples</span></a>
+  </li>  
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-guides" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Guides</span>
@@ -405,7 +409,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
@@ -426,7 +430,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="toc-actions"><ul><li><a href="https://github.com/alsmith151/plotnado/edit/main/docs/reference.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/alsmith151/plotnado/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
 
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -436,7 +440,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<div class="quarto-title-meta column-page-left">
+<div class="quarto-title-meta">
 
     
   
@@ -543,14 +547,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>fig.highlight(<span class="st">"chr1:1,032,000-1,046,000"</span>)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>fig.highlight_style(color<span class="op">=</span><span class="st">"#ffdd57"</span>, alpha<span class="op">=</span><span class="fl">0.22</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The rendered example shows highlight, autoscale, and overlay behavior together.</p>
-<div id="bc1be670" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> docs._examples <span class="im">import</span> REGION, overlay_comparison</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>overlay_comparison().plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="ffd5fc6d" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado.examples <span class="im">import</span> REGION, review_signal</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># review_signal() → DataFrame(chrom, start, end, value) — replace with BigWig paths/URLs or DataFrames</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(track_height<span class="op">=</span><span class="fl">1.2</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>fig.autoscale(<span class="va">True</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>fig.highlight(<span class="st">"chr1:1,032,000-1,046,000"</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>fig.highlight_style(color<span class="op">=</span><span class="st">"#ffdd57"</span>, alpha<span class="op">=</span><span class="fl">0.22</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>fig.bigwig(review_signal(<span class="fl">2.0</span>), title<span class="op">=</span><span class="st">"Control"</span>, autoscale_group<span class="op">=</span><span class="st">"signal"</span>, color<span class="op">=</span><span class="st">"#1f77b4"</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>fig.bigwig(review_signal(<span class="fl">10.0</span>, <span class="fl">1.2</span>), title<span class="op">=</span><span class="st">"Treatment"</span>, autoscale_group<span class="op">=</span><span class="st">"signal"</span>, color<span class="op">=</span><span class="st">"#d62728"</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>fig.overlay(</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    [review_signal(<span class="fl">5.5</span>, <span class="fl">2.0</span>), review_signal(<span class="fl">6.5</span>, <span class="fl">2.8</span>)],</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Overlay"</span>,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    autoscale_group<span class="op">=</span><span class="st">"signal"</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    colors<span class="op">=</span>[<span class="st">"#2ca02c"</span>, <span class="st">"#9467bd"</span>],</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="fl">0.55</span>,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>fig.plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
 <div>
 <figure class="figure">
-<p><img src="reference_files/figure-html/cell-2-output-1.png" width="1073" height="474" class="figure-img"></p>
+<p><img src="reference_files/figure-html/cell-2-output-1.png" width="1073" height="452" class="figure-img"></p>
 </figure>
 </div>
 </div>

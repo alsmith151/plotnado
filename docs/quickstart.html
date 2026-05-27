@@ -80,9 +80,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-bd31b91f9ddb1a75e3744ba9797c8182.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-e9f872f2cd0ea725a55848b536195f79.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-a023808155192ba0b8721be52e261cfa.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-e9f872f2cd0ea725a55848b536195f79.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-347c76f3922e9c7b1f88642e221dcbf2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-cf8ae49b665e302d0bf992539d2f6917.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-347c76f3922e9c7b1f88642e221dcbf2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -319,6 +319,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
     </ul>
   </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../docs/examples.html"> 
+<span class="menu-text">Examples</span></a>
+  </li>  
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-guides" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Guides</span>
@@ -405,7 +409,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
@@ -416,7 +420,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#quick-start" id="toc-quick-start" class="nav-link active" data-scroll-target="#quick-start">Quick Start</a>
   <ul>
   <li><a href="#build-a-figure-in-python" id="toc-build-a-figure-in-python" class="nav-link" data-scroll-target="#build-a-figure-in-python">Build a figure in Python</a></li>
-  <li><a href="#save-the-same-figure" id="toc-save-the-same-figure" class="nav-link" data-scroll-target="#save-the-same-figure">Save the same figure</a></li>
   <li><a href="#generate-and-render-a-template" id="toc-generate-and-render-a-template" class="nav-link" data-scroll-target="#generate-and-render-a-template">Generate and render a template</a></li>
   <li><a href="#next" id="toc-next" class="nav-link" data-scroll-target="#next">Next</a></li>
   </ul></li>
@@ -424,10 +427,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="toc-actions"><ul><li><a href="https://github.com/alsmith151/plotnado/edit/main/docs/quickstart.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/alsmith151/plotnado/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Save the same figure</h1>
+</div>
 
 
 
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
 
 
 <section id="quick-start" class="level1">
@@ -443,27 +462,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="build-a-figure-in-python" class="level2">
 <h2 class="anchored" data-anchor-id="build-a-figure-in-python">Build a figure in Python</h2>
 <p>This example is fully in-memory, so it renders during the docs build without external files.</p>
-<div id="7a543ac1" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> docs._examples <span class="im">import</span> REGION, quickstart_figure</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> quickstart_figure()</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>fig.plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="ac810d7a" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado.examples <span class="im">import</span> REGION, signal, intervals</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># signal() returns a synthetic DataFrame(chrom, start, end, value) — in real use pass a BigWig path/URL or any DataFrame with those columns</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># intervals() returns a synthetic DataFrame(chrom, start, end, name) — in real use pass a BED/BigBed path, URL, or DataFrame</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(width<span class="op">=</span><span class="dv">11</span>, track_height<span class="op">=</span><span class="fl">1.25</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>fig.scalebar()</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(scale<span class="op">=</span><span class="fl">1.15</span>), title<span class="op">=</span><span class="st">"Synthetic signal"</span>, style<span class="op">=</span><span class="st">"fill"</span>, color<span class="op">=</span><span class="st">"#1f77b4"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>fig.bed(intervals(), title<span class="op">=</span><span class="st">"Intervals"</span>, display<span class="op">=</span><span class="st">"expanded"</span>, show_labels<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>fig.axis()</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>fig.plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="1">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="quickstart_files/figure-html/cell-2-output-1.png" width="985" height="301" class="figure-img"></p>
+<p><img src="quickstart_files/figure-html/cell-2-output-1.png" width="985" height="311" class="figure-img"></p>
+<figcaption>Scale, axis, signal, and BED-like intervals from deterministic DataFrames.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Caption: scale, axis, signal, and BED-like intervals from deterministic DataFrames.</p>
-</section>
-<section id="save-the-same-figure" class="level2">
-<h2 class="anchored" data-anchor-id="save-the-same-figure">Save the same figure</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> docs._examples <span class="im">import</span> REGION, quickstart_figure</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> quickstart_figure()</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>fig.save(<span class="st">"quickstart.png"</span>, region<span class="op">=</span>REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado.examples <span class="im">import</span> REGION, signal, intervals</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># signal() → DataFrame(chrom, start, end, value); intervals() → DataFrame(chrom, start, end, name)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># replace with BigWig paths/URLs or real DataFrames</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(width<span class="op">=</span><span class="dv">11</span>, track_height<span class="op">=</span><span class="fl">1.25</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>fig.scalebar()</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>fig.bigwig(signal(scale<span class="op">=</span><span class="fl">1.15</span>), title<span class="op">=</span><span class="st">"Synthetic signal"</span>, style<span class="op">=</span><span class="st">"fill"</span>, color<span class="op">=</span><span class="st">"#1f77b4"</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>fig.bed(intervals(), title<span class="op">=</span><span class="st">"Intervals"</span>, display<span class="op">=</span><span class="st">"expanded"</span>, show_labels<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>fig.axis()</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>fig.save(<span class="st">"quickstart.png"</span>, region<span class="op">=</span>REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="generate-and-render-a-template" class="level2">
 <h2 class="anchored" data-anchor-id="generate-and-render-a-template">Generate and render a template</h2>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>installation – PlotNado Documentation</title>
+<title>examples – PlotNado Documentation</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -320,7 +320,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="../docs/examples.html"> 
+    <a class="nav-link active" href="../docs/examples.html" aria-current="page"> 
 <span class="menu-text">Examples</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -417,17 +417,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#installation" id="toc-installation" class="nav-link active" data-scroll-target="#installation">Installation</a>
+  <li><a href="#worked-examples" id="toc-worked-examples" class="nav-link active" data-scroll-target="#worked-examples">Worked Examples</a>
   <ul>
-  <li><a href="#requirements" id="toc-requirements" class="nav-link" data-scroll-target="#requirements">Requirements</a></li>
-  <li><a href="#install-uv" id="toc-install-uv" class="nav-link" data-scroll-target="#install-uv">Install <code>uv</code></a></li>
-  <li><a href="#use-plotnado-as-a-cli" id="toc-use-plotnado-as-a-cli" class="nav-link" data-scroll-target="#use-plotnado-as-a-cli">Use PlotNado as a CLI</a></li>
-  <li><a href="#develop-from-source" id="toc-develop-from-source" class="nav-link" data-scroll-target="#develop-from-source">Develop from source</a></li>
-  <li><a href="#build-docs-locally" id="toc-build-docs-locally" class="nav-link" data-scroll-target="#build-docs-locally">Build docs locally</a></li>
-  <li><a href="#pip-and-conda" id="toc-pip-and-conda" class="nav-link" data-scroll-target="#pip-and-conda">Pip and Conda</a></li>
+  <li><a href="#example-1-stacked-bigwig-tracks-with-on-track-labels" id="toc-example-1-stacked-bigwig-tracks-with-on-track-labels" class="nav-link" data-scroll-target="#example-1-stacked-bigwig-tracks-with-on-track-labels">Example 1: stacked BigWig tracks with on-track labels</a></li>
+  <li><a href="#example-2-bigwig_overlay-with-a-shared-axis" id="toc-example-2-bigwig_overlay-with-a-shared-axis" class="nav-link" data-scroll-target="#example-2-bigwig_overlay-with-a-shared-axis">Example 2: <code>bigwig_overlay()</code> with a shared axis</a></li>
+  <li><a href="#example-3-signal-peaks-curated-bed-at-the-lyz-locus" id="toc-example-3-signal-peaks-curated-bed-at-the-lyz-locus" class="nav-link" data-scroll-target="#example-3-signal-peaks-curated-bed-at-the-lyz-locus">Example 3: signal + peaks + curated BED at the LYZ locus</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/alsmith151/plotnado/edit/main/docs/installation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/alsmith151/plotnado/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/alsmith151/plotnado/edit/main/docs/examples.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/alsmith151/plotnado/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
@@ -436,54 +433,135 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="installation" class="level1">
-<h1>Installation</h1>
-<p>PlotNado uses standard Python packaging, but the recommended workflow is <code>uv</code>.</p>
-<section id="requirements" class="level2">
-<h2 class="anchored" data-anchor-id="requirements">Requirements</h2>
-<ul>
-<li>Python 3.12+</li>
-<li><code>uv</code></li>
-<li>Quarto, only if you are building the public documentation site</li>
-</ul>
+<section id="worked-examples" class="level1">
+<h1>Worked Examples</h1>
+<p>Real-data examples using public BigWig and BigBed files from the <a href="http://www.blueprint-epigenome.eu/">Blueprint Epigenome Project</a> (GRCh38). These examples require network access to the EBI FTP server.</p>
+<hr>
+<section id="example-1-stacked-bigwig-tracks-with-on-track-labels" class="level2">
+<h2 class="anchored" data-anchor-id="example-1-stacked-bigwig-tracks-with-on-track-labels">Example 1: stacked BigWig tracks with on-track labels</h2>
+<p>Two Blueprint plasma-cell RNA signal tracks rendered in separate panels with on-track label boxes and a shared autoscale group so both panels use the same y-axis limits.</p>
+<div id="03dd4cbd" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(theme<span class="op">=</span><span class="st">"publication"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>fig.scalebar()</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, url <span class="kw">in</span> BLUEPRINT_RNA_FILES.items():</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    fig.bigwig(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        url,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span>name,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        style<span class="op">=</span><span class="st">"fragment"</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        height<span class="op">=</span><span class="fl">0.55</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        autoscale_group<span class="op">=</span><span class="st">"blueprint_rna"</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        label_on_track<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        label_box_enabled<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        label_box_alpha<span class="op">=</span><span class="fl">0.95</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        title_height<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        scale_height<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        plot_scale<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>fig.genes(<span class="st">"hg38"</span>, height<span class="op">=</span><span class="fl">0.55</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>fig.axis()</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>fig.plot(ACTB_REGION, extend<span class="op">=</span><span class="dv">10_000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="examples_files/figure-html/cell-3-output-1.png" width="1073" height="272" class="figure-img"></p>
+<figcaption>Blueprint plasma-cell RNA at the ACTB locus. Both tracks share one autoscale group, so differences in expression level are directly comparable.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
 </section>
-<section id="install-uv" class="level2">
-<h2 class="anchored" data-anchor-id="install-uv">Install <code>uv</code></h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-LsSf</span> https://astral.sh/uv/install.sh <span class="kw">|</span> <span class="fu">sh</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>On macOS:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install uv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="example-2-bigwig_overlay-with-a-shared-axis" class="level2">
+<h2 class="anchored" data-anchor-id="example-2-bigwig_overlay-with-a-shared-axis">Example 2: <code>bigwig_overlay()</code> with a shared axis</h2>
+<p><code>bigwig_overlay()</code> places multiple signals in one panel on a shared y-axis. Use this when you want to compare signal shape rather than absolute levels.</p>
+<div id="788ab4b3" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(theme<span class="op">=</span><span class="st">"publication"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>fig.scalebar()</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>fig.bigwig_overlay(</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">list</span>(BLUEPRINT_RNA_FILES.values()),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Blueprint plasma-cell RNA overlay"</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    colors<span class="op">=</span>[<span class="st">"#FF9D1B"</span>, <span class="st">"#1E5DF8"</span>],</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="fl">0.65</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="fl">0.9</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    label_on_track<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    label_box_enabled<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    label_box_alpha<span class="op">=</span><span class="fl">0.95</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    title_height<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    scale_height<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    plot_scale<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    style<span class="op">=</span>PlotStyle.FRAGMENT,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>fig.genes(<span class="st">"hg38"</span>, height<span class="op">=</span><span class="fl">0.55</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>fig.axis()</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>fig.plot(ACTB_REGION, extend<span class="op">=</span><span class="dv">10_000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="examples_files/figure-html/cell-4-output-1.png" width="1073" height="249" class="figure-img"></p>
+<figcaption>Overlay of two Blueprint RNA tracks at the ACTB locus. One panel, one y-axis, colors distinguish the two samples.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<hr>
 </section>
-<section id="use-plotnado-as-a-cli" class="level2">
-<h2 class="anchored" data-anchor-id="use-plotnado-as-a-cli">Use PlotNado as a CLI</h2>
-<p>For a user-level command:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> tool install plotnado</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">plotnado</span> <span class="at">--help</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>From a checked-out repository, prefer:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run plotnado <span class="at">--help</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="develop-from-source" class="level2">
-<h2 class="anchored" data-anchor-id="develop-from-source">Develop from source</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/alsmith151/plotnado</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> plotnado</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync <span class="at">--extra</span> dev <span class="at">--extra</span> docs</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pytest tests/</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python examples/run_examples.py</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run plotnado <span class="at">--help</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>uv sync --extra dev --extra docs</code> installs the package, test tools, and documentation dependencies into the project environment.</p>
-</section>
-<section id="build-docs-locally" class="level2">
-<h2 class="anchored" data-anchor-id="build-docs-locally">Build docs locally</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync <span class="at">--extra</span> dev <span class="at">--extra</span> docs</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="va">QUARTO_PYTHON</span><span class="op">=</span>.venv/bin/python <span class="ex">quarto</span> render</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="va">QUARTO_PYTHON</span><span class="op">=</span>.venv/bin/python <span class="ex">quarto</span> preview</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The docs use executable Quarto Python cells. Most examples use deterministic in-memory data; optional cooler, CapCruncher, and QuantNado examples need their corresponding dependencies and fixture data.</p>
-</section>
-<section id="pip-and-conda" class="level2">
-<h2 class="anchored" data-anchor-id="pip-and-conda">Pip and Conda</h2>
-<p><code>pip</code> and Conda environments can still install PlotNado, but project development and docs examples assume the <code>uv</code> commands above.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> venv .venv</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> .venv/bin/activate</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install plotnado</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="example-3-signal-peaks-curated-bed-at-the-lyz-locus" class="level2">
+<h2 class="anchored" data-anchor-id="example-3-signal-peaks-curated-bed-at-the-lyz-locus">Example 3: signal + peaks + curated BED at the LYZ locus</h2>
+<p>A three-layer review plot: BigWig signal, hub peak calls from a remote BigBed, and a checked-in BED of candidate loci for follow-up.</p>
+<div id="b1ae5d3e" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(theme<span class="op">=</span><span class="st">"publication"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fig.scalebar()</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>fig.bigwig(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    BLUEPRINT_MONOCYTE_BW,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Monocyte H3K27ac"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    style<span class="op">=</span>PlotStyle.FRAGMENT,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="fl">0.6</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"#d9485f"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    label_on_track<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    label_box_enabled<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    label_box_alpha<span class="op">=</span><span class="fl">0.95</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    title_height<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    scale_height<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    plot_scale<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>fig.bed(</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    BLUEPRINT_MONOCYTE_BB,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"H3K27ac peaks (bigBed)"</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"#f59e0b"</span>,</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    draw_edges<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="fl">0.42</span>,</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    label_on_track<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    label_box_enabled<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    label_box_alpha<span class="op">=</span><span class="fl">0.95</span>,</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    title_height<span class="op">=</span><span class="fl">0.7</span>,</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    show_labels<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>fig.bed(</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    CANDIDATE_BED,</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Curated follow-up peaks"</span>,</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"#0f766e"</span>,</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    draw_edges<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    show_labels<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    label_field<span class="op">=</span><span class="st">"name"</span>,</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    font_size<span class="op">=</span><span class="dv">7</span>,</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    label_on_track<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    label_box_enabled<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    label_box_alpha<span class="op">=</span><span class="fl">0.95</span>,</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    title_height<span class="op">=</span><span class="fl">0.7</span>,</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>fig.genes(<span class="st">"hg38"</span>, height<span class="op">=</span><span class="fl">0.55</span>)</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>fig.axis()</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>fig.plot(LYZ_REGION, extend<span class="op">=</span><span class="dv">10_000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="examples_files/figure-html/cell-5-output-1.png" width="1108" height="319" class="figure-img"></p>
+<figcaption>Blueprint monocyte H3K27ac signal, hub peak calls, and curated candidate peaks at the LYZ locus.</figcaption>
+</figure>
+</div>
+</div>
+</div>
 
 
 </section>
@@ -908,4 +986,4 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/alsmith151/plotnado/edit/main/docs/installation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/alsmith151/plotnado/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/alsmith151/plotnado/edit/main/docs/examples.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/alsmith151/plotnado/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
