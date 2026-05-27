@@ -1,0 +1,86 @@
+---
+title: PlotNado
+page-layout: full
+title-block-style: none
+jupyter: python3
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+# PlotNado
+
+PlotNado builds genome browser-style figures from Python code or editable YAML templates.
+It is useful when you need reproducible plots for BigWig-like signals, intervals, peaks,
+links, genes, and optional matrix-style genomic data.
+
+::: {.callout-note appearance="simple"}
+Start with [Installation](docs/installation.qmd) if you are setting up the project,
+or [Quick Start](docs/quickstart.qmd) if you already have the uv environment.
+:::
+
+## First figure
+
+```{python}
+from docs._examples import REGION, quickstart_figure
+
+quickstart_figure().plot(REGION)
+```
+
+The example is rendered by Quarto from deterministic in-memory data. The same pattern
+is used throughout the docs so code and output stay in sync.
+
+## Common routes
+
+| Need | Start here |
+|---|---|
+| Install from source or PyPI | [Installation](docs/installation.qmd) |
+| Build the first Python figure | [Quick Start](docs/quickstart.qmd) |
+| Infer and render YAML templates | [CLI](docs/cli.qmd) |
+| Choose a track type | [Track Catalog](docs/track_catalog.qmd) |
+| Tune colors, labels, scaling, and styles | [Aesthetics](docs/aesthetics.qmd) |
+| Debug blank plots or scale problems | [Troubleshooting](docs/troubleshooting.qmd) |
+
+## Two workflows
+
+### Python API
+
+```python
+from plotnado import GenomicFigure
+
+fig = (
+    GenomicFigure()
+    .scalebar()
+    .axis()
+    .bigwig(signal, title="Signal", style="fill")
+    .bed(intervals, title="Intervals", display="expanded")
+)
+fig.save("plot.png", region="chr1:1,010,000-1,080,000")
+```
+
+Use this route in scripts, notebooks, analysis pipelines, and executable docs.
+
+### CLI + YAML
+
+```bash
+uv run plotnado init sample1.bw peaks.narrowpeak --auto --output template.yaml
+uv run plotnado validate template.yaml
+uv run plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output plot.png
+```
+
+Use this route when the figure definition should be reviewed or versioned as a
+human-editable YAML file.
+
+## Visual options
+
+Most option guidance is shown where it matters. For example, signal style choices
+are visible in the rendered comparison below.
+
+```{python}
+from docs._examples import style_comparison
+
+style_comparison().plot(REGION)
+```
+
+For compact runtime lookup, use [Compact Options](docs/option_lookup.qmd).
