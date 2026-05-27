@@ -9,7 +9,7 @@ description = "A simple plotting library for making genomic tracks"
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "GPL-3.0-or-later" }
-version = "0.3.0"
+version = "0.3.1"
 dynamic = ["dependencies"]
 keywords = ["genomics", "bioinformatics", "plotting", "genome-browser", "tracks"]
 classifiers = [
