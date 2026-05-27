@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>reference – PlotNado Documentation</title>
+<title>template_schema – PlotNado Documentation</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -413,57 +413,174 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#reference" id="toc-reference" class="nav-link active" data-scroll-target="#reference">Reference</a>
+  <li><a href="#template-schema" id="toc-template-schema" class="nav-link active" data-scroll-target="#template-schema">Template Schema</a>
   <ul>
-  <li><a href="#genomicfigure" id="toc-genomicfigure" class="nav-link" data-scroll-target="#genomicfigure"><code>GenomicFigure</code></a></li>
-  <li><a href="#core-track-helpers" id="toc-core-track-helpers" class="nav-link" data-scroll-target="#core-track-helpers">Core track helpers</a></li>
-  <li><a href="#figure-level-controls" id="toc-figure-level-controls" class="nav-link" data-scroll-target="#figure-level-controls">Figure-level controls</a></li>
-  <li><a href="#editing-after-build" id="toc-editing-after-build" class="nav-link" data-scroll-target="#editing-after-build">Editing after build</a></li>
-  <li><a href="#loading-external-definitions" id="toc-loading-external-definitions" class="nav-link" data-scroll-target="#loading-external-definitions">Loading external definitions</a></li>
-  <li><a href="#runtime-option-discovery" id="toc-runtime-option-discovery" class="nav-link" data-scroll-target="#runtime-option-discovery">Runtime option discovery</a></li>
+  <li><a href="#minimal-template" id="toc-minimal-template" class="nav-link" data-scroll-target="#minimal-template">Minimal template</a></li>
+  <li><a href="#top-level-fields" id="toc-top-level-fields" class="nav-link" data-scroll-target="#top-level-fields">Top-level fields</a></li>
+  <li><a href="#track-fields" id="toc-track-fields" class="nav-link" data-scroll-target="#track-fields">Track fields</a></li>
+  <li><a href="#type-mapping" id="toc-type-mapping" class="nav-link" data-scroll-target="#type-mapping">Type mapping</a></li>
+  <li><a href="#groups" id="toc-groups" class="nav-link" data-scroll-target="#groups">Groups</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/alsmith151/plotnado/edit/main/docs/reference.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/alsmith151/plotnado/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/alsmith151/plotnado/edit/main/docs/template_schema.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/alsmith151/plotnado/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content">
-
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Plotting and saving</h1>
-</div>
+<main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
 
 
-<div class="quarto-title-meta column-page-left">
-
-    
-  
-    
-  </div>
-  
 
 
-</header>
-
-
-<section id="reference" class="level1">
-<h1>Reference</h1>
-<p>This page summarizes the high-level API contract. For visual examples, start with <a href="../docs/quickstart.html">Quick Start</a>, <a href="../docs/track_catalog.html">Track Catalog</a>, and <a href="../docs/aesthetics.html">Aesthetics</a>. For generated field lookup, use <a href="../docs/option_lookup.html">Compact Options</a>.</p>
-<section id="genomicfigure" class="level2">
-<h2 class="anchored" data-anchor-id="genomicfigure"><code>GenomicFigure</code></h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span><span class="dv">12</span>,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    track_height<span class="op">=</span><span class="fl">1.25</span>,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    theme<span class="op">=</span><span class="st">"publication"</span>,  <span class="co"># "default" | "minimal" | "publication" | None</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Every track helper returns <code>self</code>, so figures can be built with chained or sequential calls.</p>
+<section id="template-schema" class="level1">
+<h1>Template Schema</h1>
+<p>Templates are the public YAML format used by <code>plotnado init</code>, <code>plotnado validate</code>, <code>plotnado plot</code>, and <code>GenomicFigure.from_template(...)</code>.</p>
+<section id="minimal-template" class="level2">
+<h2 class="anchored" data-anchor-id="minimal-template">Minimal template</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">genome</span><span class="kw">:</span><span class="at"> hg38</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">guides</span><span class="kw">:</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">genes</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tracks</span><span class="kw">:</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> sample1.bw</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> bigwig</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">title</span><span class="kw">:</span><span class="at"> Sample 1</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> peaks.narrowpeak</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> narrowpeak</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">title</span><span class="kw">:</span><span class="at"> Peaks</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="core-track-helpers" class="level2">
-<h2 class="anchored" data-anchor-id="core-track-helpers">Core track helpers</h2>
+<section id="top-level-fields" class="level2">
+<h2 class="anchored" data-anchor-id="top-level-fields">Top-level fields</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 28%">
+<col style="width: 28%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th style="text-align: right;">Type</th>
+<th style="text-align: right;">Default</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>genome</code></td>
+<td style="text-align: right;">string</td>
+<td style="text-align: right;"><code>null</code></td>
+<td>Enables genome-aware features such as gene guides and gene-name plotting.</td>
+</tr>
+<tr class="even">
+<td><code>width</code></td>
+<td style="text-align: right;">number</td>
+<td style="text-align: right;"><code>12.0</code></td>
+<td>Figure width in inches.</td>
+</tr>
+<tr class="odd">
+<td><code>track_height</code></td>
+<td style="text-align: right;">number</td>
+<td style="text-align: right;"><code>1.0</code></td>
+<td>Default height multiplier.</td>
+</tr>
+<tr class="even">
+<td><code>guides</code></td>
+<td style="text-align: right;">object</td>
+<td style="text-align: right;">axis and scalebar enabled</td>
+<td>Optional structural tracks.</td>
+</tr>
+<tr class="odd">
+<td><code>tracks</code></td>
+<td style="text-align: right;">list</td>
+<td style="text-align: right;"><code>[]</code></td>
+<td>Ordered track specs.</td>
+</tr>
+<tr class="even">
+<td><code>groups</code></td>
+<td style="text-align: right;">list</td>
+<td style="text-align: right;"><code>[]</code></td>
+<td>Optional overrides for shared scaling/coloring.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="track-fields" class="level2">
+<h2 class="anchored" data-anchor-id="track-fields">Track fields</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 28%">
+<col style="width: 28%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th style="text-align: right;">Type</th>
+<th style="text-align: right;">Default</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>path</code></td>
+<td style="text-align: right;">string</td>
+<td style="text-align: right;"><code>null</code></td>
+<td>File path or URL for file-backed tracks.</td>
+</tr>
+<tr class="even">
+<td><code>type</code></td>
+<td style="text-align: right;">string</td>
+<td style="text-align: right;"><code>unknown</code></td>
+<td>Template track type; see below.</td>
+</tr>
+<tr class="odd">
+<td><code>title</code></td>
+<td style="text-align: right;">string</td>
+<td style="text-align: right;"><code>null</code></td>
+<td>Display title.</td>
+</tr>
+<tr class="even">
+<td><code>name</code></td>
+<td style="text-align: right;">string</td>
+<td style="text-align: right;"><code>null</code></td>
+<td>Stable identifier for group references; falls back to title.</td>
+</tr>
+<tr class="odd">
+<td><code>group</code></td>
+<td style="text-align: right;">string</td>
+<td style="text-align: right;"><code>null</code></td>
+<td>Shared autoscale/color group.</td>
+</tr>
+<tr class="even">
+<td><code>style</code></td>
+<td style="text-align: right;">string</td>
+<td style="text-align: right;"><code>null</code></td>
+<td>Track-specific style, such as <code>fill</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>color</code></td>
+<td style="text-align: right;">string</td>
+<td style="text-align: right;"><code>null</code></td>
+<td>Matplotlib-compatible color.</td>
+</tr>
+<tr class="even">
+<td><code>height</code></td>
+<td style="text-align: right;">number</td>
+<td style="text-align: right;"><code>1.0</code></td>
+<td>Relative panel height.</td>
+</tr>
+<tr class="odd">
+<td><code>options</code></td>
+<td style="text-align: right;">object</td>
+<td style="text-align: right;"><code>{}</code></td>
+<td>Advanced fields passed through to the figure method.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="type-mapping" class="level2">
+<h2 class="anchored" data-anchor-id="type-mapping">Type mapping</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -472,125 +589,78 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </colgroup>
 <thead>
 <tr class="header">
-<th>Helper</th>
-<th>Purpose</th>
-<th>Typical input</th>
+<th>Template type</th>
+<th>Figure method</th>
+<th>Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>bigwig(data, **kwargs)</code></td>
+<td><code>bigwig</code></td>
+<td><code>bigwig</code></td>
 <td>Continuous signal.</td>
-<td>BigWig path/URL or table with <code>chrom</code>, <code>start</code>, <code>end</code>, <code>value</code>.</td>
 </tr>
 <tr class="even">
-<td><code>bed(data, **kwargs)</code></td>
-<td>Genomic intervals.</td>
-<td>BED/BigBed path or table with <code>chrom</code>, <code>start</code>, <code>end</code>.</td>
+<td><code>bedgraph</code></td>
+<td><code>bigwig</code></td>
+<td>bedGraph-like inputs are handled by BigWigTrack.</td>
 </tr>
 <tr class="odd">
-<td><code>narrowpeak(data, **kwargs)</code></td>
-<td>ENCODE narrowPeak intervals.</td>
-<td>narrowPeak path or compatible table.</td>
+<td><code>bed</code></td>
+<td><code>bed</code></td>
+<td>Interval track.</td>
 </tr>
 <tr class="even">
-<td><code>links(data, **kwargs)</code></td>
-<td>Interaction arcs.</td>
-<td>BEDPE-like table.</td>
+<td><code>narrowpeak</code></td>
+<td><code>narrowpeak</code></td>
+<td>Peak intervals.</td>
 </tr>
 <tr class="odd">
-<td><code>genes(genome="hg38", **kwargs)</code></td>
-<td>Gene models.</td>
-<td>Built-in genome name or custom annotation data.</td>
+<td><code>gene</code>, <code>genes</code></td>
+<td><code>genes</code></td>
+<td>Gene annotation.</td>
 </tr>
 <tr class="even">
-<td><code>overlay(tracks, **kwargs)</code></td>
-<td>Multiple signals in one panel.</td>
-<td>List of signal sources or <code>BigWigTrack</code> objects.</td>
+<td><code>links</code></td>
+<td><code>links</code></td>
+<td>BEDPE-style arcs.</td>
 </tr>
 <tr class="odd">
-<td><code>bigwig_collection(files, **kwargs)</code></td>
-<td>Multi-file signal collection.</td>
-<td>BigWig file list.</td>
+<td><code>annotation</code></td>
+<td><code>bed</code></td>
+<td>Semantic BED alias.</td>
 </tr>
 <tr class="even">
-<td><code>bigwig_diff(file_a, file_b, **kwargs)</code></td>
-<td>Difference between two signal files.</td>
-<td>Two BigWig files.</td>
+<td><code>overlay</code></td>
+<td><code>overlay</code></td>
+<td>Shared-axis signal overlay.</td>
 </tr>
 <tr class="odd">
-<td><code>scalebar(**kwargs)</code></td>
-<td>Genomic distance cue.</td>
-<td>No external data.</td>
-</tr>
-<tr class="even">
-<td><code>axis(**kwargs)</code></td>
-<td>Coordinate ticks.</td>
-<td>No external data.</td>
-</tr>
-<tr class="odd">
-<td><code>spacer(height=0.5, **kwargs)</code></td>
-<td>Blank vertical space.</td>
-<td>No external data.</td>
+<td><code>unknown</code></td>
+<td><code>bed</code></td>
+<td>Fallback for inferred interval-like files.</td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="figure-level-controls" class="level2">
-<h2 class="anchored" data-anchor-id="figure-level-controls">Figure-level controls</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fig.autoscale(<span class="va">True</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>fig.autocolor(<span class="st">"Set2"</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>fig.highlight(<span class="st">"chr1:1,032,000-1,046,000"</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>fig.highlight_style(color<span class="op">=</span><span class="st">"#ffdd57"</span>, alpha<span class="op">=</span><span class="fl">0.22</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The rendered example shows highlight, autoscale, and overlay behavior together.</p>
-<div id="bc1be670" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> docs._examples <span class="im">import</span> REGION, overlay_comparison</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>overlay_comparison().plot(REGION)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="1">
-<div>
-<figure class="figure">
-<p><img src="reference_files/figure-html/cell-2-output-1.png" width="1073" height="474" class="figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fig.plot(<span class="st">"chr1:1,000,000-2,000,000"</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>fig.plot(<span class="st">"chr1:1,000,000-2,000,000"</span>, extend<span class="op">=</span><span class="fl">0.25</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>fig.plot_gene(<span class="st">"GNAQ"</span>, extend<span class="op">=</span><span class="fl">0.5</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>fig.plot_regions([<span class="st">"chr1:1,000,000-2,000,000"</span>, <span class="st">"chr2:5,000,000-6,000,000"</span>], ncols<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>fig.save(<span class="st">"out.png"</span>, region<span class="op">=</span><span class="st">"chr1:1,000,000-2,000,000"</span>, dpi<span class="op">=</span><span class="dv">200</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="editing-after-build" class="level2">
-<h2 class="anchored" data-anchor-id="editing-after-build">Editing after build</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fig[<span class="st">"track title"</span>]</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>fig[<span class="dv">0</span>]</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>fig[<span class="st">"track title"</span>].color <span class="op">=</span> <span class="st">"coral"</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>fig.update_track(<span class="st">"title"</span>, color<span class="op">=</span><span class="st">"purple"</span>, max_value<span class="op">=</span><span class="dv">500</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>fig.update_track(height<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>fig.update_track(track_type<span class="op">=</span><span class="st">"bigwig"</span>, height<span class="op">=</span><span class="fl">0.3</span>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>fig.update_track(group<span class="op">=</span><span class="st">"group_1"</span>, max_value<span class="op">=</span><span class="dv">1000</span>)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>fig.update_track(where<span class="op">=</span><span class="kw">lambda</span> t: <span class="st">"CD"</span> <span class="kw">in</span> (t.title <span class="kw">or</span> <span class="st">""</span>), color<span class="op">=</span><span class="st">"coral"</span>)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>fig.remove_track(<span class="st">"title"</span>)</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>fig.bigwig(<span class="st">"extra.bw"</span>, title<span class="op">=</span><span class="st">"extra"</span>, position<span class="op">=</span><span class="st">"top"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="loading-external-definitions" class="level2">
-<h2 class="anchored" data-anchor-id="loading-external-definitions">Loading external definitions</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure.from_template(<span class="st">"template.yaml"</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>fig, locus <span class="op">=</span> GenomicFigure.from_igv_session(<span class="st">"session.xml"</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>fig.plot(locus)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>fig.to_toml(<span class="st">"figure.toml"</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>fig2 <span class="op">=</span> GenomicFigure.from_toml(<span class="st">"figure.toml"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="runtime-option-discovery" class="level2">
-<h2 class="anchored" data-anchor-id="runtime-option-discovery">Runtime option discovery</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>GenomicFigure.available_track_aliases()</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>GenomicFigure.track_options(<span class="st">"bigwig"</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>GenomicFigure.track_options_markdown(<span class="st">"bigwig"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="groups" class="level2">
+<h2 class="anchored" data-anchor-id="groups">Groups</h2>
+<p>Group references resolve case-insensitively against track <code>name</code> or <code>title</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tracks</span><span class="kw">:</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> control.bw</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> bigwig</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">title</span><span class="kw">:</span><span class="at"> Control</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">group</span><span class="kw">:</span><span class="at"> signal</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> treatment.bw</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> bigwig</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">title</span><span class="kw">:</span><span class="at"> Treatment</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">group</span><span class="kw">:</span><span class="at"> signal</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">groups</span><span class="kw">:</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> signal</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">tracks</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">Control</span><span class="kw">,</span><span class="at"> Treatment</span><span class="kw">]</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">autoscale</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">autocolor</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Template compilation does not mutate the loaded <code>Template</code>; resolved group indices live in the render plan.</p>
 
 
 </section>
@@ -1015,4 +1085,4 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/alsmith151/plotnado/edit/main/docs/reference.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/alsmith151/plotnado/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/alsmith151/plotnado/edit/main/docs/template_schema.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/alsmith151/plotnado/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
