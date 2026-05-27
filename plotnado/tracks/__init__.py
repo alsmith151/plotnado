@@ -5,7 +5,6 @@ Provides track classes for genomic visualization.
 """
 
 from .enums import (
-    BedLabelPosition,
     CollectionStyle,
     DisplayMode,
     FontWeight,
@@ -84,7 +83,6 @@ SpacerTrack = Spacer
 
 __all__ = [
     # Enums
-    "BedLabelPosition",
     "DisplayMode",
     "CollectionStyle",
     "FontWeight",

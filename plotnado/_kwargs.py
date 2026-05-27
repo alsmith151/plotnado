@@ -47,8 +47,6 @@ class BigwigKwargs(TypedDict, total=False):
     smoothing_center: bool
     min_value: float | None
     max_value: float | None
-    n_bins: int | None
-    bin_size: int | None
     plot_title: bool
     plot_scale: bool
     label_on_track: bool
@@ -249,7 +247,6 @@ class BedKwargs(TypedDict, total=False):
     font_size: int
     rect_linewidth: float
     draw_edges: bool
-    label_position: BedLabelPosition
     plot_title: bool
     plot_scale: bool
     label_on_track: bool
@@ -518,7 +515,6 @@ class NarrowpeakKwargs(TypedDict, total=False):
     font_size: int
     rect_linewidth: float
     draw_edges: bool
-    label_position: BedLabelPosition
     color_by: NarrowPeakColorBy | None
     cmap: str
     min_score: float | None

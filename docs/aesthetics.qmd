@@ -14,62 +14,19 @@ This page focuses on choices you can see: signal styles, color grouping, label p
 `style` changes how a quantitative signal is drawn.
 
 ```{python}
-#| fig-cap: "`fill` is the default for continuous signal, `fragment` emphasizes bins, `scatter` shows individual values, and `std` draws a band-style summary."
-from plotnado import GenomicFigure
-from plotnado.examples import REGION, signal
-# signal() returns a synthetic ChIP-seq-like DataFrame(chrom, start, end, value)
-# In real use pass a BigWig path/URL or any DataFrame with those columns
-# REGION is a string like "chr1:1,000,000-1,100,000"
+from docs._examples import REGION, style_comparison
 
-
-fig = GenomicFigure(track_height=1.15)
-fig.scalebar()
-fig.bigwig(signal(phase=0.0), title="fill", style="fill", color="#1f77b4")
-fig.bigwig(signal(phase=0.8), title="fragment", style="fragment", color="#d62728")
-fig.bigwig(signal(phase=1.6), title="scatter", style="scatter", color="#2ca02c", scatter_point_size=10)
-fig.bigwig(signal(phase=2.4), title="std", style="std", color="#9467bd")
+fig = style_comparison()
 fig.plot(REGION)
 ```
 
-## Signal resolution
-
-`n_bins` divides the plotted region into a fixed number of equal bins regardless of the source resolution. `bin_size` sets the bin width in base pairs instead. Both work with BigWig files and DataFrames; overlapping source intervals are averaged by overlap length.
-
-```{python}
-#| fig-cap: "Coarser binning compresses the signal into broader summaries; finer bins preserve peak shape. The bottom track is the native 200 bp resolution from the synthetic data."
-from plotnado import GenomicFigure
-from plotnado.examples import REGION, signal
-# signal() returns a synthetic ChIP-seq-like DataFrame(chrom, start, end, value) at 200 bp bins
-# In real use pass a BigWig path/URL or any DataFrame with those columns
-
-fig = GenomicFigure(track_height=1.15)
-fig.scalebar()
-fig.bigwig(signal(), title="bin_size=5000 (coarse)", style="fill", color="#9467bd", bin_size=5000)
-fig.bigwig(signal(), title="bin_size=1000",           style="fill", color="#d62728", bin_size=1000)
-fig.bigwig(signal(), title="bin_size=200 (native)",   style="fill", color="#1f77b4")
-fig.bigwig(signal(), title="n_bins=50",                 style="fill", color="#2ca02c", n_bins=50)
-fig.bigwig(signal(), title="n_bins=200",                style="fill", color="#ff7f0e", n_bins=200)
-fig.axis()
-fig.plot(REGION)
-```
-
-Use `n_bins` when you want consistent resolution across regions of different sizes:
-
-```python
-# Always 200 bins regardless of zoom level
-fig.bigwig("signal.bw", n_bins=200)
-
-# Fixed bin width across any region
-fig.bigwig("signal.bw", bin_size=500)
-```
+Caption: `fill` is the default for continuous signal, `fragment` emphasizes bins, `scatter` shows individual values, and `std` draws a band-style summary.
 
 ## Color and alpha
 
 ```{python}
-#| fig-cap: "Use opacity to reduce visual dominance when several panels are compared."
 from plotnado import GenomicFigure
-from plotnado.examples import REGION, signal
-# signal() → DataFrame(chrom, start, end, value) — replace with a BigWig path/URL or DataFrame
+from docs._examples import REGION, signal
 
 fig = GenomicFigure(track_height=1.0)
 fig.bigwig(signal(), title="alpha=1.0", style="fill", color="#1f77b4", alpha=1.0)
@@ -78,16 +35,15 @@ fig.bigwig(signal(phase=1.6), title="alpha=0.35", style="fill", color="#2ca02c",
 fig.plot(REGION)
 ```
 
+Caption: use opacity to reduce visual dominance when several panels are compared.
+
 ## Autocolor and groups
 
 Use `autocolor()` once, then assign related tracks the same `color_group`.
 
 ```{python}
-#| fig-cap: "Color groups keep semantically related tracks aligned without hard-coding every color."
 from plotnado import GenomicFigure
-from plotnado.examples import REGION, intervals, signal
-# signal() → DataFrame(chrom, start, end, value) — replace with a BigWig path/URL or DataFrame
-# intervals() → DataFrame(chrom, start, end, name) — replace with a BED/BigBed path, URL, or DataFrame
+from docs._examples import REGION, intervals, signal
 
 fig = GenomicFigure(track_height=1.1).autocolor("Set2")
 fig.bigwig(signal(phase=0.0), title="Sample A signal", color_group="A")
@@ -97,86 +53,56 @@ fig.bed(intervals().assign(name=["b1", "b2", "b3", "b4"]), title="Sample B peaks
 fig.plot(REGION)
 ```
 
+Caption: color groups keep semantically related tracks aligned without hard-coding every color.
+
 ## Label placement
 
 ```{python}
-#| fig-cap: "`title_location` anchors the label left or right; `label_box_enabled` adds a legibility box; `label_on_track` with the box is useful for compact multi-track figures."
 from plotnado import GenomicFigure
-from plotnado.examples import REGION, signal
-# signal() → DataFrame(chrom, start, end, value) — replace with a BigWig path/URL or DataFrame
+from docs._examples import REGION, signal
 
 fig = GenomicFigure(track_height=1.0)
-fig.bigwig(signal(),           title="title_location='left'",                       title_location="left")
-fig.bigwig(signal(phase=0.7),  title="title_location='right'",                      title_location="right")
-fig.bigwig(signal(phase=1.4),  title="label_on_track, no box",                      label_on_track=True, label_box_enabled=False)
-fig.bigwig(signal(phase=2.1),  title="label_on_track + label_box_enabled",          label_on_track=True, label_box_enabled=True)
+fig.bigwig(signal(), title="left margin", title_location="left")
+fig.bigwig(signal(phase=0.7), title="right margin", title_location="right")
+fig.bigwig(signal(phase=1.4), title="on track", label_on_track=True, label_box_enabled=True)
 fig.plot(REGION)
 ```
+
+Caption: on-track labels are useful for compact figures, especially with a label box.
 
 ## Overlay, autoscale, and highlights
 
 ```{python}
-#| fig-cap: "`highlight()` marks a locus without changing y-limits; `autoscale_group` on the overlay synchronizes the panel with neighboring signal tracks."
-from plotnado import GenomicFigure
-from plotnado.examples import REGION, review_signal
-# review_signal() → DataFrame(chrom, start, end, value) — replace with BigWig paths/URLs or DataFrames
+from docs._examples import REGION, overlay_comparison
 
-signal_a = review_signal(2.0)
-signal_b = review_signal(10.0, 1.2)
-
-
-fig = GenomicFigure(track_height=1.2)
-fig.autoscale(True)
-fig.highlight("chr1:1,032,000-1,046,000")
-fig.highlight_style(color="#ffdd57", alpha=0.22)
-fig.bigwig(signal_a, title="Control", autoscale_group="signal", color="#1f77b4")
-fig.bigwig(signal_b, title="Treatment", autoscale_group="signal", color="#d62728")
-fig.overlay(
-    [signal_a, signal_b],
-    title="Overlay",
-    autoscale_group="signal",
-    colors=["#1f77b4", "#d62728"],
-    alpha=0.55,
-)
+fig = overlay_comparison()
 fig.plot(REGION)
 ```
+
+Caption: `highlight()` marks a locus without changing y-limits; `autoscale_group` on the overlay synchronizes the panel with neighboring signal tracks.
 
 ## BED, narrowPeak, and links
 
 ```{python}
-#| fig-cap: "Interval, peak, and link tracks use tabular inputs with genomic coordinate columns."
 from plotnado import GenomicFigure
-from plotnado.examples import REGION, intervals, links, narrowpeaks
-# intervals() → DataFrame(chrom, start, end, name) — replace with a BED/BigBed path, URL, or DataFrame
-# narrowpeaks() → DataFrame(chrom, start, end, name, score, strand, signalValue, pValue, qValue, peak) — replace with a .narrowPeak path or DataFrame
-# links() → DataFrame(chrom1, start1, end1, chrom2, start2, end2, score) — replace with a BEDPE path or DataFrame
+from docs._examples import REGION, intervals, links, narrowpeaks
 
 fig = GenomicFigure(track_height=1.1)
+fig.axis()
 fig.bed(intervals(), title="BED intervals", display="expanded", show_labels=True)
 fig.narrowpeak(narrowpeaks(), title="narrowPeak", color_by="signalValue", cmap="Oranges", show_summit=True)
 fig.links(links(), title="Links", color_by_score=True, cmap="viridis", alpha=0.8)
-fig.axis()
 fig.plot(REGION)
 ```
 
+Caption: interval, peak, and link tracks use tabular inputs with genomic coordinate columns.
+
 ## Themes
 
-```{python}
+```python
 from plotnado import GenomicFigure
-from plotnado.examples import signal, REGION
 
 fig = GenomicFigure(theme="publication")
-fig.scalebar()
-fig.bigwig(signal(), title="Publication theme", style="fill", color="#1f77b4")
-fig.axis()
-fig.plot("chr1:1,000,000-1,100,000", show=True)
-
-fig = GenomicFigure(theme="minimal")
-fig.scalebar()
-fig.bigwig(signal(), title="Minimal theme", style="fill", color="#1f77b4")
-fig.axis()
-fig.plot("chr1:1,000,000-1,100,000", show=False)
-
 ```
 
 Built-in themes include `"default"`, `"minimal"`, and `"publication"`.
