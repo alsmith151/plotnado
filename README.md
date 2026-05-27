@@ -5,7 +5,7 @@ It is designed for reproducible genomic plots in scripts, notebooks, Quarto docs
 Use it when you want compact tracks for BigWig-like signals, BED/narrowPeak intervals, links, genes, and optional matrix/QuantNado data.
 
 <p align="center">
-  <img src="docs/images/Logo.jpeg" alt="PlotNado logo" width="220">
+  <img src="https://raw.githubusercontent.com/alsmith151/plotnado/main/docs/images/Logo.jpeg" alt="PlotNado logo" width="220">
 </p>
 
 <p align="center">
