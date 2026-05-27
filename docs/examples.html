@@ -440,7 +440,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="example-1-stacked-bigwig-tracks-with-on-track-labels" class="level2">
 <h2 class="anchored" data-anchor-id="example-1-stacked-bigwig-tracks-with-on-track-labels">Example 1: stacked BigWig tracks with on-track labels</h2>
 <p>Two Blueprint plasma-cell RNA signal tracks rendered in separate panels with on-track label boxes and a shared autoscale group so both panels use the same y-axis limits.</p>
-<div id="e459707b" class="cell" data-execution_count="2">
+<div id="a7df07bb" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(theme<span class="op">=</span><span class="st">"publication"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>fig.scalebar()</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, url <span class="kw">in</span> BLUEPRINT_RNA_FILES.items():</span>
@@ -474,7 +474,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="example-2-bigwig_overlay-with-a-shared-axis" class="level2">
 <h2 class="anchored" data-anchor-id="example-2-bigwig_overlay-with-a-shared-axis">Example 2: <code>bigwig_overlay()</code> with a shared axis</h2>
 <p><code>bigwig_overlay()</code> places multiple signals in one panel on a shared y-axis. Use this when you want to compare signal shape rather than absolute levels.</p>
-<div id="e80dc960" class="cell" data-execution_count="3">
+<div id="15e3d6a7" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(theme<span class="op">=</span><span class="st">"publication"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>fig.scalebar()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>fig.bigwig_overlay(</span>
@@ -508,7 +508,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="example-3-signal-peaks-curated-bed-at-the-lyz-locus" class="level2">
 <h2 class="anchored" data-anchor-id="example-3-signal-peaks-curated-bed-at-the-lyz-locus">Example 3: signal + peaks + curated BED at the LYZ locus</h2>
 <p>A three-layer review plot: BigWig signal, hub peak calls from a remote BigBed, and a checked-in BED of candidate loci for follow-up.</p>
-<div id="6cc722b2" class="cell" data-execution_count="4">
+<div id="0f252d33" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> GenomicFigure(theme<span class="op">=</span><span class="st">"publication"</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fig.scalebar()</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>fig.bigwig(</span>
