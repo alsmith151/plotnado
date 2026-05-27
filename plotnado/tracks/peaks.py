@@ -88,6 +88,11 @@ class NarrowPeakTrack(BedTrack):
             return
 
         row_scale = 1.0 / max(1, self.max_rows)
+        effective_height = (
+            self.interval_height
+            if self.display == DisplayMode.COLLAPSED
+            else min(self.interval_height, row_scale * 0.85)
+        )
         row_last_positions: list[int] = []
 
         # Setup colormap if needed
@@ -126,6 +131,12 @@ class NarrowPeakTrack(BedTrack):
                 else ((row_index + 0.5) * row_scale)
             )
 
+            # Clip to region — intervals may extend beyond the viewed window
+            draw_start = max(float(start), float(gr.start))
+            draw_end = min(float(end), float(gr.end))
+            if draw_end <= draw_start:
+                continue
+
             # Determine color
             current_color = self.color
             if cmap and norm and hasattr(row, self.color_by):
@@ -134,9 +145,9 @@ class NarrowPeakTrack(BedTrack):
 
             # Draw interval
             rect = matplotlib.patches.Rectangle(
-                (start, ypos - self.interval_height / 2),
-                end - start,
-                self.interval_height,
+                (draw_start, ypos - effective_height / 2),
+                draw_end - draw_start,
+                effective_height,
                 linewidth=self.rect_linewidth if self.draw_edges else 0,
                 edgecolor=self.edge_color if self.draw_edges else "none",
                 facecolor=current_color,
@@ -145,32 +156,31 @@ class NarrowPeakTrack(BedTrack):
             )
             ax.add_patch(rect)
 
-            # Draw summit if enabled
+            # Draw summit if enabled — skip if outside view
             if self.show_summit and hasattr(row, "peak") and row.peak != -1:
-                # peak is 0-based offset from start
-                summit_pos = start + row.peak
-                ax.plot(
-                    [summit_pos, summit_pos],
-                    [
-                        ypos - self.interval_height / 2,
-                        ypos + self.interval_height / 2,
-                    ],
-                    color=self.summit_color,
-                    linewidth=self.summit_width,
-                    zorder=2,
-                )
+                summit_pos = float(start) + float(row.peak)
+                if gr.start <= summit_pos <= gr.end:
+                    ax.plot(
+                        [summit_pos, summit_pos],
+                        [ypos - effective_height / 2, ypos + effective_height / 2],
+                        color=self.summit_color,
+                        linewidth=self.summit_width,
+                        zorder=2,
+                    )
 
             # Draw label if enabled
             if self.show_labels and hasattr(row, self.label_field):
                 label = getattr(row, self.label_field)
+                label_xpos = max(draw_start, min(draw_end, (float(start) + float(end)) / 2))
                 ax.text(
-                    (start + end) / 2,
+                    label_xpos,
                     ypos,
                     str(label),
                     ha="center",
                     va="center",
                     fontsize=self.font_size,
                     zorder=3,
+                    clip_on=True,
                 )
 
         ax.set_xlim(gr.start, gr.end)

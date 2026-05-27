@@ -1,15 +1,12 @@
 ---
 title: PlotNado
 page-layout: full
-title-block-style: none
 jupyter: python3
 execute:
   echo: false
   warning: false
   message: false
 ---
-
-# PlotNado
 
 PlotNado builds genome browser-style figures from Python code or editable YAML templates.
 It is useful when you need reproducible plots for BigWig-like signals, intervals, peaks,
@@ -23,13 +20,43 @@ or [Quick Start](docs/quickstart.qmd) if you already have the uv environment.
 ## First figure
 
 ```{python}
-from docs._examples import REGION, quickstart_figure
+#| echo: true
+from pathlib import Path
+import plotnado
+from plotnado import GenomicFigure, PlotStyle
 
-quickstart_figure().plot(REGION)
+BLUEPRINT_MONOCYTE_BW = (
+    "http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/GRCh38/venous_blood"
+    "/C000S5/CD14-positive_CD16-negative_classical_monocyte/ChIP-Seq/NCMLS"
+    "/C000S5H2.ERX173536.H3K27ac.bwa.GRCh38.20150529.bw"
+)
+BLUEPRINT_MONOCYTE_BB = (
+    "http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/GRCh38/venous_blood"
+    "/C000S5/CD14-positive_CD16-negative_classical_monocyte/ChIP-Seq/NCMLS"
+    "/C000S5H2.ERX173536.H3K27ac.bwa.GRCh38.20150527.bb"
+)
+CANDIDATE_BED = str(
+    Path(plotnado.__file__).parent.parent / "examples" / "data" / "blueprint_monocyte_lyz_candidate_peaks.bed"
+)
+
+fig = GenomicFigure(width=11, track_height=0.7, theme="publication")
+fig.scalebar()
+fig.genes("hg38", height=0.55)
+fig.bigwig(
+    BLUEPRINT_MONOCYTE_BW,
+    title="Monocyte H3K27ac",
+    style=PlotStyle.FRAGMENT,
+    color="#d9485f",
+    height=0.75,
+    label_on_track=True,
+    label_box_enabled=True,
+    plot_scale=True,
+)
+fig.bed(BLUEPRINT_MONOCYTE_BB, title="H3K27ac peaks", color="#f59e0b", height=0.35, show_labels=False)
+fig.bed(CANDIDATE_BED, title="Candidate loci", color="#0f766e", show_labels=True, label_field="name", font_size=7)
+fig.axis()
+fig.plot("chr12:69,310,000-69,400,000")
 ```
-
-The example is rendered by Quarto from deterministic in-memory data. The same pattern
-is used throughout the docs so code and output stay in sync.
 
 ## Common routes
 
@@ -52,9 +79,9 @@ from plotnado import GenomicFigure
 fig = (
     GenomicFigure()
     .scalebar()
-    .axis()
     .bigwig(signal, title="Signal", style="fill")
     .bed(intervals, title="Intervals", display="expanded")
+    .axis()
 )
 fig.save("plot.png", region="chr1:1,010,000-1,080,000")
 ```
@@ -71,16 +98,5 @@ uv run plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output pl
 
 Use this route when the figure definition should be reviewed or versioned as a
 human-editable YAML file.
-
-## Visual options
-
-Most option guidance is shown where it matters. For example, signal style choices
-are visible in the rendered comparison below.
-
-```{python}
-from docs._examples import style_comparison
-
-style_comparison().plot(REGION)
-```
 
 For compact runtime lookup, use [Compact Options](docs/option_lookup.qmd).

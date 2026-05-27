@@ -28,7 +28,9 @@ Call `autocolor()` once and reuse `color_group` for related tracks.
 
 ```{python}
 from plotnado import GenomicFigure
-from docs._examples import REGION, intervals, signal
+from plotnado.examples import REGION, intervals, signal
+# signal() → DataFrame(chrom, start, end, value) — replace with a BigWig path/URL or DataFrame
+# intervals() → DataFrame(chrom, start, end, name) — replace with a BED/BigBed path, URL, or DataFrame
 
 fig = GenomicFigure(track_height=1.05).autocolor("Set2")
 fig.bigwig(signal(phase=0.0), title="A signal", color_group="A")

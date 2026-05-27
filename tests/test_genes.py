@@ -5,8 +5,10 @@ from unittest.mock import MagicMock, patch
 import matplotlib.markers
 import matplotlib.pyplot as plt
 import pandas as pd
+import pytest
 
 from plotnado.tracks import Genes, GenesAesthetics, GenomicRegion
+from plotnado.tracks.genes import _user_genomes, register_genome
 
 
 def _chevron_calls(ax: MagicMock) -> list:
@@ -751,3 +753,98 @@ class TestGenes:
         y_values = [call.args[1] for call in mock_ax.text.call_args_list]
         assert len(y_values) == 2
         assert len(set(y_values)) == 2
+
+
+class TestRegisterGenome:
+    @pytest.fixture(autouse=True)
+    def _clean_registry(self):
+        """Restore _user_genomes to its pre-test state after each test."""
+        snapshot = dict(_user_genomes)
+        yield
+        _user_genomes.clear()
+        _user_genomes.update(snapshot)
+
+    @patch("plotnado.tracks.genes.read_bed_regions")
+    def test_register_and_use_genome(self, mock_read_bed, tmp_path, genomic_region):
+        bed_file = tmp_path / "custom.bed"
+        bed_file.write_text("")
+        mock_read_bed.return_value = pd.DataFrame(
+            {
+                "chrom": ["chr1"],
+                "start": [1100],
+                "end": [1300],
+                "name": ["gene1"],
+                "strand": ["+"],
+                "blockCount": [1],
+                "blockSizes": ["200"],
+                "blockStarts": ["0"],
+            }
+        )
+
+        register_genome("custom_asm", bed_file)
+        genes = Genes(genome="custom_asm")
+        result = genes.fetch_data(genomic_region)
+
+        mock_read_bed.assert_called_once()
+        assert "geneid" in result.columns
+
+    @patch("plotnado.tracks.genes.read_bed_regions")
+    def test_path_autodetect_absolute_bed(self, mock_read_bed, tmp_path, genomic_region):
+        bed_file = tmp_path / "mm10_genes.bed"
+        bed_file.write_text("")
+        mock_read_bed.return_value = pd.DataFrame(
+            {
+                "chrom": ["chr1"],
+                "start": [1100],
+                "end": [1300],
+                "name": ["gene1"],
+                "strand": ["+"],
+                "blockCount": [1],
+                "blockSizes": ["200"],
+                "blockStarts": ["0"],
+            }
+        )
+
+        genes = Genes(genome=str(bed_file))
+        result = genes.fetch_data(genomic_region)
+
+        mock_read_bed.assert_called_once()
+        assert "geneid" in result.columns
+
+    @patch("plotnado.tracks.genes.read_gtf_regions")
+    def test_path_autodetect_gtf_extension(self, mock_read_gtf, tmp_path, genomic_region):
+        gtf_file = tmp_path / "custom.gtf"
+        gtf_file.write_text("")
+        mock_read_gtf.return_value = pd.DataFrame(
+            {
+                "Chromosome": ["chr1", "chr1"],
+                "Start": [1100, 1200],
+                "End": [1150, 1250],
+                "Feature": ["exon", "exon"],
+                "gene_id": ["g1", "g1"],
+                "Strand": ["+", "+"],
+            }
+        )
+
+        genes = Genes(genome=str(gtf_file))
+        result = genes.fetch_data(genomic_region)
+
+        mock_read_gtf.assert_called_once()
+        assert "geneid" in result.columns
+
+    def test_unknown_genome_raises_valueerror(self, genomic_region):
+        genes = Genes(genome="nonexistent_assembly_xyz")
+        with pytest.raises(ValueError, match="not found in the genes database"):
+            genes.fetch_data(genomic_region)
+
+    def test_error_message_includes_user_genomes(self, tmp_path, genomic_region):
+        register_genome("my_asm", tmp_path / "fake.bed")
+        genes = Genes(genome="wrong_name")
+        with pytest.raises(ValueError) as exc_info:
+            genes.fetch_data(genomic_region)
+        assert "my_asm" in str(exc_info.value)
+
+    def test_register_genome_exported_from_package(self):
+        import plotnado
+        assert hasattr(plotnado, "register_genome")
+        assert callable(plotnado.register_genome)

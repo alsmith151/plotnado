@@ -25,6 +25,7 @@ class GenomicAxisAesthetics(BaseAesthetics):
         num_ticks: Approximate number of ticks to display
         show_chromosome: Whether to show chromosome name
     """
+    color: str = Field(default="black", description="Color for the axis baseline.")
     font_size: int = Field(default=9, description="Font size for tick and chromosome labels.")
     num_ticks: int = Field(default=5, description="Target number of tick marks across the region.")
     show_chromosome: bool = Field(default=True, description="Render chromosome name label near the axis.")
@@ -34,7 +35,7 @@ class GenomicAxisAesthetics(BaseAesthetics):
     )
     tick_height: float = Field(default=0.15, description="Tick length drawn downward from axis baseline.")
     axis_linewidth: float = Field(default=1.1, description="Line width of the horizontal axis baseline.")
-    tick_color: str = Field(default="#333333", description="Color for tick marks and tick labels.")
+    tick_color: str = Field(default="black", description="Color for tick marks and tick labels.")
     tick_linewidth: float = Field(default=0.9, description="Line width of tick marks.")
     chromosome_fontweight: FontWeight = Field(
         default=FontWeight.BOLD,

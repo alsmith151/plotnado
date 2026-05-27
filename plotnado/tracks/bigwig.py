@@ -67,6 +67,17 @@ class BigwigAesthetics(BaseAesthetics):
         description="Optional fixed upper y-limit; auto-derived when omitted.",
     )
 
+    n_bins: int | None = Field(
+        default=None,
+        ge=1,
+        description="Divide the plotted region into this many equal bins. Overrides bin_size.",
+    )
+    bin_size: int | None = Field(
+        default=None,
+        ge=1,
+        description="Bin width in base pairs. Ignored when n_bins is set.",
+    )
+
 
 @registry.register(TrackType.BIGWIG, aliases=["bw", "signal", "bedgraph"])
 class BigWigTrack(Track):
@@ -144,12 +155,54 @@ class BigWigTrack(Track):
             df.loc[mask, ["start", "end", "value", "chrom"]].copy()
         )
 
+    def _resolve_n_bins(self, gr: GenomicRegion) -> int | None:
+        if self.n_bins is not None:
+            return int(self.n_bins)
+        if self.bin_size is not None:
+            return max(1, int((gr.end - gr.start) / self.bin_size))
+        return None
+
+    def _rebin(self, data: pd.DataFrame, gr: GenomicRegion, n_bins: int) -> pd.DataFrame:
+        """Weighted-average rebin of bedgraph data into n_bins equal-width bins over the region."""
+        if data.empty:
+            return data
+
+        edges = np.linspace(gr.start, gr.end, n_bins + 1)
+        bin_starts = edges[:-1]
+        bin_ends = edges[1:]
+
+        src_s = data["start"].to_numpy(dtype=float)
+        src_e = data["end"].to_numpy(dtype=float)
+        src_v = data["value"].to_numpy(dtype=float)
+        valid = ~np.isnan(src_v)
+        src_s, src_e, src_v = src_s[valid], src_e[valid], src_v[valid]
+
+        bin_values = np.full(n_bins, np.nan)
+        for i in range(n_bins):
+            overlap = np.maximum(0.0, np.minimum(src_e, bin_ends[i]) - np.maximum(src_s, bin_starts[i]))
+            w = overlap.sum()
+            if w > 0:
+                bin_values[i] = (src_v * overlap).sum() / w
+
+        keep = ~np.isnan(bin_values)
+        return pd.DataFrame({
+            "chrom": gr.chromosome,
+            "start": bin_starts[keep].astype(int),
+            "end": bin_ends[keep].astype(int),
+            "value": bin_values[keep],
+        })
+
     def fetch_data(self, gr: GenomicRegion) -> BedgraphDataFrame:
         """Fetch data for the given genomic region."""
         if isinstance(self.data, pd.DataFrame):
             df = self._fetch_from_df(gr)
         else:
             df = self._fetch_from_disk(gr)
+
+        n = self._resolve_n_bins(gr)
+        if n is not None:
+            df = self._rebin(df, gr, n)
+
         return BedgraphDataFrame(df)
 
     def _apply_smoothing(self, data: pd.DataFrame) -> pd.DataFrame:

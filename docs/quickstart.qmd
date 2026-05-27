@@ -24,20 +24,33 @@ uv run plotnado --help
 This example is fully in-memory, so it renders during the docs build without external files.
 
 ```{python}
-from docs._examples import REGION, quickstart_figure
+#| fig-cap: "Scale, axis, signal, and BED-like intervals from deterministic DataFrames."
+from plotnado import GenomicFigure
+from plotnado.examples import REGION, signal, intervals
+# signal() returns a synthetic DataFrame(chrom, start, end, value) — in real use pass a BigWig path/URL or any DataFrame with those columns
+# intervals() returns a synthetic DataFrame(chrom, start, end, name) — in real use pass a BED/BigBed path, URL, or DataFrame
 
-fig = quickstart_figure()
+fig = GenomicFigure(width=11, track_height=1.25)
+fig.scalebar()
+fig.bigwig(signal(scale=1.15), title="Synthetic signal", style="fill", color="#1f77b4")
+fig.bed(intervals(), title="Intervals", display="expanded", show_labels=True)
+fig.axis()
 fig.plot(REGION)
 ```
-
-Caption: scale, axis, signal, and BED-like intervals from deterministic DataFrames.
 
 ## Save the same figure
 
 ```python
-from docs._examples import REGION, quickstart_figure
+from plotnado import GenomicFigure
+from plotnado.examples import REGION, signal, intervals
+# signal() → DataFrame(chrom, start, end, value); intervals() → DataFrame(chrom, start, end, name)
+# replace with BigWig paths/URLs or real DataFrames
 
-fig = quickstart_figure()
+fig = GenomicFigure(width=11, track_height=1.25)
+fig.scalebar()
+fig.bigwig(signal(scale=1.15), title="Synthetic signal", style="fill", color="#1f77b4")
+fig.bed(intervals(), title="Intervals", display="expanded", show_labels=True)
+fig.axis()
 fig.save("quickstart.png", region=REGION)
 ```
 

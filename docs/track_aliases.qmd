@@ -12,8 +12,10 @@ execute:
 ## Alias usage
 
 ```{python}
+#| fig-cap: "Alias-added tracks render the same way as helper-method tracks."
 from plotnado import GenomicFigure
-from docs._examples import REGION, signal
+from plotnado.examples import REGION, signal
+# signal() → DataFrame(chrom, start, end, value) — replace with a BigWig path/URL or DataFrame
 
 fig = GenomicFigure().autocolor("Set2")
 fig.add_track("scalebar")
@@ -22,8 +24,6 @@ fig.add_track("bigwig", data=signal(phase=0.0), title="Replicate A", style="fill
 fig.add_track("bigwig", data=signal(phase=0.9), title="Replicate B", style="fill")
 fig.plot(REGION)
 ```
-
-Caption: alias-added tracks render the same way as helper-method tracks.
 
 ## How kwargs are routed
 

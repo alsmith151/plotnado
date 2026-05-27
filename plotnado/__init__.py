@@ -6,6 +6,7 @@ without heavy dependencies like CoolBox.
 """
 
 from .figure import GenomicFigure
+from .tracks.genes import register_genome
 from .igv import parse_igv_session, IgvSession
 from .hub import parse_ucsc_hub, UcscHubSession
 from .widgets import TrackVisibilityWidget
@@ -14,6 +15,7 @@ from .template import Template, TrackSpec, GuideSpec, GroupSpec
 from .render import TemplateCompiler, RenderPlan, ResolvedTrack
 from .tracks import (
     # Enums
+    BedLabelPosition,
     CollectionStyle,
     DisplayMode,
     FontWeight,
@@ -81,6 +83,7 @@ except ImportError:
 
 __all__ = [
     "GenomicFigure",
+    "register_genome",
     "parse_igv_session",
     "IgvSession",
     "parse_ucsc_hub",
@@ -97,6 +100,7 @@ __all__ = [
     "RenderPlan",
     "ResolvedTrack",
     # Enums
+    "BedLabelPosition",
     "DisplayMode",
     "CollectionStyle",
     "FontWeight",

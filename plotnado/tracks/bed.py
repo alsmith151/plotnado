@@ -13,7 +13,7 @@ from pydantic import ConfigDict, Field, BaseModel
 from .region import GenomicRegion
 from .base import Track, TrackLabeller
 from .utils import clean_axis, read_bed_regions
-from .enums import DisplayMode, TrackType
+from .enums import BedLabelPosition, DisplayMode, TrackType
 from .aesthetics import BaseAesthetics
 from .registry import registry
 
@@ -49,6 +49,10 @@ class BedAesthetics(BaseAesthetics):
     font_size: int = Field(default=8, description="Font size for interval labels.")
     rect_linewidth: float = Field(default=0.7, description="Border line width for interval rectangles.")
     draw_edges: bool = Field(default=True, description="Draw rectangle borders for intervals.")
+    label_position: BedLabelPosition = Field(
+        default=BedLabelPosition.ABOVE,
+        description="Where to place interval labels: 'above', 'inside', or 'below' the rectangle.",
+    )
 
 
 @registry.register(TrackType.BED, aliases=["annotation", "unknown"])
@@ -152,6 +156,12 @@ class BedTrack(Track):
             return
 
         row_scale = 1.0 / max(1, self.max_rows)
+        # In expanded mode cap rect height so rows don't overflow y=[0, 1]
+        effective_height = (
+            self.interval_height
+            if self.display == DisplayMode.COLLAPSED
+            else min(self.interval_height, row_scale * 0.85)
+        )
         row_last_positions: list[int] = []
 
         for row in data.itertuples():
@@ -172,11 +182,17 @@ class BedTrack(Track):
                 else ((row_index + 0.5) * row_scale)
             )
 
+            # Clip to region — intervals may extend beyond the viewed window
+            draw_start = max(float(start), float(gr.start))
+            draw_end = min(float(end), float(gr.end))
+            if draw_end <= draw_start:
+                continue
+
             # Draw interval
             rect = matplotlib.patches.Rectangle(
-                (start, ypos - self.interval_height / 2),
-                end - start,
-                self.interval_height,
+                (draw_start, ypos - effective_height / 2),
+                draw_end - draw_start,
+                effective_height,
                 linewidth=self.rect_linewidth if self.draw_edges else 0,
                 edgecolor=self.edge_color if self.draw_edges else "none",
                 facecolor=self.color,
@@ -186,17 +202,27 @@ class BedTrack(Track):
 
             # Draw label if enabled
             if self.show_labels and hasattr(row, self.label_field):
-                label = getattr(row, self.label_field)
-                # Position label above the peak, within track bounds
-                label_ypos = ypos + self.interval_height / 2 + 0.05
+                label_text = str(getattr(row, self.label_field))
+                label_xpos = float(start) + float(end)
+                label_xpos /= 2  # true midpoint — allowed to go off-screen
+                match self.label_position:
+                    case BedLabelPosition.ABOVE:
+                        label_ypos = ypos + effective_height / 2 + 0.03
+                        va = "bottom"
+                    case BedLabelPosition.INSIDE:
+                        label_ypos = ypos
+                        va = "center"
+                    case BedLabelPosition.BELOW:
+                        label_ypos = ypos - effective_height / 2 - 0.03
+                        va = "top"
                 ax.text(
-                    (start + end) / 2,
+                    label_xpos,
                     label_ypos,
-                    str(label),
+                    label_text,
                     ha="center",
-                    va="bottom",
+                    va=va,
                     fontsize=self.font_size,
-                    clip_on=True,  # Clip text that extends outside axis
+                    clip_on=True,
                 )
 
         ax.set_xlim(gr.start, gr.end)

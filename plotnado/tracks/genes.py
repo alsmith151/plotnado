@@ -23,6 +23,24 @@ from .utils import clean_axis, read_bed_regions, read_gtf_regions
 from .aesthetics import BaseAesthetics
 from .registry import registry
 
+_user_genomes: dict[str, Path] = {}
+
+
+def register_genome(name: str, path: str | Path) -> None:
+    """Register a BED12 or GTF file under a short genome name.
+
+    Once registered, use it anywhere a bundled genome identifier is accepted::
+
+        import plotnado
+        plotnado.register_genome("mm10", "/data/mm10_refseq.bed")
+        fig.genes("mm10")  # or genome: mm10 in YAML templates
+
+    Args:
+        name: Short genome identifier (e.g. ``"mm10"``, ``"hg19"``).
+        path: Path to a BED12 or GTF gene annotation file (plain or bgzip-compressed).
+    """
+    _user_genomes[name] = Path(path)
+
 
 @dataclass
 class LabelPlacement:
@@ -183,6 +201,9 @@ class Genes(Track):
         return raw.lower()
 
     def _fetch_genes_from_package(self, gr: GenomicRegion) -> pd.DataFrame:
+        if self.genome in _user_genomes:
+            return self._fetch_from_disk_bed12(gr, _user_genomes[self.genome])
+
         try:
             bed_prefix = importlib.resources.files("plotnado.data.gene_bed_files")
             mapping_path = bed_prefix / "genes.json"
@@ -196,7 +217,7 @@ class Genes(Track):
         if self.genome not in gene_files:
             raise ValueError(
                 f"Genome {self.genome} not found in the genes database. "
-                f"Available genomes: {list(gene_files.keys())}"
+                f"Available genomes: {list(gene_files.keys()) + list(_user_genomes.keys())}"
             )
 
         gene_file = bed_prefix / gene_files[self.genome]
@@ -287,8 +308,8 @@ class Genes(Track):
             df["block_count"] = df["block_starts"].apply(lambda values: len(values) or 1)
         return df
 
-    def _fetch_from_disk_gtf(self, gr: GenomicRegion) -> pd.DataFrame:
-        gtf_df = read_gtf_regions(str(self.data), gr.chromosome, gr.start, gr.end)
+    def _fetch_from_disk_gtf(self, gr: GenomicRegion, file_path: Path | None = None) -> pd.DataFrame:
+        gtf_df = read_gtf_regions(str(file_path or self.data), gr.chromosome, gr.start, gr.end)
         if gtf_df.empty:
             return pd.DataFrame(
                 columns=[
@@ -357,6 +378,22 @@ class Genes(Track):
             raise ValueError("Either data or genome must be provided")
 
         if self.data is None:
+            # Allow genome= to accept a file path directly (absolute or known extension)
+            if self.genome and self.genome not in _user_genomes:
+                p = Path(self.genome)
+                genome_lower = self.genome.lower()
+                is_path = (
+                    p.is_absolute()
+                    or genome_lower.endswith((".bed", ".bed.gz", ".gtf", ".gtf.gz"))
+                )
+                if is_path:
+                    if genome_lower.endswith(".gtf") or genome_lower.endswith(".gtf.gz"):
+                        data = self._fetch_from_disk_gtf(gr, file_path=p)
+                    else:
+                        data = self._fetch_from_disk_bed12(gr, p)
+                    if self.aesthetics.minimum_gene_length > 0 and not data.empty:
+                        data = data.query(f"end - start >= {self.aesthetics.minimum_gene_length}")
+                    return data
             data = self._fetch_genes_from_package(gr)
         elif isinstance(self.data, pd.DataFrame):
             data = self.data.copy()

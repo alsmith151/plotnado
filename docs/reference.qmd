@@ -55,9 +55,24 @@ fig.highlight_style(color="#ffdd57", alpha=0.22)
 The rendered example shows highlight, autoscale, and overlay behavior together.
 
 ```{python}
-from docs._examples import REGION, overlay_comparison
+from plotnado import GenomicFigure
+from plotnado.examples import REGION, review_signal
+# review_signal() → DataFrame(chrom, start, end, value) — replace with BigWig paths/URLs or DataFrames
 
-overlay_comparison().plot(REGION)
+fig = GenomicFigure(track_height=1.2)
+fig.autoscale(True)
+fig.highlight("chr1:1,032,000-1,046,000")
+fig.highlight_style(color="#ffdd57", alpha=0.22)
+fig.bigwig(review_signal(2.0), title="Control", autoscale_group="signal", color="#1f77b4")
+fig.bigwig(review_signal(10.0, 1.2), title="Treatment", autoscale_group="signal", color="#d62728")
+fig.overlay(
+    [review_signal(5.5, 2.0), review_signal(6.5, 2.8)],
+    title="Overlay",
+    autoscale_group="signal",
+    colors=["#2ca02c", "#9467bd"],
+    alpha=0.55,
+)
+fig.plot(REGION)
 ```
 
 ## Plotting and saving

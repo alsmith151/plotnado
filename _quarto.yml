@@ -29,6 +29,8 @@ website:
             href: docs/quickstart.qmd
           - text: Track Construction
             href: docs/quickstart_tracks.qmd
+      - text: Examples
+        href: docs/examples.qmd
       - text: Guides
         menu:
           - text: Track Catalog
@@ -73,7 +75,7 @@ format:
     toc-depth: 4
     code-copy: true
     code-overflow: wrap
-    page-layout: full
+    page-layout: article
 
 execute:
   enabled: true

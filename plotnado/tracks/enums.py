@@ -97,6 +97,14 @@ class BigWigDiffMethod(str, Enum):
     LOG2RATIO = "log2ratio"
 
 
+class BedLabelPosition(str, Enum):
+    """Where to anchor interval label text relative to the rectangle."""
+
+    ABOVE = "above"
+    INSIDE = "inside"
+    BELOW = "below"
+
+
 class NarrowPeakColorBy(str, Enum):
     """Fields that can drive narrowPeak color mapping."""
 

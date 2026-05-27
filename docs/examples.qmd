@@ -1,0 +1,164 @@
+---
+jupyter: python3
+execute:
+  warning: false
+  message: false
+---
+
+# Worked Examples
+
+Real-data examples using public BigWig and BigBed files from the
+[Blueprint Epigenome Project](http://www.blueprint-epigenome.eu/) (GRCh38).
+These examples require network access to the EBI FTP server.
+
+```{python}
+#| echo: false
+from pathlib import Path
+import plotnado
+from plotnado import GenomicFigure, PlotStyle
+
+repo_root = Path(plotnado.__file__).resolve().parent.parent
+
+BLUEPRINT_MONOCYTE_BW = (
+    "http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/GRCh38/venous_blood"
+    "/C000S5/CD14-positive_CD16-negative_classical_monocyte/ChIP-Seq/NCMLS"
+    "/C000S5H2.ERX173536.H3K27ac.bwa.GRCh38.20150529.bw"
+)
+BLUEPRINT_MONOCYTE_BB = (
+    "http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/GRCh38/venous_blood"
+    "/C000S5/CD14-positive_CD16-negative_classical_monocyte/ChIP-Seq/NCMLS"
+    "/C000S5H2.ERX173536.H3K27ac.bwa.GRCh38.20150527.bb"
+)
+BLUEPRINT_RNA_FILES = {
+    "T12-15 plasma cell RNA": (
+        "http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/GRCh38"
+        "/tonsil/T12-15/plasma_cell/RNA-Seq/IDIBAPS"
+        "/T12-15-PC.signal.star_grape2_crg.GRCh38.20150815.bw"
+    ),
+    "T12-16 plasma cell RNA": (
+        "http://ftp.ebi.ac.uk/pub/databases/blueprint/data/homo_sapiens/GRCh38"
+        "/tonsil/T12-16/plasma_cell/RNA-Seq/IDIBAPS"
+        "/T12-16-PC.signal.star_grape2_crg.GRCh38.20150815.bw"
+    ),
+}
+CANDIDATE_BED = str(repo_root / "examples" / "data" / "blueprint_monocyte_lyz_candidate_peaks.bed")
+
+LYZ_REGION = "chr12:69,310,000-69,400,000"
+ACTB_REGION = "chr7:5,527,000-5,535,000"
+```
+
+---
+
+## Example 1: stacked BigWig tracks with on-track labels
+
+Two Blueprint plasma-cell RNA signal tracks rendered in separate panels with
+on-track label boxes and a shared autoscale group so both panels use the same
+y-axis limits.
+
+```{python}
+#| fig-cap: "Blueprint plasma-cell RNA at the ACTB locus. Both tracks share one autoscale group, so differences in expression level are directly comparable."
+fig = GenomicFigure(theme="publication")
+fig.scalebar()
+for name, url in BLUEPRINT_RNA_FILES.items():
+    fig.bigwig(
+        url,
+        title=name,
+        style="fragment",
+        height=0.55,
+        autoscale_group="blueprint_rna",
+        label_on_track=True,
+        label_box_enabled=True,
+        label_box_alpha=0.95,
+        title_height=0.5,
+        scale_height=0.5,
+        plot_scale=True,
+    )
+fig.genes("hg38", height=0.55)
+fig.axis()
+fig.plot(ACTB_REGION, extend=10_000)
+```
+
+---
+
+## Example 2: `bigwig_overlay()` with a shared axis
+
+`bigwig_overlay()` places multiple signals in one panel on a shared y-axis.
+Use this when you want to compare signal shape rather than absolute levels.
+
+```{python}
+#| fig-cap: "Overlay of two Blueprint RNA tracks at the ACTB locus. One panel, one y-axis, colors distinguish the two samples."
+fig = GenomicFigure(theme="publication")
+fig.scalebar()
+fig.bigwig_overlay(
+    list(BLUEPRINT_RNA_FILES.values()),
+    title="Blueprint plasma-cell RNA overlay",
+    colors=["#FF9D1B", "#1E5DF8"],
+    alpha=0.65,
+    height=0.9,
+    label_on_track=True,
+    label_box_enabled=True,
+    label_box_alpha=0.95,
+    title_height=0.5,
+    scale_height=0.5,
+    plot_scale=True,
+    style=PlotStyle.FRAGMENT,
+)
+fig.genes("hg38", height=0.55)
+fig.axis()
+fig.plot(ACTB_REGION, extend=10_000)
+```
+
+---
+
+## Example 3: signal + peaks + curated BED at the LYZ locus
+
+A three-layer review plot: BigWig signal, hub peak calls from a remote BigBed,
+and a checked-in BED of candidate loci for follow-up.
+
+```{python}
+#| fig-cap: "Blueprint monocyte H3K27ac signal, hub peak calls, and curated candidate peaks at the LYZ locus."
+fig = GenomicFigure(theme="publication")
+fig.scalebar()
+fig.bigwig(
+    BLUEPRINT_MONOCYTE_BW,
+    title="Monocyte H3K27ac",
+    style=PlotStyle.FRAGMENT,
+    height=0.6,
+    color="#d9485f",
+    label_on_track=True,
+    label_box_enabled=True,
+    label_box_alpha=0.95,
+    title_height=0.5,
+    scale_height=0.5,
+    plot_scale=True,
+)
+fig.bed(
+    BLUEPRINT_MONOCYTE_BB,
+    title="H3K27ac peaks (bigBed)",
+    color="#f59e0b",
+    draw_edges=False,
+    height=0.42,
+    label_on_track=True,
+    label_box_enabled=True,
+    label_box_alpha=0.95,
+    title_height=0.7,
+    show_labels=False,
+)
+fig.bed(
+    CANDIDATE_BED,
+    title="Curated follow-up peaks",
+    color="#0f766e",
+    draw_edges=True,
+    show_labels=True,
+    label_field="name",
+    font_size=7,
+    height=0.5,
+    label_on_track=True,
+    label_box_enabled=True,
+    label_box_alpha=0.95,
+    title_height=0.7,
+)
+fig.genes("hg38", height=0.55)
+fig.axis()
+fig.plot(LYZ_REGION, extend=10_000)
+```

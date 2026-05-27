@@ -12,9 +12,17 @@ Choose a track by the visual question you need to answer. The tables are compact
 ## Signal tracks
 
 ```{python}
-from docs._examples import REGION, style_comparison
+from plotnado import GenomicFigure
+from plotnado.examples import REGION, signal
+# signal() → DataFrame(chrom, start, end, value) — replace with a BigWig path/URL or DataFrame
 
-style_comparison().plot(REGION)
+fig = GenomicFigure(track_height=1.15)
+fig.scalebar()
+fig.bigwig(signal(phase=0.0), title="fill", style="fill", color="#1f77b4")
+fig.bigwig(signal(phase=0.8), title="fragment", style="fragment", color="#d62728")
+fig.bigwig(signal(phase=1.6), title="scatter", style="scatter", color="#2ca02c", scatter_point_size=10)
+fig.bigwig(signal(phase=2.4), title="std", style="std", color="#9467bd")
+fig.plot(REGION)
 ```
 
 | Track / aliases | Use when | Input |
@@ -26,17 +34,22 @@ style_comparison().plot(REGION)
 
 There is no separate `GenomicFigure.bedgraph()` method; bedGraph-like inputs use `bigwig`.
 
+Pass `n_bins=N` or `bin_size=B` to any bigwig-family track to rebin to a fixed resolution. Bins are computed as weighted averages of overlapping source intervals and work for both BigWig files and DataFrames.
+
 ## Interval, peak, and link tracks
 
 ```{python}
 from plotnado import GenomicFigure
-from docs._examples import REGION, intervals, links, narrowpeaks
+from plotnado.examples import REGION, intervals, links, narrowpeaks
+# intervals() → DataFrame(chrom, start, end, name) — replace with a BED/BigBed path, URL, or DataFrame
+# narrowpeaks() → DataFrame(chrom, start, end, name, score, strand, signalValue, pValue, qValue, peak) — replace with a .narrowPeak path or DataFrame
+# links() → DataFrame(chrom1, start1, end1, chrom2, start2, end2, score) — replace with a BEDPE path or DataFrame
 
 fig = GenomicFigure(track_height=1.1)
-fig.axis()
 fig.bed(intervals(), title="BED", display="expanded", show_labels=True)
 fig.narrowpeak(narrowpeaks(), title="narrowPeak", color_by="signalValue", cmap="Oranges", show_summit=True)
 fig.links(links(), title="Links", color_by_score=True, cmap="viridis")
+fig.axis()
 fig.plot(REGION)
 ```
 

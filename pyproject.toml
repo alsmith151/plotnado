@@ -63,7 +63,7 @@ where = ["."]
 include = ["plotnado*"]
 
 [tool.setuptools.package-data]
-plotnado = ["data/gene_bed_files/*", "py.typed"]
+plotnado = ["data/gene_bed_files/*", "data/*.bed", "py.typed"]
 
 
 

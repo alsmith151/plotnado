@@ -10,9 +10,16 @@ execute:
 ## Single region
 
 ```{python}
-from docs._examples import REGION, quickstart_figure
+from plotnado import GenomicFigure
+from plotnado.examples import REGION, signal, intervals
+# signal() → DataFrame(chrom, start, end, value) — replace with a BigWig path/URL or DataFrame
+# intervals() → DataFrame(chrom, start, end, name) — replace with a BED/BigBed path, URL, or DataFrame
 
-fig = quickstart_figure()
+fig = GenomicFigure(width=11, track_height=1.25)
+fig.scalebar()
+fig.bigwig(signal(scale=1.15), title="Synthetic signal", style="fill", color="#1f77b4")
+fig.bed(intervals(), title="Intervals", display="expanded", show_labels=True)
+fig.axis()
 fig.plot(REGION)
 ```
 
