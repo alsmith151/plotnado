@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools >= 61.0", "wheel", "setuptools_scm[toml]>=6.2"]
+requires = ["setuptools >= 61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,7 +9,8 @@ description = "A simple plotting library for making genomic tracks"
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "GPL-3.0-or-later" }
-dynamic = ["version", "dependencies"]
+version = "0.3.0"
+dynamic = ["dependencies"]
 keywords = ["genomics", "bioinformatics", "plotting", "genome-browser", "tracks"]
 classifiers = [
 	"Development Status :: 3 - Alpha",
@@ -66,10 +67,6 @@ include = ["plotnado*"]
 plotnado = ["data/gene_bed_files/*", "py.typed"]
 
 
-
-[tool.setuptools_scm]
-local_scheme = "no-local-version"
-write_to = "plotnado/_version.py"
 
 [project.urls]
 Homepage = "https://github.com/alsmith151/plotnado"

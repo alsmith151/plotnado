@@ -75,8 +75,9 @@ from .tracks import (
 )
 
 try:
-    from ._version import version as __version__
-except ImportError:
+    from importlib.metadata import version as _version
+    __version__ = _version("plotnado")
+except Exception:
     __version__ = "unknown"
 
 __all__ = [
