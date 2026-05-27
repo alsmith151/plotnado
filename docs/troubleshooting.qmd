@@ -8,61 +8,57 @@ from plotnado import GenomicFigure
 GenomicFigure.available_track_aliases()
 ```
 
+Check [Track Aliases](track_aliases.qmd) if the alias comes from YAML or config.
+
 ## Empty plots
 
 - Confirm the region overlaps your data.
-- Check chromosome naming consistency (`chr1` vs `1`).
-- Validate required columns for your track input.
+- Check chromosome naming consistency such as `chr1` versus `1`.
+- Validate required columns for in-memory tables.
+- For file-backed tracks, confirm paths are visible from the process running PlotNado.
 
-## Overlay panel looks squashed or uses the wrong scale
+## Overlay panel looks squashed
 
-Check these points in order:
-
-- Put `autoscale_group` on the overlay track itself when the whole panel should match sibling signal tracks.
-- Use `fig.autoscale(True)` if you want figure-wide shared limits derived from all signal-like tracks, including overlays.
-- Remember that explicit overlay `min_value` / `max_value` intentionally overrides grouped or global autoscale on that edge.
+Put `autoscale_group` on the overlay track itself when the entire panel should match sibling signal tracks.
 
 ```python
+fig.autoscale(True)
 fig.overlay(
-	[signal_a, signal_b],
-	title="Overlay",
-	autoscale_group="signal-panels",
+    [signal_a, signal_b],
+    title="Overlay",
+    autoscale_group="signal-panels",
 )
 ```
 
-Output:
+If two series need fundamentally different y-ranges, split them into separate panels.
 
-![Overlay troubleshooting output](images/aesthetics/overlay_autoscale.png)
-
-If two series need fundamentally different scales to remain interpretable, split them into separate panels instead of forcing them into one overlay.
-
-## Overlay label shows an unexpected range
-
-The scale label mirrors the limits that were active when the overlay was rendered.
-
-- If the label should match sibling panels, use `autoscale_group` on the overlay.
-- If the label should stay pinned, set overlay `min_value` / `max_value` explicitly.
-
-## Docs build fails with Python version error
+## Docs build fails with Python version errors
 
 PlotNado requires Python 3.12+.
 
 ```bash
 uv run python --version
-quarto render
+uv sync --extra dev --extra docs
+QUARTO_PYTHON=.venv/bin/python quarto render
 ```
 
-## TOML export/import errors
+If Quarto reports that Jupyter or PyYAML is missing from a system Python, it is
+not using the uv environment. Set `QUARTO_PYTHON=.venv/bin/python`.
 
-Install optional dependencies:
+## CLI command is missing
+
+Check the installed command surface:
 
 ```bash
-uv sync --extra docs
+uv run plotnado --help
+uv run plotnado init --help
+uv run plotnado validate --help
+uv run plotnado plot --help
 ```
 
-## I cannot find a track option in the docs
+There is no `plotnado track-options` command. Use the Python runtime helpers instead.
 
-Use runtime discovery first:
+## I cannot find a track option
 
 ```python
 from plotnado import GenomicFigure
@@ -71,4 +67,4 @@ GenomicFigure.track_options("overlay")
 GenomicFigure.track_options_markdown("bigwig")
 ```
 
-Then compare with [Aesthetics Reference](aesthetics_reference.qmd) and [Reference](reference.qmd).
+Then compare with [Compact Options](option_lookup.qmd) and [Reference](reference.qmd).

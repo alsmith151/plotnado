@@ -1,57 +1,78 @@
+---
+jupyter: python3
+execute:
+  warning: false
+  message: false
+---
+
 # Recipes
 
-Practical combinations of options and track types, with rendered output so you can see what the recipe actually produces.
+Recipes combine several options into patterns that are useful in real figures.
+
+## Compare styles before choosing one
+
+```{python}
+from docs._examples import REGION, style_comparison
+
+fig = style_comparison()
+fig.plot(REGION)
+```
+
+Caption: render style comparisons in the docs or notebook instead of relying on remembered defaults.
 
 ## Autoscale + overlay + highlight
 
-- Enable global autoscaling with `gf.autoscale(True)`.
-- Put `autoscale_group` on the overlay itself when the overlay should sync with nearby signal panels.
-- Mark regions with `gf.highlight(...)` and `gf.highlight_style(...)`.
+```{python}
+from docs._examples import REGION, overlay_comparison
 
-![Autoscale + overlay + highlight](images/examples/recipe_autoscale_overlay_highlight.png)
-
-Use this when you want one overlay panel to sit beside ordinary signal tracks without silently drifting onto a different y-scale.
-
-Source: [examples/recipes/01_autoscale_overlay_highlight.py](https://github.com/alsmith151/plotnado/blob/main/examples/recipes/01_autoscale_overlay_highlight.py)
-
-## Theme + labels + TOML round-trip
-
-- Apply publication defaults with `theme="publication"`.
-- Control labels with shorthand kwargs (`title`, `title_color`, `title_location`).
-- Save and reload figure definitions with TOML.
-
-![Theme, labels, and TOML](images/examples/recipe_theme_labels.png)
-
-Source: [examples/recipes/02_theme_labels_toml.py](https://github.com/alsmith151/plotnado/blob/main/examples/recipes/02_theme_labels_toml.py)
-
-## Autocolor + color groups
-
-- Enable auto palette assignment with `gf.autocolor()`.
-- Use `color_group` so related tracks share one color.
-
-```python
-gf = GenomicFigure(theme="publication")
-gf.autocolor()
-gf.bed("THP1_peaks.bigBed", title="THP1 peaks", color_group="THP1")
-gf.bigwig("THP1_signal.bw", title="THP1 signal", color_group="THP1")
-gf.bed("K562_peaks.bigBed", title="K562 peaks", color_group="K562")
-gf.bigwig("K562_signal.bw", title="K562 signal", color_group="K562")
+fig = overlay_comparison()
+fig.plot(REGION)
 ```
 
-![Autocolor and color groups](images/aesthetics/autocolor.png)
+Use this when one overlay panel should sit next to ordinary signal tracks without drifting onto a different scale.
 
-## Track-style comparisons
+## Autocolor + related interval tracks
 
-- Compare BigWig styles (`fill`, `fragment`, `scatter`, `std`).
-- Compare BED and narrowPeak interval behavior.
+```{python}
+from plotnado import GenomicFigure
+from docs._examples import REGION, intervals, signal
 
-![BigWig style comparison](images/examples/track_bigwig_styles.png)
+fig = GenomicFigure(track_height=1.05).autocolor("tab10")
+fig.bigwig(signal(phase=0.0), title="Condition A signal", color_group="A")
+fig.bed(intervals(), title="Condition A intervals", color_group="A", display="expanded")
+fig.bigwig(signal(phase=1.1), title="Condition B signal", color_group="B")
+fig.bed(intervals().assign(name=["b1", "b2", "b3", "b4"]), title="Condition B intervals", color_group="B", display="expanded")
+fig.plot(REGION)
+```
 
-![BED and narrowPeak comparison](images/examples/track_bed_and_narrowpeak.png)
+Use the same `color_group` for tracks that represent the same sample, condition, or assay.
 
-Scripts:
+## Interval and link context
 
-- [examples/tracks/01_bigwig_styles.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/01_bigwig_styles.py)
-- [examples/tracks/02_bed_and_narrowpeak.py](https://github.com/alsmith151/plotnado/blob/main/examples/tracks/02_bed_and_narrowpeak.py)
+```{python}
+from plotnado import GenomicFigure
+from docs._examples import REGION, intervals, links, narrowpeaks
 
-More rendered runnable outputs, including quickstart, links/hline/vline, and gene-label examples, are collected in the [Living Gallery](example_coverage.qmd).
+fig = GenomicFigure(track_height=1.1)
+fig.axis()
+fig.bed(intervals(), title="Annotations", display="expanded", show_labels=True)
+fig.narrowpeak(narrowpeaks(), title="Peaks", color_by="signalValue", cmap="Oranges")
+fig.links(links(), title="Interactions", color_by_score=True, cmap="viridis")
+fig.plot(REGION)
+```
+
+Use interval tracks for local annotations and `links()` for paired genomic anchors.
+
+## Save reusable figure definitions
+
+```python
+fig.to_toml("figure.toml")
+loaded = GenomicFigure.from_toml("figure.toml")
+loaded.save("figure.png", region="chr1:1,000,000-1,100,000")
+```
+
+Run the maintained example suite with:
+
+```bash
+uv run python examples/run_examples.py
+```

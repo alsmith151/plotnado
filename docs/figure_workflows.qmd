@@ -1,139 +1,89 @@
+---
+jupyter: python3
+execute:
+  warning: false
+  message: false
+---
+
 # Figure Workflows
 
-## Single region plot
+## Single region
 
-```python
-gf.plot("chr1:1,000,000-1,100,000")
+```{python}
+from docs._examples import REGION, quickstart_figure
+
+fig = quickstart_figure()
+fig.plot(REGION)
 ```
 
-Output:
-
-![Single region plot output](images/examples/basic_figure.png)
-
-## Extend around region
+## Extend around a region
 
 ```python
-gf.plot("chr1:1,000,000-1,050,000", extend=0.25)
+fig.plot("chr1:1,000,000-1,050,000", extend=0.25)
 ```
 
-Output:
-
-![Extended region plot output](images/examples/basic_figure.png)
+`extend=0.25` adds 25% of the requested span on both sides before rendering.
 
 ## Plot many regions
 
 ```python
-gf.plot_regions(["chr1:1,000,000-1,050,000", "chr1:1,060,000-1,110,000"], ncols=2)
+fig.plot_regions(
+    ["chr1:1,000,000-1,050,000", "chr1:1,060,000-1,110,000"],
+    ncols=2,
+)
 ```
 
-Output:
-
-![Multi-region plot output](images/examples/advanced_features.png)
-
-`plot_regions` also accepts a BED path.
+`plot_regions()` also accepts a BED path.
 
 ## Plot by gene symbol
 
 ```python
-gf.plot_gene("GNAQ", extend=0.5)
+fig.genes("hg38")
+fig.plot_gene("GNAQ", extend=0.5)
 ```
 
-Output:
-
-![Gene plot output](images/examples/recipe_gene_label_strategies.png)
+Gene-name resolution needs a genome-aware genes track.
 
 ## Load from an IGV session
-
-Convert a saved IGV `.xml` session directly into a `GenomicFigure`:
 
 ```python
 from plotnado import GenomicFigure
 
 fig, locus = GenomicFigure.from_igv_session("session.xml")
-fig.plot(locus)  # locus is the session's saved view region
+fig.plot(locus)
 ```
 
-Output:
+Track colors, fixed scales, autoscale groups, and gene annotations are preserved where the IGV session provides them.
 
-![IGV session plot output](images/examples/basic_figure.png)
-
-Track colors, fixed scales (`min`/`max`), autoscale groups, and gene annotations are
-all preserved. The session locus is returned alongside the figure so you can use it
-directly or override it.
-
-For lower-level access, `parse_igv_session` returns the intermediate `IgvSession`
-object (`.template`, `.locus`, `.genome`):
+For lower-level access:
 
 ```python
-from plotnado import parse_igv_session, GenomicFigure
+from plotnado import GenomicFigure, parse_igv_session
 
 session = parse_igv_session("session.xml")
 fig = GenomicFigure.from_template(session.template)
 fig.plot(session.locus)
 ```
 
-Output:
-
-![Parsed IGV session output](images/examples/basic_figure.png)
-
-## Edit tracks after building a figure
-
-Access and mutate individual tracks by title (case-insensitive) or index:
+## Edit tracks after building
 
 ```python
-fig["25_NK"].color = "steelblue"
+fig["Synthetic signal"].color = "steelblue"
 fig[0].height = 2.0
+fig.update_track("Synthetic signal", color="purple", max_value=500)
+fig.update_track(track_type="bigwig", height=0.8)
+fig.remove_track("Intervals")
+fig.bigwig(extra_signal, title="Extra", position="top")
 ```
 
-Update a single track by key:
-
-```python
-fig.update_track("CAT-MV411_H3K27ac", color="purple", max_value=500)
-```
-
-Update multiple tracks at once — omit `key` and optionally filter:
-
-```python
-fig.update_track(height=0.2)                                    # all tracks
-fig.update_track(track_type="bigwig", height=0.3)               # by type
-fig.update_track(group="igv_group_3", max_value=1000.0)         # by autoscale group
-fig.update_track(where=lambda t: t.title and "CD" in t.title, color="coral")
-```
-
-Remove a track:
-
-```python
-fig.remove_track("25_NK")
-fig.remove_track(0)
-```
-
-Add a track at the top or bottom (default):
-
-```python
-fig.bigwig("new.bw", title="extra", position="top")
-fig.genes("hg38", position="top")
-```
-
-All editing methods return `self` for chaining:
-
-```python
-(fig
-    .remove_track("01_HSC")
-    .update_track(track_type="bigwig", height=0.25)
-    .bigwig("new.bw", title="extra", position="top")
-)
-```
+Track lookup by title is case-insensitive. Editing methods return `self` for chaining.
 
 ## Save and load figure configs
 
 ```python
-gf.to_toml("figure.toml")
+fig.to_toml("figure.toml")
 loaded = GenomicFigure.from_toml("figure.toml")
-loaded.save("figure.png", "chr1:1,000,000-1,100,000")
+loaded.save("figure.png", region="chr1:1,000,000-1,100,000")
 ```
 
-Output:
-
-![TOML round-trip output](images/examples/recipe_theme_labels_from_toml.png)
-
-See [examples/recipes/02_theme_labels_toml.py](https://github.com/alsmith151/plotnado/blob/main/examples/recipes/02_theme_labels_toml.py) for a full round-trip script.
+For YAML template workflows, use [CLI](cli.qmd) and [Template Schema](template_schema.qmd).

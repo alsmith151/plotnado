@@ -1,38 +1,34 @@
 # CLI
 
-PlotNado includes a template-driven CLI for users who prefer a file-based workflow.
+PlotNado's CLI is a YAML-template workflow:
 
-The standard flow is:
+1. `plotnado init` infers a template from data files.
+2. `plotnado validate` checks the template before plotting.
+3. `plotnado plot` renders one or more regions.
 
-1. `plotnado init` to infer a YAML template from track files
-2. `plotnado validate` to catch missing files or bad group references
-3. `plotnado plot` to render one or more regions from that template
+Run commands through `uv` in the source tree:
+
+```bash
+uv run plotnado --help
+```
 
 ## `plotnado init`
 
-Generate a starting template from track files:
-
 ```bash
-plotnado init sample1.bw sample2.bw peaks.narrowpeak --auto --output template.yaml
+uv run plotnado init sample1.bw sample2.bw peaks.narrowpeak --auto --output template.yaml
 ```
 
 Useful options:
 
-- `--output` / `-o`: where to write the YAML file
-- `--genome` / `-g`: set a default genome such as `hg38` or `mm10`
-- `--group-by`: group tracks by a predefined strategy or regex
-- `--auto`: skip interactive prompts and use inferred defaults
-- `--no-genes`: do not add a genes guide track by default
+| Option | Purpose |
+|---|---|
+| `--output`, `-o` | Write the YAML file to a specific path. |
+| `--genome`, `-g` | Set a default genome such as `hg38` or `mm10`. |
+| `--group-by` | Group files by a built-in strategy or regex. |
+| `--auto` | Use inferred defaults without interactive prompts. |
+| `--no-genes` | Do not add the genes guide track. |
 
-Examples:
-
-```bash
-plotnado init *.bw --auto
-plotnado init sample1_H3K27ac.bw sample1_H3K4me3.bw sample2_H3K27ac.bw --group-by sample
-plotnado init control_r1.bw control_r2.bw treat_r1.bw treat_r2.bw --group-by '([^_]+)_r[0-9]'
-```
-
-The generated template is plain YAML and intended to be edited. A typical file looks like:
+Example template:
 
 ```yaml
 genome: hg38
@@ -50,57 +46,42 @@ tracks:
 
 ## `plotnado validate`
 
-Validate a template before rendering:
-
 ```bash
-plotnado validate template.yaml
+uv run plotnado validate template.yaml
 ```
 
-Validation checks:
-
-- template can be loaded as YAML
-- local track files exist
-- group references resolve against track `name` or `title`
-- the template compiles into a render plan cleanly
+Validation checks YAML parsing, local file existence, group references, and template compilation.
 
 ## `plotnado plot`
 
-Render a template for one or more regions:
-
 ```bash
-plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output output.png
+uv run plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output output.png
 ```
-
-Output:
-
-![CLI plot output](images/examples/quickstart_first_plot.png)
 
 Useful options:
 
-- `--region` / `-r`: genomic region or gene name; repeat for multiple outputs
-- `--output` / `-o`: explicit output path for a single region
-- `--format` / `-f`: output format such as `png`, `pdf`, `svg`, or `jpg`
-- `--width` / `-w`: override template width in inches
-- `--dpi`: output resolution
+| Option | Purpose |
+|---|---|
+| `--region`, `-r` | Genomic region or gene name; repeat for multiple outputs. |
+| `--output`, `-o` | Explicit output path for a single region. |
+| `--format`, `-f` | Output format such as `png`, `pdf`, `svg`, or `jpg`. |
+| `--width`, `-w` | Override template width in inches. |
+| `--dpi` | Output resolution. |
 
 Examples:
 
 ```bash
-plotnado plot template.yaml --region chr1:1,000,000-2,000,000
-plotnado plot template.yaml --region GNAQ
-plotnado plot template.yaml --region chr1:1,000,000-2,000,000 --region chr2:5,000,000-6,000,000
-plotnado plot template.yaml --region chr1:1,000,000-2,000,000 --output plot.pdf --dpi 300
+uv run plotnado plot template.yaml --region chr1:1,000,000-2,000,000
+uv run plotnado plot template.yaml --region GNAQ
+uv run plotnado plot template.yaml --region chr1:1,000,000-2,000,000 --region chr2:5,000,000-6,000,000
+uv run plotnado plot template.yaml --region chr1:1,000,000-2,000,000 --output plot.pdf --dpi 300
 ```
 
-Output:
-
-![Additional CLI plot output](images/examples/quickstart_first_plot.png)
-
-Gene-name resolution requires `genome` to be defined in the template.
+Gene-name resolution requires `genome` in the template.
 
 ## Python bridge
 
-The CLI template format is not separate from the Python API. The same template can be loaded directly in Python:
+The template format is shared with the Python API:
 
 ```python
 from plotnado import GenomicFigure
@@ -109,6 +90,4 @@ fig = GenomicFigure.from_template("template.yaml")
 fig.save("output.png", region="chr1:1,000,000-1,100,000")
 ```
 
-Output:
-
-![Python bridge output](images/examples/quickstart_first_plot.png)
+See [Template Schema](template_schema.qmd) for the compact field reference.

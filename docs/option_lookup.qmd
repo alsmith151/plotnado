@@ -1,0 +1,48 @@
+---
+jupyter: python3
+execute:
+  warning: false
+  message: false
+---
+
+# Compact Options
+
+Use this page for a small runtime lookup. For learning, start with [Quick Start](quickstart.qmd), [Track Construction](quickstart_tracks.qmd), and [Aesthetics](aesthetics.qmd).
+
+## Aliases
+
+```{python}
+#| output: asis
+from plotnado import GenomicFigure
+
+aliases = GenomicFigure.available_track_aliases()
+rows = ["| Alias | Track class |", "|---|---|"]
+rows.extend(f"| `{alias}` | `{target}` |" for alias, target in sorted(aliases.items())[:24])
+print("\n".join(rows))
+```
+
+## High-value option groups
+
+```{python}
+#| output: asis
+from plotnado import GenomicFigure
+
+for alias in ["bigwig", "bed", "narrowpeak", "overlay", "genes", "links"]:
+    options = GenomicFigure.track_options(alias)
+    print(f"### `{alias}`")
+    print("| Section | Fields |")
+    print("|---|---|")
+    for section, fields in options.items():
+        field_names = ", ".join(f"`{name}`" for name in list(fields)[:12])
+        print(f"| `{section}` | {field_names} |")
+    print()
+```
+
+For full details in your installed version:
+
+```python
+from plotnado import GenomicFigure
+
+GenomicFigure.track_options("bigwig")
+GenomicFigure.track_options_markdown("bigwig")
+```

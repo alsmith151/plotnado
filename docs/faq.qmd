@@ -6,7 +6,7 @@ No. PlotNado is independent.
 
 ## Can I use DataFrames instead of files?
 
-Yes. Signal and interval-style tracks support in-memory tabular inputs where applicable.
+Yes. Signal and interval-style tracks support in-memory tabular inputs where applicable. The docs examples use DataFrames so Quarto renders them without external files.
 
 ## How do I discover all options for a track?
 
@@ -17,11 +17,7 @@ GenomicFigure.track_options("bigwig")
 GenomicFigure.track_options_markdown("bigwig")
 ```
 
-or CLI:
-
-```bash
-plotnado track-options bigwig
-```
+There is no `plotnado track-options` CLI command.
 
 ## How should I scale overlays?
 
@@ -29,15 +25,29 @@ Treat the overlay as the unit of scaling:
 
 - Use `autoscale_group` on the overlay track when it should match neighboring signal panels.
 - Use overlay `min_value` / `max_value` only when you want to pin that edge deliberately.
-- Use separate panels instead of an overlay when the signals need independent ranges.
+- Use separate panels when the signals need independent ranges.
 
-## What is the recommended coding style?
+## What is the recommended workflow?
 
-Use a single `GenomicFigure` instance (`gf`) and chain helper methods. See [Track Construction](quickstart_tracks.qmd).
+Use `uv`:
+
+```bash
+uv sync --extra dev --extra docs
+uv run pytest tests/
+uv run python examples/run_examples.py
+uv run plotnado --help
+```
 
 ## How do I share figure definitions?
 
+Use YAML templates for CLI workflows and TOML when you want to save a Python-built figure.
+
 ```python
-gf.to_toml("plot.toml")
+fig.to_toml("plot.toml")
 loaded = GenomicFigure.from_toml("plot.toml")
+```
+
+```bash
+uv run plotnado init *.bw --auto --output template.yaml
+uv run plotnado validate template.yaml
 ```

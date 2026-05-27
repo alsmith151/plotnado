@@ -1,45 +1,60 @@
+---
+jupyter: python3
+execute:
+  warning: false
+  message: false
+---
+
 # Track Aliases
 
-`GenomicFigure.add_track()` accepts either a concrete track object or a string alias.
+`GenomicFigure.add_track()` accepts a concrete track object or a string alias. Aliases are the bridge between Python, YAML templates, and generated config.
 
 ## Alias usage
 
-```python
+```{python}
 from plotnado import GenomicFigure
+from docs._examples import REGION, signal
 
-gf = GenomicFigure()
-gf.add_track("scalebar")
-gf.add_track("axis")
-gf.add_track("genes", genome="hg38")
-gf.add_track("bigwig", data="signal.bw", style="fill")
+fig = GenomicFigure().autocolor("Set2")
+fig.add_track("scalebar")
+fig.add_track("axis")
+fig.add_track("bigwig", data=signal(phase=0.0), title="Replicate A", style="fill")
+fig.add_track("bigwig", data=signal(phase=0.9), title="Replicate B", style="fill")
+fig.plot(REGION)
 ```
 
-Output:
-
-![Alias usage output](images/examples/quickstart_aliases_and_options.png)
+Caption: alias-added tracks render the same way as helper-method tracks.
 
 ## How kwargs are routed
 
-- Track constructor fields: passed directly.
-- Aesthetics fields (for example `color`, `alpha`, `style`): routed to `aesthetics`.
-- Label fields (for example `title`, `title_color`, `title_location`): routed to `label`.
-- If both shorthand and nested objects are supplied, shorthand values win for overlapping keys.
+- Track constructor fields are passed directly.
+- Aesthetics fields such as `color`, `alpha`, and `style` are routed to `aesthetics`.
+- Label fields such as `title`, `title_color`, and `title_location` are routed to `label`.
+- If shorthand and nested objects are both supplied, shorthand values win for overlapping keys.
 
 ## Common aliases
 
-- Structural: `scalebar`, `axis`, `genes`, `spacer`
-- Signal: `bigwig`, `overlay`, `bigwig_collection`, `bigwig_diff`
-- Interval/annotation: `bed`, `narrowpeak`, `links`, `highlight`, `hline`, `vline`
-- Matrix: `cooler`, `capcruncher`, `cooler_average`
-- QuantNado: `quantnado_coverage`, `quantnado_stranded_coverage`, `quantnado_methylation`, `quantnado_variant`
+| Family | Aliases |
+|---|---|
+| Structural | `scalebar`, `scale`, `axis`, `spacer` |
+| Signal | `bigwig`, `bw`, `signal`, `bedgraph`, `overlay`, `bigwig_overlay`, `bigwig_collection`, `bigwig_diff` |
+| Interval | `bed`, `annotation`, `unknown`, `narrowpeak`, `links`, `highlight`, `hline`, `vline` |
+| Genes | `genes`, `gene` |
+| Optional matrix | `cooler`, `cooler_average`, `capcruncher` |
+| Optional QuantNado | `quantnado_coverage`, `quantnado_stranded_coverage`, `quantnado_methylation`, `quantnado_variant` |
 
-## Get the full, current alias map
+Optional matrix and QuantNado aliases require the corresponding dependencies and data formats.
 
-```python
+## Current alias map
+
+```{python}
+#| output: asis
 from plotnado import GenomicFigure
 
 aliases = GenomicFigure.available_track_aliases()
-print("\n".join(f"{k} -> {v}" for k, v in sorted(aliases.items())))
+rows = ["| Alias | Track class |", "|---|---|"]
+rows.extend(f"| `{alias}` | `{target}` |" for alias, target in sorted(aliases.items()))
+print("\n".join(rows))
 ```
 
-Use [Track Catalog](track_catalog.qmd) for track families and [Aesthetics Reference](aesthetics_reference.qmd) for full field-level options.
+Use [Track Catalog](track_catalog.qmd) for choosing track families and [Compact Options](option_lookup.qmd) for field lookup.

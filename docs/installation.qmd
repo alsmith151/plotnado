@@ -1,109 +1,69 @@
 # Installation
 
+PlotNado uses standard Python packaging, but the recommended workflow is `uv`.
+
 ## Requirements
 
 - Python 3.12+
-- `uv` recommended, `pip` supported
+- `uv`
+- Quarto, only if you are building the public documentation site
 
 ## Install `uv`
-
-If you do not already have `uv`, install it first:
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-On macOS you can also use:
+On macOS:
 
 ```bash
 brew install uv
 ```
 
-## Install PlotNado with `uv`
+## Use PlotNado as a CLI
 
-For a local virtual environment:
-
-```bash
-uv venv
-source .venv/bin/activate
-uv pip install plotnado
-```
-
-For a global CLI install:
+For a user-level command:
 
 ```bash
 uv tool install plotnado
+plotnado --help
 ```
 
-## Install PlotNado with `pip`
-
-If you prefer the standard Python packaging workflow:
+From a checked-out repository, prefer:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install plotnado
+uv run plotnado --help
 ```
 
-## Install PlotNado in a Conda environment
-
-If you already use Conda or Miniforge for scientific Python work:
-
-```bash
-conda create -n plotnado python=3.12
-conda activate plotnado
-pip install plotnado
-```
-
-For development in a Conda environment:
+## Develop from source
 
 ```bash
 git clone https://github.com/alsmith151/plotnado
 cd plotnado
-conda create -n plotnado-dev python=3.12
-conda activate plotnado-dev
-pip install -e .[dev,docs]
-pre-commit install
-```
-
-## Development install with `uv`
-
-```bash
-git clone https://github.com/alsmith151/plotnado
-cd plotnado
-uv venv
-source .venv/bin/activate
 uv sync --extra dev --extra docs
-uv run pre-commit install
+uv run pytest tests/
+uv run python examples/run_examples.py
+uv run plotnado --help
 ```
 
-## Verify installation
-
-```bash
-uv run python -c "import plotnado; print(plotnado.__version__)"
-uv run plotnado validate --help
-```
+`uv sync --extra dev --extra docs` installs the package, test tools, and documentation dependencies into the project environment.
 
 ## Build docs locally
 
 ```bash
-quarto render
-quarto preview
+uv sync --extra dev --extra docs
+QUARTO_PYTHON=.venv/bin/python quarto render
+QUARTO_PYTHON=.venv/bin/python quarto preview
 ```
 
-## Run tests
+The docs use executable Quarto Python cells. Most examples use deterministic in-memory data; optional cooler, CapCruncher, and QuantNado examples need their corresponding dependencies and fixture data.
 
-```bash
-uv run pytest tests/
-```
+## Pip and Conda
 
-## Development install with `pip`
-
-If you prefer not to use `uv`, the traditional workflow still works:
+`pip` and Conda environments can still install PlotNado, but project development and docs examples assume the `uv` commands above.
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -e .[dev,docs]
-pre-commit install
+pip install plotnado
 ```

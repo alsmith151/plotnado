@@ -1,48 +1,58 @@
+---
+jupyter: python3
+execute:
+  warning: false
+  message: false
+---
+
 # Best Practices
 
-Use this checklist when building figures for analysis reports or publications.
+Use this checklist when building figures for reports, papers, or reproducible
+analysis workflows.
 
 ## Build figures deterministically
 
-- Pin file paths and genome build explicitly (`genome="hg38"` rather than implicit defaults).
-- Use `fig.to_toml("figure.toml")` to version figure definitions with your analysis code.
-- Rebuild figures from TOML in CI or notebooks to avoid configuration drift.
+- Pin genome build explicitly (`genome="hg38"` rather than relying on context).
+- Prefer deterministic in-memory fixtures in docs and tests.
+- Use `fig.to_toml("figure.toml")` or YAML templates to version reusable figure definitions.
 
 ## Keep track construction readable
 
-- Prefer 4 to 8 tracks per panel for first-pass interpretation.
-- Group structural tracks first (`scalebar`, `axis`, `genes`), then signals, then annotations.
-- Use explicit titles on quantitative tracks so exported figures are self-describing.
+- Start with structural tracks (`scalebar`, `axis`, `genes`) when they help orientation.
+- Add signal tracks before interval/link annotations.
+- Keep titles short but explicit enough for exported figures.
 
 ## Keep colors semantically consistent
 
-- Call `gf.autocolor()` once near figure setup.
-- Reuse `color_group` across related tracks (for example BED + BigWig for one sample).
-- Avoid manually overriding colors unless you need a specific publication palette.
+Call `autocolor()` once and reuse `color_group` for related tracks.
 
-```python
-gf = GenomicFigure(theme="publication")
-gf.autocolor()
+```{python}
+from plotnado import GenomicFigure
+from docs._examples import REGION, intervals, signal
 
-gf.bed("A.bigBed", title="A peaks", color_group="A")
-gf.bigwig("A.bw", title="A signal", color_group="A")
-gf.bed("B.bigBed", title="B peaks", color_group="B")
-gf.bigwig("B.bw", title="B signal", color_group="B")
+fig = GenomicFigure(track_height=1.05).autocolor("Set2")
+fig.bigwig(signal(phase=0.0), title="A signal", color_group="A")
+fig.bed(intervals(), title="A intervals", color_group="A", display="expanded")
+fig.bigwig(signal(phase=1.2), title="B signal", color_group="B")
+fig.bed(
+    intervals().assign(name=["b1", "b2", "b3", "b4"]),
+    title="B intervals",
+    color_group="B",
+    display="expanded",
+)
+fig.plot(REGION)
 ```
-
-Output:
-
-![Semantically consistent colors output](images/aesthetics/autocolor.png)
 
 ## Use aliases for speed, models for strictness
 
-- Use alias helpers (`fig.bigwig(...)`, `fig.bed(...)`) for exploratory work.
-- Use explicit track classes when validating inputs/types in larger pipelines.
-- Inspect options at runtime before custom styling:
+- Use helper methods such as `fig.bigwig(...)` and `fig.bed(...)` for most work.
+- Use `fig.add_track(alias, ...)` when track type names come from config.
+- Use explicit track classes when a larger pipeline needs to validate or pass track objects.
 
 ```python
 from plotnado import GenomicFigure
 
+GenomicFigure.available_track_aliases()
 GenomicFigure.track_options("bigwig")
 GenomicFigure.track_options_markdown("genes")
 ```
@@ -50,22 +60,15 @@ GenomicFigure.track_options_markdown("genes")
 ## Validate input assumptions early
 
 - Confirm chromosome naming is consistent (`chr1` vs `1`).
-- Check region overlap before styling tweaks.
-- Keep coordinate systems and genome versions consistent across all inputs.
-
-## Use themes intentionally
-
-- Start with defaults for publication-ready output.
-- Apply a project-wide theme once (instead of per-track overrides) to reduce style drift.
-- Only disable theme (`theme=None`) when you need full manual control.
+- Check that the plotted region overlaps the input data.
+- Keep genome versions consistent across signals, intervals, and genes.
 
 ## Automate quality checks
 
-- Run tests and docs build before release:
-
 ```bash
-uv run pytest tests/ -v
-quarto render
+uv run pytest tests/
+uv run python examples/run_examples.py
+QUARTO_PYTHON=.venv/bin/python quarto render
 ```
 
-- Prefer example scripts in `examples/` as regression fixtures for plotting behavior.
+Example scripts in `examples/` are useful regression fixtures for plotting behavior.

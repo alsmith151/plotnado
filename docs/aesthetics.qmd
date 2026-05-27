@@ -1,241 +1,108 @@
+---
+jupyter: python3
+execute:
+  warning: false
+  message: false
+---
+
 # Aesthetics
 
-This guide is about the visual layer: how tracks scale, label, color, and share space. For exact field names, pair it with [Aesthetics Reference](aesthetics_reference.qmd).
-
-The rendered panels on this page are paired with live Quarto examples in the [Living Gallery](example_coverage.qmd), where the code cells and output are rendered together from the current package.
-
-Every track kwarg is routed automatically — aesthetics fields go into the style model, label fields go into the label model. You do not need to nest anything manually:
-
-```python
-fig.bigwig(
-    "signal.bw",
-    title="H3K27ac",        # label
-    title_color="black",    # label
-    style="fill",           # aesthetics
-    color="#1f77b4",        # aesthetics
-    alpha=0.8,              # aesthetics
-)
-```
-
-Output:
-
-![Automatic kwarg routing output](images/quickstart.png)
-
----
+This page focuses on choices you can see: signal styles, color grouping, label placement, and shared scales. For exhaustive runtime fields, use [Compact Options](option_lookup.qmd).
 
 ## BigWig styles
 
-`style` controls how the signal is drawn. The four options:
+`style` changes how a quantitative signal is drawn.
 
-Runnable example: [BigWig styles](example_coverage.qmd#bigwig-styles)
+```{python}
+from docs._examples import REGION, style_comparison
 
-```python
-fig.bigwig(signal, title="fill",     style="fill",     color="#1f77b4")
-fig.bigwig(signal, title="fragment", style="fragment", color="#d62728")
-fig.bigwig(signal, title="scatter",  style="scatter",  color="#2ca02c", scatter_point_size=10)
-fig.bigwig(signal, title="std",      style="std",      color="#9467bd")
+fig = style_comparison()
+fig.plot(REGION)
 ```
 
-![BigWig styles](images/aesthetics/bigwig_styles.png)
-
----
+Caption: `fill` is the default for continuous signal, `fragment` emphasizes bins, `scatter` shows individual values, and `std` draws a band-style summary.
 
 ## Color and alpha
 
-`color` accepts any matplotlib color string (hex, named, rgb tuple). `alpha` controls opacity 0–1.
+```{python}
+from plotnado import GenomicFigure
+from docs._examples import REGION, signal
 
-```python
-fig.bigwig(signal, title="color=#1f77b4  alpha=1.0", style="fill", color="#1f77b4", alpha=1.0)
-fig.bigwig(signal, title="color=#d62728  alpha=0.8", style="fill", color="#d62728", alpha=0.8)
-fig.bigwig(signal, title="color=#2ca02c  alpha=0.5", style="fill", color="#2ca02c", alpha=0.5)
-fig.bigwig(signal, title="color=#ff7f0e  alpha=0.2", style="fill", color="#ff7f0e", alpha=0.2)
+fig = GenomicFigure(track_height=1.0)
+fig.bigwig(signal(), title="alpha=1.0", style="fill", color="#1f77b4", alpha=1.0)
+fig.bigwig(signal(phase=0.8), title="alpha=0.65", style="fill", color="#d62728", alpha=0.65)
+fig.bigwig(signal(phase=1.6), title="alpha=0.35", style="fill", color="#2ca02c", alpha=0.35)
+fig.plot(REGION)
 ```
 
-![Color and alpha](images/aesthetics/color_alpha.png)
+Caption: use opacity to reduce visual dominance when several panels are compared.
 
----
+## Autocolor and groups
 
-## Automatic coloring
+Use `autocolor()` once, then assign related tracks the same `color_group`.
 
-Call `autocolor()` once and PlotNado assigns palette colors to all tracks. Use `color_group` to share a color across tracks that represent the same biological sample.
+```{python}
+from plotnado import GenomicFigure
+from docs._examples import REGION, intervals, signal
 
-```python
-fig = GenomicFigure()
-fig.autocolor()
-fig.bigwig(signal_a, title="Sample A signal", color_group="A", style="fill")
-fig.bed(peaks_a,    title="Sample A peaks",  color_group="A", display="expanded")
-fig.bigwig(signal_b, title="Sample B signal", color_group="B", style="fill")
-fig.bed(peaks_b,    title="Sample B peaks",  color_group="B", display="expanded")
+fig = GenomicFigure(track_height=1.1).autocolor("Set2")
+fig.bigwig(signal(phase=0.0), title="Sample A signal", color_group="A")
+fig.bed(intervals(), title="Sample A peaks", color_group="A", display="expanded")
+fig.bigwig(signal(phase=1.2), title="Sample B signal", color_group="B")
+fig.bed(intervals().assign(name=["b1", "b2", "b3", "b4"]), title="Sample B peaks", color_group="B", display="expanded")
+fig.plot(REGION)
 ```
 
-![Autocolor and color_group](images/aesthetics/autocolor.png)
-
----
+Caption: color groups keep semantically related tracks aligned without hard-coding every color.
 
 ## Label placement
 
-`title_location` positions the track title: `"left"` (default), `"right"`, or `"center"`. Set `label_on_track=True` to draw labels inside the track panel instead of in the margin.
+```{python}
+from plotnado import GenomicFigure
+from docs._examples import REGION, signal
 
-```python
-fig.bigwig(signal, title="title_location='left'",   title_location="left",   label_on_track=False)
-fig.bigwig(signal, title="title_location='right'",  title_location="right",  label_on_track=False)
-fig.bigwig(signal, title="title_location='center'", title_location="center", label_on_track=False)
-fig.bigwig(signal, title="label_on_track=True",     title_location="left",   label_on_track=True)
+fig = GenomicFigure(track_height=1.0)
+fig.bigwig(signal(), title="left margin", title_location="left")
+fig.bigwig(signal(phase=0.7), title="right margin", title_location="right")
+fig.bigwig(signal(phase=1.4), title="on track", label_on_track=True, label_box_enabled=True)
+fig.plot(REGION)
 ```
 
-![Label placement](images/aesthetics/label_placement.png)
-
----
-
-## Scale annotations and label boxes
-
-`plot_scale=True` adds a y-range annotation. `scale_location` places it `"left"` or `"right"`. `label_box_enabled=True` draws a translucent box behind label text.
-
-```python
-fig.bigwig(
-    signal,
-    title="label box + scale right",
-    label_box_enabled=True,
-    label_box_alpha=0.85,
-    title_location="left",
-    plot_scale=True,
-    scale_location="right",
-)
-fig.bigwig(
-    signal,
-    title="no box, scale left",
-    label_box_enabled=False,
-    plot_scale=True,
-    scale_location="left",
-)
-```
-
-![Scale and label box](images/aesthetics/scale_box.png)
-
----
-
-## BED and narrowPeak styling
-
-BED tracks support `display="expanded"` for stacked intervals and `show_labels=True` for name text. narrowPeak adds score-based coloring via `color_by` and optional summit lines.
-
-Runnable example: [BED and narrowPeak](example_coverage.qmd#bed-and-narrowpeak)
-
-```python
-fig.bed(
-    bed_df,
-    title="BED",
-    display="expanded",
-    show_labels=True,
-    color="#4dac26",
-)
-fig.narrowpeak(
-    narrowpeak_df,
-    title="narrowPeak",
-    color_by="signalValue",
-    cmap="Oranges",
-    show_labels=True,
-    show_summit=True,
-)
-```
-
-![BED and narrowPeak](images/aesthetics/bed_narrowpeak.png)
-
----
+Caption: on-track labels are useful for compact figures, especially with a label box.
 
 ## Overlay, autoscale, and highlights
 
-`overlay()` draws multiple signals in one panel. `autoscale(True)` and `autoscale_group` now treat overlays as first-class signal panels rather than leaving them on an isolated scale.
+```{python}
+from docs._examples import REGION, overlay_comparison
 
-Runnable example: [Overlay, autoscale, and highlight](example_coverage.qmd#overlay-autoscale-and-highlight)
-
-Key rules:
-
-- Overlay panels derive one shared y-range from the union of their component tracks.
-- `fig.autoscale(True)` includes overlay component values when it computes figure-wide limits.
-- `autoscale_group` should be set on the overlay track itself when the overlay should match sibling signal panels.
-- Explicit overlay `min_value` / `max_value` overrides grouped or global autoscale on that edge.
-- `highlight()` is orthogonal to scaling; it shades the genomic interval without changing the y-range.
-
-```python
-fig = GenomicFigure()
-fig.autoscale(True)
-fig.highlight("chr1:1,032,000-1,046,000")
-fig.highlight_style(color="#ffdd57", alpha=0.22)
-
-fig.bigwig(signal_a, title="Sample A", autoscale_group="g1", style="fill", color="#1f77b4")
-fig.bigwig(signal_b, title="Sample B", autoscale_group="g1", style="fill", color="#d62728")
-fig.overlay(
-    [signal_c, signal_d],
-    title="Overlay",
-    autoscale_group="g1",
-    colors=["#2ca02c", "#9467bd"],
-    alpha=0.55,
-)
+fig = overlay_comparison()
+fig.plot(REGION)
 ```
 
-![Overlay, autoscale, highlight](images/aesthetics/overlay_autoscale.png)
+Caption: `highlight()` marks a locus without changing y-limits; `autoscale_group` on the overlay synchronizes the panel with neighboring signal tracks.
 
-::: {.callout-tip title="When overlay scaling looks wrong"}
-If the overlay panel should match nearby signal tracks, put `autoscale_group` on the overlay itself. Putting it only on the nested component tracks does not synchronize the panel with sibling axes.
-:::
+## BED, narrowPeak, and links
 
----
+```{python}
+from plotnado import GenomicFigure
+from docs._examples import REGION, intervals, links, narrowpeaks
 
-## Gene display modes
-
-`display="collapsed"` fits all genes on one row. `display="expanded"` stacks overlapping genes.
-
-Related runnable example: [Gene label strategies](example_coverage.qmd#gene-label-strategies)
-
-```python
-fig.genes("hg38", title="display='collapsed'", display="collapsed")
-fig.genes("hg38", title="display='expanded'",  display="expanded")
+fig = GenomicFigure(track_height=1.1)
+fig.axis()
+fig.bed(intervals(), title="BED intervals", display="expanded", show_labels=True)
+fig.narrowpeak(narrowpeaks(), title="narrowPeak", color_by="signalValue", cmap="Oranges", show_summit=True)
+fig.links(links(), title="Links", color_by_score=True, cmap="viridis", alpha=0.8)
+fig.plot(REGION)
 ```
 
-![Gene display modes](images/aesthetics/gene_display.png)
-
----
-
-## Links
-
-Arc width and color can be driven by a `score` column using `color_by_score=True` and any matplotlib colormap.
-
-Runnable example: [Links, hline, and vline](example_coverage.qmd#links-hline-and-vline)
-
-```python
-fig.links(links_df, title="Loops", color_by_score=True, cmap="viridis", alpha=0.8)
-fig.hline(0.1, color="#666666", linewidth=0.8)
-fig.vline(1_048_000, color="#222222", linewidth=1.0)
-```
-
-![Links, hline, vline](images/aesthetics/links.png)
-
----
+Caption: interval, peak, and link tracks use tabular inputs with genomic coordinate columns.
 
 ## Themes
 
-Pass a theme to `GenomicFigure` to apply a consistent style to all tracks. Built-in options: `"default"`, `"minimal"`, `"publication"`.
-
 ```python
+from plotnado import GenomicFigure
+
 fig = GenomicFigure(theme="publication")
 ```
 
-For full manual control pass `theme=None`. Custom themes can be built with `plotnado.Theme`.
-
----
-
-## Common label kwargs (all tracks)
-
-| Kwarg | Default | Effect |
-| --- | --- | --- |
-| `title` | — | Track title text |
-| `title_location` | `"left"` | `"left"` · `"right"` · `"center"` |
-| `title_color` | `"#333333"` | Title text color |
-| `title_size` | `10` | Title font size |
-| `title_weight` | `"bold"` | `"bold"` · `"normal"` |
-| `label_on_track` | `False` | Draw title inside the plot area |
-| `label_box_enabled` | `True` | Background box behind labels |
-| `label_box_alpha` | `0.9` | Label box opacity |
-| `plot_scale` | `True` | Show y-range annotation |
-| `scale_location` | `"right"` | `"left"` · `"right"` |
-| `plot_title` | `True` | Toggle title visibility |
+Built-in themes include `"default"`, `"minimal"`, and `"publication"`.

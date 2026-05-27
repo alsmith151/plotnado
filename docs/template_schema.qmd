@@ -1,0 +1,80 @@
+# Template Schema
+
+Templates are the public YAML format used by `plotnado init`, `plotnado validate`, `plotnado plot`, and `GenomicFigure.from_template(...)`.
+
+## Minimal template
+
+```yaml
+genome: hg38
+guides:
+  genes: true
+tracks:
+  - path: sample1.bw
+    type: bigwig
+    title: Sample 1
+  - path: peaks.narrowpeak
+    type: narrowpeak
+    title: Peaks
+```
+
+## Top-level fields
+
+| Field | Type | Default | Notes |
+|---|---:|---:|---|
+| `genome` | string | `null` | Enables genome-aware features such as gene guides and gene-name plotting. |
+| `width` | number | `12.0` | Figure width in inches. |
+| `track_height` | number | `1.0` | Default height multiplier. |
+| `guides` | object | axis and scalebar enabled | Optional structural tracks. |
+| `tracks` | list | `[]` | Ordered track specs. |
+| `groups` | list | `[]` | Optional overrides for shared scaling/coloring. |
+
+## Track fields
+
+| Field | Type | Default | Notes |
+|---|---:|---:|---|
+| `path` | string | `null` | File path or URL for file-backed tracks. |
+| `type` | string | `unknown` | Template track type; see below. |
+| `title` | string | `null` | Display title. |
+| `name` | string | `null` | Stable identifier for group references; falls back to title. |
+| `group` | string | `null` | Shared autoscale/color group. |
+| `style` | string | `null` | Track-specific style, such as `fill`. |
+| `color` | string | `null` | Matplotlib-compatible color. |
+| `height` | number | `1.0` | Relative panel height. |
+| `options` | object | `{}` | Advanced fields passed through to the figure method. |
+
+## Type mapping
+
+| Template type | Figure method | Notes |
+|---|---|---|
+| `bigwig` | `bigwig` | Continuous signal. |
+| `bedgraph` | `bigwig` | bedGraph-like inputs are handled by BigWigTrack. |
+| `bed` | `bed` | Interval track. |
+| `narrowpeak` | `narrowpeak` | Peak intervals. |
+| `gene`, `genes` | `genes` | Gene annotation. |
+| `links` | `links` | BEDPE-style arcs. |
+| `annotation` | `bed` | Semantic BED alias. |
+| `overlay` | `overlay` | Shared-axis signal overlay. |
+| `unknown` | `bed` | Fallback for inferred interval-like files. |
+
+## Groups
+
+Group references resolve case-insensitively against track `name` or `title`.
+
+```yaml
+tracks:
+  - path: control.bw
+    type: bigwig
+    title: Control
+    group: signal
+  - path: treatment.bw
+    type: bigwig
+    title: Treatment
+    group: signal
+groups:
+  - name: signal
+    tracks: [Control, Treatment]
+    autoscale: true
+    autocolor: true
+```
+
+Template compilation does not mutate the loaded `Template`; resolved group indices live in the render plan.

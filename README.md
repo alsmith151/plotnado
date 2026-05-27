@@ -1,11 +1,11 @@
 # PlotNado
 
-<p align="center">
-  <img src="docs/images/Logo.jpeg" alt="PlotNado logo" width="240">
-</p>
+PlotNado creates genome browser-style figures from Python or YAML templates.
+It is designed for reproducible genomic plots in scripts, notebooks, Quarto docs, and CLI workflows.
+Use it when you want compact tracks for BigWig-like signals, BED/narrowPeak intervals, links, genes, and optional matrix/QuantNado data.
 
 <p align="center">
-  Lightweight genome browser-style plotting for Python scripts, notebooks, and YAML-driven CLI workflows.
+  <img src="docs/images/Logo.jpeg" alt="PlotNado logo" width="220">
 </p>
 
 <p align="center">
@@ -14,62 +14,25 @@
   </a>
 </p>
 
-PlotNado is a lightweight Python package for building genome browser-style figures with publication-style defaults.
-Use it directly from Python or generate, validate, and render YAML templates from the CLI.
+## Start
 
-Quick links: [Install](#install) | [Python Quick Start](#python-quick-start) | [CLI Quick Start](#cli-quick-start)
-
-It supports two complementary workflows:
-
-- A chainable Python API built around `GenomicFigure`
-- A template-driven CLI for generating, validating, and rendering YAML specs
-
-Use the Python API if you want plotting in notebooks or scripts.
-Use the CLI if you want an editable YAML template and a file-driven workflow.
-
-
-## Install
-
-`uv` is the recommended way to work with PlotNado.
-
-For a project-local environment:
-
-```bash
-uv venv
-source .venv/bin/activate
-uv pip install plotnado
-```
-
-For a global CLI install:
+Install for day-to-day use:
 
 ```bash
 uv tool install plotnado
+plotnado --help
 ```
 
-If you prefer standard Python tooling, `pip` also works:
+Work from source:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install plotnado
+git clone https://github.com/alsmith151/plotnado
+cd plotnado
+uv sync --extra dev --extra docs
+uv run pytest tests/
 ```
 
-If you use Conda:
-
-```bash
-conda create -n plotnado python=3.12
-conda activate plotnado
-pip install plotnado
-```
-
-## Start Here
-
-Choose the workflow that matches how you want to work:
-
-- Python API: build figures directly in code
-- CLI + YAML template: infer a template from files, edit it, then render plots
-
-## Python Quick Start
+## Python API
 
 ```python
 from plotnado import GenomicFigure
@@ -84,62 +47,24 @@ signal = pd.DataFrame({
     "value": 5 + 2 * np.sin(np.linspace(0, 6, len(bins))),
 })
 
-fig = GenomicFigure()
-fig.scalebar()
-fig.axis()
-fig.genes("hg38")
-fig.bigwig(signal, title="Synthetic signal", style="fill", color="#1f77b4")
-fig.save("quickstart.png", "chr1:1,010,000-1,080,000")
+fig = (
+    GenomicFigure()
+    .scalebar()
+    .axis()
+    .bigwig(signal, title="Synthetic signal", style="fill", color="#1f77b4")
+)
+fig.save("quickstart.png", region="chr1:1,010,000-1,080,000")
 ```
 
-Output:
-
-![Quickstart output](docs/images/quickstart.png)
-
-`GenomicFigure()` uses publication-style defaults automatically. Use `GenomicFigure(theme=None)` to opt out.
-
-## CLI Quick Start
-
-Generate a template from your files:
+## CLI + YAML
 
 ```bash
-plotnado init sample1.bw sample2.bw peaks.narrowpeak --auto --output template.yaml
+uv run plotnado init sample1.bw sample2.bw peaks.narrowpeak --auto --output template.yaml
+uv run plotnado validate template.yaml
+uv run plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output browser_view.png
 ```
 
-Validate it:
-
-```bash
-plotnado validate template.yaml
-```
-
-Render a region:
-
-```bash
-plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output browser_view.png
-```
-
-You can also plot by gene name when the template defines `genome`:
-
-```bash
-plotnado plot template.yaml --region GNAQ
-```
-
-If you want to return to Python after generating a template:
-
-```python
-from plotnado import GenomicFigure
-
-fig = GenomicFigure.from_template("template.yaml")
-fig.save("browser_view.png", region="chr1:1,000,000-1,100,000")
-```
-
-Output:
-
-![Template-rendered output](docs/images/examples/quickstart_first_plot.png)
-
-## What The Template Looks Like
-
-The generated YAML is meant to be human-editable:
+Templates are editable YAML:
 
 ```yaml
 genome: hg38
@@ -154,81 +79,52 @@ tracks:
     title: peaks
 ```
 
-## Key Features
-
-- Chainable `GenomicFigure` API for fast composition.
-- Template-driven CLI built around `init`, `validate`, and `plot`.
-- Alias-based track creation (`fig.add_track("bigwig", ...)`).
-- Built-in themes, autocolor, autoscale, and highlight overlays.
-- Broad track support: BigWig, BED, narrowPeak, genes, axis, scalebar, links, `OverlayTrack`, cooler-based matrix tracks.
-
-## Learn More
-
-- Docs home: `docs/index.md`
-- Method reference: `docs/reference.md`
-- Aesthetics and styling: `docs/aesthetics.md`
-- CLI guide: `docs/cli.md`
-
-## Examples
-
-- Start with `python examples/basic_figure.py`
-- Then run `python examples/advanced_features.py`
-- Full curated suite: `python examples/run_examples.py`
-- Additional focused examples live in:
-  - `examples/quickstart/`
-  - `examples/tracks/`
-  - `examples/recipes/`
-
-All scripts write outputs to `examples/output/`.
-
-## Discover Track Options
+The same template can be loaded from Python:
 
 ```python
-from plotnado import GenomicFigure, BigWigTrack
+from plotnado import GenomicFigure
 
-GenomicFigure.available_track_aliases()
-GenomicFigure.track_options("bigwig")
-GenomicFigure.track_options_markdown("bigwig")
-BigWigTrack.options_markdown()
+fig = GenomicFigure.from_template("template.yaml")
+fig.save("browser_view.png", region="chr1:1,000,000-1,100,000")
 ```
 
-## Build Docs
+## What It Covers
 
-```bash
-uv sync --extra docs
-quarto render
-quarto preview
-```
+- Chainable `GenomicFigure` API for programmatic plotting.
+- `plotnado init`, `plotnado validate`, and `plotnado plot` for YAML workflows.
+- In-memory tabular examples for reproducible docs and notebooks.
+- Runtime alias and option lookup through `GenomicFigure.available_track_aliases()` and `GenomicFigure.track_options(...)`.
+- Optional cooler, CapCruncher, and QuantNado tracks when their dependencies and input datasets are installed.
+
+## Documentation
+
+- [Installation](docs/installation.qmd)
+- [Quick Start](docs/quickstart.qmd)
+- [Track Catalog](docs/track_catalog.qmd)
+- [Aesthetics](docs/aesthetics.qmd)
+- [CLI](docs/cli.qmd)
+- [Troubleshooting](docs/troubleshooting.qmd)
+
+## Troubleshooting
+
+If a plot is empty, first check that the region overlaps your data and that chromosome names match (`chr1` versus `1`).
+If Quarto uses the wrong Python, render with `QUARTO_PYTHON=.venv/bin/python quarto render`.
+For option names, use `GenomicFigure.track_options("bigwig")`.
 
 ## Development
 
-For development from source:
-
 ```bash
-git clone https://github.com/alsmith151/plotnado
-cd plotnado
-uv venv
-source .venv/bin/activate
 uv sync --extra dev --extra docs
-
-# required developer setup: run local quality hooks before every commit
-uv run pre-commit install
+uv run pytest tests/
+uv run python examples/run_examples.py
+uv run plotnado --help
+QUARTO_PYTHON=.venv/bin/python quarto render
 ```
 
-Developer workflow:
+Docs are Quarto pages with executable Python cells. Prefer deterministic in-memory data in docs examples and keep generated option tables secondary to plotted examples.
 
-- Do not edit autogenerated typing surfaces directly:
-  - `plotnado/figure.pyi`
-  - auto-generated overload blocks in `plotnado/figure.py` (`# BEGIN/END AUTO-GENERATED OVERLOAD`)
-- Make API changes in the source Pydantic models first (track models/aesthetics/labels), then regenerate artifacts:
+Contributions should start with a source install, the test suite, the example runner, and a Quarto render. The main branch is protected, so open a pull request for review.
 
-```bash
-uv run python scripts/generate_figure_overloads.py
-uv run python scripts/generate_figure_stub.py
-```
+## License
 
-- Always run pre-commit before pushing:
-
-```bash
-uv run pre-commit run --all-files
-```
+PlotNado is licensed under GPL-3.0-or-later. See [LICENSE](LICENSE).

@@ -1,180 +1,100 @@
+---
+jupyter: python3
+execute:
+  warning: false
+  message: false
+---
+
 # Track Construction
 
-This page shows the different ways to add tracks to a `GenomicFigure`.
+Use helper methods for most figures, `add_track()` when names come from configuration, and explicit track classes only when you need direct object construction.
 
-## 1) Preferred chain-helper style
+## Helper methods
 
-This is concise and works well for interactive analysis.
-
-```python
+```{python}
 from plotnado import GenomicFigure
+from docs._examples import REGION, intervals, signal
 
-gf = GenomicFigure(theme="publication")
-gf.autocolor()
-gf.scalebar()
-gf.genes("hg38", display="expanded", minimum_gene_length=1e5)
-
-gf.bed(
-    "https://.../THP1H3K4me3_bigBed.bigBed",
-    title="THP1 H3K4me3 peaks",
-    title_color="black",
-    color_group="THP1 H3K4me3",
-    draw_edges=False,
-)
-
-gf.bigwig(
-    "https://.../THP1H3K4me1_bigWig.bigWig",
-    title="THP1 H3K4me1",
-    title_color="black",
-    color_group="THP1 H3K4me1",
-    style="std",
-)
-
-gf.axis()
-gf.plot_gene("GNAQ")
+fig = GenomicFigure(track_height=1.2)
+fig.autocolor("Set2")
+fig.scalebar()
+fig.axis()
+fig.bigwig(signal(), title="Signal", style="fill", color_group="sample-a")
+fig.bed(intervals(), title="Intervals", display="expanded", show_labels=True, color_group="sample-a")
+fig.plot(REGION)
 ```
 
-Output:
+Caption: helper methods keep ordinary figure construction readable and chainable.
 
-![Track construction output](images/examples/basic_figure.png)
+## Alias entry point
 
-## 2) Generic alias entrypoint (`add_track`)
+`add_track()` is useful when track names are read from YAML, TOML, or another runtime source.
 
-Best when alias names come from config/TOML/CLI inputs.
+```{python}
+from plotnado import GenomicFigure
+from docs._examples import REGION, signal
 
-```python
-gf.add_track("scalebar")
-gf.add_track("genes", genome="hg38")
-gf.add_track("bigwig", data="signal.bw", title="ChIP", style="std")
+fig = GenomicFigure().autocolor("Dark2")
+fig.add_track("scalebar")
+fig.add_track("axis")
+fig.add_track("bigwig", data=signal(phase=0.0), title="Replicate A", alpha=0.75)
+fig.add_track("bigwig", data=signal(phase=0.8), title="Replicate B", alpha=0.75)
+fig.plot(REGION)
 ```
 
-Output:
+Caption: aliases map to the same track constructors used by helper methods.
 
-![Alias-added track output](images/examples/quickstart_aliases_and_options.png)
+## Explicit objects
 
-## 3) Explicit track objects
-
-Best when you want strict object construction and reuse track instances.
+Use explicit classes when you need to pass track objects around before adding them.
 
 ```python
-from plotnado import BigWigTrack
+from plotnado import BigWigTrack, GenomicFigure
+from docs._examples import signal
 
-gf.add_track(
-    BigWigTrack(
-        data="signal.bw",
-        title="ChIP",
-        style="std",
-    )
+track = BigWigTrack(data=signal(), title="Reusable signal", style="fill")
+fig = GenomicFigure().add_track(track)
+```
+
+## Kwarg routing
+
+Helper methods route shorthand kwargs automatically:
+
+```python
+fig.bigwig(
+    signal(),
+    title="H3K27ac",        # label
+    title_color="black",    # label
+    style="fill",           # aesthetics
+    color="#1f77b4",        # aesthetics
+    alpha=0.8,              # aesthetics
 )
 ```
 
-Output:
-
-![Explicit BigWig track output](images/examples/track_bigwig_styles.png)
-
-## 4) Mixed approach (recommended in real projects)
-
-- Use helper methods for most tracks.
-- Use explicit classes only for custom/advanced tracks.
-- Keep structural tracks first (`scalebar`, `axis`, `genes`) for readability.
-
-## Overlay tracks with shared scaling
-
-Use `overlay()` when several signals should occupy one panel. Treat the overlay as a real track: give the overlay its own `title`, `autoscale_group`, and optional `min_value` / `max_value`.
+The explicit nested form is still available:
 
 ```python
-gf.overlay(
-    [sample_a, sample_b],
-    title="Replicate overlay",
-    autoscale_group="signal-panels",
-    colors=["#2ca02c", "#9467bd"],
-    alpha=0.6,
+fig.bigwig(
+    signal(),
+    aesthetics={"style": "fill", "color": "#1f77b4", "alpha": 0.8},
+    label={"title": "H3K27ac", "title_color": "black"},
 )
 ```
 
-Output:
+## Overlay tracks
 
-![Overlay output](images/aesthetics/overlay_autoscale.png)
+Treat the overlay as the panel that owns the shared scale.
 
-Practical rule:
+```{python}
+from docs._examples import REGION, overlay_comparison
 
-- Use `autoscale_group` on the overlay itself when the whole panel should sync with neighboring signal tracks.
-- Use overlay `min_value` / `max_value` only when you intentionally want to pin one edge.
-- Use separate panels instead of an overlay when the series need independent y-ranges for interpretation.
-
-## Automatic kwarg routing in `GenomicFigure` methods
-
-When you use helper methods like `gf.bigwig(...)`, PlotNado can automatically route kwargs into nested models:
-
-- Track kwargs stay at track level (for example `data`, `autoscale_group`).
-- Aesthetics kwargs are auto-packed into `aesthetics` (for example `style`, `color`, `alpha`).
-- Label kwargs are auto-packed into `label` (for example `title`, `title_color`, `title_location`).
-
-Shorthand (recommended):
-
-```python
-gf.bigwig(
-    "signal.bw",
-    title="H3K4me3",
-    title_color="black",
-    style="std",
-    color="#1f77b4",
-    alpha=0.8,
-)
+fig = overlay_comparison()
+fig.plot(REGION)
 ```
 
-Equivalent explicit form:
+Caption: ordinary signal tracks and the overlay share one `autoscale_group`.
 
-```python
-gf.bigwig(
-    "signal.bw",
-    aesthetics={"style": "std", "color": "#1f77b4", "alpha": 0.8},
-    label={"title": "H3K4me3", "title_color": "black"},
-)
-```
-
-Output:
-
-![Automatic kwarg routing output](images/aesthetics/bigwig_styles.png)
-
-## Color management (`autocolor`, `color_group`)
-
-Use `autocolor()` to assign colors automatically from the active theme.
-
-```python
-gf = GenomicFigure(theme="publication")
-gf.autocolor()
-gf.bigwig("sample_a.bw", title="Sample A")
-gf.bigwig("sample_b.bw", title="Sample B")
-```
-
-Output:
-
-![Autocolor output](images/aesthetics/autocolor.png)
-
-Use `color_group` when multiple tracks should share the same assigned color.
-
-```python
-gf = GenomicFigure(theme="publication")
-gf.autocolor()
-
-gf.bed("peaks_a.bigBed", title="A peaks", color_group="A")
-gf.bigwig("signal_a.bw", title="A signal", color_group="A")
-
-gf.bed("peaks_b.bigBed", title="B peaks", color_group="B")
-gf.bigwig("signal_b.bw", title="B signal", color_group="B")
-```
-
-Output:
-
-![Color group output](images/aesthetics/autocolor.png)
-
-Practical rule:
-
-- Same biological sample/condition: same `color_group`.
-- Different sample/condition: different `color_group`.
-
-## Option discovery
+## Option lookup
 
 ```python
 from plotnado import GenomicFigure
@@ -185,4 +105,4 @@ GenomicFigure.track_options("overlay")
 GenomicFigure.track_options_markdown("genes")
 ```
 
-See [Track Aliases](track_aliases.qmd) for alias notes, the [Living Gallery](example_coverage.qmd) for rendered code examples, and [Best Practices](best_practices.qmd) for production guidance.
+See [Track Aliases](track_aliases.qmd), [Track Catalog](track_catalog.qmd), and [Compact Options](option_lookup.qmd).
