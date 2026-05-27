@@ -460,12 +460,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Use this page for a small runtime lookup. For learning, start with <a href="../docs/quickstart.html">Quick Start</a>, <a href="../docs/quickstart_tracks.html">Track Construction</a>, and <a href="../docs/aesthetics.html">Aesthetics</a>.</p>
 <section id="aliases" class="level2">
 <h2 class="anchored" data-anchor-id="aliases">Aliases</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>aliases <span class="op">=</span> GenomicFigure.available_track_aliases()</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>rows <span class="op">=</span> [<span class="st">"| Alias | Track class |"</span>, <span class="st">"|---|---|"</span>]</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>rows.extend(<span class="ss">f"| `</span><span class="sc">{</span>alias<span class="sc">}</span><span class="ss">` | `</span><span class="sc">{</span>target<span class="sc">}</span><span class="ss">` |"</span> <span class="cf">for</span> alias, target <span class="kw">in</span> <span class="bu">sorted</span>(aliases.items())[:<span class="dv">24</span>])</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span>.join(rows))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -572,17 +566,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </tbody>
 </table>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> alias <span class="kw">in</span> [<span class="st">"bigwig"</span>, <span class="st">"bed"</span>, <span class="st">"narrowpeak"</span>, <span class="st">"overlay"</span>, <span class="st">"genes"</span>, <span class="st">"links"</span>]:</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    options <span class="op">=</span> GenomicFigure.track_options(alias)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"### `</span><span class="sc">{</span>alias<span class="sc">}</span><span class="ss">`"</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"| Section | Fields |"</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"|---|---|"</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> section, fields <span class="kw">in</span> options.items():</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        field_names <span class="op">=</span> <span class="st">", "</span>.join(<span class="ss">f"`</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">`"</span> <span class="cf">for</span> name <span class="kw">in</span> <span class="bu">list</span>(fields)[:<span class="dv">12</span>])</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"| `</span><span class="sc">{</span>section<span class="sc">}</span><span class="ss">` | </span><span class="sc">{</span>field_names<span class="sc">}</span><span class="ss"> |"</span>)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <section id="bigwig" class="level3">
 <h3 class="anchored" data-anchor-id="bigwig"><code>bigwig</code></h3>
 <table class="caption-top table">
@@ -715,7 +698,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>track</code></td>
-<td><code>title</code>, <code>data</code>, <code>height</code>, <code>autoscale_group</code>, <code>color_group</code>, <code>genome</code>, <code>row_scale</code>, <code>small_relative</code>, <code>gene_count</code></td>
+<td><code>title</code>, <code>data</code>, <code>height</code>, <code>autoscale_group</code>, <code>color_group</code>, <code>genome</code>, <code>gene_filter</code>, <code>row_scale</code>, <code>small_relative</code>, <code>gene_count</code></td>
 </tr>
 <tr class="even">
 <td><code>aesthetics</code></td>
@@ -757,10 +740,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 <p>For full details in your installed version:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>GenomicFigure.track_options(<span class="st">"bigwig"</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>GenomicFigure.track_options_markdown(<span class="st">"bigwig"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnado <span class="im">import</span> GenomicFigure</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>GenomicFigure.track_options(<span class="st">"bigwig"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>GenomicFigure.track_options_markdown(<span class="st">"bigwig"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
 </section>
