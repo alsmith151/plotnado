@@ -175,7 +175,7 @@ fig = GenomicFigure(theme="minimal")
 fig.scalebar()
 fig.bigwig(signal(), title="Minimal theme", style="fill", color="#1f77b4")
 fig.axis()
-fig.plot("chr1:1,000,000-1,100,000", show=False) # Note: this is just for demonstration; the theme doesn't affect the plot command, but it does affect the default styling of the figure and tracks.
+fig.plot("chr1:1,000,000-1,100,000", show=False)
 
 ```
 
