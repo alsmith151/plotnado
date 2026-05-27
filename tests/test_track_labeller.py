@@ -113,12 +113,13 @@ class TestTrackLabeller:
         # Validate
         mock_ax.text.assert_called_once()
         args, kwargs = mock_ax.text.call_args
-        assert args[0] == 1010  # gr.start + (0.01 * gr.length)
-        assert args[1] == 0.8  # labeller.y_delta * labeller.title_height
+        assert args[0] == 0.01
+        assert args[1] == 0.8  # title_height (axes fraction)
         assert args[2] == "Test Title"
         assert kwargs['horizontalalignment'] == "left"
         assert kwargs['verticalalignment'] == "top"
-        
+        assert kwargs['transform'] == mock_ax.transAxes
+
     def test_plot_title_right(self, mock_ax):
         """Test plotting title at right position."""
         gr = GenomicRegion(
@@ -143,11 +144,12 @@ class TestTrackLabeller:
         # Validate
         mock_ax.text.assert_called_once()
         args, kwargs = mock_ax.text.call_args
-        assert args[0] == 1990  # gr.end - (0.01 * gr.length)
-        assert args[1] == 0.8  # labeller.y_delta * labeller.title_height
+        assert args[0] == 0.99
+        assert args[1] == 0.8  # title_height (axes fraction)
         assert args[2] == "Test Title"
         assert kwargs['horizontalalignment'] == "right"
         assert kwargs['verticalalignment'] == "top"
+        assert kwargs['transform'] == mock_ax.transAxes
 
     def test_plot_scale_left(self, mock_ax):
         """Test plotting scale at left position."""
@@ -173,12 +175,12 @@ class TestTrackLabeller:
         # Validate
         mock_ax.text.assert_called_once()
         args, kwargs = mock_ax.text.call_args
-        assert args[0] == 1010  # gr.start + (0.01 * gr.length)
-        # y = y_min + y_delta * scale_height = 0.5 + 1.0 * 0.8 = 1.3
-        assert args[1] == pytest.approx(1.3)
+        assert args[0] == 0.01
+        assert args[1] == pytest.approx(0.8)  # scale_height (axes fraction)
         assert args[2] == "[ 0.50 - 1.50 ]"
         assert kwargs['horizontalalignment'] == "left"
         assert kwargs['verticalalignment'] == "top"
+        assert kwargs['transform'] == mock_ax.transAxes
 
     def test_plot_scale_right(self, mock_ax):
         """Test plotting scale at right position."""
@@ -204,12 +206,12 @@ class TestTrackLabeller:
         # Validate
         mock_ax.text.assert_called_once()
         args, kwargs = mock_ax.text.call_args
-        assert args[0] == 1990  # gr.end - (0.01 * gr.length)
-        # y = y_min + y_delta * scale_height = 0.5 + 1.0 * 0.8 = 1.3
-        assert args[1] == pytest.approx(1.3)
+        assert args[0] == 0.99
+        assert args[1] == pytest.approx(0.8)  # scale_height (axes fraction)
         assert args[2] == "[ 0.50 - 1.50 ]"
         assert kwargs['horizontalalignment'] == "right"
         assert kwargs['verticalalignment'] == "top"
+        assert kwargs['transform'] == mock_ax.transAxes
 
     def test_label_box_enabled_default(self, mock_ax):
         gr = GenomicRegion(chromosome="chr1", start=1000, end=2000, strand="+")
@@ -312,7 +314,7 @@ class TestTrackLabeller:
         # 1st text call is title, 2nd is scale
         scale_call = mock_ax.text.call_args_list[1]
         args, kwargs = scale_call
-        assert args[0] == 1990
+        assert args[0] == 0.99
         assert kwargs["horizontalalignment"] == "right"
         mock_clean_axis.assert_called_once_with(mock_ax)
 
@@ -335,7 +337,7 @@ class TestTrackLabeller:
 
         scale_call = mock_ax.text.call_args_list[1]
         args, kwargs = scale_call
-        assert args[0] == 1010
+        assert args[0] == 0.01
         assert kwargs["horizontalalignment"] == "left"
         mock_clean_axis.assert_called_once_with(mock_ax)
 
@@ -356,7 +358,7 @@ class TestTrackLabeller:
         labeller.plot(mock_ax, gr)
 
         args, kwargs = mock_ax.text.call_args
-        assert args[0] == 1010
+        assert args[0] == 0.01
         assert kwargs["horizontalalignment"] == "left"
         mock_clean_axis.assert_called_once_with(mock_ax)
 

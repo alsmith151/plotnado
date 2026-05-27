@@ -143,6 +143,7 @@ class GenomicFigure:
             height: float = 1.5,
             autoscale_group: str | None = None,
             color_group: str | None = None,
+            gene_filter: str | list[str] | None = None,
             row_scale: float = 1.0,
             small_relative: float = 0.01,
             gene_count: int = 0,

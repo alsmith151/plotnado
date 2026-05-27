@@ -136,6 +136,7 @@ class GenomicFigureMethods:
         color_group: str | None = ...,
         data: Path | str | pd.DataFrame | None = ...,
         gene_count: int = ...,
+        gene_filter: str | list[str] | None = ...,
         height: float = ...,
         row_scale: float = ...,
         small_relative: float = ...,

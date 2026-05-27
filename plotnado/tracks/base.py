@@ -427,26 +427,21 @@ class TrackLabeller(BaseModel):
 
     def _plot_title(self, ax: matplotlib.axes.Axes, gr: GenomicRegion) -> None:
         if self.label_on_track:
-            x_pos = gr.start + (0.02 * gr.length)
-            y_pos = self.y_min + (self.y_delta * self.title_height)
+            x_pos = 0.02
             h_align = "left"
         else:
-            x_pos = (
-                gr.start + (0.01 * gr.length)
-                if self.title_location == "left"
-                else gr.end - (0.01 * gr.length)
-            )
-            y_pos = self.y_min + (self.y_delta * self.title_height)
+            x_pos = 0.01 if self.title_location == "left" else 0.99
             h_align = "left" if self.title_location == "left" else "right"
         title_bbox = self._text_bbox()
 
         ax.text(
             x_pos,
-            y_pos,
+            self.title_height,
             self.title,
             horizontalalignment=h_align,
             verticalalignment="top",
             bbox=title_bbox,
+            transform=ax.transAxes,
             fontdict={
                 "size": self.title_size,
                 "color": self.title_color,
@@ -473,21 +468,18 @@ class TrackLabeller(BaseModel):
         y_min = self._format_scale(self.y_min)
         y_max = self._format_scale(self.y_max)
 
-        x_pos = (
-            gr.end - (0.01 * gr.length)
-            if location == "right"
-            else gr.start + (0.01 * gr.length)
-        )
+        x_pos = 0.99 if location == "right" else 0.01
         h_align = "right" if location == "right" else "left"
         scale_bbox = self._text_bbox()
 
         ax.text(
             x_pos,
-            self.y_min + (self.y_delta * self.scale_height),
+            self.scale_height,
             f"[ {y_min} - {y_max} ]",
             horizontalalignment=h_align,
             verticalalignment="top",
             bbox=scale_bbox,
+            transform=ax.transAxes,
             fontdict={
                 "size": self.scale_size,
                 "color": self.scale_color,

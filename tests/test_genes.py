@@ -848,3 +848,68 @@ class TestRegisterGenome:
         import plotnado
         assert hasattr(plotnado, "register_genome")
         assert callable(plotnado.register_genome)
+
+
+class TestGeneFilter:
+    def _make_df(self):
+        return pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1", "chr1"],
+                "start": [1000, 5000, 9000],
+                "end": [2000, 6000, 10000],
+                "geneid": ["BRCA1", "TP53", "MYC"],
+                "strand": ["+", "-", "+"],
+                "block_count": [1, 1, 1],
+                "block_sizes": [[1000], [1000], [1000]],
+                "block_starts": [[0], [0], [0]],
+            }
+        )
+
+    def test_no_filter_returns_all(self):
+        genes = Genes(data=self._make_df())
+        result = genes._apply_filters(self._make_df())
+        assert len(result) == 3
+
+    def test_single_gene_string(self):
+        genes = Genes(data=self._make_df(), gene_filter="TP53")
+        result = genes._apply_filters(self._make_df())
+        assert list(result["geneid"]) == ["TP53"]
+
+    def test_list_of_genes(self):
+        genes = Genes(data=self._make_df(), gene_filter=["BRCA1", "MYC"])
+        result = genes._apply_filters(self._make_df())
+        assert set(result["geneid"]) == {"BRCA1", "MYC"}
+
+    def test_case_insensitive(self):
+        genes = Genes(data=self._make_df(), gene_filter="brca1")
+        result = genes._apply_filters(self._make_df())
+        assert list(result["geneid"]) == ["BRCA1"]
+
+    def test_no_match_returns_empty(self):
+        genes = Genes(data=self._make_df(), gene_filter="NOTREAL")
+        result = genes._apply_filters(self._make_df())
+        assert result.empty
+
+    def test_filter_on_empty_df_returns_empty(self):
+        genes = Genes(data=self._make_df(), gene_filter="BRCA1")
+        empty = self._make_df().iloc[0:0]
+        result = genes._apply_filters(empty)
+        assert result.empty
+
+    @patch("plotnado.tracks.genes.read_bed_regions")
+    def test_filter_applied_through_fetch_data(self, mock_read_bed, genomic_region):
+        mock_read_bed.return_value = pd.DataFrame(
+            {
+                "chrom": ["chr1", "chr1"],
+                "start": [1000, 5000],
+                "end": [2000, 6000],
+                "name": ["BRCA1", "TP53"],
+                "strand": ["+", "-"],
+                "blockCount": [1, 1],
+                "blockSizes": ["1000", "1000"],
+                "blockStarts": ["0", "0"],
+            }
+        )
+        genes = Genes(data="/mock.bed", gene_filter="BRCA1")
+        result = genes.fetch_data(genomic_region)
+        assert list(result["geneid"]) == ["BRCA1"]

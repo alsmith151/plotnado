@@ -39,3 +39,82 @@ Expected columns:
 - Matrix tracks: Cooler/MCool
 
 Use in-memory data for quick prototyping and tests, then switch to file-backed inputs for real datasets.
+
+## Gene annotations
+
+`hg38` is bundled. For any other genome, download a BED12 or GTF annotation and register it once per session with `register_genome`.
+
+### Downloading from UCSC GoldenPath
+
+UCSC publishes per-genome GTF files under `goldenPath/<genome>/bigZips/genes/`. Download once, then register:
+
+```python
+import urllib.request
+from pathlib import Path
+import plotnado
+
+url = "https://hgdownload.soe.ucsc.edu/goldenPath/mm10/bigZips/genes/mm10.refGene.gtf.gz"
+dest = Path("mm10.refGene.gtf.gz")
+
+if not dest.exists():
+    urllib.request.urlretrieve(url, dest)
+
+plotnado.register_genome("mm10", dest)
+```
+
+Other common genomes follow the same pattern — substitute the assembly name:
+
+| Genome | URL path |
+|--------|----------|
+| hg19 | `goldenPath/hg19/bigZips/genes/hg19.refGene.gtf.gz` |
+| mm39 | `goldenPath/mm39/bigZips/genes/mm39.refGene.gtf.gz` |
+| dm6 | `goldenPath/dm6/bigZips/genes/dm6.refGene.gtf.gz` |
+| danRer11 | `goldenPath/danRer11/bigZips/genes/danRer11.refGene.gtf.gz` |
+
+Base URL: `https://hgdownload.soe.ucsc.edu/`
+
+### Using the registered genome
+
+```python
+from plotnado import GenomicFigure
+
+fig = (
+    GenomicFigure()
+    .genes("mm10")
+    .scalebar()
+)
+fig.save("genes.png", region="chr7:94,000,000-95,000,000")
+```
+
+Registered names are also accepted in YAML templates:
+
+```yaml
+guides:
+  genes: mm10
+```
+
+### Passing a file path directly
+
+`genome=` also accepts an absolute path or any string ending in `.bed`, `.bed.gz`, `.gtf`, or `.gtf.gz` — no explicit registration needed:
+
+```python
+fig.genes("/data/my_genome.gtf.gz")
+```
+
+### Filtering to specific genes
+
+Use `gene_filter` to show only genes of interest. Matching is case-insensitive.
+
+Single gene:
+
+```python
+fig.genes("hg38", gene_filter="BRCA1")
+```
+
+Multiple genes:
+
+```python
+fig.genes("hg38", gene_filter=["BRCA1", "BRCA2", "TP53"])
+```
+
+This works with any annotation source — bundled genomes, registered genomes, and direct file paths alike. Genes not in the filter are silently dropped before rendering.

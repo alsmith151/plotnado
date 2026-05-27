@@ -75,6 +75,7 @@ class GenesKwargs(TypedDict, total=False):
     height: float
     autoscale_group: str | None
     color_group: str | None
+    gene_filter: str | list[str] | None
     row_scale: float
     small_relative: float
     gene_count: int

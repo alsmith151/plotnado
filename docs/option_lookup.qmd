@@ -13,6 +13,7 @@ Use this page for a small runtime lookup. For learning, start with [Quick Start]
 
 ```{python}
 #| output: asis
+#| echo: false
 from plotnado import GenomicFigure
 
 aliases = GenomicFigure.available_track_aliases()
@@ -25,6 +26,7 @@ print("\n".join(rows))
 
 ```{python}
 #| output: asis
+#| echo: false
 from plotnado import GenomicFigure
 
 for alias in ["bigwig", "bed", "narrowpeak", "overlay", "genes", "links"]:

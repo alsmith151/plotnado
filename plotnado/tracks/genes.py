@@ -178,6 +178,10 @@ class Genes(Track):
         description="Visual styling options for genes, exons, introns, and labels.",
     )
     height: float = Field(default=1.5, description="Relative panel height for this track.")
+    gene_filter: str | list[str] | None = Field(
+        default=None,
+        description="Show only genes whose name matches this value or any value in this list (case-insensitive).",
+    )
 
     row_scale: float = Field(default=1.0, description="Internal row scaling factor used during layout.")
     small_relative: float = Field(
@@ -391,9 +395,7 @@ class Genes(Track):
                         data = self._fetch_from_disk_gtf(gr, file_path=p)
                     else:
                         data = self._fetch_from_disk_bed12(gr, p)
-                    if self.aesthetics.minimum_gene_length > 0 and not data.empty:
-                        data = data.query(f"end - start >= {self.aesthetics.minimum_gene_length}")
-                    return data
+                    return self._apply_filters(data)
             data = self._fetch_genes_from_package(gr)
         elif isinstance(self.data, pd.DataFrame):
             data = self.data.copy()
@@ -413,8 +415,19 @@ class Genes(Track):
                     "Unsupported file format. Only BED/BED.GZ/BigBed and GTF files are supported."
                 )
 
+        return self._apply_filters(data)
+
+    def _apply_filters(self, data: pd.DataFrame) -> pd.DataFrame:
         if self.minimum_gene_length > 0 and not data.empty:
             data = data.query(f"end - start >= {self.minimum_gene_length}")
+        if self.gene_filter is not None and not data.empty:
+            names = (
+                [self.gene_filter]
+                if isinstance(self.gene_filter, str)
+                else list(self.gene_filter)
+            )
+            names_lower = {n.lower() for n in names}
+            data = data.loc[data["geneid"].str.lower().isin(names_lower)]
         return data
 
     def _allocate_row_index(
