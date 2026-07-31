@@ -12,6 +12,7 @@ import matplotlib.axes
 import matplotlib.figure
 import matplotlib.lines
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg
 import numpy as np
 import pandas as pd
 from loguru import logger
@@ -1003,8 +1004,9 @@ class GenomicFigure(GenomicFigureMethods):
             axes_array = np.atleast_1d(grid_axes).ravel()
 
             for index, source_fig in enumerate(figs):
-                source_fig.canvas.draw()
-                image = np.asarray(source_fig.canvas.buffer_rgba())
+                canvas = FigureCanvasAgg(source_fig)
+                canvas.draw()
+                image = np.asarray(canvas.buffer_rgba())
                 axes_array[index].imshow(image)
                 axes_array[index].set_axis_off()
                 axes_array[index].set_title(region_strings[index], fontsize=9)
