@@ -206,7 +206,11 @@ class Genes(Track):
 
     def _fetch_genes_from_package(self, gr: GenomicRegion) -> pd.DataFrame:
         if self.genome in _user_genomes:
-            return self._fetch_from_disk_bed12(gr, _user_genomes[self.genome])
+            user_path = Path(_user_genomes[self.genome])
+            user_path_lower = str(user_path).lower()
+            if user_path_lower.endswith(".gtf") or user_path_lower.endswith(".gtf.gz"):
+                return self._fetch_from_disk_gtf(gr, user_path)
+            return self._fetch_from_disk_bed12(gr, user_path)
 
         try:
             bed_prefix = importlib.resources.files("plotnado.data.gene_bed_files")
