@@ -13,7 +13,8 @@ class BedgraphDataFrameSchema(pa.DataFrameModel):
     chrom: Series[str]
     start: Series[int]
     end: Series[int]
-    value: Series[float]
+    # BigWig intervals may carry NaN where the file has no coverage.
+    value: Series[float] = pa.Field(nullable=True)
 
     class Config:
         coerce = True

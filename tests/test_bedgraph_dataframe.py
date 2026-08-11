@@ -57,6 +57,17 @@ class TestBedgraphDataFrame:
         assert df['end'].dtype == 'int64'
         assert df['value'].dtype == 'float64'
 
+    def test_nan_values_allowed(self):
+        """BigWig regions without coverage yield NaN values, which must validate."""
+        data = {
+            'chrom': ['chr1', 'chr1', 'chr1'],
+            'start': [100, 200, 300],
+            'end': [200, 300, 400],
+            'value': [float('nan'), 0.2, float('nan')],
+        }
+        df = BedgraphDataFrame(data)
+        assert df['value'].isna().tolist() == [True, False, True]
+
     def test_unconvertible_value_raises(self):
         data = {
             'chrom': ['chr1'],
