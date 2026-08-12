@@ -2787,7 +2787,7 @@ wheels = [
 
 [[package]]
 name = "plotnado"
-version = "0.3.1"
+version = "0.3.2"
 source = { editable = "." }
 dependencies = [
     { name = "loguru" },
@@ -3502,7 +3502,7 @@ wheels = [
 
 [[package]]
 name = "quantnado"
-version = "0.4.8"
+version = "0.4.9"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "bamnado" },
@@ -3526,9 +3526,9 @@ dependencies = [
     { name = "xarray" },
     { name = "zarr" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c2/7d/57e220e6db5c6b19b0bbccc3eb467ea3029c88a4cecbc559e8b67c0bd50e/quantnado-0.4.8.tar.gz", hash = "sha256:4ab3fae09b946e5045c78cb158de2f1b980d3cb631a592c6bea060970e99379f", size = 27834088, upload-time = "2026-05-18T16:51:45.382Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/cc/58/5364cecda0cdcfbe9bce506d07e07de043727bcd1389b0418b9730499fd3/quantnado-0.4.9.tar.gz", hash = "sha256:ff0d6a3230a80d20b548d34aa1aa0f231a07abb5186c697c0d4b63924e3f691d", size = 27840298, upload-time = "2026-06-22T16:15:41.804Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/fe/a7/50e7a6585cde8c4952da6b0eedd0e435e2b4c409d9b88f40544a5f0c9e69/quantnado-0.4.8-py3-none-any.whl", hash = "sha256:f564d0ae81e3350e63401a2ba8b621a754689fece1b037783f7350139e5cf3ff", size = 27371977, upload-time = "2026-05-18T16:51:41.829Z" },
+    { url = "https://files.pythonhosted.org/packages/9e/d8/c2b7914e68d7bc4d87a57b1597d7173998e1f4a9245a3d19590b0e2799c1/quantnado-0.4.9-py3-none-any.whl", hash = "sha256:517bc916ca5835e2680fabb41bfafa21a2df58eff20d5645efa4d361d82a4822", size = 27377475, upload-time = "2026-06-22T16:15:38.325Z" },
 ]
 
 [[package]]
