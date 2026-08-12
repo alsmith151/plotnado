@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.2](https://github.com/alsmith151/plotnado/compare/plotnado-v0.3.1...plotnado-v0.3.2) (2026-08-12)
+
+
+### Bug Fixes
+
+* **bigwig:** Allow NaN values in BedgraphDataFrame for BigWig coverage ([#47](https://github.com/alsmith151/plotnado/issues/47)) ([1c54bb0](https://github.com/alsmith151/plotnado/commit/1c54bb0f250cd3e08da879bb27ba7026daf5b967))
+* **genes:** Corrects bug when using GTF for different genome than hg38 ([#46](https://github.com/alsmith151/plotnado/issues/46)) ([a54b2e4](https://github.com/alsmith151/plotnado/commit/a54b2e4ada9263dba843cb2679c9597db157cb46))
+
 ## [0.3.1](https://github.com/alsmith151/plotnado/compare/plotnado-v0.3.0...plotnado-v0.3.1) (2026-05-27)
 
 
