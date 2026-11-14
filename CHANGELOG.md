@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.4](https://github.com/alsmith151/plotnado/compare/plotnado-v0.3.3...plotnado-v0.3.4) (2026-11-14)
+
+
+### Bug Fixes
+
+* Container fixes, version/python/kernel commands, and install docs ([#54](https://github.com/alsmith151/plotnado/issues/54)) ([a526d82](https://github.com/alsmith151/plotnado/commit/a526d82ea5d3e1d74d26ce523859774b55a18eee))
+
 ## [0.3.3](https://github.com/alsmith151/plotnado/compare/plotnado-v0.3.2...plotnado-v0.3.3) (2026-11-14)
 
 
