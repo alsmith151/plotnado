@@ -81,7 +81,7 @@ def kernel_uninstall(
 
     try:
         KernelSpecManager().remove_kernel_spec(name)
-    except NoSuchKernel:
+    except (KeyError, NoSuchKernel):  # jupyter_client raises KeyError for unknown names
         typer.echo(f"No Jupyter kernel named '{name}' is installed.", err=True)
         raise typer.Exit(1)
     typer.echo(f"Removed Jupyter kernel '{name}'")

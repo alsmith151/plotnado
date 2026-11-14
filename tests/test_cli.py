@@ -298,32 +298,127 @@ def test_version_reports_installed_version(args):
     assert result.output.strip() == f"plotnado {get_version()}"
 
 
-def test_python_command_runs_code_with_plotnado_importable(tmp_path):
+def _run_cli(*args, cwd=None, input=None):
+    """Run the real CLI in a subprocess (needed where Python's own stdio/exit code matter)."""
     import subprocess
     import sys
 
-    script = tmp_path / "s.py"
-    script.write_text("import sys, plotnado\nprint('ok', sys.argv[1:])\nsys.exit(3)\n")
-    result = subprocess.run(
-        [sys.executable, "-c", "from plotnado.cli.cli import main; main()", "python", str(script), "-x", "--flag"],
+    return subprocess.run(
+        [sys.executable, "-c", "from plotnado.cli.cli import main; main()", *args],
         capture_output=True,
         text=True,
+        cwd=cwd,
+        input=input,
     )
-    assert result.returncode == 3
+
+
+def test_help_lists_environment_commands():
+    result = runner.invoke(app, ["--help"])
+    assert result.exit_code == 0
+    for command in ("version", "python", "kernel"):
+        assert command in result.output
+
+
+def test_python_command_runs_script_with_args_and_exit_code(tmp_path):
+    script = tmp_path / "s.py"
+    script.write_text("import sys, plotnado\nprint('ok', sys.argv[1:])\nsys.exit(3)\n")
+    result = _run_cli("python", str(script), "-x", "--flag")
+    assert result.returncode == 3, result.stderr
     assert "ok ['-x', '--flag']" in result.stdout
 
 
-def test_kernel_install_and_uninstall(tmp_path, monkeypatch):
+def test_python_command_runs_inline_code():
+    result = _run_cli("python", "-c", "import plotnado; print('version', plotnado.__version__)")
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.startswith("version ")
+
+
+def test_python_command_runs_module(tmp_path):
+    pkg = tmp_path / "mypkg"
+    pkg.mkdir()
+    (pkg / "__init__.py").write_text("")
+    (pkg / "plots.py").write_text("import plotnado\nprint('module ran')\n")
+    result = _run_cli("python", "-m", "mypkg.plots", cwd=tmp_path)
+    assert result.returncode == 0, result.stderr
+    assert "module ran" in result.stdout
+
+
+def test_python_command_reads_stdin_without_args():
+    result = _run_cli("python", input="import plotnado\nprint('from stdin')\n")
+    assert result.returncode == 0, result.stderr
+    assert "from stdin" in result.stdout
+
+
+def test_python_command_uses_plotnado_interpreter():
+    import sys
+    from pathlib import Path
+
+    result = _run_cli("python", "-c", "import sys; print(sys.executable)")
+    assert result.returncode == 0, result.stderr
+    assert Path(result.stdout.strip()).resolve() == Path(sys.executable).resolve()
+
+
+def test_python_command_passes_help_to_interpreter():
+    result = _run_cli("python", "--help")
+    assert result.returncode == 0
+    assert "usage:" in result.stdout.lower()
+    assert "Run Python with plotnado importable" not in result.stdout
+
+
+@pytest.fixture
+def jupyter_data_dir(tmp_path, monkeypatch):
     pytest.importorskip("ipykernel")
+    monkeypatch.setenv("JUPYTER_DATA_DIR", str(tmp_path))
+    return tmp_path
+
+
+def _kernel_spec(data_dir, name):
     import json
 
+    return json.loads((data_dir / "kernels" / name / "kernel.json").read_text())
+
+
+def test_kernel_install_defaults(jupyter_data_dir):
+    import sys
+
+    from plotnado.cli.cli import get_version
+
+    result = runner.invoke(app, ["kernel", "install"])
+    assert result.exit_code == 0, result.output
+
+    spec = _kernel_spec(jupyter_data_dir, "plotnado")
+    assert spec["display_name"] == f"PlotNado {get_version()}"
+    assert spec["argv"][0] == sys.executable
+
+
+def test_kernel_install_custom_names(jupyter_data_dir):
+    result = runner.invoke(
+        app, ["kernel", "install", "--name", "pn-test", "--display-name", "My PlotNado"]
+    )
+    assert result.exit_code == 0, result.output
+    assert _kernel_spec(jupyter_data_dir, "pn-test")["display_name"] == "My PlotNado"
+
+
+def test_kernel_uninstall_removes_kernel(jupyter_data_dir):
+    assert runner.invoke(app, ["kernel", "install", "--name", "pn-test"]).exit_code == 0
+    result = runner.invoke(app, ["kernel", "uninstall", "--name", "pn-test"])
+    assert result.exit_code == 0, result.output
+    assert not (jupyter_data_dir / "kernels" / "pn-test").exists()
+
+
+def test_kernel_uninstall_missing_kernel_fails(jupyter_data_dir):
+    result = runner.invoke(app, ["kernel", "uninstall", "--name", "does-not-exist"])
+    assert result.exit_code == 1
+    assert "No Jupyter kernel named 'does-not-exist'" in result.output
+
+
+@pytest.mark.parametrize("subcommand", ["install", "uninstall"])
+def test_kernel_without_ipykernel_points_to_notebook_extra(subcommand, tmp_path, monkeypatch):
+    import sys
+
     monkeypatch.setenv("JUPYTER_DATA_DIR", str(tmp_path))
-    result = runner.invoke(app, ["kernel", "install", "--name", "plotnado-test"])
-    assert result.exit_code == 0, result.output
-
-    spec = json.loads((tmp_path / "kernels" / "plotnado-test" / "kernel.json").read_text())
-    assert spec["display_name"].startswith("PlotNado")
-
-    result = runner.invoke(app, ["kernel", "uninstall", "--name", "plotnado-test"])
-    assert result.exit_code == 0, result.output
-    assert not (tmp_path / "kernels" / "plotnado-test").exists()
+    monkeypatch.setitem(sys.modules, "ipykernel", None)
+    result = runner.invoke(app, ["kernel", subcommand])
+    assert result.exit_code == 1
+    assert "plotnado[notebook]" in result.output
+    assert not (tmp_path / "kernels").exists()
