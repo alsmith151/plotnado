@@ -422,3 +422,45 @@ def test_kernel_without_ipykernel_points_to_notebook_extra(subcommand, tmp_path,
     assert result.exit_code == 1
     assert "plotnado[notebook]" in result.output
     assert not (tmp_path / "kernels").exists()
+
+
+def test_python_command_in_process_forwards_args_and_exit_code(monkeypatch):
+    """Covers the command body in-process; the subprocess tests above check real behaviour."""
+    import subprocess
+    import sys
+
+    calls = []
+
+    def fake_run(cmd, *args, **kwargs):
+        calls.append(cmd)
+        return subprocess.CompletedProcess(cmd, 5)
+
+    monkeypatch.setattr("plotnado.cli.env.subprocess.run", fake_run)
+    result = runner.invoke(app, ["python", "script.py", "--flag", "-x"])
+    assert result.exit_code == 5
+    assert calls == [[sys.executable, "script.py", "--flag", "-x"]]
+
+
+def test_get_version_falls_back_when_not_installed(monkeypatch):
+    from importlib.metadata import PackageNotFoundError
+
+    from plotnado.cli import cli as cli_module
+
+    def missing(_name):
+        raise PackageNotFoundError("plotnado")
+
+    monkeypatch.setattr(cli_module, "_package_version", missing)
+    assert cli_module.get_version() == "unknown"
+    assert runner.invoke(app, ["--version"]).output.strip() == "plotnado unknown"
+
+
+def test_main_entry_point_runs_app(monkeypatch, capsys):
+    import sys
+
+    from plotnado.cli.cli import get_version, main
+
+    monkeypatch.setattr(sys, "argv", ["plotnado", "--version"])
+    with pytest.raises(SystemExit) as exc:
+        main()
+    assert exc.value.code == 0
+    assert capsys.readouterr().out.strip() == f"plotnado {get_version()}"
