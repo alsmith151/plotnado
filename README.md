@@ -27,11 +27,12 @@ pip install plotnado
 **Without managing a Python environment**, [uv](https://docs.astral.sh/uv/) installs PlotNado as a self-contained tool:
 
 ```bash
-uv tool install "plotnado[notebook]"
+uv tool install plotnado
 plotnado --version
 plotnado python my_plot.py   # run scripts that `import plotnado`
-plotnado kernel install      # add a "PlotNado" kernel to Jupyter / VS Code
 ```
+
+For notebooks, install with `uv tool install "plotnado[notebook]"`, then run `plotnado kernel install` to add a "PlotNado" kernel to Jupyter / VS Code.
 
 If you get `command not found`, run `uv tool update-shell` and open a new terminal.
 

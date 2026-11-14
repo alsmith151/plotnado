@@ -40,8 +40,8 @@ To use PlotNado in Jupyter from this environment, also `pip install ipykernel`.
 ## Install as a tool with uv
 
 Use this if you do not want to manage a Python environment yourself.
-It gives you the `plotnado` command, plus ways to run Python scripts and notebooks
-that use the PlotNado API.
+It gives you the `plotnado` command and a way to run Python scripts that use the
+PlotNado API, with optional Jupyter support.
 [uv](https://docs.astral.sh/uv/) installs PlotNado in its own isolated environment,
 and downloads a suitable Python version if needed.
 
@@ -57,11 +57,8 @@ and downloads a suitable Python version if needed.
 2. Install PlotNado:
 
     ```bash
-    uv tool install "plotnado[notebook]"
+    uv tool install plotnado
     ```
-
-    The `notebook` extra adds Jupyter kernel support. Plain `uv tool install plotnado`
-    also works if you only need the command line and scripts.
 
 3. If your shell then says `plotnado: command not found`, add uv's tool directory
    to your `PATH` and open a new terminal:
@@ -77,7 +74,7 @@ uv tool upgrade plotnado
 uv tool uninstall plotnado
 ```
 
-To add more extras, list them together, e.g. `uv tool install "plotnado[notebook,cooler]"`.
+To add optional extras, list them in brackets, e.g. `uv tool install "plotnado[cooler]"`.
 
 ### Use the Python API
 
@@ -91,9 +88,13 @@ plotnado python                     # interactive Python prompt
 plotnado python -m my_package.plots # run a module
 ```
 
-For notebooks, register PlotNado's environment as a Jupyter kernel once:
+### Use PlotNado in Jupyter (optional)
+
+To use the API in notebooks, add the `notebook` extra and register PlotNado's environment
+as a Jupyter kernel once:
 
 ```bash
+uv tool install --force "plotnado[notebook]"
 plotnado kernel install
 ```
 
