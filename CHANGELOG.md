@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/alsmith151/plotnado/compare/plotnado-v0.3.2...plotnado-v0.3.3) (2026-11-14)
+
+
+### Miscellaneous Chores
+
+* release 0.3.3 ([#52](https://github.com/alsmith151/plotnado/issues/52)) ([5c903d7](https://github.com/alsmith151/plotnado/commit/5c903d74002b1264ecb2c1175f72f23e2b8d4ee3))
+
 ## [0.3.2](https://github.com/alsmith151/plotnado/compare/plotnado-v0.3.1...plotnado-v0.3.2) (2026-08-12)
 
 
