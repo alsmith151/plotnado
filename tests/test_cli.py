@@ -287,3 +287,12 @@ class TestPlot:
         assert "chr9:77716097-78031811(+)" in result.output
         assert out.exists()
         assert out.stat().st_size > 0
+
+
+@pytest.mark.parametrize("args", [["--version"], ["-V"], ["version"]])
+def test_version_reports_installed_version(args):
+    from plotnado.cli.cli import get_version
+
+    result = runner.invoke(app, args)
+    assert result.exit_code == 0
+    assert result.output.strip() == f"plotnado {get_version()}"

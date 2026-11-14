@@ -14,6 +14,9 @@ Primary workflow:
      Validates and explains the template
 """
 
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as _package_version
+
 import typer
 
 # Initialize the main CLI app
@@ -21,6 +24,41 @@ app = typer.Typer(
     help="PlotNado - Heuristic templates for genomic track visualization",
     no_args_is_help=True,
 )
+
+
+def get_version() -> str:
+    """Return the installed plotnado version."""
+    try:
+        return _package_version("plotnado")
+    except PackageNotFoundError:
+        return "unknown"
+
+
+def _version_callback(value: bool) -> None:
+    if value:
+        typer.echo(f"plotnado {get_version()}")
+        raise typer.Exit()
+
+
+@app.callback()
+def _root(
+    version: bool = typer.Option(
+        False,
+        "--version",
+        "-V",
+        help="Show the plotnado version and exit.",
+        callback=_version_callback,
+        is_eager=True,
+    ),
+) -> None:
+    """PlotNado - Heuristic templates for genomic track visualization."""
+
+
+@app.command("version")
+def version_command() -> None:
+    """Show the plotnado version."""
+    typer.echo(f"plotnado {get_version()}")
+
 
 # Import commands - this registers them with the app
 from . import init, plot, validate  # noqa: F401
