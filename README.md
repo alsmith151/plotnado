@@ -14,23 +14,40 @@ Use it when you want compact tracks for BigWig-like signals, BED/narrowPeak inte
   </a>
 </p>
 
-## Start
+## Install
 
-Install for day-to-day use:
+PlotNado needs Python 3.12+.
+
+**For Python scripts and notebooks** (gives you `import plotnado` and the `plotnado` command):
+
+```bash
+pip install plotnado
+```
+
+**For the command line only**, [uv](https://docs.astral.sh/uv/) installs PlotNado in its own isolated environment:
 
 ```bash
 uv tool install plotnado
-plotnado --help
+plotnado --version
 ```
 
-Work from source:
+If you get `command not found`, run `uv tool update-shell` and open a new terminal.
+
+To use the Python API through uv without a virtual environment: `uv run --with plotnado python my_plot.py`.
+
+**With no local install**, use the container (includes Jupyter Lab):
 
 ```bash
-git clone https://github.com/alsmith151/plotnado
-cd plotnado
-uv sync --extra dev --extra docs
-uv run pytest tests/
+# Run the CLI on files in the current directory
+docker run --rm -v "$PWD":/work ghcr.io/alsmith151/plotnado:latest \
+  plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output view.png
+
+# Or start Jupyter Lab at http://localhost:8888
+docker run --rm -p 8888:8888 -v "$PWD":/work ghcr.io/alsmith151/plotnado:latest
 ```
+
+Optional extras: `pip install "plotnado[cooler]"` (cooler/CapCruncher) or `"plotnado[quantnado]"`.
+See [Installation](docs/installation.qmd) for container tags, Linux file permissions, HPC (Apptainer), and source installs.
 
 ## Python API
 
@@ -59,9 +76,9 @@ fig.save("quickstart.png", region="chr1:1,010,000-1,080,000")
 ## CLI + YAML
 
 ```bash
-uv run plotnado init sample1.bw sample2.bw peaks.narrowpeak --auto --output template.yaml
-uv run plotnado validate template.yaml
-uv run plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output browser_view.png
+plotnado init sample1.bw sample2.bw peaks.narrowpeak --auto --output template.yaml
+plotnado validate template.yaml
+plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output browser_view.png
 ```
 
 Templates are editable YAML:
@@ -114,6 +131,8 @@ For option names, use `GenomicFigure.track_options("bigwig")`.
 ## Development
 
 ```bash
+git clone https://github.com/alsmith151/plotnado
+cd plotnado
 uv sync --extra dev --extra docs
 uv run pytest tests/
 uv run python examples/run_examples.py
