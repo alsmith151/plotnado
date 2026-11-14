@@ -18,22 +18,22 @@ Use it when you want compact tracks for BigWig-like signals, BED/narrowPeak inte
 
 PlotNado needs Python 3.12+.
 
-**For Python scripts and notebooks** (gives you `import plotnado` and the `plotnado` command):
+**Into an existing Python environment** (gives you `import plotnado` and the `plotnado` command):
 
 ```bash
 pip install plotnado
 ```
 
-**For the command line only**, [uv](https://docs.astral.sh/uv/) installs PlotNado in its own isolated environment:
+**Without managing a Python environment**, [uv](https://docs.astral.sh/uv/) installs PlotNado as a self-contained tool:
 
 ```bash
-uv tool install plotnado
+uv tool install "plotnado[notebook]"
 plotnado --version
+plotnado python my_plot.py   # run scripts that `import plotnado`
+plotnado kernel install      # add a "PlotNado" kernel to Jupyter / VS Code
 ```
 
 If you get `command not found`, run `uv tool update-shell` and open a new terminal.
-
-To use the Python API through uv without a virtual environment: `uv run --with plotnado python my_plot.py`.
 
 **With no local install**, use the container (includes Jupyter Lab):
 

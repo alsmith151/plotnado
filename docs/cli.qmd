@@ -16,6 +16,18 @@ plotnado --help
 Examples below use `uv run plotnado` from a source checkout. With a
 [pip, uv tool, or container install](installation.qmd), drop the `uv run` prefix.
 
+## `plotnado python` and `plotnado kernel`
+
+Run Python inside PlotNado's own environment. This is how to use the Python API
+after `uv tool install plotnado`, where `import plotnado` does not work from
+your system Python.
+
+```bash
+plotnado python my_plot.py   # arguments are passed straight to Python
+plotnado kernel install      # register a "PlotNado" Jupyter kernel (needs the notebook extra)
+plotnado kernel uninstall
+```
+
 ## `plotnado init`
 
 ```bash
