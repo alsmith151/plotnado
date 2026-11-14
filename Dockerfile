@@ -35,7 +35,12 @@ FROM ${UV_IMAGE}
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PATH="/opt/venv/bin:$PATH"
+    PATH="/opt/venv/bin:$PATH" \
+    HOME=/home/plotnado
+
+# World-writable home so the image works under any `--user uid:gid`
+# (Jupyter and matplotlib write config/runtime files to $HOME).
+RUN mkdir -p /home/plotnado && chmod 1777 /home/plotnado
 
 COPY --from=builder /opt/venv /opt/venv
 
