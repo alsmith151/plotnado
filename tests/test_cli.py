@@ -296,3 +296,34 @@ def test_version_reports_installed_version(args):
     result = runner.invoke(app, args)
     assert result.exit_code == 0
     assert result.output.strip() == f"plotnado {get_version()}"
+
+
+def test_python_command_runs_code_with_plotnado_importable(tmp_path):
+    import subprocess
+    import sys
+
+    script = tmp_path / "s.py"
+    script.write_text("import sys, plotnado\nprint('ok', sys.argv[1:])\nsys.exit(3)\n")
+    result = subprocess.run(
+        [sys.executable, "-c", "from plotnado.cli.cli import main; main()", "python", str(script), "-x", "--flag"],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 3
+    assert "ok ['-x', '--flag']" in result.stdout
+
+
+def test_kernel_install_and_uninstall(tmp_path, monkeypatch):
+    pytest.importorskip("ipykernel")
+    import json
+
+    monkeypatch.setenv("JUPYTER_DATA_DIR", str(tmp_path))
+    result = runner.invoke(app, ["kernel", "install", "--name", "plotnado-test"])
+    assert result.exit_code == 0, result.output
+
+    spec = json.loads((tmp_path / "kernels" / "plotnado-test" / "kernel.json").read_text())
+    assert spec["display_name"].startswith("PlotNado")
+
+    result = runner.invoke(app, ["kernel", "uninstall", "--name", "plotnado-test"])
+    assert result.exit_code == 0, result.output
+    assert not (tmp_path / "kernels" / "plotnado-test").exists()

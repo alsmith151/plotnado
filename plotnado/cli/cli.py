@@ -61,7 +61,7 @@ def version_command() -> None:
 
 
 # Import commands - this registers them with the app
-from . import init, plot, validate  # noqa: F401
+from . import env, init, plot, validate  # noqa: F401
 
 
 def main():
