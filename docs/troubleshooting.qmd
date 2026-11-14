@@ -50,6 +50,7 @@ not using the uv environment. Set `QUARTO_PYTHON=.venv/bin/python`.
 Check the installed command surface:
 
 ```bash
+uv run plotnado --version
 uv run plotnado --help
 uv run plotnado init --help
 uv run plotnado validate --help

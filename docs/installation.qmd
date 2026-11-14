@@ -1,39 +1,199 @@
 # Installation
 
-PlotNado uses standard Python packaging, but the recommended workflow is `uv`.
+PlotNado needs Python 3.12 or newer. Pick the option that matches how you want to use it:
 
-## Requirements
+| You want to... | Use |
+|---|---|
+| Add PlotNado to an existing Python environment | [pip](#install-with-pip) |
+| Get the `plotnado` command, Python API, and a Jupyter kernel without managing environments | [uv tool](#install-as-a-tool-with-uv) |
+| Skip installing Python or dependencies | [Container](#run-in-a-container) |
+| Change PlotNado itself | [Develop from source](#develop-from-source) |
 
-- Python 3.12+
-- `uv`
-- Quarto, only if you are building the public documentation site
-
-## Install `uv`
-
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-On macOS:
+Check any install with:
 
 ```bash
-brew install uv
+plotnado --version
 ```
 
-## Use PlotNado as a CLI
+## Install with pip
 
-For a user-level command:
+Use this if you want `import plotnado` in your own scripts or notebooks.
+Install it into a virtual environment (or an existing Conda environment):
 
 ```bash
-uv tool install plotnado
-plotnado --help
+python -m venv .venv
+source .venv/bin/activate
+pip install plotnado
 ```
 
-From a checked-out repository, prefer:
+On Windows, activate the environment with `.venv\Scripts\activate`.
+
+Optional extras add support for more data types:
 
 ```bash
-uv run plotnado --help
+pip install "plotnado[cooler]"     # Hi-C / cooler and CapCruncher tracks
+pip install "plotnado[quantnado]"  # QuantNado tracks
 ```
+
+To use PlotNado in Jupyter from this environment, also `pip install ipykernel`.
+
+## Install as a tool with uv
+
+Use this if you do not want to manage a Python environment yourself.
+It gives you the `plotnado` command and a way to run Python scripts that use the
+PlotNado API, with optional Jupyter support.
+[uv](https://docs.astral.sh/uv/) installs PlotNado in its own isolated environment,
+and downloads a suitable Python version if needed.
+
+1. Install uv (once):
+
+    ```bash
+    # macOS / Linux
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    # or, on macOS with Homebrew
+    brew install uv
+    ```
+
+2. Install PlotNado:
+
+    ```bash
+    uv tool install plotnado
+    ```
+
+3. If your shell then says `plotnado: command not found`, add uv's tool directory
+   to your `PATH` and open a new terminal:
+
+    ```bash
+    uv tool update-shell
+    ```
+
+Upgrade or remove it later with:
+
+```bash
+uv tool upgrade plotnado
+uv tool uninstall plotnado
+```
+
+To add optional extras, list them in brackets, e.g. `uv tool install "plotnado[cooler]"`.
+
+### Use the Python API
+
+uv keeps a tool in its own environment, so `import plotnado` does not work from
+your system Python. Run Python through `plotnado` instead; everything after
+`plotnado python` is passed to the interpreter:
+
+```bash
+plotnado python my_plot.py          # run a script that does `import plotnado`
+plotnado python                     # interactive Python prompt
+plotnado python -m my_package.plots # run a module
+```
+
+### Use PlotNado in Jupyter (optional)
+
+To use the API in notebooks, add the `notebook` extra and register PlotNado's environment
+as a Jupyter kernel once:
+
+```bash
+uv tool install --force "plotnado[notebook]"
+plotnado kernel install
+```
+
+Then pick **PlotNado** as the kernel in Jupyter Lab, Jupyter Notebook, or VS Code.
+Re-run it after `uv tool upgrade plotnado` to refresh the version shown in its name, and
+remove it with `plotnado kernel uninstall`.
+
+## Run in a container
+
+A ready-made image with PlotNado, Jupyter Lab, and all dependencies is published for
+every release on the GitHub Container Registry. It runs on Linux, macOS, and Windows
+(x86-64 and ARM) with [Docker](https://docs.docker.com/get-docker/) or a compatible
+runtime such as Podman.
+
+```bash
+docker pull ghcr.io/alsmith151/plotnado:latest
+```
+
+Tags available:
+
+| Tag | Meaning |
+|---|---|
+| `latest` | Most recent release |
+| `0.3` | Most recent `0.3.x` release |
+| `0.3.3` | One exact release; use this for reproducible analyses |
+
+The container works in `/work`. Mount your data directory there with `-v` so PlotNado
+can read your files and write plots back to your machine.
+
+### Run CLI commands
+
+Run from the directory that holds your data and template:
+
+```bash
+docker run --rm -v "$PWD":/work ghcr.io/alsmith151/plotnado:latest \
+  plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output view.png
+```
+
+`view.png` appears in your current directory. All paths in the command and in the
+template must be **relative** to that directory (or start with `/work/`); paths on
+your machine such as `/Users/me/data/x.bw` do not exist inside the container.
+
+To avoid typing the full command every time, define a shell alias:
+
+```bash
+alias plotnado='docker run --rm -v "$PWD":/work ghcr.io/alsmith151/plotnado:latest plotnado'
+
+plotnado --version
+plotnado init sample1.bw sample2.bw peaks.narrowpeak --auto --output template.yaml
+plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output view.png
+```
+
+### Use Jupyter Lab
+
+With no command, the container starts Jupyter Lab on port 8888:
+
+```bash
+docker run --rm -p 8888:8888 -v "$PWD":/work ghcr.io/alsmith151/plotnado:latest
+```
+
+Open <http://localhost:8888> in your browser. Your current directory appears in
+the Jupyter file browser, and notebooks you save there stay on your machine.
+Stop the server with `Ctrl+C`.
+
+::: {.callout-warning}
+Jupyter Lab in the container has no password or token. Anyone who can reach port 8888
+can run code as you. On a shared machine or server, bind to localhost only:
+`-p 127.0.0.1:8888:8888`.
+:::
+
+### File ownership on Linux
+
+On Linux, files written by the container are owned by `root` by default. Run as your own
+user to avoid this:
+
+```bash
+docker run --rm --user "$(id -u):$(id -g)" \
+  -v "$PWD":/work ghcr.io/alsmith151/plotnado:latest \
+  plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output view.png
+```
+
+This works for both CLI commands and Jupyter Lab. macOS and Windows (Docker Desktop)
+do not need it.
+
+Images up to and including `0.3.3` also need `-e HOME=/tmp` when run with `--user`,
+otherwise Jupyter Lab exits on startup.
+
+### HPC clusters (Apptainer / Singularity)
+
+Most clusters do not allow Docker, but Apptainer can run the same image.
+It mounts your home and current directories automatically and runs as your user:
+
+```bash
+apptainer pull plotnado.sif docker://ghcr.io/alsmith151/plotnado:latest
+apptainer exec plotnado.sif plotnado --version
+apptainer exec plotnado.sif plotnado plot template.yaml --region chr1:1,000,000-1,100,000 --output view.png
+```
+
+With Apptainer, absolute paths on the cluster file system work as normal.
 
 ## Develop from source
 
@@ -46,9 +206,19 @@ uv run python examples/run_examples.py
 uv run plotnado --help
 ```
 
-`uv sync --extra dev --extra docs` installs the package, test tools, and documentation dependencies into the project environment.
+`uv sync --extra dev --extra docs` installs the package, test tools, and documentation
+dependencies into the project environment at `.venv`. Prefix commands with `uv run`
+to use it.
+
+To build the container locally:
+
+```bash
+docker build -t plotnado:dev .
+```
 
 ## Build docs locally
+
+Requires [Quarto](https://quarto.org/docs/get-started/).
 
 ```bash
 uv sync --extra dev --extra docs
@@ -56,14 +226,6 @@ QUARTO_PYTHON=.venv/bin/python quarto render
 QUARTO_PYTHON=.venv/bin/python quarto preview
 ```
 
-The docs use executable Quarto Python cells. Most examples use deterministic in-memory data; optional cooler, CapCruncher, and QuantNado examples need their corresponding dependencies and fixture data.
-
-## Pip and Conda
-
-`pip` and Conda environments can still install PlotNado, but project development and docs examples assume the `uv` commands above.
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install plotnado
-```
+The docs use executable Quarto Python cells. Most examples use deterministic in-memory data;
+optional cooler, CapCruncher, and QuantNado examples need their corresponding dependencies
+and fixture data.

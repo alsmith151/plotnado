@@ -62,7 +62,7 @@ fig.plot("chr12:69,310,000-69,400,000")
 
 | Need | Start here |
 |---|---|
-| Install from source or PyPI | [Installation](docs/installation.qmd) |
+| Install with pip, uv, or the container | [Installation](docs/installation.qmd) |
 | Build the first Python figure | [Quick Start](docs/quickstart.qmd) |
 | Infer and render YAML templates | [CLI](docs/cli.qmd) |
 | Choose a track type | [Track Catalog](docs/track_catalog.qmd) |
