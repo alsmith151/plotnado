@@ -431,12 +431,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#installation" id="toc-installation" class="nav-link active" data-scroll-target="#installation">Installation</a>
   <ul>
-  <li><a href="#requirements" id="toc-requirements" class="nav-link" data-scroll-target="#requirements">Requirements</a></li>
-  <li><a href="#install-uv" id="toc-install-uv" class="nav-link" data-scroll-target="#install-uv">Install <code>uv</code></a></li>
-  <li><a href="#use-plotnado-as-a-cli" id="toc-use-plotnado-as-a-cli" class="nav-link" data-scroll-target="#use-plotnado-as-a-cli">Use PlotNado as a CLI</a></li>
+  <li><a href="#install-with-pip" id="toc-install-with-pip" class="nav-link" data-scroll-target="#install-with-pip">Install with pip</a></li>
+  <li><a href="#install-as-a-tool-with-uv" id="toc-install-as-a-tool-with-uv" class="nav-link" data-scroll-target="#install-as-a-tool-with-uv">Install as a tool with uv</a>
+  <ul class="collapse">
+  <li><a href="#use-the-python-api" id="toc-use-the-python-api" class="nav-link" data-scroll-target="#use-the-python-api">Use the Python API</a></li>
+  <li><a href="#use-plotnado-in-jupyter-optional" id="toc-use-plotnado-in-jupyter-optional" class="nav-link" data-scroll-target="#use-plotnado-in-jupyter-optional">Use PlotNado in Jupyter (optional)</a></li>
+  </ul></li>
+  <li><a href="#run-in-a-container" id="toc-run-in-a-container" class="nav-link" data-scroll-target="#run-in-a-container">Run in a container</a>
+  <ul class="collapse">
+  <li><a href="#run-cli-commands" id="toc-run-cli-commands" class="nav-link" data-scroll-target="#run-cli-commands">Run CLI commands</a></li>
+  <li><a href="#use-jupyter-lab" id="toc-use-jupyter-lab" class="nav-link" data-scroll-target="#use-jupyter-lab">Use Jupyter Lab</a></li>
+  <li><a href="#file-ownership-on-linux" id="toc-file-ownership-on-linux" class="nav-link" data-scroll-target="#file-ownership-on-linux">File ownership on Linux</a></li>
+  <li><a href="#hpc-clusters-apptainer-singularity" id="toc-hpc-clusters-apptainer-singularity" class="nav-link" data-scroll-target="#hpc-clusters-apptainer-singularity">HPC clusters (Apptainer / Singularity)</a></li>
+  </ul></li>
   <li><a href="#develop-from-source" id="toc-develop-from-source" class="nav-link" data-scroll-target="#develop-from-source">Develop from source</a></li>
   <li><a href="#build-docs-locally" id="toc-build-docs-locally" class="nav-link" data-scroll-target="#build-docs-locally">Build docs locally</a></li>
-  <li><a href="#pip-and-conda" id="toc-pip-and-conda" class="nav-link" data-scroll-target="#pip-and-conda">Pip and Conda</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/alsmith151/plotnado/edit/main/docs/installation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/alsmith151/plotnado/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -450,52 +459,177 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="installation" class="level1">
 <h1>Installation</h1>
-<p>PlotNado uses standard Python packaging, but the recommended workflow is <code>uv</code>.</p>
-<section id="requirements" class="level2">
-<h2 class="anchored" data-anchor-id="requirements">Requirements</h2>
-<ul>
-<li>Python 3.12+</li>
-<li><code>uv</code></li>
-<li>Quarto, only if you are building the public documentation site</li>
-</ul>
+<p>PlotNado needs Python 3.12 or newer. Pick the option that matches how you want to use it:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>You want to…</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Add PlotNado to an existing Python environment</td>
+<td><a href="#install-with-pip">pip</a></td>
+</tr>
+<tr class="even">
+<td>Get the <code>plotnado</code> command, Python API, and a Jupyter kernel without managing environments</td>
+<td><a href="#install-as-a-tool-with-uv">uv tool</a></td>
+</tr>
+<tr class="odd">
+<td>Skip installing Python or dependencies</td>
+<td><a href="#run-in-a-container">Container</a></td>
+</tr>
+<tr class="even">
+<td>Change PlotNado itself</td>
+<td><a href="#develop-from-source">Develop from source</a></td>
+</tr>
+</tbody>
+</table>
+<p>Check any install with:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">plotnado</span> <span class="at">--version</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="install-with-pip" class="level2">
+<h2 class="anchored" data-anchor-id="install-with-pip">Install with pip</h2>
+<p>Use this if you want <code>import plotnado</code> in your own scripts or notebooks. Install it into a virtual environment (or an existing Conda environment):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> venv .venv</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> .venv/bin/activate</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install plotnado</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>On Windows, activate the environment with <code>.venv\Scripts\activate</code>.</p>
+<p>Optional extras add support for more data types:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="st">"plotnado[cooler]"</span>     <span class="co"># Hi-C / cooler and CapCruncher tracks</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="st">"plotnado[quantnado]"</span>  <span class="co"># QuantNado tracks</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>To use PlotNado in Jupyter from this environment, also <code>pip install ipykernel</code>.</p>
 </section>
-<section id="install-uv" class="level2">
-<h2 class="anchored" data-anchor-id="install-uv">Install <code>uv</code></h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-LsSf</span> https://astral.sh/uv/install.sh <span class="kw">|</span> <span class="fu">sh</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>On macOS:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install uv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="install-as-a-tool-with-uv" class="level2">
+<h2 class="anchored" data-anchor-id="install-as-a-tool-with-uv">Install as a tool with uv</h2>
+<p>Use this if you do not want to manage a Python environment yourself. It gives you the <code>plotnado</code> command and a way to run Python scripts that use the PlotNado API, with optional Jupyter support. <a href="https://docs.astral.sh/uv/">uv</a> installs PlotNado in its own isolated environment, and downloads a suitable Python version if needed.</p>
+<ol type="1">
+<li><p>Install uv (once):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># macOS / Linux</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-LsSf</span> https://astral.sh/uv/install.sh <span class="kw">|</span> <span class="fu">sh</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># or, on macOS with Homebrew</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install uv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Install PlotNado:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> tool install plotnado</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>If your shell then says <code>plotnado: command not found</code>, add uv’s tool directory to your <code>PATH</code> and open a new terminal:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> tool update-shell</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+</ol>
+<p>Upgrade or remove it later with:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> tool upgrade plotnado</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> tool uninstall plotnado</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>To add optional extras, list them in brackets, e.g.&nbsp;<code>uv tool install "plotnado[cooler]"</code>.</p>
+<section id="use-the-python-api" class="level3">
+<h3 class="anchored" data-anchor-id="use-the-python-api">Use the Python API</h3>
+<p>uv keeps a tool in its own environment, so <code>import plotnado</code> does not work from your system Python. Run Python through <code>plotnado</code> instead; everything after <code>plotnado python</code> is passed to the interpreter:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">plotnado</span> python my_plot.py          <span class="co"># run a script that does `import plotnado`</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">plotnado</span> python                     <span class="co"># interactive Python prompt</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">plotnado</span> python <span class="at">-m</span> my_package.plots <span class="co"># run a module</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="use-plotnado-as-a-cli" class="level2">
-<h2 class="anchored" data-anchor-id="use-plotnado-as-a-cli">Use PlotNado as a CLI</h2>
-<p>For a user-level command:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> tool install plotnado</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">plotnado</span> <span class="at">--help</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>From a checked-out repository, prefer:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run plotnado <span class="at">--help</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="use-plotnado-in-jupyter-optional" class="level3">
+<h3 class="anchored" data-anchor-id="use-plotnado-in-jupyter-optional">Use PlotNado in Jupyter (optional)</h3>
+<p>To use the API in notebooks, add the <code>notebook</code> extra and register PlotNado’s environment as a Jupyter kernel once:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> tool install <span class="at">--force</span> <span class="st">"plotnado[notebook]"</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">plotnado</span> kernel install</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Then pick <strong>PlotNado</strong> as the kernel in Jupyter Lab, Jupyter Notebook, or VS Code. Re-run it after <code>uv tool upgrade plotnado</code> to refresh the version shown in its name, and remove it with <code>plotnado kernel uninstall</code>.</p>
+</section>
+</section>
+<section id="run-in-a-container" class="level2">
+<h2 class="anchored" data-anchor-id="run-in-a-container">Run in a container</h2>
+<p>A ready-made image with PlotNado, Jupyter Lab, and all dependencies is published for every release on the GitHub Container Registry. It runs on Linux, macOS, and Windows (x86-64 and ARM) with <a href="https://docs.docker.com/get-docker/">Docker</a> or a compatible runtime such as Podman.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull ghcr.io/alsmith151/plotnado:latest</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Tags available:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Tag</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>latest</code></td>
+<td>Most recent release</td>
+</tr>
+<tr class="even">
+<td><code>0.3</code></td>
+<td>Most recent <code>0.3.x</code> release</td>
+</tr>
+<tr class="odd">
+<td><code>0.3.3</code></td>
+<td>One exact release; use this for reproducible analyses</td>
+</tr>
+</tbody>
+</table>
+<p>The container works in <code>/work</code>. Mount your data directory there with <code>-v</code> so PlotNado can read your files and write plots back to your machine.</p>
+<section id="run-cli-commands" class="level3">
+<h3 class="anchored" data-anchor-id="run-cli-commands">Run CLI commands</h3>
+<p>Run from the directory that holds your data and template:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> <span class="at">-v</span> <span class="st">"</span><span class="va">$PWD</span><span class="st">"</span>:/work ghcr.io/alsmith151/plotnado:latest <span class="dt">\</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  plotnado plot template.yaml <span class="at">--region</span> chr1:1,000,000-1,100,000 <span class="at">--output</span> view.png</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>view.png</code> appears in your current directory. All paths in the command and in the template must be <strong>relative</strong> to that directory (or start with <code>/work/</code>); paths on your machine such as <code>/Users/me/data/x.bw</code> do not exist inside the container.</p>
+<p>To avoid typing the full command every time, define a shell alias:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">alias</span> plotnado=<span class="st">'docker run --rm -v "$PWD":/work ghcr.io/alsmith151/plotnado:latest plotnado'</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="ex">plotnado</span> <span class="at">--version</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="ex">plotnado</span> init sample1.bw sample2.bw peaks.narrowpeak <span class="at">--auto</span> <span class="at">--output</span> template.yaml</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="ex">plotnado</span> plot template.yaml <span class="at">--region</span> chr1:1,000,000-1,100,000 <span class="at">--output</span> view.png</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="use-jupyter-lab" class="level3">
+<h3 class="anchored" data-anchor-id="use-jupyter-lab">Use Jupyter Lab</h3>
+<p>With no command, the container starts Jupyter Lab on port 8888:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> <span class="at">-p</span> 8888:8888 <span class="at">-v</span> <span class="st">"</span><span class="va">$PWD</span><span class="st">"</span>:/work ghcr.io/alsmith151/plotnado:latest</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Open <a href="http://localhost:8888" class="uri">http://localhost:8888</a> in your browser. Your current directory appears in the Jupyter file browser, and notebooks you save there stay on your machine. Stop the server with <code>Ctrl+C</code>.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Jupyter Lab in the container has no password or token. Anyone who can reach port 8888 can run code as you. On a shared machine or server, bind to localhost only: <code>-p 127.0.0.1:8888:8888</code>.</p>
+</div>
+</div>
+</section>
+<section id="file-ownership-on-linux" class="level3">
+<h3 class="anchored" data-anchor-id="file-ownership-on-linux">File ownership on Linux</h3>
+<p>On Linux, files written by the container are owned by <code>root</code> by default. Run as your own user to avoid this:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> <span class="at">--user</span> <span class="st">"</span><span class="va">$(</span><span class="fu">id</span> <span class="at">-u</span><span class="va">)</span><span class="st">:</span><span class="va">$(</span><span class="fu">id</span> <span class="at">-g</span><span class="va">)</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-v</span> <span class="st">"</span><span class="va">$PWD</span><span class="st">"</span>:/work ghcr.io/alsmith151/plotnado:latest <span class="dt">\</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  plotnado plot template.yaml <span class="at">--region</span> chr1:1,000,000-1,100,000 <span class="at">--output</span> view.png</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This works for both CLI commands and Jupyter Lab. macOS and Windows (Docker Desktop) do not need it.</p>
+<p>Images up to and including <code>0.3.3</code> also need <code>-e HOME=/tmp</code> when run with <code>--user</code>, otherwise Jupyter Lab exits on startup.</p>
+</section>
+<section id="hpc-clusters-apptainer-singularity" class="level3">
+<h3 class="anchored" data-anchor-id="hpc-clusters-apptainer-singularity">HPC clusters (Apptainer / Singularity)</h3>
+<p>Most clusters do not allow Docker, but Apptainer can run the same image. It mounts your home and current directories automatically and runs as your user:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> pull plotnado.sif docker://ghcr.io/alsmith151/plotnado:latest</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> exec plotnado.sif plotnado <span class="at">--version</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> exec plotnado.sif plotnado plot template.yaml <span class="at">--region</span> chr1:1,000,000-1,100,000 <span class="at">--output</span> view.png</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>With Apptainer, absolute paths on the cluster file system work as normal.</p>
+</section>
 </section>
 <section id="develop-from-source" class="level2">
 <h2 class="anchored" data-anchor-id="develop-from-source">Develop from source</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/alsmith151/plotnado</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> plotnado</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync <span class="at">--extra</span> dev <span class="at">--extra</span> docs</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pytest tests/</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python examples/run_examples.py</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run plotnado <span class="at">--help</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>uv sync --extra dev --extra docs</code> installs the package, test tools, and documentation dependencies into the project environment.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/alsmith151/plotnado</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> plotnado</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync <span class="at">--extra</span> dev <span class="at">--extra</span> docs</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run pytest tests/</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run python examples/run_examples.py</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run plotnado <span class="at">--help</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>uv sync --extra dev --extra docs</code> installs the package, test tools, and documentation dependencies into the project environment at <code>.venv</code>. Prefix commands with <code>uv run</code> to use it.</p>
+<p>To build the container locally:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">-t</span> plotnado:dev .</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="build-docs-locally" class="level2">
 <h2 class="anchored" data-anchor-id="build-docs-locally">Build docs locally</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync <span class="at">--extra</span> dev <span class="at">--extra</span> docs</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="va">QUARTO_PYTHON</span><span class="op">=</span>.venv/bin/python <span class="ex">quarto</span> render</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="va">QUARTO_PYTHON</span><span class="op">=</span>.venv/bin/python <span class="ex">quarto</span> preview</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Requires <a href="https://quarto.org/docs/get-started/">Quarto</a>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync <span class="at">--extra</span> dev <span class="at">--extra</span> docs</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="va">QUARTO_PYTHON</span><span class="op">=</span>.venv/bin/python <span class="ex">quarto</span> render</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="va">QUARTO_PYTHON</span><span class="op">=</span>.venv/bin/python <span class="ex">quarto</span> preview</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The docs use executable Quarto Python cells. Most examples use deterministic in-memory data; optional cooler, CapCruncher, and QuantNado examples need their corresponding dependencies and fixture data.</p>
-</section>
-<section id="pip-and-conda" class="level2">
-<h2 class="anchored" data-anchor-id="pip-and-conda">Pip and Conda</h2>
-<p><code>pip</code> and Conda environments can still install PlotNado, but project development and docs examples assume the <code>uv</code> commands above.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> venv .venv</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> .venv/bin/activate</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install plotnado</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
 </section>
